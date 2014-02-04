@@ -1,5 +1,5 @@
 var config = require('../config');
-var MongoClient = require('mongodb').MongoClient
+var MongoClient = require('mongodb').MongoClient;
 var ins = null;
 
 exports.open = function(callback){
@@ -11,6 +11,8 @@ exports.open = function(callback){
     MongoClient.connect(config.DB_URI, function(err, db){
         if(!err){
             ins = db;
+        }else{
+            console.log('DB open error: ', err);
         }
         callback(err, db);
     });
@@ -23,6 +25,8 @@ exports.close = function(){
     }
 }
 
+// test code
+// 
 // exports.open(function(err, db){
 //     if(!err){
 //         var collection = db.collection('test_insert');
