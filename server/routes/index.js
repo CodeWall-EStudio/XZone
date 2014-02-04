@@ -23,8 +23,14 @@ exports.verify = function(req, res, next){
     if(WHITE_LIST.indexOf(req.path) >= 0){
         next();
     }else{
-        next();
-        // res.json({err: ERR.NOT_LOGIN});
+        var skey = req.cookies.skey;
+        var loginUser = req.session[skey];
+        if(!loginUser){
+            res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
+        }else{
+            req.params.loginUser = loginUser;
+            next();
+        }
     }
 }
 

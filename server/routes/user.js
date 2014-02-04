@@ -62,7 +62,7 @@ exports.login = function(req, res){
         res.json({err: ERR.NOT_LOGIN});
     }else{
         var loginProxy = EventProxy.create('validate', 'userInfo', 'groups', function(valData, userInfo, groups){
-            req.session[valData.loginName] = valData.encodeKey;
+            req.session[valData.encodeKey] = valData.loginName;
             res.cookie('skey', valData.encodeKey, { httpOnly: true });
             res.json({
                 err: ERR.SUCCESS,
