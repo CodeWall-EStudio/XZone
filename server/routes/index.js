@@ -1,17 +1,17 @@
 var ERR = require('../errorcode')
 
 var WHITE_LIST = [
-    '/user/login',
-    '/user/gotoLogin'
+    '/api/user/login',
+    '/api/user/gotoLogin'
 ];
 
 function getRouter(path, method){
 
     var arr = path.split('/');
-    var module = require('./' + arr[1]);
-    if(module){
-        if(arr[2]){
-            return module[arr[2]];
+    if(arr[1] === 'api'){
+        var module = require('./' + arr[2]);
+        if(arr[3]){
+            return module[arr[3]];
         }else{
             return module[method.toLowerCase()];
         }
