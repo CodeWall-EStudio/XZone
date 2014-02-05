@@ -1,0 +1,85 @@
+.dis-list-type .td2 i.icon-type1,i.icon-type1{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;*/
+	width:32px;
+	height:32px;
+	background:url(imgs/type-img.png) no-repeat;
+}
+
+.dis-list-type .td2 i.icon-type2,i.icon-type2{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;	*/
+	width:32px;
+	height:32px;
+	background:url(imgs/type-doc.png) no-repeat;
+}
+
+.dis-list-type .td2 i.icon-type3,i.icon-type3{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;	*/
+	width:32px;
+	height:32px;
+	background:url(imgs/type-music.png) no-repeat;
+}
+
+.dis-list-type .td2 i.icon-type4,i.icon-type4{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;*/	
+	width:32px;
+	height:32px;
+	background:url(imgs/type-vedio.png) no-repeat;
+}
+
+.dis-list-type .td2 i.icon-type5,i.icon-type5{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;*/	
+	width:32px;
+	height:32px;
+	background:url(imgs/type-exe.png) no-repeat;
+}
+
+.dis-list-type .td2 i.icon-type6,i.icon-type6{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;*/	
+	width:32px;
+	height:32px;
+	background:url(imgs/type-zip.png) no-repeat;
+}
+
+.dis-list-type .td2 i.icon-type,i.icon-type,i.icon-type0{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;*/	
+	width:32px;
+	height:32px;
+	background:url(imgs/type-other.png) no-repeat;
+}
+i.fold{
+	display:inline-block;
+	width:32px;
+	height:32px;
+	float:left;
+	/*margin:19px 0 0 15px;*/
+	background:url(imgs/file1.png) 0 2px no-repeat;
+}
+
+i.colls{
+	cursor:pointer;
+	display:inline-block;
+/*	position:absolute;*/
+	top:20px;
+	right:10px;
+	width:16px;
+	height:15px;
+	background:url(imgs/star.png) no-repeat;
+}
+td i.s{
+	height:16px;
+	background:url(imgs/star1.png) no-repeat;
+}

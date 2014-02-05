@@ -1,0 +1,30 @@
+			<ul>
+				<li>
+					<a>通知</a><span>(<span id="allNums" data-num="<%+mailnum%>" class="mailnum"><%-mailnum%></span>)</span>
+				</li>
+				<li id="shareHis">
+					共享历史
+					<p class="mailbox">
+						<a cmd="get" data-toggle="modal" data-target="#mailbox">收件箱</a><span>(<span id="newMailnum" class="mailnum"><%-mailnum%></span>)</span>
+					</p>
+					<P class="mailbox">
+						<a cmd="send" data-toggle="modal" data-target="#mailbox">发件箱</a>
+					</p>						
+					<p class="mailbox">					
+						<a cmd="share" data-toggle="modal" data-target="#mailbox">我的贡献</a>
+					</p>
+				</li>
+				<li >
+					<a id="myColl" data-toggle="modal" data-target="#mailbox">收藏夹</a>
+				</li>				
+				<li>
+					<a id="myRecy" data-toggle="modal" data-target="#mailbox">回收站</a>
+				</li>
+			</ul>
+			<div class="userinfo">
+				<div>个人空间已用 <%-pre%>%</div>
+				<div class="user-zone"> 
+					<div class="prog" style="width:<%+pre%>%"></div><%-used%>/<%-size%>
+				</div>			
+				<div><a href="/logout">退出登录</a></div>
+			</div>				

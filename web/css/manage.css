@@ -1,0 +1,33 @@
+.from{
+	background:#fff;
+}
+
+.from-h2{
+	margin:0;
+	padding:20px;
+}
+.addfrom{
+	padding:30px;
+}
+.addfrom li{
+	position:relative;
+	padding:15px 0;
+}
+.manage-list{
+	margin-left:60px;
+}
+.user-list span{
+	display:inline-block;
+	padding:4px 8px;
+}
+.fail{
+	padding:40px;
+	text-align:center;
+}
+.success{
+	padding:40px;
+	text-align:center;
+}
+.user-list .color{
+	color:#f00;
+}

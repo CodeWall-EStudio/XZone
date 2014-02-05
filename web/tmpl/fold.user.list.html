@@ -1,0 +1,41 @@
+		<%
+			for(var i in list){
+				var item = list[i];
+		%>
+		<tr class="fold">
+			<td width="30"><input type="checkbox" name="file" class="fdclick liclick" value="<%+item.id%>" data-type="fold" /></td>
+			<td>
+				<%if(gid){%>
+				<a href="#groupid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold"></i></a>
+				<%}else{%>
+				<a href="#fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold"></i></a>
+				<%}%>
+				<dl>
+					<dt>
+						<%if(gid){%>
+							<a href="#groupid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
+						<%}else{%>
+							<a href="#fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
+						<%}%>							
+						<span cmd="edit" data-id="<%+item.id%>">
+							<%if(item.mark==''){%>
+								编辑备注
+							<%}else{%>
+								<%-item.mark%>
+							<%}%>
+						</span>
+						<span class="editmark hide">
+							<input class="name-edit" type="text" maxlength="20" value="<%+item.mark%>" />
+							<i class="edit-comp" cmd="editComp" data-type="fold" data-id="<%+item.id%>"></i>
+							<i class="edit-close" data-value="<%+item.mark%>" cmd="editClose"></i>
+						</span>
+					</dt>
+					<dd>
+					</dd>
+				</dl>							
+			</td>
+			<td width="90"></td>
+			<td width="90"></td>
+			<td width="120"><span><%-item.time%></span></td>
+		</tr>
+		<%}%>

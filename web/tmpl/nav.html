@@ -1,0 +1,57 @@
+			<i class="logo"></i>
+			<ul class="navbar-nav header-nav">
+				<li class="nav selected">
+					<a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">我的工作室<b class="caret"></b></a>
+					<ul class="dropdown-menu menu" role="menu" aria-labelledby="dLabel">
+						<li><a href="#">个人文件</a></li>
+						<li><a href="#myprep">我的备课</a></li>
+					</ul>				
+				</li>
+				<li class="nav">
+					<a data-toggle="dropdown">小组空间<b class="caret"></b></a>
+					<ul class="dropdown-menu menu" role="menu" aria-labelledby="dLabel">
+						<%
+							for(var i in gl){
+								var item = gl[i];
+						%>
+							<li>
+								<a href="#groupid=<%+item.id%>"><%-item.name %> <%-item.auth %></a>
+								<%if(item.auth){%>
+									<span><a data-toggle="modal" data-id="<%+item.id%>" cmd="manage" data-target="#manageWin">管理</a></span>
+								<%}%>
+							</li>
+						<%}%>
+						<li><a id="createNewGroup" data-toggle="modal" cmd="newgroup" data-target="#manageWin">申请新的小组</a></li>
+					</ul>
+				</li>
+				<li class="nav">
+					<a data-toggle="dropdown">部门空间<b class="caret"></b></a>
+					<ul class="dropdown-menu menu" role="menu" aria-labelledby="dLabel">
+						<%
+							for(var i in dep){
+								var item = dep[i];
+						%>
+							<li>
+								<a href="#groupid=<%+item.id%>"><%-item.name%></a>
+								<%if(item.auth){%>
+									<span><a data-toggle="modal" data-id="<%+item.id%>" cmd="manage" data-target="#manageWin">管理</a></span>
+								<%}%>
+							</li>						
+						<%}%>
+					</ul>				
+				</li>
+				<%if(school){%>
+				<li class="nav"><a href="#school">学校空间</a></li>
+				<%}%>
+			</ul>
+			<div class="userinfo">
+				<%if(nick){%>
+					<%=nick%>
+					<%if(auth){%>
+						<a href="/manage/">管理</a>
+					<%}%>
+					<a class="layout">退出</a>
+				<%}else{%>
+					<a href="/login/connect">登录</a>
+				<%}%>
+			</div>
