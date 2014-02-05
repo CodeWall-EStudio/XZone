@@ -2,7 +2,7 @@
 			for(var i in list){
 				var item = list[i];
 		%>
-		<tr class="fold">
+		<tr class="fold fold<%+item.id%>">
 			<td width="30"><input type="checkbox" name="file" class="fdclick liclick" value="<%+item.id%>" data-type="fold" /></td>
 			<td>
 				<%if(gid){%>
@@ -13,9 +13,9 @@
 				<dl>
 					<dt>
 						<%if(gid){%>
-							<a href="#groupid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
+							<a class="fdname<%+item.id%>" href="#groupid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
 						<%}else{%>
-							<a href="#fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
+							<a class="fdname<%+item.id%>" href="#fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
 						<%}%>							
 						<span cmd="edit" data-id="<%+item.id%>">
 							<%if(item.mark==''){%>
@@ -34,6 +34,11 @@
 					</dd>
 				</dl>							
 			</td>
+			<%if(gid){%>
+				<td width="60"></td>
+				<td width="60"></td>
+				<td width="60"></td>
+			<%}%>			
 			<td width="90"></td>
 			<td width="90"></td>
 			<td width="120"><span><%-item.time%></span></td>

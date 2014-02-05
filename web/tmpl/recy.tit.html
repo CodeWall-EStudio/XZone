@@ -1,0 +1,19 @@
+<div class="fold-list-link">
+	<a href="#">返回</a>
+	<a href="#" style="z-index:20">回收站</a>
+</div>
+<ul class="act-zone">
+	<li class="all-file file-type dropdown" id="changeFileType">
+		<a id="drop-type" "button" data-toggle="dropdown" >
+			全部类型
+		<b class="caret"></b></a>
+		<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+			<%
+				for(var i in filetype){
+					var item = filetype[i];
+			%>
+				<li><a href="#mycoll=1&type=<%+i%>"><%-item%></a></li>
+			<%}%>
+		</ul>
+	</li>
+</ul>

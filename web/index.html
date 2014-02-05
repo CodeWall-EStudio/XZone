@@ -43,16 +43,16 @@
 					<li class="sharefile">
 						<a data-toggle="dropdown">共享<span class="caret"></span></a>
 						<ul id="actDropDown" class="dropdown-menu menu" role="menu" aria-labelledby="dLabel">
-							<li><a data-toggle="modal" cmd="toother" data-target="#shareWin">发送给别人</a></li>
-							<li><a data-toggle="modal" cmd="togroup" data-target="#shareWin">发送到小组</a></li>
-							<li><a data-toggle="modal" cmd="todep"  data-target="#shareWin">提交到部门</a></li>
+							<li><a cmd="toother">发送给别人</a></li>
+							<li><a cmd="togroup">发送到小组</a></li>
+							<li><a cmd="todep">提交到部门</a></li>
 						</ul>						
 					</li>
 					<li class="downfile"><a cmd="downfile" id="donwFiles">下载</a></li>
-					<li class="renamefile" id="renameAct"><a cmd="rename" data-toggle="modal" data-target="#renameFile">重命名</a></li>
-					<li class="copyfile"><a cmd="copyFile" data-toggle="modal" data-target="#shareWin">复制到备课</a></li>
-					<li class="copyfile"><a cmd="moveFile" data-toggle="modal" data-target="#shareWin">移动文件</a></li>
-					<li class="delfile"><a cmd="delFile" data-toggle="modal" data-target="#delFile">删除</a></li>
+					<li class="renamefile" id="renameAct"><a cmd="rename">重命名</a></li>
+					<li class="copyfile"><a cmd="copy">复制到备课</a></li>
+					<li class="movefile"><a cmd="move">移动文件</a></li>
+					<li class="delfile"><a cmd="del">删除</a></li>
 					<li class="cancel"><a cmd="cancel">取消</a></li>
 				</ul>
 			</div>		
@@ -77,16 +77,34 @@
 					
 				</div>
 				<div class="listDiv">
-				<table width="100%"  class="table table-striped table-hover table-list">
+				<table width="100%"  class="table table-striped table-hover table-list table-files">
 					<tbody id="fileInfoList">
 					</tbody>
 				</table>	
-				<div id="pageZone">
+				<div id="pageZone" class="page-div">
 
 				</div>
 				</div>
 			</div>
 
+			<div id="boxList">
+				<div id="boxtableTit" class="table-order">
+					
+				</div>	
+				<div class="listDiv">			
+				<table width="100%"  class="table table-striped table-hover table-list">
+					<tbody id="boxTableList">
+					</tbody>
+				</table>
+				<div class="page-div" id="boxpageZone">
+
+				</div>
+				</div>				
+			</div>
+
+			<div id="shareBox">
+
+			</div>
 
 		</div>
 
@@ -113,15 +131,23 @@
 					<h4 class="modal-title">新建文件夹</h4>
 				</div>
 				<form class="new-fold" id="newFolds" method="get">
-				<div class="modal-body">
-					<label>文件夹名称：</label><input id="foldname" maxlength="20" name="foldname" type="text" style="width:80%" />
-					<input type="hidden" class="parentid" name="parentid" value="<?=$fid?>" />
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<input type="submit" class="btn btn-primary btn-new-fold" value="确定" />
-				</div>
+					<div class="modal-body">
+						<label>文件夹名称：</label><input id="foldname" maxlength="20" name="foldname" type="text" style="width:80%" />
+						<input type="hidden" class="parentid" name="parentid" value="<?=$fid?>" />
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+						<button type="submit" class="btn btn-primary btn-new-fold">确定</button>
+					</div>
 				</from>
+			</div>
+		</div>
+	</div>
+
+	<div id="actWin" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content" id="actWinZone">
+			
 			</div>
 		</div>
 	</div>	

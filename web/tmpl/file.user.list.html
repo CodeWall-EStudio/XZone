@@ -2,7 +2,7 @@
 			for(var i in list){
 				var item = list[i];
 		%>
-			<tr class="file" data-id="<?=$item['id']?>">
+			<tr class="file file<%+item.id%>" data-id="<?=$item['id']?>">
 					<td width="30"><input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" /></td>
 					<td>
 						<a class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
@@ -13,7 +13,7 @@
 						<%}%>
 						</a>
 						<dl>
-							<dt><a class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
+							<dt><a class="file-name fdname<%+item.id%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
 								<span cmd="edit" data-id="<%+item.id%>"><%-item.mark%></span>
 								<span class="editmark hide">
 									<input class="name-edit" type="text" value="<%+item.mark%>" />
@@ -30,10 +30,15 @@
 									<!-- <li><a cmd="toschool" data-id="<?=$item['id']?>" data-name="<?=$item['name']?>">到学校空间</a></li>		 -->			
 								</ul>
 								</span>										
-								<span><a cmd="down" data-id="<%+item.id%>" data-fid="<%+item.fid%>">下载</a></span>
+								<span><a href="<%+down%>?fileId=<%+item.fid%>" data-id="<%+item.id%>" data-fid="<%+item.fid%>" target="_blank">下载</a></span>
 							</dd>
 						</dl>
 					</td>
+					<%if(gid){%>
+						<td width="60"></td>
+						<td width="60"></td>
+						<td width="60"></td>						
+					<%}%>
 					<td width="90">
 						<%-filetype[item.type]%>
 					</td>

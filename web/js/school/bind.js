@@ -7,31 +7,6 @@ define(['config'],function(config){
 		nowGid = 0,  //当前小组id
 		nowPage = 'user';
 
-
-	$('.table-order').bind('click',function(e){
-		var target = $(e.target),
-			on = target.attr('data-on');
-		if(!on){
-			target = target.parent();
-			on = target.attr('data-on');
-		}
-		if(!on){
-			return;
-		}
-		var key = searchTarget.val(),
-			def = searchTarget.attr('data-def');
-		if(key == def){
-			key == '';
-		}
-		var od = target.attr('data-od');
-		var data = {};
-		data[on] = od;
-		handerObj.triggerHandler('order:change',{
-			order : data,
-			key : key
-		});
-	});
-
     $("#newFolds").validate({
             rules:{
                     foldname : {
@@ -51,10 +26,9 @@ define(['config'],function(config){
 			 	var value = $('#foldname').val();
 
 			 	handerObj.triggerHandler('fold:create',{
-			 		name : value,
-			 		fdid : nowFd,
-			 		gid : nowGid
-			 	});        	
+			 		name : value
+			 	});  
+			 	$("#newFold .close").click();      	
                 return false;
             }
     });		
@@ -94,6 +68,19 @@ define(['config'],function(config){
 	}
 	/***********************************/
 
+	function gosearch(key){
+		var hash = location.hash;
+		if(hash.indexOf('key=')>=0){
+			hash = hash.replace(/key=([^&])+/g,'key='+key);
+			location.hash = hash;
+		}else{
+			if(hash.length<1){
+				location.hash = location.hash+'key='+key;
+			}else{
+				location.hash = location.hash+'&key='+key;
+			}
+		}
+	}
 
 	//搜索框的绑定
 	$('.search-key').bind('keyup',function(e){
@@ -103,9 +90,12 @@ define(['config'],function(config){
 		if(e.keyCode == 13){
 			var v= $.trim(target.val());
 			if(v != def){
-				handerObj.triggerHandler('search:start',{
-					key : v
-				});
+				gosearch(v);
+				//console.log(location.hash);
+				//location.hash = location.hash+'&key='+v;
+				// handerObj.triggerHandler('search:start',{
+				// 	key : v
+				// });
 			}
 		}
 	}).bind('focus',function(e){
@@ -130,14 +120,165 @@ define(['config'],function(config){
 		var	def = searchTarget.attr('data-def');		
 		if(v != def){
 			var v= $.trim(searchTarget.val());
-			handerObj.triggerHandler('search:start',{
-				key : v
-			});						
+			gosearch(v);
+			// location.hash = location.hash+'&key='+v;
+			// handerObj.triggerHandler('search:start',{
+			// 	key : v
+			// });						
 		}
 	});
 
+    //显示或者隐藏重命名和评论
+    var checkAct = function(){
+    	var l = $('.table-files .fclick:checked').length;
+
+    	// $('#fileList .fdclick:checked').each(function(){
+    	// 	$(this).attr('checked',false);
+    	// });
+	    	$('#fileActZone .sharefile').show();
+	    	$('#fileActZone .downfile').show();
+	    	$('#fileActZone .collfile').show();    		
+	    	$('#fileActZone .copyfile').show();     	
+    	if(l==0){
+			$('.tool-zone').removeClass('hide');
+			$('.file-act-zone').addClass('hide');
+    	}else{
+			$('.tool-zone').addClass('hide');
+			$('.file-act-zone').removeClass('hide');
+    		if(l>1){
+	    		$('#renameAct').addClass('hide');
+	    		$('#remarkAct').addClass('hide');
+    		}else{
+	    		$('#renameAct').removeClass('hide');
+	    		$('#remarkAct').removeClass('hide');
+    		}
+    	}
+    }	
+
+    //显示或者隐藏重命名和评论
+    var checkFoldAct = function(){
+    	var l = $('.table-files .fdclick:checked').length;
+    	// $('#fileList .fclick:checked').each(function(){
+    	// 	$(this).attr('checked',false);
+    	// });   	
+    	if(l==0){
+			$('.tool-zone').removeClass('hide');
+			$('.file-act-zone').addClass('hide');
+    	}else{
+	    	$('#fileActZone .sharefile').hide();
+	    	$('#fileActZone .downfile').hide();
+	    	$('#fileActZone .collfile').hide();    		
+	    	$('#fileActZone .copyfile').hide(); 
+			$('.tool-zone').addClass('hide');
+			$('.file-act-zone').removeClass('hide');
+    		if(l>1){
+	    		$('#renameAct').addClass('hide');
+	    		$('#remarkAct').addClass('hide');
+    		}else{
+	    		$('#renameAct').removeClass('hide');
+	    		$('#remarkAct').removeClass('hide');
+    		}
+    	}
+    }  
+
+    //删除文件和文件夹
+    function deleteObj(){
+    	var fid = {},
+    		fdid = {};
+		$('.table-files .fclick:checked').each(function(e){
+			var id = $(this).val();
+			fid[id] = $('.fdname'+id).text();
+		});    	
+		$('.table-files .fdclick:checked').each(function(e){
+			var id = $(this).val();
+			fdid[id] = $('.fdname'+id).text();
+		});		
+		handerObj.triggerHandler('file:del',{
+			fl : fid,
+			fd : fdid
+		});
+    }
+
+    //重命名文件夹或文件
+    function renameObj(){
+    	if($('.table-files .fclick:checked').length > 0){
+    		var id = $('.table-files .fclick:checked').val();
+    		handerObj.triggerHandler('file:edit',{
+    			id : id,
+    			name : $('.fdname'+id).text()
+    		});
+    	}else{
+    		var id = $('.table-files .fdclick:checked').val();
+    		handerObj.triggerHandler('fold:edit',{
+    			id : id,
+    			name : $('.fdname'+id).text()
+    		});
+    	}
+    }
+
+    //批量操作按钮
+    $('#fileActZone').bind('click',function(e){
+		var target = $(e.target),
+			cmd = target.attr('cmd');
+		switch(cmd){	
+			case 'rename':
+				renameObj();
+				break;
+			case 'togroup':
+				break;
+			case 'toother':
+				break;	
+			case 'todep':
+				break;	
+			case 'move':
+				break;
+			case 'copy':
+				break;
+			case 'del':
+				deleteObj();
+				break;
+			case 'cancel':
+				$('.tool-zone').removeClass('hide');
+				$('.file-act-zone').addClass('hide');				
+				$('.table-files input:checked').each(function(){
+					$(this).attr('checked',false);
+				});
+				break;
+		}			
+    });
+
+    $('#tableTit').bind('click',function(e){
+    	var target = $(e.target),
+    		cmd = target.attr('cmd');
+    	if(cmd == 'selectall'){
+			if(target[0].checked){
+				$('#fileList .liclick:not(:checked)').each(function(){
+					$(this)[0].checked = true;
+				});
+			}else{
+				$('#fileList .liclick:checked').each(function(){
+					$(this).attr('checked',false);
+				});
+			}
+			checkAct();    		
+    	}
+    })
+
+	$('.table-files').click(function(e){
+		var t = $(e.target),
+			type = t.attr("data-type");
+		if(!type){
+			return;
+		}
+		if(type == 'file'){
+			checkAct();
+		}else{
+			checkFoldAct();
+		}
+	});
 
 	$(".table-list").bind('click',function(e){
+
 		var gid = $('#fileList').attr('data-gid') || 0;
 		var key = $('#searchKey').val(),
 			def = $('#searchKey').attr('data-def');
@@ -146,18 +287,15 @@ define(['config'],function(config){
 			key = false;
 		}
 		var target = $(e.target),
+			tag = 0,
+			file = 0,
 			cmd = target.attr('cmd');
 
-		switch(cmd){
-			case 'page': //加载更多文件
-				var page = target.attr('data-page'),
-					on = target.attr('data-on'),
-					od = target.attr('data-od'),
-					fdid = target.attr('data-fdid'),
-					type = target.attr('data-type');
+		if(target.parents('.table-list').hasClass('table-files')){
+			file = 1;
+		}
 
-				pageAct(type,page,fdid,on,od,gid,key);
-				break;
+		switch(cmd){
 			case 'coll':
 				var fid = target.attr('data-fid');
 				coll(fid,target);
@@ -188,39 +326,24 @@ define(['config'],function(config){
 			case 'down':
 				down(e);
 				break;
+			default :
+				if(file){
+					if(!target.hasClass('liclick') && !target.hasClass('name-edit') && !target.hasClass('share-file')){
+						var p = target.parents("tr");
+						p.find('.liclick').click();										
+					}
+				}
+				break;
 		}
 	});
 
-
-	//相关处理函数
-	function pageAct(type,page,fdid,on,od,gid,key){
-		var act = '';
-		switch(type){
-			case 'user':
-				if(key){
-					act = 'myfile:search';
-				}else{
-					act = 'myfile:get';
-				}
-				break;
-			case 'prep':
-				break;
-			case 'group':
-				break;
+	$('.page-div').bind('click',function(e){
+		var target = $(e.target),
+			cmd = target.attr('cmd');
+		if(cmd){
+			handerObj.triggerHandler('page:next');
 		}
-
-
-
-		handerObj.triggerHandler(act,{
-			page : page,
-			fdid : fdid,
-			on : on,
-			od : od,
-			gid : gid,
-			key : key
-		});
-	}
-
+	});
 
     var scrollData = {
         scrollEl: [],

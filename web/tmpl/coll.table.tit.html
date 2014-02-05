@@ -1,4 +1,4 @@
-<%
+	<%
 	var od,on;
 	for(var i in order){
 		od = order[i];
@@ -6,13 +6,11 @@
 	}
 %>
 
-
 <table width="100%" class="table table-striped table-hover">
 	<tr>
-		<th width="30"><input type="checkbox" cmd="selectall" /></th>
+		<th width="30"><input type="checkbox" id="selectAllFold" /></th>
 		<th>
-			文件夹和文件
-			<a href="#fdid=<%+fdid%>&on=name&od=<%if(on=='name' && od){%>0<%}else{%>1<%}%>">
+			<a href="#<%+name%>=1&on=name&od=<%if(on=='name' && od){%>0<%}else{%>1<%}%>">
 			<span>文件名</span>  
 			<%if(on == 'name' && od==0){%>
 				<i class="ad"></i>
@@ -22,17 +20,20 @@
 				<i class="ad"></i>
 			<%}%>			
 			</a>	
-
-			<a data-tag="folds">选择本页所有文件夹</a>
-			<a data-tag="files">选择本页所有文件</a>
 		</th>
-		<%if(gid){%>
-		<th width="60">评论</th>
-		<th width="60">作者</th>
-		<th width="60">来源</th>	
-		<%}%>	
+		<%if(name=='mailbox'){%>
+			<th width="90">
+				<%if(type == 0){%>
+					目标组织
+				<%}else if(type == 1){%>
+					来源用户
+				<%}else if(type == 2){%>
+					目标用户
+				<%}%>
+			</th>
+		<%}%>
 		<th width="90">
-		<a href="#fdid=<%+fdid%>&on=type&od=<%if(on=='type' && od){%>0<%}else{%>1<%}%>">
+		<a href="#<%+name%>=1&on=type&od=<%if(on=='type' && od){%>0<%}else{%>1<%}%>">
 			<span>类型</span> 
 			<%if(on == 'type' && od==0){%>
 				<i class="ad"></i>
@@ -44,7 +45,7 @@
 		</a>
 		</th>
 		<th width="90">
-			<a href="#fdid=<%+fdid%>&on=size&od=<%if(on=='size' && od){%>0<%}else{%>1<%}%>">
+			<a href="#<%+name%>=1&on=size&od=<%if(on=='size' && od){%>0<%}else{%>1<%}%>">
 			<span>大小</span>  
 			<%if(on == 'size' && od==0){%>
 				<i class="ad"></i>
@@ -56,7 +57,7 @@
 			</a>							
 		</th>
 		<th width="120" align="right">
-			<a href="#fdid=<%+fdid%>&on=createtime&od=<%if(on=='createtime' && od){%>0<%}else{%>1<%}%>">
+			<a href="#<%+name%>=1&on=createtime&od=<%if(on=='createtime' && od){%>0<%}else{%>1<%}%>">
 			<span>时间</span>  
 			<%if(on == 'createtime' && od==0){%>
 				<i class="ad"></i>

@@ -2,7 +2,9 @@ define(['config','helper/view','model.fold'],function(config,View){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
+		action = 0,
 		nowGinfo = {},
+		nowFdInfo = {},
 		nowKey = '',
 		nowFd = 0,
 		nowOrder  = { 
@@ -11,6 +13,8 @@ define(['config','helper/view','model.fold'],function(config,View){
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		actTarget = $('#actWinZone'),
+		actWin = $('#actWin'),	
 		titTarget = $('#sectionTit');
 
 	function crTit(obj){
@@ -30,16 +34,21 @@ define(['config','helper/view','model.fold'],function(config,View){
 
 	function marksuc(e,d){
 		var target = d.target;
-		target.parent('span').prev('span').text(d.mark);
+		if(target){
+			target.parent('span').prev('span').text(d.mark);
+		}
 	}
 
 	function foldInit(e,d){
+		action = 1;
 
 		tmpTarget.html('');
+		nowFdInfo = {};
 		if(d){
 			nowGid = d.gid || 0;
-			nowFd = d.fdid || 0;
 			nowGinfo = d.info || {};
+			nowFd = nowGinfo.rootfold || d.fdid || 0;
+			nowKey = d.key || '';
 		}
 		if(!nowFd){
 			crTit();
@@ -56,11 +65,12 @@ define(['config','helper/view','model.fold'],function(config,View){
 	}
 
 	function foldOne(e,d){
+		//console.log(d,nowFd);
+		nowFdInfo = d;
 		crTit(d);
 	}
 
 	function foldLoad(e,d){
-
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'fold.user.list',
@@ -103,7 +113,61 @@ define(['config','helper/view','model.fold'],function(config,View){
 		});			
 	}	
 
+	function createFold(e,d){
+		var data = {
+			gid : nowGid,
+			fdid : nowFd,
+			name : d.name
+		}
+		handerObj.triggerHandler('fold:new',data);1
+	}
+
+	function delSuc(e,d){
+		var list = d.id;
+		for(var i = 0,l=list.length;i<l;i++){
+			$('.fold'+list[i]).remove();
+		}
+	}
+
+	function foldEdit(e,d){
+		var view = new View({
+			target : actTarget,
+			tplid : 'modify',
+			data : {
+				type : 'fold',
+				name : d.name
+			},
+			after : function(){
+				$("#actWin").modal('show');
+			},
+			handlers : {
+				'.btn-modify' : {
+					'click' : function(){
+						var n = actTarget.find('.obj-name').val();
+						if(n != ''){
+							handerObj.triggerHandler('fold:modify',{
+								fileId : d.id,
+								groupId : nowGid,
+								name : n
+							});
+						}
+					}
+				}
+			}
+		});
+		view.createPanel();			
+	}
+
+	function modifySuc(e,d){
+		console.log(d.fileId,d.name);
+		$('.fdname'+d.fileId).text(d.name);
+	}
+
 	var handlers = {
+		'fold:modifysuc' : modifySuc,
+		'fold:edit' : foldEdit,
+		'fold:delsuc' : delSuc,
+		'fold:create' : createFold,
 		'order:change' : orderChange,
 		'search:start' : search,
 		'fold:marksuc' : marksuc,

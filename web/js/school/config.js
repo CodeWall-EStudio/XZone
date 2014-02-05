@@ -1,5 +1,5 @@
 define(function() {
-	var CGI_PATH = '/',
+	var CGI_PATH = '/api/',
 		EXT = '';
 
 	return {
@@ -35,30 +35,34 @@ define(function() {
 			fileshare : CGI_PATH+'file/share'+EXT,
 
 			//文件夹
-			foldinfo : CGI_PATH+'folder'+EXT,
+			foldinfo : CGI_PATH+'folder/info'+EXT,
 			foldcreate : CGI_PATH+'folder/create'+EXT,
 			foldmodify : CGI_PATH+'folder/modify'+EXT,
 			foldlist : CGI_PATH+'folder/list'+EXT,
 			foldsearch : CGI_PATH+'folder/search'+EXT,
+			folddel : CGI_PATH+'folder/delete'+EXT,
 
 			//文件收藏
 			favcreate : CGI_PATH+'fav/create'+EXT,
 			favlist : CGI_PATH+'fav/list'+EXT,
 			favdel : CGI_PATH+'fav/del'+EXT,
+			favsearch : CGI_PATH+'fav/search'+EXT,
 
 			//回收站
-			reclist : CGI_PATH+'/recycle/list'+EXT,
-			recrev : CGI_PATH+'/recycle/revert'+EXT,
+			reclist : CGI_PATH+'recycle/list'+EXT,
+			recrev : CGI_PATH+'recycle/revert'+EXT,
+			recsearch : CGI_PATH+'recycle/search'+EXT,
 
 			//小组&部门
 			groupcreate : CGI_PATH+'group/create'+EXT,
 			groupmodify : CGI_PATH+'group/modify'+EXT,
-			groupinfo : CGI_PATH+'group'+EXT,
+			groupinfo : CGI_PATH+'group/info'+EXT,
 			groupverify : CGI_PATH+'group/verify'+EXT,
 			groupverlist : CGI_PATH+'group/verify/list'+EXT,
 
 			//消息
 			msgcreate : CGI_PATH+'message/create'+EXT,
+			msgsearch : CGI_PATH+'message/search'+EXT,
 
 			//留言板
 			boardcreate : CGI_PATH+'board/create'+EXT,

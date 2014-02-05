@@ -5,7 +5,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var list = [];
 		for(var i=0,l=data.length;i<l;i++){
 			var item = data[i];
-			list.push({
+			var td = {
 				id : item._id,
 				fid : item.fid,
 				name : item.name,
@@ -13,7 +13,8 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				type : item.type,
 				time : util.time(item.createtime),
 				coll : item.coll
-			})
+			}
+			list.push(td);
 		}
 		return list;
 	}
@@ -136,8 +137,49 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		request.post(opt,success);	
 	}
 
+	function delFile(e,d){
+		var fileId = [];
+		for(var i in d){
+			fileId.push(i);
+		}
+		var opt = {
+			method : 'POST',
+			cgi : config.cgi.filedel,
+			data : {
+				fileId : fileId
+			}
+		}
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('file:delsuc',{id: fileId});
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.post(opt,success);			
+	}
+
+	function fileModify(e,d){
+		var opt = {
+			method : 'POST',
+			cgi : config.cgi.filemodify,
+			data : d
+		}
+		var td = d;
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('file:modifysuc',td);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.post(opt,success);		
+	}
+
 	var handlers = {
 		//'file:get' : getFile,
+		'file:modify' : fileModify,
+		'file:delfiles' : delFile,
 		'file:serach' : searchFile,
 		'file:coll' : coll,
 		'file:uncoll' : unColl,
