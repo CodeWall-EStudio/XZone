@@ -7,8 +7,8 @@ module.exports = exports = new BaseModel('group');
 
 
 exports.listUserGroups = function(query, callback){
-    db.open(function(err, db){
-        db.collection('groupuser').find(query).toArray(function(err, docs){
+    db.getCollection('groupuser', function(err, collection){
+        collection.find(query).toArray(function(err, docs){
             if(!err){
                 return callback(err, null);
             }

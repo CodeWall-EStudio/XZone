@@ -25,6 +25,16 @@ exports.close = function(){
     }
 }
 
+exports.getCollection = function(name, callback){
+    exports.open(function(err, db){
+        if(err){
+            callback(err, null);
+        }else{
+            callback(null, db.collection(name));
+        }
+    });
+}
+
 // test code
 // 
 // exports.open(function(err, db){

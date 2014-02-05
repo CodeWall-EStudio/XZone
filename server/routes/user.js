@@ -61,14 +61,22 @@ exports.login = function(req, res){
     if(!ticket){
         res.json({err: ERR.NOT_LOGIN});
     }else{
-        var loginProxy = EventProxy.create('validate', 'userInfo', 'groups', function(valData, userInfo, groups){
-            req.session[valData.encodeKey] = valData.loginName;
+        var loginProxy = EventProxy.create('validate', 'userInfo', 'saveUser', 'groups', function(valData, userInfo, user, groups){
+            req.session[valData.encodeKey] = {
+                _id: user._id,
+                name: user.name
+            };
+
             res.cookie('skey', valData.encodeKey, { httpOnly: true });
             res.json({
                 err: ERR.SUCCESS,
                 result: {
-                    nick: userInfo.name, // 中文名
-                    name: userInfo.loginName, // 拼音, 唯一
+                    nick: user.nick, // 中文名
+                    name: user.name, // 拼音, 唯一
+                    auth: user.auth,
+                    size: user.size,
+                    used: user.used,
+                    lastgroup: user.lastgroup,
                     groups: groups // 该用户参加的小组列表
                 }
             });
@@ -99,7 +107,9 @@ exports.login = function(req, res){
                         lastgroup: null
                     }
                 }
-                mUser.save(doc, function(){});
+                mUser.save(doc, function(err, result){
+                    mUser.findOne({ _id: doc._id }, loginProxy.done('saveUser'));
+                });
             });
         });
 

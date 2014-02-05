@@ -25,10 +25,11 @@ exports.verify = function(req, res, next){
     }else{
         var skey = req.cookies.skey;
         var loginUser = req.session[skey];
+
         if(!loginUser){
             res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
         }else{
-            req.params.loginUser = loginUser;
+            req.loginUser = loginUser;
             next();
         }
     }
