@@ -90,8 +90,24 @@ exports.create = function(req, res){
                 result: {
                     data: doc
                 }
-            })
+            });
         }
     });
 }
 
+exports.delete = function(req, res){
+    var params = req.query;
+
+    mFolder.delete(params, function(err, number){
+        if(err){
+            res.json({ err: number || ERR.SERVER_ERROR, msg: err});
+        }else{
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    count: number
+                }
+            });
+        }
+    })
+}

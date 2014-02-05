@@ -1,4 +1,4 @@
-var CAS = require('node-cas');
+var CAS = require('../lib/cas');
 var config = require('../config');
 var ERR = require('../errorcode');
 
@@ -9,7 +9,6 @@ var http = require('http');
 var querystring = require('querystring');
 var EventProxy = require('eventproxy');
 
-var ObjectID = require('mongodb').ObjectID;
 
 var cas = new CAS({
     base_url: config.CAS_BASE_URL,
@@ -62,10 +61,7 @@ exports.login = function(req, res){
         res.json({err: ERR.NOT_LOGIN});
     }else{
         var loginProxy = EventProxy.create('validate', 'userInfo', 'saveUser', 'groups', function(valData, userInfo, user, groups){
-            req.session[valData.encodeKey] = {
-                _id: user._id,
-                name: user.name
-            };
+            req.session[valData.encodeKey] = user;
 
             res.cookie('skey', valData.encodeKey, { httpOnly: true });
             res.json({
@@ -91,14 +87,14 @@ exports.login = function(req, res){
             var nick = userInfo.name;
 
             // name 是唯一的
-            mUser.findOne({ name: name}, function(err, doc){
-                if(doc){ // db已经有该用户, 更新资料
-                    doc.nick = nick;
+            mUser.getUserByName(name, function(err, user){
+                if(user){ // db已经有该用户, 更新资料
+                    user.nick = nick;
 
-                    mGroup.listUserGroups({ uid: doc._id }, loginProxy.done('groups'));
+                    mGroup.listUserGroups(user._id , loginProxy.done('groups'));
 
                 }else{
-                    doc = {
+                    user = {
                         nick: nick,
                         name: name,
                         auth: 0,
@@ -107,9 +103,7 @@ exports.login = function(req, res){
                         lastgroup: null
                     }
                 }
-                mUser.save(doc, function(err, result){
-                    mUser.findOne({ _id: doc._id }, loginProxy.done('saveUser'));
-                });
+                mUser.save(user, loginProxy.done('saveUser'));
             });
         });
 
