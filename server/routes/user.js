@@ -48,9 +48,25 @@ exports.gotoLogin = function(req, res){
 }
 
 exports.get = function(req, res){
-    var skey = req.cookies.skey;
-    getUserInfo(skey, function(err, userInfo){
-        res.send(userInfo);
+
+    var loginUser = req.loginUser;
+    mUser.getUserByName(loginUser.name, function(err, user){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else if(!user){
+            res.json({ err: ERR.NOT_FOUND, msg: 'no such user'});
+        }else{
+
+            mGroup.getGroupByUser(user._id.toString() , function(err, groups){
+                res.json({
+                    err: ERR.SUCCESS,
+                    result: {
+                        user: user,
+                        groups: groups
+                    }
+                });
+            });
+        }// end of else 
     });
 }
 
@@ -67,12 +83,7 @@ exports.login = function(req, res){
             res.json({
                 err: ERR.SUCCESS,
                 result: {
-                    nick: user.nick, // 中文名
-                    name: user.name, // 拼音, 唯一
-                    auth: user.auth,
-                    size: user.size,
-                    used: user.used,
-                    lastgroup: user.lastgroup,
+                    user: user,
                     groups: groups // 该用户参加的小组列表
                 }
             });
@@ -91,7 +102,7 @@ exports.login = function(req, res){
                 if(user){ // db已经有该用户, 更新资料
                     user.nick = nick;
 
-                    mGroup.listUserGroups(user._id , loginProxy.done('groups'));
+                    mGroup.getGroupByUser(user._id , loginProxy.done('groups'));
 
                 }else{
                     user = {
@@ -100,6 +111,7 @@ exports.login = function(req, res){
                         auth: 0,
                         size: config.DEFAULT_USER_SPACE,
                         used: 0,
+                        mailnum: 0,
                         lastgroup: null
                     }
                 }

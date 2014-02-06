@@ -5,6 +5,7 @@ var EventProxy = require('eventproxy');
 var EventEmitter = require('events').EventEmitter;
 var ERR = require('../errorcode');
 var U = require('../util');
+var mFile = require('./file');
 
 exports.list = function(params, callback){
 
@@ -27,8 +28,8 @@ exports.search = function(params, callback){
     var keyword = params.keyword || '';
 
     var order = params.order || [];
-    var page = params.page || 1;
-    var pageNum = params.pageNum || 0;
+    var page = Number(params.page) || 1;
+    var pageNum = Number(params.pageNum) || 0;
     var skipNum = pageNum * (page - 1);
 
     var hasGroupId = groupId && groupId.length === 24;
@@ -49,7 +50,14 @@ exports.search = function(params, callback){
         proxy.fail(callback);
 
         cursor.count(proxy.done('total'));
-        cursor.sort(order).skip(skipNum).limit(pageNum).toArray(proxy.done('result'));
+        cursor.sort(order);
+        if(skipNum){
+            cursor.skip(skipNum);
+        }
+        if(pageNum){
+            cursor.limit(pageNum);
+        }
+        cursor.toArray(proxy.done('result'));
 
     });
 }
@@ -64,25 +72,16 @@ exports.getFolder = function(params, callback){
 
 }
 
-exports.modify = function(params, callback){
+exports.modify = function(params, doc, callback){
     var folderId = params.folderId;
-    var groupId = params.groupId || 0;
-    var mark = params.mark;
-    var name = params.name;
-    var doc = {
-        updatetime: Date.now()
-    };
-    if(params.mark){
-        doc.mark = params.mark;
-    }
-    if(params.name){
-        doc.name = params.name;
-    }
+    var groupId = params.groupId;
+
+    doc.updatetime = Date.now();
 
     var hasGroupId = groupId && groupId.length === 24;
     var collectionName = hasGroupId ? 'groupfolds' : 'userfolds';
-    db[collectionName].findAndModify({ _id: new ObjectID(folderId) }, [], doc, 
-            { 'new':true, upsert:true }, callback);
+    db[collectionName].findAndModify({ _id: new ObjectID(folderId) }, [], { $set: doc }, 
+            { 'new':true }, callback);
 }
 
 exports.create = function(params, callback){
@@ -157,7 +156,7 @@ exports.delete = function(params, callback){
     var folderId = params.folderId;
     var hasGroupId = groupId && groupId.length === 24;
     var collectionName = hasGroupId ? 'groupfolds' : 'userfolds';
-    var fileCllName = hasGroupId ? 'groupfile' : 'userfile';
+
 
     db[collectionName].findAndRemove({ _id: new ObjectID(folderId)}, [], function(err, folder){
         if(err){
@@ -182,8 +181,12 @@ exports.delete = function(params, callback){
                 proxy.after('delete', docs.length * 2, function(list){
                     callback(null, U.calculate(list) + 1);
                 });
+                proxy.fail(callback);
                 docs.forEach(function(doc){
-                    db[fileCllName].remove( { fid: doc._id.toString() }, proxy.group('delete'));
+
+                    mFile.batchDelete({ groupId: groupId },{ fdid: doc._id.toString() }, 
+                            proxy.group('delete'));
+
                     db[collectionName].remove({ _id: doc._id }, proxy.group('delete'));
                 });
             });

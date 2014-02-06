@@ -1,5 +1,5 @@
-var ObjectID = require('mongodb').ObjectID;
-var DBRef = require('mongodb').DBRef;
+
+
 var config = require('../config');
 var ERR = require('../errorcode');
 
@@ -60,15 +60,24 @@ exports.get = function(req, res){
 }
 
 exports.modify = function(req, res){
-    var params = req.body;
+    var params = req.query;
 
-    mFolder.modify(params, function(err, doc){
+    var doc = {
+    };
+    if(params.mark){
+        doc.mark = params.mark;
+    }
+    if(params.name){
+        doc.name = params.name;
+    }
+
+    mFolder.modify(params, doc, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else if(!doc){
             res.json({ err: ERR.NOT_FOUND, msg: 'no such folder'});
         }else{
-            res.json({ err: ERR.SUCCESS });
+            res.json({ err: ERR.SUCCESS , result: { data: doc }});
         }
     });
 
@@ -109,5 +118,5 @@ exports.delete = function(req, res){
                 }
             });
         }
-    })
+    });
 }
