@@ -1,4 +1,4 @@
-define(['config','model.group'],function(config){
+define(['config','cache','model.group'],function(config,Cache){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,

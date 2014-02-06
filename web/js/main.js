@@ -12,7 +12,7 @@
     var handerObj = $(Schhandler);
 
     if(!util.getCookie('skey')){
-      window.location = config.cgi.login;
+      //window.location = config.cgi.login;
     }
 
     nav.init(); 

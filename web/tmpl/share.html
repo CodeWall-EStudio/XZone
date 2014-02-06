@@ -1,0 +1,71 @@
+				<%
+					var key;
+				%>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">共享文件
+						<%
+							if(type=='other'){
+								key ="请输入用户名搜索";
+						%>
+							给其他用户
+						<%
+							}else if(type=='group'){
+								key ="请输入小组名搜索";
+						%>
+							到小组
+						<%
+							}else if(type=='dep'){
+								key ="请输入部门名搜索";
+						%>
+							到部门
+						<%}%>
+					</h4>
+				</div>
+				<div class="modal-body">
+
+					<div>
+						<div class="share-tit">
+							发送文件(<%=fl.length%>)个：
+							<i>
+								<%
+									for(var i =0,l=fl.length;i<l;i++){
+										var item = fl[i];
+								%>
+									<%if(i<8){%>
+										<%-item.name%>
+									<%}%>
+								<%}%>
+								<%if(fl.length>1){%>
+									等
+								<%}%>
+							</i>
+						</div>
+						<div class="share-act-zone">
+							<p><input class="act-search-input" type="text" value="<%+key%>" data-def="<%+key%>" /><i class="act-search-btn"></i></p>
+						</div>
+						<div>
+							选择要发送的
+						<%if(type=='other'){%>
+							用户
+						<%}else if(type=='group'){%>
+							小组
+						<%}else if(type=='dep'){%>
+							部门
+						<%}%>							
+							<ul id="searchResult">
+								<%
+									for(var i=0,l=list.length;i<l;i++){
+										var item = list[i];
+								%>
+									<li class="tag<%+item.id%>"><input type="checkbox" value="<%+item.id%>" /> <%-item.name%></li>
+								<%}%>
+							</ul>						
+						</div>
+
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-share"  data-dismiss="modal">确定</button>
+				</div>

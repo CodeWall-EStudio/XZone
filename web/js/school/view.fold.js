@@ -1,4 +1,4 @@
-define(['config','helper/view','model.fold'],function(config,View){
+define(['config','helper/view','model.fold'],function(config,View,model){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
@@ -13,6 +13,7 @@ define(['config','helper/view','model.fold'],function(config,View){
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		foldTarget = $('#foldList'),
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),	
 		titTarget = $('#sectionTit');
@@ -32,6 +33,53 @@ define(['config','helper/view','model.fold'],function(config,View){
 		view.createPanel();
 	}
 
+	/*
+	需要拉根目录下的文件夹
+	*/
+	function makeTree(list,target){
+		var view = new View({
+			target : target,
+			tplid : 'fold.tree',
+			data : {
+				list : list,
+				gid : nowGid,
+				order : nowOrder
+			},
+			handlers : {
+				'.plus' : {
+					'click' : function(e){
+						var target = $(e.target),
+							id = target.attr('data-id');
+
+						var p = target.parent('li');
+						if(p.find('ul').length > 0){
+							if(target.hasClass("minus")){
+								target.removeClass('minus');
+								p.find('ul').hide();
+							}else{
+								target.addClass('minus');
+								p.find('ul').show();
+							}
+							return;
+						}							
+						handerObj.triggerHandler('fold:get',{
+							gid : nowGid,
+							fdid : id,
+							target : p
+						});
+					}
+				}
+			}
+		});
+
+		view.appendPanel();			
+	}
+
+	function foldTree(e,d){
+		makeTree(d.list,d.target);
+		d.target.addClass('minus');
+	}
+
 	function marksuc(e,d){
 		var target = d.target;
 		if(target){
@@ -42,25 +90,35 @@ define(['config','helper/view','model.fold'],function(config,View){
 	function foldInit(e,d){
 		action = 1;
 
+		foldTarget.hide().removeAttr('show');
+		foldTarget.css('float','none').css('width','100%');
+
+		foldTarget.html('')
 		tmpTarget.html('');
 		nowFdInfo = {};
+		
 		if(d){
 			nowGid = d.gid || 0;
 			nowGinfo = d.info || {};
-			nowFd = nowGinfo.rootfold || d.fdid || 0;
+			nowFd = d.fdid || 0;
 			nowKey = d.key || '';
 		}
 		if(!nowFd){
 			crTit();
 		}else{
+			var fid = nowFd;
+			if(nowGid && !nowFd){
+				fid = nowGinfo.rootfold;
+			}
 			handerObj.triggerHandler('fold:one',{
-				fdid:nowFd,
+				fdid: fid,
 				gid : nowGid
 			});	
 		}
 
 		handerObj.triggerHandler('fold:get',{
-			gid:nowGid
+			gid : nowGid,
+			fdid : nowFd
 		});		
 	}
 
@@ -71,6 +129,24 @@ define(['config','helper/view','model.fold'],function(config,View){
 	}
 
 	function foldLoad(e,d){
+		//个人的首页
+		if(!nowGid && !nowFd){
+			makeTree(d.list,foldTarget);
+			handerObj.triggerHandler('cache:set',{key: 'myfold',data:d.list});
+		}else if(nowGinfo.rootfold){
+			if(nowGinfo.rootfold == nowFd){
+				makeTree(d.list,foldTarget);
+
+				handerObj.triggerHandler('cache:set',{key: 'rootfold'+nowGid,data:d.list});
+			}else{
+				handerObj.triggerHandler('fold:get',{
+					gid : nowGid,
+					fdid : nowGinfo.rootfold,
+					target : foldTarget
+				});				
+			}
+		}
+
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'fold.user.list',
@@ -164,6 +240,7 @@ define(['config','helper/view','model.fold'],function(config,View){
 	}
 
 	var handlers = {
+		'fold:treeload' : foldTree,
 		'fold:modifysuc' : modifySuc,
 		'fold:edit' : foldEdit,
 		'fold:delsuc' : delSuc,

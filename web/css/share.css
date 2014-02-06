@@ -128,3 +128,10 @@ body {
 	outline:none;
 	width:280px;
 }
+
+#searchResult li{
+	padding:5px 10px;
+}
+#searchResult .color{
+	color:#f00;
+}

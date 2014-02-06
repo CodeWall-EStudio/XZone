@@ -11,8 +11,8 @@
 					<a data-toggle="dropdown">小组空间<b class="caret"></b></a>
 					<ul class="dropdown-menu menu" role="menu" aria-labelledby="dLabel">
 						<%
-							for(var i in gl){
-								var item = gl[i];
+							for(var i in group){
+								var item = group[i];
 						%>
 							<li>
 								<a href="#groupid=<%+item.id%>"><%-item.name %> <%-item.auth %></a>

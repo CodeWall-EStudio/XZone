@@ -10,8 +10,8 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				id : item._id,
 				name : item.name,
 				mark : item.mark,
-				hasChild : item.haschild,
-				time : util.time(item.createtime)
+				hasChild : item.hasChild,
+				time : util.time(item.createtime),
 			})
 		}
 		return list;
@@ -92,7 +92,9 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var page = data.page || 0,
 			gid = data.gid || 0,
 			order = data.order || {},
-			fdid = data.fdid || 0;
+			fdid = data.fdid || 0,
+			tplid = data.tplid,
+			target = data.target || 0;
 
 		var opt = {
 			cgi : config.cgi.foldlist,
@@ -104,10 +106,16 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 
 		var success = function(d){
 			if(d.err == 0){
-
 				var list = convent(d.result.list);
-				handerObj.triggerHandler('fold:load',{list:list});
-
+				if(target){
+					if(tplid){
+						handerObj.triggerHandler('file:treeload',{list:list,target:target});
+					}else{
+						handerObj.triggerHandler('fold:treeload',{list:list,target:target,tplid:tplid});
+					}
+				}else{
+					handerObj.triggerHandler('fold:load',{list:list});
+				}
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}

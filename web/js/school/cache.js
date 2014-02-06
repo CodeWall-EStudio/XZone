@@ -2,56 +2,28 @@ define(['config'],function(config){
 
 	var	handerObj = $(Schhandler);
 
-	var myfile = {},
-		myFold = {},
-		groupFile = {},
-		groupFold = {};
-
-	function addUFile(e,d){
+	var cache = {
 
 	}
 
-	function addUFold(e,d){
-
+	function setCache(e,d){
+		cache[d.key] = d.data;
+		console.log(d.key,d.data);
 	}
 
-	function updateFile(e,d){
-		var id = d.id;
+	function getCache(d){
+		return cache[d];
 	}
-
-	function updateFold(e,d){
-
-	}
-
-	function addGFile(e,d){
-
-	}
-
-	function addGFold(e,d){
-
-	}
-
-	function updateGFile(e,d){
-
-	}
-
-	function updateGFold(e,d){
-
-	}	
 
 	var handlers = {
-		'user:addfile' : addUFile,
-		'user:addfold' : addUFold,
-		'user:updatefile' : updateFile,
-		'user:updatefold' : updateFold,
-		'group:addfile' : addGFile,
-		'group:addfold' : addGFold,
-		'group:updatefile' : updateGFile,
-		'group:updatefold' : updateGFold		
+		'cache:set' : setCache	
 	}
 
 	for(var i in handlers){
 		handerObj.bind(i,handlers[i]);
 	}
 
+	return {
+		get : getCache
+	}
 });

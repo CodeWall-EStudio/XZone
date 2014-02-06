@@ -1,6 +1,6 @@
 define(function() {
 	var CGI_PATH = '/api/',
-		EXT = '';
+		EXT = '.php';
 
 	return {
 		pagenum : 10,
@@ -16,7 +16,7 @@ define(function() {
 		cgi : {
 			//个人资料
 			myinfo : '/cgi/myinfo.php',
-			info : CGI_PATH+'user'+EXT,
+			info : CGI_PATH+'user/login'+EXT,
 			login : CGI_PATH+'user/gotoLogin'+EXT,
 			varify : CGI_PATH+'user/verify'+EXT,
 			logout : CGI_PATH+'user/logoff'+EXT,
@@ -31,6 +31,7 @@ define(function() {
 			filedown : CGI_PATH+'file/download'+EXT,
 			filemodify : CGI_PATH+'file/modify'+EXT,
 			filecopy : CGI_PATH+'file/copy'+EXT,
+			filemove : CGI_PATH+'file/move'+EXT,
 			filedel : CGI_PATH+'file/delete'+EXT,
 			fileshare : CGI_PATH+'file/share'+EXT,
 
@@ -51,6 +52,7 @@ define(function() {
 			//回收站
 			reclist : CGI_PATH+'recycle/list'+EXT,
 			recrev : CGI_PATH+'recycle/revert'+EXT,
+			recdel : CGI_PATH+'recycle/delete'+EXT,
 			recsearch : CGI_PATH+'recycle/search'+EXT,
 
 			//小组&部门

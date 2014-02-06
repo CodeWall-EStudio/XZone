@@ -19,35 +19,6 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		return list;
 	}
 
-	// function getFile(e,d){
-	// 	var data = d || {};
-	// 	var page = data.page || 0,
-	// 		gid = data.gid || 0,
-	// 		order = data.order || {},
-	// 		fdid = data.fdid || 0;
-
-	// 	var opt = {
-	// 		cgi : config.cgi.filelist,
-	// 		data : {
-	// 			page : page,
-	// 			fdid : fdid
-	// 		}
-	// 	}
-
-	// 	var success = function(d){
-	// 		if(d.err == 0){
-	// 			var list = convent(d.result.list);
-	// 			handerObj.triggerHandler('file:load',{
-	// 				list : list,
-	// 				next : d.result.next
-	// 			});
-	// 		}else{
-	// 			handerObj.triggerHandler('msg:error',d.err);
-	// 		}
-	// 	}
-	// 	request.get(opt,success);			
-	// }
-
 	function searchFile(e,d){
 		var opt = {
 			cgi : config.cgi.filesearch,
@@ -176,8 +147,135 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		request.post(opt,success);		
 	}
 
+	function fileShare(e,d){
+		if(d.type == 'other'){
+			var opt = {
+				method : 'POST',
+				cgi : config.cgi.msgcreate,
+				data : {
+					fileId : d.fileId
+				}
+			}
+		}else{
+			var opt = {
+				method : 'POST',
+				cgi : config.cgi.fileshare,
+				data : {
+					fileId : d.fileId
+				}
+			}
+		}
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('msg:error',d.err);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}	
+		request.post(opt,success);		
+	}
+
+	function getUser(e,d){
+		var opt = {
+			cgi : config.cgi.userlist
+		}
+		var success = function(data){
+			if(data.err == 0){
+				var list = [];
+				for(var i = 0,l=data.result.list.length;i<l;i++){
+
+					var item = data.result.list[i];
+					console.log(item);
+					list.push({
+						id : item._id,
+						name : item.nick
+					});
+				}
+				handerObj.triggerHandler('file:shareload',{ type : d.type,files: d.files, list :list});
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);
+	}
+
+	function fileMove(e,d){
+		var fids = d.fileId;
+		console.log(fids);
+		var opt = {
+			cgi : config.cgi.filemove,
+			data : d
+		}	
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('file:movesuc',{ids: fids});
+				handerObj.triggerHandler('msg:error',d.err);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}	
+		request.post(opt,success);				
+	}
+
+	function fileCopy(e,d){
+		var fids = d.fileId;
+		var opt = {
+			cgi : config.cgi.filemove,
+			data : d
+		}	
+		var success = function(d){
+			if(d.err == 0){
+				//handerObj.triggerHandler('file:copysuc',fids);
+				handerObj.triggerHandler('msg:error',d.err);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}	
+		request.post(opt,success);				
+	}
+
+	function recyRef(e,d){
+		var ids = d.fileId;
+		var opt = {
+			cgi : config.cgi.recrev,
+			data : d
+		}	
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('recy:recysuc',{ids:ids});
+				handerObj.triggerHandler('msg:error',d.err);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}	
+		request.post(opt,success);	
+	}
+
+	function recyDel(e,d){
+		var ids = d.fileId;
+		var opt = {
+			cgi : config.cgi.recdel,
+			data : d
+		}	
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('recy:recysuc',{ids:ids});
+				handerObj.triggerHandler('msg:error',d.err);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}	
+		request.post(opt,success);			
+	}	
+
 	var handlers = {
+		'file:recyref' : recyRef,
+		'file:recydel' : recyDel,
 		//'file:get' : getFile,
+		'file:copyto' : fileCopy,
+		'file:moveto' : fileMove,
+		'file:getuser' : getUser,
+		'file:shareto' : fileShare,
 		'file:modify' : fileModify,
 		'file:delfiles' : delFile,
 		'file:serach' : searchFile,

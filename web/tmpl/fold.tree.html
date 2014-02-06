@@ -1,0 +1,22 @@
+<%
+	var od,on;
+	for(var i in order){
+		od = order[i];
+		on = i;
+	}
+%>
+<ul>
+	<%
+		for(var i in list){
+			var item = list[i];
+			if(gid){
+				var url = '#groupid='+gid+'&fdid='+item.id;
+			}else{
+				var url = '#fdid='+item.id;
+			}
+	%>
+		<li class="list-li">
+			<i <%if(item.hasChild){%>cmd="next" class="plus"<%}%> data-id="<%+item.id%>"></i><a title="<%+item.name%>" class="list-link" href="<%+url%>"> <%=item.name%></a>							
+		</li>						
+	<%}%>
+</ul>

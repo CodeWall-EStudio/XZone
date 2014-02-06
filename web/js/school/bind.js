@@ -59,8 +59,86 @@ define(['config'],function(config){
 	}
 
 	//分享文件
-	function share(id){
+	function shareFile(type,obj){
+		//单个文件
+		if(obj){
+			handerObj.triggerHandler('file:share',{target:type,fl: [obj] });
+		//批量
+		}else{
+			if($('.table-files .fclick:checked').length>0){
+				var fl  = [];
+				$('.table-files .fclick:checked').each(function(){
+					var id = $(this).val(),
+						name = $('.fdname'+id).text();
+					fl.push({
+						id : id,
+						name : name
+					})
+				})
 
+				handerObj.triggerHandler('file:share',{target:type,fl:fl});
+			}
+			
+		}
+	}
+
+	//复制文件到目录
+	function moveFile(){
+			if($('.table-files .fclick:checked').length>0){
+				var fl  = [];
+				$('.table-files .fclick:checked').each(function(){
+					var id = $(this).val(),
+						fid = $(this).attr('data-fid'),
+						name = $('.fdname'+id).text();
+					fl.push({
+						id : id,
+						fid : fid,
+						name : name
+					})
+				})
+
+				handerObj.triggerHandler('file:move',{fl:fl});
+			}
+	}
+
+	//移动文件到备课
+	function copyFile(){
+			if($('.table-files .fclick:checked').length>0){
+				var fl  = [];
+				$('.table-files .fclick:checked').each(function(){
+					var id = $(this).val(),
+						fid = $(this).attr('data-fid'),
+						name = $('.fdname'+id).text();
+					fl.push({
+						id : id,
+						fid : fid,
+						name : name
+					})
+				})
+
+				handerObj.triggerHandler('file:copy',{fl:fl});
+			}
+	}
+
+	//批量下载
+	function downFile(){
+  //   	$('#downloadForm').html('');
+		// $('#fileList .fclick:checked').each(function(){
+		// 	var flid = $(this).attr('data-fid');
+		// 	ids.push(flid);
+		// 	$('#downloadForm').append('<input name="ids[]" type="checkbox" checked value="'+flid+'" />');
+		// 	//window.open('/cgi/downfile?fid='+files[$(this).val()].fid);
+		// });	
+		// if(ids.length>1){
+		// 	$('#downloadForm').append('<input name="isprep" type="checkbox" checked value="'+isprep+'" />');
+		// 	$('#downloadForm').append('<input name="gid" type="checkbox" checked value="'+gid+'" />');
+		// 	$('#downloadForm').append('<input name="fdid" type="checkbox" checked value="'+fid+'" />');
+		// 	$('#downloadForm').submit();
+		// }else{
+		// 	if(ids[0]){
+		// 		//window.open('/download?fdid='+fid+'&gid='+gid+'&id='+ids[0]);	
+		// 	}
+		// }		
 	}
 
 	function editMark(id,mark,type,target){
@@ -120,11 +198,7 @@ define(['config'],function(config){
 		var	def = searchTarget.attr('data-def');		
 		if(v != def){
 			var v= $.trim(searchTarget.val());
-			gosearch(v);
-			// location.hash = location.hash+'&key='+v;
-			// handerObj.triggerHandler('search:start',{
-			// 	key : v
-			// });						
+			gosearch(v);					
 		}
 	});
 
@@ -224,15 +298,19 @@ define(['config'],function(config){
 			case 'rename':
 				renameObj();
 				break;
-			case 'togroup':
+			case 'group':
+			case 'other':
+			case 'dep':
+				shareFile(cmd);
+				break;	
+			case 'downfile':
+				downFile();
 				break;
-			case 'toother':
-				break;	
-			case 'todep':
-				break;	
 			case 'move':
+				moveFile();
 				break;
 			case 'copy':
+				copyFile();
 				break;
 			case 'del':
 				deleteObj();
@@ -245,6 +323,23 @@ define(['config'],function(config){
 				});
 				break;
 		}			
+    });
+
+    //title 事件绑定
+    $('#sectionTit').bind('click',function(e){
+    	var target = $(e.target),
+    		cmd = target.attr('cmd');
+    	switch(cmd){
+    		case 'tree':
+				if($("#foldList").attr('show')){
+					$("#foldList").hide().removeAttr('show');
+					$('#fileList').css('float','none').css('width','100%');
+				}else{
+					$("#foldList").show().css('float','left').css('width','20%').attr('show',1);
+					$('#fileList').css('float','left').css('width','80%');
+				}   		
+    			break;
+    	}
     });
 
     $('#tableTit').bind('click',function(e){
@@ -296,6 +391,25 @@ define(['config'],function(config){
 		}
 
 		switch(cmd){
+			case 'other':
+			case 'group':
+			case 'dep':
+				var fid = target.attr('data-fid'),
+					name = target.attr('data-name'),
+					obj = {
+						id : id,
+						name : name
+					};
+				shareFile(cmd,obj);
+				break;	
+			case 'ref': //恢复文件
+				var id = target.attr('data-id');
+				handerObj.triggerHandler('recy:ref',{id:[id]});
+				break; 
+			case 'delcomp': //从回收站彻底删除
+				var id = target.attr('data-id');
+				handerObj.triggerHandler('recy:del',{id:[id]});
+				break;				
 			case 'coll':
 				var fid = target.attr('data-fid');
 				coll(fid,target);
@@ -328,7 +442,7 @@ define(['config'],function(config){
 				break;
 			default :
 				if(file){
-					if(!target.hasClass('liclick') && !target.hasClass('name-edit') && !target.hasClass('share-file')){
+					if(!target.hasClass('liclick') && !target.hasClass('name-edit') && !target.hasClass('share-file') && !target.hasClass('no-act')){
 						var p = target.parents("tr");
 						p.find('.liclick').click();										
 					}
@@ -375,6 +489,7 @@ define(['config'],function(config){
 
     var wHeight = $(window).height();
     $('.listDiv').height(wHeight-220);
+    $('#foldList').height(wHeight-220);
 
     function pageChange(e,d){
     	nowPage = d;

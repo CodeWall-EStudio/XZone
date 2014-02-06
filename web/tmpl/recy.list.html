@@ -2,7 +2,7 @@
 			for(var i in list){
 				var item = list[i];
 		%>
-			<tr class="file" data-id="<?=$item['id']?>">
+			<tr class="file recy<%+item.id%>" data-id="<%+item.id%>">
 					<td width="30"><input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" /></td>
 					<td>
 						<a class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
@@ -18,7 +18,7 @@
 							</dt>
 						<dd>
 							<a cmd="ref"  data-fid="<%+item.fid%>" data-id="<%+item.id%>">恢复</a>
-							<a cmd="del"  data-fid="<%+item.fid%>" data-id="<%+item.id%>">完全删除</a>
+							<a cmd="delcomp"  data-fid="<%+item.fid%>" data-id="<%+item.id%>">完全删除</a>
 						</dd>							
 						</dl>
 					</td>
