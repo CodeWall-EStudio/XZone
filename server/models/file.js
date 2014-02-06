@@ -13,7 +13,7 @@ exports.create = function(params, callback){
     var collectionName = groupId ? 'groupfile' : 'userfile';
 
     var doc = {
-        fid: params.docId,
+        docid: params.docId,
         fdid: folderId,
         name: params.name,
         creator: params.creator,
@@ -61,7 +61,7 @@ exports.delete = function(params, callback){
     db[collectionName].findAndRemove({ _id: new ObjectID(fileId)}, [], function(err, file){
 
         if(!err){ // 将 files 的引用计数减一
-            db.files.findAndModify({ _id: ObjectID(file.fid) }, [], { $inc: { ref: -1 } }, function(){});
+            db.files.findAndModify({ _id: ObjectID(file.docid) }, [], { $inc: { ref: -1 } }, function(){});
         }
         callback(err);
     });

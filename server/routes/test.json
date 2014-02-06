@@ -1,0 +1,21 @@
+groups: [
+{
+_id: "52f34c25ec566fec37578558",
+content: "",
+creator: "52f2f10071086909323f2610",
+grade: null,
+name: "测试组123",
+pid: null,
+pt: null,
+rootfold: "52f34c25ec566fec37578559",
+status: true,
+tag: null,
+type: 0,
+auth: 0
+}]
+
+rootfold: {
+    "_id": "xxx",
+    "name": "yyy",
+    "haschild":false
+    }
