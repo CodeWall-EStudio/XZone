@@ -115,7 +115,8 @@ exports.search = function(params, callback){
     db.getCollection(collectionName, function(err, collection){
         var query = { 
             name: new RegExp('.*' + keyword + '.*'),
-            fdid: folderId
+            fdid: folderId,
+            del: false
         };
 
         var cursor = collection.find(query);
