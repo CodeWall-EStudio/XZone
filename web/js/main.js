@@ -7,12 +7,13 @@
     }    
   });
 
-  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.recy','view.share','bind','upload'], function(config,router,util,nav) {
+  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','bind','upload'], function(config,router,util,nav) {
 
     var handerObj = $(Schhandler);
 
+    console.log(util.getCookie('skey'));
     if(!util.getCookie('skey')){
-      //window.location = config.cgi.login;
+      //window.location = config.cgi.gotologin;
     }
 
     nav.init(); 
@@ -33,7 +34,7 @@
         'myrecy=:id' : 'recy',
         "groupid=:id" : 'group',
         "groupid=:id&fdid=:fdid" : 'group',
-        "myprep" : 'myPrep', //备课
+        "myprep=:1" : 'myPrep', //备课
         "my" : 'myFile',     //个人文件
         "key=:id" : 'myFile',     //个人文件
         "" : 'myFile', // 无hash的情况，首页
@@ -58,7 +59,8 @@
         if(od){
           d.order = {};
           d.order[on] = od;
-        }                
+        }               
+        handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('mail:init',d);
         handerObj.triggerHandler('model:change','mail');
       },
@@ -67,6 +69,7 @@
         starget.show();
         mtarget.hide();        
 
+        handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('share:init');
         handerObj.triggerHandler('model:change','share');
       },      
@@ -85,6 +88,8 @@
         if(key){
           d.key = key;
         }
+
+        handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('coll:init',d);
         handerObj.triggerHandler('model:change','coll');
       },
@@ -105,6 +110,7 @@
         if(key){
           d.key = key;
         }
+        handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('recy:init',d);
         handerObj.triggerHandler('model:change','recy');
       },
@@ -130,6 +136,8 @@
         if(key){
           d.key = key;
         }
+
+        handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('group:init',d);  
         handerObj.triggerHandler('model:change','file');     
       },
@@ -153,23 +161,43 @@
         if(key){
           d.key = key;
         }
+
+        handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('my:init',d);
-        handerObj.triggerHandler('file:init',d);
-        handerObj.triggerHandler('fold:init',d);
         handerObj.triggerHandler('model:change','file');     
       },
-      myPrep : function(){
+      myPrep : function(data){
 
         ftarget.show();
         starget.hide();
         mtarget.hide(); 
-
-        handerObj.triggerHandler('myfile:prep');
+        var fdid = data.fdid || 0,
+            gid = data.groupId || 0,
+            od = data.od || 0,
+            on = data.on || 0,
+            key = data.key || 0;
+        var d = {
+          fdid : fdid,
+          gid : gid
+        }
+        if(od){
+          d.order = {};
+          d.order[on] = od;
+        }
+        if(key){
+          d.key = key;
+        }        
+ 
+        handerObj.triggerHandler('prep:init',d);
         handerObj.triggerHandler('model:change','file');     
       }
     };
 
-    router.extend(opt);
-    router.start();    
+
+    handerObj.bind('site:start',function(){
+      router.extend(opt);
+      router.start();    
+    });
+   
   });
 })();

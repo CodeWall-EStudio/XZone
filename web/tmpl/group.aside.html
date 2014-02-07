@@ -1,0 +1,22 @@
+			<h3 class="selected"><%-name%></h3>
+			<div class="group-desc" id="groupDesc">
+				<h6>小组公告: &nbsp;&nbsp;<%if(auth){%><a class="group-desc-edit">编辑</a><%}%></h6> 
+				<p>
+					<%if(content==''){%>
+						暂无公告
+					<%}else{%>
+						<%-content%>
+					<%}%>
+				</p>
+			</div>
+			<div class="group-desc hide" id="groupEdit">
+				<h6>小组公告: &nbsp;&nbsp;<%if(auth){%><a class="group-desc-save">保存</a>  <a class="group-desc-esc">取消</a><%}%></h6> 
+				<p>
+					<textarea><%-content%></textarea>
+				</p>
+			</div>		
+
+			<div class="group-board" id="groupBoard">
+
+
+			</div>

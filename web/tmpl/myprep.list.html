@@ -1,0 +1,15 @@
+			<h3 class="selected">我的备课</h3>
+			<ul class="my-prep-list">
+				<%if(list.length>0){%>
+					<%
+						for(var i =0,l=list.length;i<l;i++){
+							var item = list[i];
+					%>
+					<li>
+						<a href="#myprep=1&groupId=<%+item.id%>&fdid=<%+item.rootFolder.id%>"><%-item.name%></a>
+					</li>
+					<%}%>
+				<%}else{%>
+					<li>你还没有加入教学组</li>
+				<%}%>
+			</ul>

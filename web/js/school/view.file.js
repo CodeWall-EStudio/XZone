@@ -8,6 +8,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		nowOrder  = { 
 			'createtime': 1
 		},
+		nowPrep = 0, //当前是否是备课
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -51,13 +52,19 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 				nowOrder = d.order;
 			}
 			nowKey = d.key || '';
+			nowPrep = d.prep || 0;
 		}
 
 		tmpTarget.html('');
 
+		var tpl = 'file.table';
+		if(nowPrep){
+			tpl = 'prep.table.tit';
+		}
+
 		var view = new View({
 			target : tabletitTarget,
-			tplid : 'file.table',
+			tplid : tpl,
 			data : {
 				order : nowOrder,
 				gid : nowGid,
@@ -67,7 +74,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		view.createPanel();
 
 		handerObj.triggerHandler('file:serach',{
-			gid:nowGid,
+			groupId:nowGid,
 			keyword : nowKey,
 			folderId : nowFd,
 			page:nextPage,
@@ -329,7 +336,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 
 		var fold;
 		if(nowGid){
-			fold = Cache.get('rootfold'+nowGid);
+			fold = Cache.get('rootFolder'+nowGid);
 		}else{
 			fold = Cache.get('myfold');
 		}

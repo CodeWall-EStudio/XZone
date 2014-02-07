@@ -3,32 +3,43 @@ define(['config','helper/request','cache'],function(config,request,cache){
 	var	handerObj = $(Schhandler);
 
 	function convent(data){
+		console.log(data);
 		var o = {};
-		o.nick = data.nick;
-		o.name = data.name;
-		o.size = data.size;
-		o.used = data.used;
-		o.auth = data.auth;
-		o.mailnum = data.mailnum;
-		o.pre = data.pre;
+		o.nick = data.user.nick;
+		o.name = data.user.name;
+		o.size = data.user.size;
+		o.used = data.user.used;
+		o.auth = data.user.auth;
+		o.mailnum = data.user.mailnum;
+		o.pre = data.user.pre;
 		o.group = [];
 		o.dep = [];
 		o.prep = [];
 		o.school = 0;
+		o.group2key = {};
+		o.dep2key = {};
+		o.prep2key = {};
+		o.rootFolder = data.user.rootFolder;
+		o.rootFolder.id = data.user.rootFolder['$id'];
 		for(var i =0,l=data.groups.length;i<l;i++){
 			var item = data.groups[i];
+			item.id = item._id;
+			item.rootFolder.id = item.rootFolder._id;
+			o.group2key[item.id] = item;
 			switch(item.type){
-				case 0:
+				case 0: //学校
 					o.school = 1;
 					break;
-				case 1:
+				case 1: //小组
 					o.group.push(item);
 					break;
-				case 2:
+				case 2: //部门
 					o.dep.push(item);
+					o.dep2key[item.id] = item;
 					break;
-				case 3:
+				case 3: //备课
 					o.prep.push(item);
+					o.prep2key[item.id] = item;
 					break;
 			}
 
@@ -39,7 +50,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 	function init(){
 
 		var opt = {
-			cgi : config.cgi.info,
+			cgi : config.cgi.getinfo,
 			data : {}
 		}
 

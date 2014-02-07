@@ -2,11 +2,12 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
-		action = 0,
+		action = 0, //当前页卡是否在活动状态
 		nowGinfo = {},
 		nowFdInfo = {},
 		nowKey = '',
 		nowFd = 0,
+		nowPrep = 0, //当前是否是备课
 		nowOrder  = { 
 			'createtime': 1
 		},
@@ -19,9 +20,15 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		titTarget = $('#sectionTit');
 
 	function crTit(obj){
+
+		var tpl = 'file.tit';
+		if(nowPrep){
+			tpl = 'prep.tit';
+		}
+
 		var view = new View({
 			target : titTarget,
-			tplid : 'file.tit',
+			tplid : tpl,
 			data : {
 				gid : nowGid,
 				gname : nowGinfo.name || '',
@@ -37,6 +44,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	需要拉根目录下的文件夹
 	*/
 	function makeTree(list,target){
+		foldTarget.html('')
 		var view = new View({
 			target : target,
 			tplid : 'fold.tree',
@@ -88,12 +96,13 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	}
 
 	function foldInit(e,d){
+
 		action = 1;
 
 		foldTarget.hide().removeAttr('show');
 		foldTarget.css('float','none').css('width','100%');
 
-		foldTarget.html('')
+		// foldTarget.html('')
 		tmpTarget.html('');
 		nowFdInfo = {};
 		
@@ -102,18 +111,23 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			nowGinfo = d.info || {};
 			nowFd = d.fdid || 0;
 			nowKey = d.key || '';
+			nowPrep = d.prep || 0;
 		}
+
+		//没有fdid  是个人的.
 		if(!nowFd){
 			crTit();
-		}else{
 			var fid = nowFd;
-			if(nowGid && !nowFd){
-				fid = nowGinfo.rootfold;
+			if(nowGid){
+				fid = nowGinfo.rootFolder;
 			}
 			handerObj.triggerHandler('fold:one',{
 				fdid: fid,
 				gid : nowGid
-			});	
+			});		
+		//如果是备课		
+		}else if(nowPrep){
+		 	crTit();
 		}
 
 		handerObj.triggerHandler('fold:get',{
@@ -129,22 +143,24 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	}
 
 	function foldLoad(e,d){
+
 		//个人的首页
 		if(!nowGid && !nowFd){
 			makeTree(d.list,foldTarget);
 			handerObj.triggerHandler('cache:set',{key: 'myfold',data:d.list});
-		}else if(nowGinfo.rootfold){
-			if(nowGinfo.rootfold == nowFd){
+		}else if(nowGinfo.rootFolder){
+			if(nowGinfo.rootFolder.id == nowFd){
 				makeTree(d.list,foldTarget);
-
-				handerObj.triggerHandler('cache:set',{key: 'rootfold'+nowGid,data:d.list});
+				handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:d.list});
 			}else{
 				handerObj.triggerHandler('fold:get',{
 					gid : nowGid,
-					fdid : nowGinfo.rootfold,
+					fdid : nowGinfo.rootFolder,
 					target : foldTarget
 				});				
 			}
+		}else{
+			//console.log(1234);
 		}
 
 		var view = new View({
@@ -235,7 +251,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	}
 
 	function modifySuc(e,d){
-		console.log(d.fileId,d.name);
 		$('.fdname'+d.fileId).text(d.name);
 	}
 

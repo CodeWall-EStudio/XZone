@@ -1,0 +1,40 @@
+<div class="fold-list-link">
+			
+<%if(!key){%>
+	<%if(gid){%>
+	<a href="#groupid=<%+gid%>" style="z-index:20"><%-gname%></a>
+	<%}else{%>
+	<a href="#" style="z-index:20">个人文件</a>
+	<%}%>
+
+	<%if(fold){%>				
+		<%if(fold.idpath.length>1){%>
+			<a style="z-index:19">......</a>
+		<%}%>					
+		<%if(fold.pid){%>
+			<a href="#<%if(gid){%>groupid=<%+gid%>&<%}%>fdid=<%+fold.pid%>" class="frist" style="z-index:19"  href="#"><%-fold.pname%></a>
+		<%}%>
+		<a class="end" style="z-index:18"><%-fold.name%></a>
+		<a class="second" style="z-index:17" class="end" href="#<%if(gid){%>groupid=<%+gid%>&<%}%>fdid=<%+fold.pid%>">返回上级</a>
+	<%}%>
+<%}else{%>	
+	<a >搜索结果</a>
+	<!-- <a class="end" href="/home?fid=<?=$fid?>&od=<?=$od?>&on=<?=$on?>">返回上级</a> -->
+	<a class="return">退出搜索结果</a>
+<%}%>
+</div>
+<ul class="act-zone">
+	<li class="all-file file-type dropdown" id="changeFileType">
+		<a id="drop-type" "button" data-toggle="dropdown" >
+			全部类型
+		<b class="caret"></b></a>
+		<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+			<%
+				for(var i in filetype){
+					var item = filetype[i];
+			%>
+				<li><a href="#<%if(gid){%>groupid=<%+gid%>&<%}%><%if(fold){%>fdid=<%+fold.id%>&<%}%>type=<%+i%>"><%-item%></a></li>
+			<%}%>
+		</ul>
+	</li>
+</ul>

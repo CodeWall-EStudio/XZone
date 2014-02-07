@@ -1,6 +1,7 @@
-define(['config','model.file','helper/view'],function(config,mf,View){
+define(['config','cache','helper/view','model.file'],function(config,Cache,View){
 
 	var	handerObj = $(Schhandler),
+		myInfo = null,
 		loading = 0,
 		isFrist = 1,
 		nowKey = '',  //当前关键字
@@ -24,8 +25,18 @@ define(['config','model.file','helper/view'],function(config,mf,View){
 
 	var fileType = config.filetype;
 
-	function init(){
+	function init(e,d){
+		$('#aside .aside-divs').hide();
+		$('#userAside').show();
 
+		if(!myInfo){
+			myInfo = Cache.get('myinfo');
+		}
+
+		d.fdid = myInfo.rootFolder.id;
+
+        handerObj.triggerHandler('file:init',d);
+        handerObj.triggerHandler('fold:init',d);		
 	}
 
 	function prep(){

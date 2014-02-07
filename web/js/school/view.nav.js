@@ -2,7 +2,7 @@ define(['config','model.nav','helper/view'],function(config,modelNav,View){
 
 	var	handerObj = $(Schhandler),
 		navTarget = $('#pageNav'),
-		asideTarget = $('#aside'),
+		userasideTarget = $('#userAside'),
 		navView = new View(),
 		myView = new View();
 
@@ -29,12 +29,22 @@ define(['config','model.nav','helper/view'],function(config,modelNav,View){
 
 
 		var opt = {
-			target : asideTarget,
+			target : userasideTarget,
 			tplid : 'my.aside',
 			data : d
 		}
 		navView.expand(opt);
-		navView.createPanel();			
+		navView.createPanel();	
+
+		var view = new View({
+			target : $('#userInfoAside'),
+			tplid : 'my.info',
+			data : d
+		});
+		view.createPanel();
+		
+
+		handerObj.triggerHandler('site:start');
 	}
 
 	var handlers = {

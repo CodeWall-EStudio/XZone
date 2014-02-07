@@ -103,6 +103,10 @@
 				</div>				
 			</div>
 
+			<div id="boardBox">
+
+			</div>
+
 			<div id="shareBox">
 
 			</div>
@@ -110,15 +114,11 @@
 		</div>
 
 		<div class="aside" id="aside">
-
-
-			<div class="userinfo">
-				<div>个人空间已用 <?=$pre?>%</div>
-				<div class="user-zone"> 
-					<div class="prog" style="width:<?=$pre?>%"></div><?=$used?>/<?=$size?>
-				</div>			
-				<div><a href="/logout">退出登录</a></div>
-			</div>			
+			<div id="userAside" class="aside-divs"></div>
+			<div id="userPrepAside" class="aside-divs"></div>
+			<div id="groupAside" class="aside-divs"></div>
+			<div id="groupPrepAside" class="aside-divs"></div>
+			<div id="userInfoAside" class="userinfo"></div>
 		</div>
 
 		<div class="clear"></div>	
@@ -175,6 +175,7 @@
 	
 	<script>
 		window.Schhandler = {};
+		document.domain = 'codewalle.com';
 	</script>
 	
 	<script src="/js/lib/jquery/jquery-1.9.1.min.js"></script>

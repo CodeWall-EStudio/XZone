@@ -8,7 +8,6 @@ define(['config'],function(config){
 
 	function setCache(e,d){
 		cache[d.key] = d.data;
-		console.log(d.key,d.data);
 	}
 
 	function getCache(d){

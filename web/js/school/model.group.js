@@ -1,17 +1,58 @@
 define(['config','helper/request','helper/util'],function(config,request,util){
 	var	handerObj = $(Schhandler);
 
-	function groupEdit(e,d){
+	function convent(data){
+		var list = [];
+		for(var i = 0,l= data.length;i<l;i++){
+			var item = data[i]
+			list.push({
+				id : item._id,
+				name : item.name,
+				time : util.time(item.createtime),
+				content : item.content
+			});
+		}
+		return list;
+	}
 
+	function groupEdit(e,d){
+		var opt = {
+			cgi : config.cgi.groupmodify,
+			data : d
+		}	
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('msg:error',d.err);
+				handerObj.triggerHandler('group:modifySuc',d.result.data);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);	
 	}	
 
 	function board(e,d){
-
+		var gid = d.groupId,
+			type = d.type,
+			keyword = d.keyword;
+		var opt = {
+			cgi : config.cgi.boardlist,
+			data : d
+		}	
+		var success = function(d){
+			if(d.err == 0){
+				var list = convent(d.result.list);
+				if(type){
+					handerObj.triggerHandler('board:asidelistsuc',{list : list,type:type,next : d.result.next});
+				}else{
+					handerObj.triggerHandler('board:listsuc',{list : list,next : d.result.next,keyword:keyword});
+				}
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);		
 	}		
-
-	function boardAdd(e,d){
-
-	}	
 
 	function groupInfo(e,d){
 		var gid = d;
@@ -30,14 +71,55 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			}
 		}
 		request.get(opt,success);	
+	}
 
+	function boardNew(e,d){
+		var type = d.type;
+		var opt = {
+			cgi : config.cgi.boardcreate,
+			data : d
+		}
+		var success = function(d){
+			if(d.err == 0){
+				var data = convent([d.result.data]);
+				if(type){
+					handerObj.triggerHandler('group:boardasideaddsuc',data);
+				}else{
+					handerObj.triggerHandler('group:boardaddsuc',data);
+				}
+				//handerObj.triggerHandler('group:infosuc',d.result.data);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.post(opt,success);		
+	}
+
+	function boardDel(e,d){
+		var target = d.target;
+		var type = d.type;
+		var opt = {
+			cgi : config.cgi.boarddel,
+			data : {
+				id : d.id
+			}
+		}
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('group:boarddelsuc',{target:target});
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}	
+		request.post(opt,success);			
 	}
 
 	var handlers = {
+		'board:del' : boardDel,
+		'board:new' : boardNew,
 		'group:info' : groupInfo,
 		'group:edit' : groupEdit,
-		'group:board' : board,
-		'group:boardadd' : boardAdd
+		'group:board' : board
 	}	
 
 	for(var i in handlers){

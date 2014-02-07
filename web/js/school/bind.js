@@ -492,12 +492,14 @@ define(['config'],function(config){
     $('#foldList').height(wHeight-220);
 
     function pageChange(e,d){
-    	nowPage = d;
-    	console.log(nowPage);
+    	// nowPage = d;
+    	// console.log(nowPage);
+		$("#foldList").hide().removeAttr('show');
+		$('#fileList').css('float','none').css('width','100%');    	
     }
 
     var handlers = {
-    	'page:change' : pageChange
+    	'page:change' : pageChange,
     }
 
     for(var i in handlers){

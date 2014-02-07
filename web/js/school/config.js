@@ -1,6 +1,6 @@
 define(function() {
 	var CGI_PATH = '/api/',
-		EXT = '';
+		EXT = ''//,'.php';
 
 	return {
 		pagenum : 10,
@@ -15,8 +15,9 @@ define(function() {
 		},
 		cgi : {
 			//个人资料
-			myinfo : '/cgi/myinfo.php',
+			getinfo : CGI_PATH+'user/'+EXT,
 			info : CGI_PATH+'user/login'+EXT,
+			gotologin : CGI_PATH+'user/gotoLogin'+EXT,
 			login : CGI_PATH+'user/gotoLogin'+EXT,
 			varify : CGI_PATH+'user/verify'+EXT,
 			logout : CGI_PATH+'user/logoff'+EXT,
