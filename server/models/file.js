@@ -88,12 +88,12 @@ exports.batchDelete = function(query, callback){
 
 exports.softDelete = function(fileId, callback){
 
-    exports.modify(fildId, { del: true }, callback);
+    exports.modify(fileId, { del: true }, callback);
 
 }
 
-exports.revertDelete = function(fildId, callback){
-    exports.modify(fildId, { del: false }, callback);
+exports.revertDelete = function(fileId, callback){
+    exports.modify(fileId, { del: false }, callback);
 }
 
 exports.getFile = function(fileId, callback){
@@ -118,9 +118,11 @@ exports.search = function(params, callback){
     db.getCollection('file', function(err, collection){
         var query = { 
             name: new RegExp('.*' + keyword + '.*'),
-            'folder.$id': ObjectID(folderId),
             del: false
         };
+        if(folderId){
+            query['folder.$id'] = ObjectID(folderId);
+        }
         query = us.extend(query, extendQuery);
 
         var cursor = collection.find(query);

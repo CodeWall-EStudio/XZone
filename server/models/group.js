@@ -5,14 +5,16 @@ var DBRef = require('mongodb').DBRef;
 
 var mFolder = require('./folder');
 
-function getGroupWithExt(groupId, ext, callback){
+function dereferenceGroup(groupId, ext, callback){
     db.group.findOne({ _id: ObjectID(groupId) }, function(err, doc){
         if(err){
             return callback(err);
         }
         if(doc){
-            doc.auth = ext.auth;
-            callback(null, doc);
+            db.dereference(doc, ['creator', 'parent', 'rootFolder'], function(err, result){
+                doc.auth = ext.auth;
+                callback(err, doc);
+            });
         }else{
             callback(null, null);
         }
@@ -34,7 +36,8 @@ exports.getGroupByUser = function(uid, callback){
             callback('get user groups error.');
         });
         docs.forEach(function(doc){
-            getGroupWithExt(doc.group.oid.toString(), doc, proxy.group('getGroup'));
+
+            dereferenceGroup(doc.group.oid.toString(), doc, proxy.group('getGroup'));
         });
     });
 }

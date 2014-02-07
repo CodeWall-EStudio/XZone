@@ -1,4 +1,4 @@
-
+var ObjectID = require('mongodb').ObjectID;
 var mFile = require('../models/file');
 var mFolder = require('../models/folder');
 var mGroup = require('../models/group');
@@ -66,7 +66,7 @@ function testCase(){
         size: 3221225472,
         used: 0,
         lastGroup: null,
-        _id: uid
+        _id: ObjectID(uid)
     }, buildCallback('save user'));
 
     evt.on('create folder', function(folder){

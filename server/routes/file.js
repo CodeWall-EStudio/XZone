@@ -117,9 +117,7 @@ exports.delete = function(req, res){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
             res.json({
-                err: ERR.SUCCESS,
-                result: {
-                }
+                err: ERR.SUCCESS
             });
         }
     });

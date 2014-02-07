@@ -1,5 +1,7 @@
 var config = require('../config');
 var MongoClient = require('mongodb').MongoClient;
+var EventProxy = require('eventproxy');
+
 var ins = null;
 
 exports.open = function(callback){
@@ -31,6 +33,36 @@ exports.getCollection = function(name, callback){
             callback(err, null);
         }else{
             callback(null, db.collection(name));
+        }
+    });
+}
+
+exports.dereference = function(doc, keys, callback){
+    exports.open(function(err, db){
+        if(err){
+            callback(err, null);
+        }else{
+            var proxy = new EventProxy();
+            proxy.after('deref', keys.length, function(list){
+                callback(null, doc);
+            });
+            proxy.fail(callback);
+
+            keys.forEach(function(key){
+                if(doc[key]){
+                    db.dereference(doc[key], proxy.group('deref', 
+                    (function(key){
+                        return function(data){
+                            console.log(key, doc[key], data != null);
+                            doc[key] = data;
+                            return null;
+                        }
+                    })(key)
+                    ));
+                }else{
+                    proxy.group('deref')(null);
+                }
+            });
         }
     });
 }
