@@ -97,7 +97,7 @@ exports.login = function(req, res){
                 if(user){ // db已经有该用户, 更新资料
                     user.nick = nick;
 
-                    mGroup.getGroupByUser(user._id , loginProxy.done('groups'));
+                    mGroup.getGroupByUser(user._id.toString(), loginProxy.done('groups'));
 
                 }else{
                     user = {

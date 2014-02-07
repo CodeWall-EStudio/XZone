@@ -53,7 +53,6 @@ exports.dereference = function(doc, keys, callback){
                     db.dereference(doc[key], proxy.group('deref', 
                     (function(key){
                         return function(data){
-                            console.log(key, doc[key], data != null);
                             doc[key] = data;
                             return null;
                         }
