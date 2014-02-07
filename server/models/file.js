@@ -104,7 +104,8 @@ exports.getFile = function(fileId, callback){
 
 exports.search = function(params, callback){
     var folderId = params.folderId;
-    var groupId = params.groupId || 0;
+    var groupId = params.groupId || null;
+    var userId = params.uid || null;
     var keyword = params.keyword || '';
     var type = Number(params.type) || 0; // FIXME 按类型分类未实现
 
@@ -122,6 +123,9 @@ exports.search = function(params, callback){
         };
         if(folderId){
             query['folder.$id'] = ObjectID(folderId);
+        }
+        if(userId){
+            query['user.$id'] = ObjectID(userId);
         }
         query = us.extend(query, extendQuery);
 

@@ -98,7 +98,7 @@ exports.login = function(req, res){
                     user.nick = nick;
 
                     mGroup.getGroupByUser(user._id.toString(), loginProxy.done('groups'));
-
+                    mUser.save(user, loginProxy.done('saveUser'));
                 }else{
                     user = {
                         nick: nick,
@@ -109,8 +109,8 @@ exports.login = function(req, res){
                         mailnum: 0,
                         lastGroup: null
                     }
+                    mUser.create(user, loginProxy.done('saveUser'));
                 }
-                mUser.save(user, loginProxy.done('saveUser'));
             });
         });
 

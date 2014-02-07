@@ -1,7 +1,9 @@
 var db = require('./db');
 var ObjectID = require('mongodb').ObjectID;
+var DBRef = require('mongodb').DBRef;
 var ERR = require('../errorcode');
 var mGroup = require('../models/group');
+var mFolder = require('../models/folder');
 
 exports.getUserById = function(id, callback){
 
@@ -26,9 +28,29 @@ exports.getUserInfoByName = function(name, callback){
             callback('no such user', ERR.NOT_FOUND)
         }else{
 
-            mGroup.getGroupByUser(user._id , function(err, groups){
+            mGroup.getGroupByUser(user._id.toString() , function(err, groups){
                 callback(null, user, groups);
             });
         }// end of else 
+    });
+}
+
+exports.create = function(user, callback){
+    db.user.save(user, function(err, result){
+        if(err){
+            return callback(err);
+        }
+        mFolder.create({
+            creator: user._id.toString(),
+            name: 'root folder'
+        }, function(err, folder){
+            if(err){
+                return callback(err);
+            }
+            user.rootFolder = DBRef('folder', folder._id.toString());
+            db.user.save(user, function(err, result){
+                callback(err, user);
+            });
+        });
     });
 }

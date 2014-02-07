@@ -20,6 +20,7 @@ function buildCallback(caseName){
 
 function testCase(){
     var uid = "52f2f10071086909323f2610";
+    var userRootFolderId = "52f4cd3e7985e3f428b95420";
     var resourceId = "52f335432886844d36195710";
 
     function createFiles(folder, group){
@@ -58,94 +59,100 @@ function testCase(){
         }, buildCallback('create file 4'));
     }
 
+    evt.on('save user', function(user){
+        uid = user._id.toString();
+        userRootFolderId = user.rootFolder.oid;
+        evt.on('create folder', function(folder){
+            createFiles(folder);
+
+            evt.on('create user folder1', function(folder){
+                mFolder.create({
+                    name: 'def地方',
+                    creator: uid,
+                    folderId: folder._id.toString()
+                }, buildCallback('create user sub folder1'));
+            });
+
+            mFolder.create({
+                name: 'abc阿百川',
+                creator: uid,
+                folderId: folder._id.toString()
+            }, buildCallback('create user folder1'));
+        });
+
+        // 创建用户文件夹
+        mFolder.create({
+            name: '测试文件夹1',
+            creator: uid,
+            mark: '我是mark',
+            parentId: userRootFolderId
+        }, buildCallback('create folder'));
+
+        evt.on('create group', function(group){
+
+            mGroup.addUserToGroup({
+                uid: uid,
+                groupId: group._id.toString()
+            }, buildCallback('addUserToGroup'));
+
+            mFolder.getFolder(group.rootFolder.oid.toString(), function(err, folder){
+                createFiles(folder, group);
+            });
+
+            mFolder.create({
+                name: '小组的测试文件夹1',
+                creator: uid,
+                mark: '我是mark',
+                groupId: group._id.toString(),
+                folderId: group.rootFolder.oid.toString()
+            }, buildCallback('create group folder1'));
+
+            mFolder.create({
+                name: '撒旦法的',
+                creator: uid,
+                mark: '我是mark',
+                groupId: group._id.toString(),
+                folderId: group.rootFolder.oid.toString()
+            }, buildCallback('create group folder2'));
+
+            mFolder.create({
+                name: '反反复复发',
+                creator: uid,
+                mark: '我是mark',
+                groupId: group._id.toString(),
+                folderId: group.rootFolder.oid.toString()
+            }, buildCallback('create group folder3'));
+
+            mFolder.create({
+                name: '啊啊啊啊啊3',
+                creator: uid,
+                mark: '我是mark',
+                groupId: group._id.toString(),
+                folderId: group.rootFolder.oid.toString()
+            }, buildCallback('create group folder4'));
+
+
+        });
+
+        // 创建用户小组
+        mGroup.create({
+            name: '测试小组',
+            creator: uid,
+            content: '啥啥?'
+        }, buildCallback('create group'))
+    });
+
     // 创建初始用户
-    mUser.save({
+    mUser.create({
         nick: "李佳",
         name: "lijia",
         auth: 0,
         size: 3221225472,
         used: 0,
-        lastGroup: null,
-        _id: ObjectID(uid)
+        lastGroup: null
     }, buildCallback('save user'));
 
-    evt.on('create folder', function(folder){
-        createFiles(folder);
-
-        evt.on('create user folder1', function(folder){
-            mFolder.create({
-                name: 'def地方',
-                creator: uid,
-                folderId: folder._id.toString()
-            }, buildCallback('create user sub folder1'));
-        });
-
-        mFolder.create({
-            name: 'abc阿百川',
-            creator: uid,
-            folderId: folder._id.toString()
-        }, buildCallback('create user folder1'));
-    });
-
-    // 创建用户文件夹
-    mFolder.create({
-        name: '测试文件夹1',
-        creator: uid,
-        mark: '我是mark'
-    }, buildCallback('create folder'));
-
-    evt.on('create group', function(group){
-
-        mGroup.addUserToGroup({
-            uid: uid,
-            groupId: group._id.toString()
-        }, buildCallback('addUserToGroup'));
-
-        mFolder.getFolder(group.rootFolder.oid.toString(), function(err, folder){
-            createFiles(folder, group);
-        });
-
-        mFolder.create({
-            name: '小组的测试文件夹1',
-            creator: uid,
-            mark: '我是mark',
-            groupId: group._id.toString(),
-            folderId: group.rootFolder.oid.toString()
-        }, buildCallback('create group folder1'));
-
-        mFolder.create({
-            name: '撒旦法的',
-            creator: uid,
-            mark: '我是mark',
-            groupId: group._id.toString(),
-            folderId: group.rootFolder.oid.toString()
-        }, buildCallback('create group folder2'));
-
-        mFolder.create({
-            name: '反反复复发',
-            creator: uid,
-            mark: '我是mark',
-            groupId: group._id.toString(),
-            folderId: group.rootFolder.oid.toString()
-        }, buildCallback('create group folder3'));
-
-        mFolder.create({
-            name: '啊啊啊啊啊3',
-            creator: uid,
-            mark: '我是mark',
-            groupId: group._id.toString(),
-            folderId: group.rootFolder.oid.toString()
-        }, buildCallback('create group folder4'));
-
-
-    });
-
-    // 创建用户小组
-    mGroup.create({
-        name: '测试小组',
-        creator: uid,
-        content: '啥啥?'
-    }, buildCallback('create group'))
+    
 
 }
 

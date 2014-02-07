@@ -22,7 +22,8 @@ exports.list = function(params, callback){
 exports.search = function(params, callback){
 
     var folderId = params.folderId;
-    var groupId = params.groupId || 0;
+    var groupId = params.groupId || null;
+    var userId = params.uid || null;
     var keyword = params.keyword || '';
 
     var order = params.order || [];
@@ -38,7 +39,9 @@ exports.search = function(params, callback){
                 { idpath: new RegExp('.*' + folderId + '.*') }
             ]
         };
-
+        if(userId){
+            query['user.$id'] = ObjectID(userId);
+        }
         var cursor = collection.find(query);
         var proxy = EventProxy.create('total', 'result', function(total, result){
             callback(null, total || 0, result);
