@@ -5,74 +5,72 @@ var EventProxy = require('eventproxy');
 var EventEmitter = require('events').EventEmitter;
 var ERR = require('../errorcode');
 var U = require('../util');
+var us = require('underscore');
 
 exports.create = function(params, callback){
     var groupId = params.groupId;
     var folderId = params.folderId;
 
-    var collectionName = groupId ? 'groupfile' : 'userfile';
-
     var doc = {
-        docid: params.docId,
-        fdid: folderId,
+        resource: DBRef('resource', ObjectID(params.resourceId)),
+        folder: DBRef('folder', ObjectID(folderId)),
         name: params.name,
-        creator: params.creator,
-        createtime: Date.now(),
-        updatetime: Date.now(),
+        creator: DBRef('user', ObjectID(params.creator)),
+        createTime: Date.now(),
+        updateTime: Date.now(),
         content: params.content || '', // 文件说明
         mark: params.mark || '', // 文件评论
         del: false,//是否删除
-        tag: null,//审核评语
-        rtag: null, //0 通过 1 不通过
-        ttime: null//审核时间
+        status: params.status || 0, // 0 上传 1 分享
+
+        validateText: null,//审核评语
+        validateStatus: null, //0 通过 1 不通过
+        validateTime: null,//审核时间
+        validator: null
     };
     if(groupId){
-        doc.gid = groupId;
-        doc.fgid = params.fgid || null;
-        doc.status = params.status || null; // 0 上传 1 分享
-        doc.ruid = params.creator || null;
+        doc.group = DBRef('group', ObjectID(groupId));
+        doc.fromGroup = params.fromGroup ? DBRef('group', ObjectID(params.fromGroup)) : doc.group;
     }
 
-    db[collectionName].insert(doc, function(err, result){
+    db.file.insert(doc, function(err, result){
         if(err){
             return callback(err);
         }
-        callback(null, result[0]);
+        result = result[0];
+        db.folder.findAndModify({ _id: ObjectID(folderId) }, [], 
+                { $set: { hasChild: true } }, { 'new':true }, function(err, newFolder){
+
+            callback(null, result);
+        });
     });
 }
 
-exports.modify = function(params, doc, callback){
-    var fileId = params.fileId;
-    var groupId = params.groupId;
+exports.modify = function(fileId, doc, callback){
 
-    doc.updatetime = Date.now();
+    doc.updateTime = Date.now();
 
-    var collectionName = groupId ? 'groupfile' : 'userfile';
-    db[collectionName].findAndModify({ _id: new ObjectID(fileId) }, [],  { $set: doc }, 
+    db.file.findAndModify({ _id: new ObjectID(fileId) }, [],  { $set: doc }, 
             { 'new':true}, callback);
 }
 
-exports.delete = function(params, callback){
-    var fileId = params.fileId;
-    var groupId = params.groupId;
+exports.delete = function(fileId, callback){
 
-    var collectionName = groupId ? 'groupfile' : 'userfile';
 
-    db[collectionName].findAndRemove({ _id: new ObjectID(fileId)}, [], function(err, file){
+    db.file.findAndRemove({ _id: new ObjectID(fileId)}, [], function(err, file){
 
-        if(!err){ // 将 files 的引用计数减一
-            db.files.findAndModify({ _id: ObjectID(file.docid) }, [], { $inc: { ref: -1 } }, function(){});
+        if(!err){ // 将 resource 的引用计数减一
+            db.resource.findAndModify({ _id: ObjectID(file.resource) }, [], 
+                    { $inc: { ref: -1 } }, callback);
+        }else{
+            callback(err);
         }
-        callback(err);
     });
 }
 
-exports.batchDelete = function(params, query, callback){
-    var groupId = params.groupId;
+exports.batchDelete = function(query, callback){
 
-    var collectionName = groupId ? 'groupfile' : 'userfile';
-    
-    db[collectionName].find(query, function(err, docs){
+    db.file.find(query, function(err, docs){
         if(err || !doc || !docs.length){
             callback(null, 0);
         }else{
@@ -82,19 +80,25 @@ exports.batchDelete = function(params, query, callback){
             });
             proxy.fail(callback);
             docs.forEach(function(doc){
-                exports.delete({ groupId: groupId, fileId: doc._id }, proxy.group('delete'));
+                exports.delete(doc._id, proxy.group('delete'));
             });
         }
     });
 }
 
-exports.getFile = function(params, callback){
-    var fileId = params.fileId;
-    var groupId = params.groupId;
+exports.softDelete = function(fileId, callback){
 
-    var collectionName = groupId ? 'groupfile' : 'userfile';
+    exports.modify(fildId, { del: true }, callback);
 
-    db[collectionName].findOne({ _id: ObjectID(fileId) }, callback);
+}
+
+exports.revertDelete = function(fildId, callback){
+    exports.modify(fildId, { del: false }, callback);
+}
+
+exports.getFile = function(fileId, callback){
+
+    db.file.findOne({ _id: ObjectID(fileId) }, callback);
 
 }
 
@@ -109,15 +113,15 @@ exports.search = function(params, callback){
     var pageNum = Number(params.pageNum) || 0;
     var skipNum = pageNum * (page - 1);
 
-    var hasGroupId = groupId && groupId.length === 24;
-    var collectionName = hasGroupId ? 'groupfile' : 'userfile';
+    var extendQuery = params.extendQuery || {};
 
-    db.getCollection(collectionName, function(err, collection){
+    db.getCollection('file', function(err, collection){
         var query = { 
             name: new RegExp('.*' + keyword + '.*'),
-            fdid: folderId,
+            'folder.$id': ObjectID(folderId),
             del: false
         };
+        query = us.extend(query, extendQuery);
 
         var cursor = collection.find(query);
         var proxy = EventProxy.create('total', 'result', function(total, result){

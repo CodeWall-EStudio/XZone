@@ -68,13 +68,11 @@ exports.addHelper = function(context, collectionName){
 
 // add a large of quick access method
 exports.addHelper(exports, 'user');
-exports.addHelper(exports, 'groups');
-exports.addHelper(exports, 'files');
+exports.addHelper(exports, 'group');
+exports.addHelper(exports, 'resource');
 exports.addHelper(exports, 'groupuser');
-exports.addHelper(exports, 'groupfile');
-exports.addHelper(exports, 'groupfolds');
-exports.addHelper(exports, 'userfile');
-exports.addHelper(exports, 'userfolds');
+exports.addHelper(exports, 'file');
+exports.addHelper(exports, 'folder');
 exports.addHelper(exports, 'usercollection');
 exports.addHelper(exports, 'board');
 exports.addHelper(exports, 'message');

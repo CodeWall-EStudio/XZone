@@ -1,22 +1,27 @@
 var db = require('./db');
 var EventProxy = require('eventproxy');
 var ObjectID = require('mongodb').ObjectID;
+var DBRef = require('mongodb').DBRef;
 
 var mFolder = require('./folder');
 
-function getGroupWithExt(gid, ext, callback){
-    db.groups.findOne({ _id: ObjectID(gid) }, function(err, doc){
+function getGroupWithExt(groupId, ext, callback){
+    db.group.findOne({ _id: ObjectID(groupId) }, function(err, doc){
         if(err){
             return callback(err);
         }
-        doc.auth = ext.auth;
-        callback(null, doc);
+        if(doc){
+            doc.auth = ext.auth;
+            callback(null, doc);
+        }else{
+            callback(null, null);
+        }
     });
 }
 
 exports.getGroupByUser = function(uid, callback){
-    db.groupuser.find({ uid: uid }, function(err, docs){
-        
+    db.groupuser.find({ 'user.$id': ObjectID(uid) }, function(err, docs){
+
         if(err || !docs || !docs.length){
             return callback(err, []);
         }
@@ -26,36 +31,48 @@ exports.getGroupByUser = function(uid, callback){
         });
 
         proxy.fail(function(err){
-            callback(err, 'get user groups error.');
-        })
+            callback('get user groups error.');
+        });
         docs.forEach(function(doc){
-            getGroupWithExt(doc.gid, doc, proxy.group('getGroup'));
+            getGroupWithExt(doc.group.oid.toString(), doc, proxy.group('getGroup'));
         });
     });
+}
+
+exports.addUserToGroup = function(params, callback){
+    var doc = {
+        user: DBRef('user', ObjectID(params.uid)),
+        group: DBRef('group', ObjectID(params.groupId)),
+        auth: Number(params.auth) || 0
+    };
+    db.groupuser.save(doc, function(err, result){
+        callback(err, doc);
+    });
+
 }
 
 exports.create = function(params, callback){
     var doc = {
         name: params.name,
-        type: Number(params.type),
         content: params.content || '',
-        pid: params.pid || null,
-        creator: params.creator,
+        type: Number(params.type) || 0,
+        parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
+        creator: DBRef('user', ObjectID(params.creator)),
         status: true,
         pt: params.pt || null,
         tag: params.tag || null,
         grade: params.grade || null
     }
 
-    db.groups.save(doc, function(err, result){
+    db.group.save(doc, function(err, result){
         
         mFolder.create({ groupId: doc._id.toString() }, function(err, folder){
             if(err){
                 callback('create group root folder error');
             }else{
-                doc.rootfold = folder._id.toString();
+                doc.rootFolder = DBRef('folder', folder._id);
 
-                db.groups.findAndModify({ _id: doc._id }, [],  { $set: {rootfold: doc.rootfold} }, 
+                db.group.findAndModify({ _id: doc._id }, [],  { $set: {rootFolder: doc.rootFolder} }, 
                     { 'new':true}, callback)
             }
         });

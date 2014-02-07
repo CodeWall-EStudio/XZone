@@ -1,4 +1,5 @@
-
+var ObjectID = require('mongodb').ObjectID;
+var DBRef = require('mongodb').DBRef;
 var config = require('../config');
 var ERR = require('../errorcode');
 
@@ -41,7 +42,7 @@ exports.modify = function(req, res){
         doc.content = params.content;
     }
 
-    mFile.modify(params, doc, function(err, doc){
+    mFile.modify(params.fileId, doc, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
@@ -60,10 +61,9 @@ exports.copy = function(req, res){
     var params = req.query;
     var fileId = params.fileId;
     var groupId = params.groupId;
+    var targetId = params.targetId;
 
-    var collectionName = groupId ? 'groupfile' : 'userfile';
-
-    mFile.getFile(params, function(err, file){
+    mFile.getFile(fileId, function(err, file){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
             return;
@@ -72,7 +72,9 @@ exports.copy = function(req, res){
         }else{
             // FIXME 这里需要检查 target 是否是同一个用户或小组的
             delete file._id;
-            db[collectionName].insert(file, function(err, result){
+            file.folder = DBRef('folder', ObjectID(targetId));
+            // FIXME 还要处理
+            db.file.insert(file, function(err, result){
                 if(err){
                     return callback(err);
                 }
@@ -85,10 +87,10 @@ exports.copy = function(req, res){
 exports.move = function(req, res){
     var params = req.query;
     var doc = {
-        fdid: params.targetId
+        folder: DBRef('folder', ObjectID(params.targetId))
     };
     // FIXME 这里需要检查 target 是否是同一个用户或小组的
-    mFile.modify(params, doc, function(err, doc){
+    mFile.modify(params.fileId, doc, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
@@ -110,9 +112,7 @@ exports.delete = function(req, res){
     var fileId = params.fileId;
     var groupId = params.groupId;
 
-    var collectionName = groupId ? 'groupfile' : 'userfile';
-
-    db[collectionName].findAndModify({ _id: ObjectID(fileId) }, [], { $set: { del: true } }, function(err, doc){
+    mFile.softDelete(fileId, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
@@ -129,8 +129,6 @@ exports.delete = function(req, res){
 exports.search = function(req, res){
     var params = req.query;
 
-    var fileId = params.fileId;
-    var groupId = params.groupId;
 
     mFile.search(params, function(err, total, docs){
         if(err){

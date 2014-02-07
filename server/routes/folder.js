@@ -45,7 +45,7 @@ exports.search = function(req, res){
 exports.get = function(req, res){
     var params = req.query;
 
-    mFolder.getFolder(params, function(err, doc){
+    mFolder.getFolder(params.folderId, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{

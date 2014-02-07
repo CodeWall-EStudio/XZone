@@ -26,9 +26,7 @@ exports.revert = function(req, res){
     var fileId = params.fileId;
     var groupId = params.groupId;
 
-    var collectionName = groupId ? 'groupfile' : 'userfile';
-
-    db[collectionName].findAndModify({ _id: ObjectID(fileId) }, [], { $set: { del: false } }, function(err, doc){
+    mFile.revertDelete(fileId, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
@@ -42,42 +40,24 @@ exports.revert = function(req, res){
 }
 
 
-exports.search = function(params, callback){
-    var folderId = params.folderId;
-    var groupId = params.groupId || 0;
-    var keyword = params.keyword || '';
-    var type = Number(params.type) || 0; // FIXME 按类型分类未实现
+exports.search = function(req, res){
+    var params = req.query;
 
-    var order = params.order || [];
-    var page = Number(params.page) || 1;
-    var pageNum = Number(params.pageNum) || 0;
-    var skipNum = pageNum * (page - 1);
+    params.extendQuery = {
+        del: true
+    }
 
-    var hasGroupId = groupId && groupId.length === 24;
-    var collectionName = hasGroupId ? 'groupfile' : 'userfile';
-
-    db.getCollection(collectionName, function(err, collection){
-        var query = { 
-            name: new RegExp('.*' + keyword + '.*'),
-            fdid: folderId,
-            del: false
-        };
-
-        var cursor = collection.find(query);
-        var proxy = EventProxy.create('total', 'result', function(total, result){
-            callback(null, total || 0, result);
-        });
-        proxy.fail(callback);
-
-        cursor.count(proxy.done('total'));
-        cursor.sort(order);
-        if(skipNum){
-            cursor.skip(skipNum);
+    mFile.search(params, function(err, total, docs){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else{
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    total: total,
+                    list: docs
+                }
+            });
         }
-        if(pageNum){
-            cursor.limit(pageNum);
-        }
-        cursor.toArray(proxy.done('result'));
-
     });
 }

@@ -13,11 +13,9 @@ exports.list = function(params, callback){
     var groupId = params.groupId || 0;
     var order = params.order || [];
 
-    var hasGroupId = groupId && groupId.length === 24;
-    var collectionName = hasGroupId ? 'groupfolds' : 'userfolds';
-    var query = { pid: folderId};
+    var query = { 'parent.$id': ObjectID(folderId)};
 
-    db[collectionName].find(query, { sort: order}, callback);
+    db.folder.find(query, { sort: order}, callback);
 
 }
 
@@ -32,13 +30,11 @@ exports.search = function(params, callback){
     var pageNum = Number(params.pageNum) || 0;
     var skipNum = pageNum * (page - 1);
 
-    var hasGroupId = groupId && groupId.length === 24;
-    var collectionName = hasGroupId ? 'groupfolds' : 'userfolds';
-    db.getCollection(collectionName, function(err, collection){
+    db.getCollection('folder', function(err, collection){
         var query = { 
             name: new RegExp('.*' + keyword + '.*'),
             $or: [
-                { pid: new ObjectID(folderId) },
+                { 'parent.$id': new ObjectID(folderId) },
                 { idpath: new RegExp('.*' + folderId + '.*') }
             ]
         };
@@ -62,13 +58,9 @@ exports.search = function(params, callback){
     });
 }
 
-exports.getFolder = function(params, callback){
-    var folderId = params.folderId;
-    var groupId = params.groupId || 0;
-    var hasGroupId = groupId && groupId.length === 24;
-    var collectionName = hasGroupId ? 'groupfolds' : 'userfolds';
+exports.getFolder = function(folderId, callback){
 
-    db[collectionName].findOne({ _id: new ObjectID(folderId) }, callback);
+    db.folder.findOne({ _id: new ObjectID(folderId) }, callback);
 
 }
 
@@ -78,49 +70,48 @@ exports.modify = function(params, doc, callback){
 
     doc.updatetime = Date.now();
 
-    var hasGroupId = groupId && groupId.length === 24;
-    var collectionName = hasGroupId ? 'groupfolds' : 'userfolds';
-    db[collectionName].findAndModify({ _id: new ObjectID(folderId) }, [], { $set: doc }, 
+
+    db.folder.findAndModify({ _id: new ObjectID(folderId) }, [], { $set: doc }, 
             { 'new':true }, callback);
 }
 
 exports.create = function(params, callback){
     var groupId = params.groupId;
     var folderId = params.folderId;
-    var hasFolderId = folderId && folderId.length === 24;
-    var hasGroupId = groupId && groupId.length === 24;
-    var collectionName = hasGroupId ? 'groupfolds' : 'userfolds';
+
 
     var that = this;
 
     var proxy = EventProxy.create('folder', function(folder){
         var doc = {
             name: params.name,
-            creator: params.creator,
+            creator: DBRef('user', ObjectID(params.creator)),
             mark: params.mark || '',
-            createtime: Date.now(),
-            updatetime: Date.now(),
+            createTime: Date.now(),
+            updateTime: Date.now(),
             type: 0,
-            pid: null,
-            tid: params.tid || null,
-            haschild: false
+            parent: null,
+            top: params.topId ? DBRef('folder', params.topId) : null,
+            hasChild: false
         };
-        if(hasGroupId){
-            doc.gid = groupId;
-            doc.closetime = params.closetime || 0;
+        if(groupId){
+            doc.group = DBRef('group', ObjectID(groupId));
+            doc.closeTime = params.closeTime || 0;
         }else{
-            doc.prid = params.prid || null;
+            doc.prepare = params.prepareId ? DBRef('group', ObjectID(params.prepareId)) : null;
         }
         if(folder){
-            doc.pid = folder._id.toString();
-            folder.haschild = true;
-            db[collectionName].save(folder, function(err){
+            doc.parent = DBRef('folder', folder._id);
+            folder.hasChild = true;
+            db.folder.save(folder, function(err){
                 if(err){
                     console.log('models/folder/create', err);
                 }
             });
+        }else{
+            doc.parent = doc.top;
         }
-        db[collectionName].insert(doc, function(err, result){
+        db.folder.insert(doc, function(err, result){
             if(err){
                 return proxy.emit('error', err);
             }
@@ -131,7 +122,7 @@ exports.create = function(params, callback){
                 result.idpath = result._id.toString();
             }
 
-            db[collectionName].save(result, function(err){
+            db.folder.save(result, function(err){
                 if(err){
                     console.log('models/folder/create', err);
                 }
@@ -143,8 +134,8 @@ exports.create = function(params, callback){
 
     proxy.fail(callback);
 
-    if(hasFolderId){
-        db[collectionName].findOne({ _id: new ObjectID(folderId)}, proxy.done("folder"));
+    if(folderId){
+        db.folder.findOne({ _id: new ObjectID(folderId.toString())}, proxy.done("folder"));
     }else{
         proxy.emit('folder', null);
     }
@@ -154,23 +145,22 @@ exports.create = function(params, callback){
 exports.delete = function(params, callback){
     var groupId = params.groupId;
     var folderId = params.folderId;
-    var hasGroupId = groupId && groupId.length === 24;
-    var collectionName = hasGroupId ? 'groupfolds' : 'userfolds';
 
 
-    db[collectionName].findAndRemove({ _id: new ObjectID(folderId)}, [], function(err, folder){
+
+    db.folder.findAndRemove({ _id: new ObjectID(folderId)}, [], function(err, folder){
         if(err){
             return callback(err);
         }
         if(!folder){
             return callback('no such folder', ERR.NOT_FOUND);
         }
-        if(folder.haschild){
+        if(folder.hasChild){
 
             var query = { 
                 idpath: new RegExp('.*' + folderId + '.*')
             };
-            db[collectionName].find(query, function(err, docs){
+            db.folder.find(query, function(err, docs){
                 if(err){
                     return callback(err);
                 }
@@ -184,14 +174,13 @@ exports.delete = function(params, callback){
                 proxy.fail(callback);
                 docs.forEach(function(doc){
 
-                    mFile.batchDelete({ groupId: groupId },{ fdid: doc._id.toString() }, 
-                            proxy.group('delete'));
+                    mFile.batchDelete({ 'parent.$id': doc._id }, proxy.group('delete'));
 
-                    db[collectionName].remove({ _id: doc._id }, proxy.group('delete'));
+                    db.folder.remove({ _id: doc._id }, proxy.group('delete'));
                 });
             });
         }
-    }); // db[collectionName]
+    }); // findAndRemove
 }
 
 

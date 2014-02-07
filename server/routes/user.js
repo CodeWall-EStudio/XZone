@@ -50,21 +50,16 @@ exports.gotoLogin = function(req, res){
 exports.get = function(req, res){
 
     var loginUser = req.loginUser;
-    mUser.getUserByName(loginUser.name, function(err, user){
+    mUser.getUserInfoByName(loginUser.name, function(err, user, groups){
         if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else if(!user){
-            res.json({ err: ERR.NOT_FOUND, msg: 'no such user'});
-        }else{
-
-            mGroup.getGroupByUser(user._id.toString() , function(err, groups){
-                res.json({
-                    err: ERR.SUCCESS,
-                    result: {
-                        user: user,
-                        groups: groups
-                    }
-                });
+            res.json({ err: user || ERR.SERVER_ERROR, msg: err});
+        }else {
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    user: user,
+                    groups: groups
+                }
             });
         }// end of else 
     });
@@ -112,7 +107,7 @@ exports.login = function(req, res){
                         size: config.DEFAULT_USER_SPACE,
                         used: 0,
                         mailnum: 0,
-                        lastgroup: null
+                        lastGroup: null
                     }
                 }
                 mUser.save(user, loginProxy.done('saveUser'));
