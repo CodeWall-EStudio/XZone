@@ -1,15 +1,9 @@
+var http = require('http');
+var EventProxy = require('eventproxy');
 
 var config = require('../config');
 var ERR = require('../errorcode');
-
-
 var mGroup = require('../models/group');
-
-var http = require('http');
-
-var EventProxy = require('eventproxy');
-
-
 
 exports.create = function(req, res){
     var params = req.query;
@@ -103,7 +97,7 @@ exports.modify = function(req, res){
 exports.get = function(req, res){
     var params = req.query;
 
-    mGroup.modify(params.groupId, doc, function(err, doc){
+    mGroup.getGroup(params.groupId, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else if(!doc){

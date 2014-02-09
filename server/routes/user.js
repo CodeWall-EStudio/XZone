@@ -67,18 +67,19 @@ exports.get = function(req, res){
 }
 
 exports.validate = function(ticket, callback){
-    var loginProxy = EventProxy.create('validate', 'userInfo', 'saveUser', 
+    var ep = EventProxy.create('validate', 'userInfo', 'saveUser', 
             function(valData, userInfo, user){
         
         callback(null, valData, user);
 
     });
 
-    loginProxy.fail(function(err, errCode){
+    ep.fail(function(err, errCode){
         callback(err, errCode);
     });
 
-    var userInfoProxy = EventProxy.create('userInfo', function(userInfo){
+    ep.on('userInfo', function(userInfo){
+
         var name = userInfo.loginName;
         var nick = userInfo.name;
 
@@ -87,33 +88,33 @@ exports.validate = function(ticket, callback){
             if(user){ // db已经有该用户, 更新资料
                 user.nick = nick;
 
-                mUser.save(user, loginProxy.done('saveUser'));
+                mUser.save(user, ep.done('saveUser'));
             }else{
                 mUser.create({
                     nick: nick,
                     name: name,
                     auth: 0, // 15 是管理员
                     size: config.DEFAULT_USER_SPACE,
-                }, loginProxy.done('saveUser'));
+                }, ep.done('saveUser'));
             }
         });
     }); // end userInfoProxy
 
-    cas.validate(ticket, loginProxy.done('validate', function(status, response){
+    cas.validate(ticket, ep.done('validate', function(status, response){
         if(!status){
-            loginProxy.emit('error', 'the ticket "' + ticket + '" is not correct!', ERR.TICKET_ERROR);
+            ep.emit('error', 'the ticket "' + ticket + '" is not correct!', ERR.TICKET_ERROR);
             return null;
         }
 
         var data = JSON.parse(response);
         var skey = data.encodeKey;
 
-        getUserInfo(skey, loginProxy.done('userInfo', function(data){
+        getUserInfo(skey, ep.done('userInfo', function(data){
             if(data.success && data.userInfo){
-                userInfoProxy.emit('userInfo', data.userInfo);
+                // userInfoProxy.emit('userInfo', data.userInfo);
                 return data.userInfo;
             }else{
-                loginProxy.emit('error', 'get userInfo error.');
+                ep.emit('error', 'get userInfo error.');
             }
         }));
 

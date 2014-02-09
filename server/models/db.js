@@ -1,6 +1,8 @@
-var config = require('../config');
 var MongoClient = require('mongodb').MongoClient;
 var EventProxy = require('eventproxy');
+
+var config = require('../config');
+var U = require('../util');
 
 var ins = null;
 
@@ -42,15 +44,17 @@ exports.dereference = function(doc, keys, callback){
         if(err){
             callback(err, null);
         }else{
-            var proxy = new EventProxy();
-            proxy.after('deref', keys.length, function(list){
+            var ep = new EventProxy();
+            ep.after('deref', U.objectSize(keys), function(list){
+
                 callback(null, doc);
             });
-            proxy.fail(callback);
+            ep.fail(callback);
 
             for(var key in keys){
+
                 if(doc[key]){
-                    db.dereference(doc[key], proxy.group('deref', 
+                    db.dereference(doc[key], ep.group('deref', 
                     (function(key, keepProps){
                         return function(data){
                             if(keepProps){
@@ -66,14 +70,14 @@ exports.dereference = function(doc, keys, callback){
                     })(key, keys[key])
                     ));
                 }else{
-                    proxy.group('deref')(null);
+                    ep.emit('deref');
                 }
             };
         }
     });
 }
 
-exports.dereferences = function(docs, keys callback){
+exports.dereferences = function(docs, keys, callback){
     var ep = new EventProxy();
 
     ep.after('deref', docs.length, function(list){

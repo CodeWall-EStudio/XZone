@@ -1,9 +1,33 @@
-var db = require('./db');
 var EventProxy = require('eventproxy');
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 
+var db = require('./db');
 var mFolder = require('./folder');
+
+exports.create = function(params, callback){
+    var doc = {
+        name: params.name,
+        content: params.content || '',
+        type: Number(params.type) || 0,
+        parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
+        creator: DBRef('user', ObjectID(params.creator)),
+        status: true, // 标示新申请的
+        pt: params.pt || null,
+        tag: params.tag || null,
+        grade: params.grade || null,
+
+        validateText: null,//审核评语
+        validateStatus: null, //0 通过 1 不通过
+        validateTime: null,//审核时间
+        validator: null
+    }
+
+    db.group.save(doc, function(err, result){
+        callback(err, doc);
+        
+    });
+}
 
 function dereferenceGroup(groupId, ext, callback){
     db.group.findOne({ _id: ObjectID(groupId) }, function(err, doc){
@@ -54,24 +78,31 @@ exports.addUserToGroup = function(params, callback){
 
 }
 
-exports.create = function(params, callback){
-    var doc = {
-        name: params.name,
-        content: params.content || '',
-        type: Number(params.type) || 0,
-        parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
-        creator: DBRef('user', ObjectID(params.creator)),
-        status: true,
-        pt: params.pt || null,
-        tag: params.tag || null,
-        grade: params.grade || null
-    }
-
-    db.group.save(doc, function(err, result){
-        callback(err, doc);
-        
+exports.getGroupMembers = function(groupId, needDetail, callback){
+    db.groupuser.find({ 'group.$id': ObjectID(groupId)}, function(err, docs){
+        if(err){
+            return callback(err);
+        }
+        if(docs && docs.length){
+            var ep = new EventProxy();
+            ep.after('fetchUser', docs.length, function(list){
+                callback(null, list);
+            });
+            ep.fail(callback);
+            docs.forEach(function(doc){
+                if(!needDetail){
+                    ep.emit('fetchUser', { // FIXME 这里是不是要传个 null 作为第一个参数
+                        _id: doc.user.oid
+                    });
+                }else{
+                    db.user.findOne({ _id: new ObjectID(doc.user.oid)}, 
+                            { fields: {_id: 1, nick: 1} }, ep.group('fetchUser'));
+                }
+            });
+        }
     });
 }
+
 
 exports.createGroupRootFolder = function(groupId, callback){
     db.group.findOne({ _id: ObjectID(groupId) }, function(err, doc){
@@ -106,4 +137,41 @@ exports.getGroup = function(groupId, callback){
     db.group.findOne({ _id: new ObjectID(groupId) }, callback);
 
 }
+
+
+exports.search = function(params, callback){
+
+
+    var order = params.order || [];
+    var page = Number(params.page) || 1;
+    var pageNum = Number(params.pageNum) || 0;
+    var skipNum = pageNum * (page - 1);
+
+    var extendQuery = params.extendQuery || {};
+
+    db.getCollection('group', function(err, collection){
+        var query = { };
+
+        query = us.extend(query, extendQuery);
+
+        var cursor = collection.find(query);
+        var proxy = EventProxy.create('total', 'result', function(total, result){
+            callback(null, total || 0, result);
+        });
+        proxy.fail(callback);
+
+        cursor.count(proxy.done('total'));
+        cursor.sort(order);
+        if(skipNum){
+            cursor.skip(skipNum);
+        }
+        if(pageNum){
+            cursor.limit(pageNum);
+        }
+        cursor.toArray(proxy.done('result'));
+
+    });
+}
+
+
 
