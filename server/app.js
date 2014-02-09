@@ -30,6 +30,8 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+app.all('/', routes.verifyAndLogin);
+
 // verify authorization
 app.all('/api/*', routes.verify);
 

@@ -1,8 +1,10 @@
-var ERR = require('../errorcode')
+var ERR = require('../errorcode');
+var routeUser = require('./user');
 
 var WHITE_LIST = [
     '/api/user/login',
-    '/api/user/gotoLogin'
+    '/api/user/gotoLogin',
+    '/api/user/loginSuccess'
 ];
 
 function getRouter(path, method){
@@ -17,6 +19,17 @@ function getRouter(path, method){
         }
     }
     return null;
+}
+
+exports.verifyAndLogin = function(req, res, next){
+    var skey = req.cookies.skey;
+    var loginUser = req.session[skey];
+
+    if(!loginUser){
+        routeUser.gotoLogin(req, res);
+    }else{
+        next();
+    }
 }
 
 exports.verify = function(req, res, next){

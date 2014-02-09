@@ -50,6 +50,15 @@ var CAS = module.exports = function CAS(options) {
 
 CAS.version = pkg.version;
 
+CAS.prototype.getLoginUrl = function(){
+  return url.format({
+    hostname: this.hostname,
+    port: this.port,
+    pathname: this.base_path+'/login',
+    query: { service: this.service }
+  });
+}
+
 /**
  * Attempt to validate a given ticket with the CAS server.
  * `callback` is called with (err, auth_status, response)
@@ -61,7 +70,7 @@ CAS.version = pkg.version;
 
 CAS.prototype.validate = function(ticket, callback) {
   var options = {
-    host: this.hostname,
+    hostname: this.hostname,
     port: this.port,
     path: url.format({
       pathname: this.base_path+'/validate',
@@ -100,7 +109,8 @@ CAS.prototype.validate = function(ticket, callback) {
     });
   }
 
-  var req = (this.protocol === 'https' ? https : http).get(options, reqCb);
+  var req = (this.protocol === 'https' ? https : http).request(options, reqCb);
+  req.end();
 
   req.on('error', function(e) {
       callback(e);
