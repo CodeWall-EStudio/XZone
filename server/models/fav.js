@@ -1,8 +1,10 @@
-var db = require('./db');
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var EventProxy = require('eventproxy');
 var EventEmitter = require('events').EventEmitter;
+var us = require('underscore');
+
+var db = require('./db');
 var ERR = require('../errorcode');
 var U = require('../util');
 

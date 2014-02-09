@@ -1,5 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 var EventProxy = require('eventproxy');
+var us = require('underscore');
 
 var config = require('../config');
 var U = require('../util');
@@ -97,7 +98,7 @@ exports.search = function(collectionName, query, options, callback){
     var pageNum = Number(options.pageNum) || 0;
     var skipNum = pageNum * (page - 1);
 
-    db.getCollection(collectionName, function(err, collection){
+    exports.getCollection(collectionName, function(err, collection){
         
         var cursor = collection.find(query);
         var ep = EventProxy.create('total', 'result', function(total, list){

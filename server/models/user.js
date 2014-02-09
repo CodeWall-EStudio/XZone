@@ -1,6 +1,8 @@
-var db = require('./db');
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
+var us = require('underscore');
+
+var db = require('./db');
 var ERR = require('../errorcode');
 var mGroup = require('../models/group');
 var mFolder = require('../models/folder');
