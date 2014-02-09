@@ -75,6 +75,7 @@ used as it is.
 */
 (function($) {
 	var uploaders = {};
+	var	handerObj = $(Schhandler);
 
 	function _(str) {
 		return plupload.translate(str) || str;
@@ -326,6 +327,8 @@ used as it is.
 				});
 
 				uploader.bind("Error", function(up, err) {
+
+
 					var file = err.file, message;
 
 					if (file) {
@@ -389,11 +392,16 @@ used as it is.
 				uploader.bind('QueueChanged', updateList);
 
 				uploader.bind('FileUploaded', function(up, file,msg) {
+
 					var t = msg.response;
 					t = $.parseJSON(t);
-					if(t.data.error.code !=0){
+					if(t.err !=0){
 						file.status = 4;
 						file.hint = t.msg;
+					}else{
+						t.result.data.id = t.result.data._id;
+						t.result.data.fid = t.result.data.resource;
+						handerObj.triggerHandler('file:uploadsuc',t.result.data);						
 					}
 					$('#'+file.id).attr('title',t.msg);
 					handleStatus(file);

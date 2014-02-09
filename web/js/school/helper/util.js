@@ -311,6 +311,17 @@ define(['../config'], function($, config) {
 	}
 
 
+    var getParam = function(name){
+        try{
+            var reg = new RegExp("(^|&|\\?|\\#)+" + name + "=(.*?)(?=(&|$))", "g");
+            var r = window.location.href.match(reg);
+            r = r[0].match(/\=.*?$/);
+            return r[0].replace('=','');
+        }catch(e){
+            return false;
+        }
+    };	
+
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -322,6 +333,7 @@ define(['../config'], function($, config) {
 	util.newClass = newClass;
 	util.time = formatTime;
 	util.cookie = cookie;
+	util.getParam = getParam;
 
 	return util;
 

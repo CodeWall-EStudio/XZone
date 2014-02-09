@@ -55,7 +55,16 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}		
 
 	function groupInfo(e,d){
-		var gid = d;
+		var deftype = 'group';
+		var gid,type = 0;
+		if(typeof d == 'object'){
+			gid = d.gid;
+			type = d.type;
+		}else{
+			gid = d;
+			type = deftype;
+		}
+		
 
 		var opt = {
 			cgi : config.cgi.groupinfo,
@@ -65,7 +74,8 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}
 		var success = function(d){
 			if(d.err == 0){
-				handerObj.triggerHandler('group:infosuc',d.result.data);
+				d.result.data.id = d.result.data._id;
+				handerObj.triggerHandler(type+':infosuc',d.result.data);
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}

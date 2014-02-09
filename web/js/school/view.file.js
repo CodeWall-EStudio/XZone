@@ -73,7 +73,18 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		});
 		view.createPanel();
 
-		handerObj.triggerHandler('file:serach',{
+		var data = {
+			keyword : nowKey,
+			folderId : nowFd,
+			page:nextPage,
+			pageNum : config.pagenum,
+			order : nowOrder			
+		}
+		if(nowGid){
+			data.groupId = nowGid;
+		}
+
+		handerObj.triggerHandler('file:search',{
 			groupId:nowGid,
 			keyword : nowKey,
 			folderId : nowFd,
@@ -144,14 +155,18 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		tmpTarget.find('.file').remove();
 		nowKey = d.key;
 		
-		handerObj.triggerHandler('file:serach',{
-			gid:nowGid,
+		var obj = {
 			keyword : nowKey,
 			folderId : nowFd,
 			page:nextPage,
 			pageNum : config.pagenum,
 			order : nowOrder
-		});			
+		}
+		if(nowGid){
+			obj.groupId = nowGid;
+		}
+
+		handerObj.triggerHandler('file:search',obj);			
 	}
 
 	function modelChange(e,d){
@@ -167,14 +182,19 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		if(!action || !nextPage){
 			return;
 		}
-		handerObj.triggerHandler('file:serach',{
-			gid:nowGid,
+
+		var obj = {
 			keyword : nowKey,
 			folderId : nowFd,
 			page:nextPage,
 			pageNum : config.pagenum,
 			order : nowOrder
-		});				
+		}
+		if(nowGid){
+			obj.groupId = nowGid;
+		}
+
+		handerObj.triggerHandler('file:search',obj);				
 	}
 
 	function fileDel(e,d){
@@ -545,6 +565,34 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		}
 	}	
 
+	function uploadSuc(e,d){
+
+		var target = tmpTarget,
+			act = 0;
+		if(tmpTarget.find('.file').length > 0){
+			target = tmpTarget.find('.file').eq(0);
+			act = 1;
+		}
+
+		console.log(target);
+		var view = new View({
+			target : target,
+			tplid : 'file.user.list',
+			data : {
+				list : [d],
+				filetype : config.filetype,
+				gid : nowGid,
+				down : config.cgi.filedown
+			}
+		});
+		if(act){
+			view.beforePanel();		
+		}else{
+			view.appendPanel();				
+		}
+		
+	}
+
 	var handlers = {
 		//'order:change' : orderChange,
 		'recy:recysuc' : recySuc,	
@@ -567,7 +615,8 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		'fav:collsuc' : collSuc,
 		'fav:uncollsuc' : uncollSUc,
 		'file:marksuc' : marksuc,
-		'page:next' : pageNext
+		'page:next' : pageNext,
+		'file:uploadsuc' : uploadSuc
 	}
 
 	for(var i in handlers){

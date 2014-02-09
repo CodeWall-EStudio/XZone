@@ -17,11 +17,11 @@
 							<li>
 								<a href="#groupid=<%+item.id%>"><%-item.name %> <%-item.auth %></a>
 								<%if(item.auth){%>
-									<span><a data-toggle="modal" data-id="<%+item.id%>" cmd="manage" data-target="#manageWin">管理</a></span>
+									<span><a data-id="<%+item.id%>" class="manage-one-group">管理</a></span>
 								<%}%>
 							</li>
 						<%}%>
-						<li><a id="createNewGroup" data-toggle="modal" cmd="newgroup" data-target="#manageWin">申请新的小组</a></li>
+						<li class="create-new-group"><a id="createNewGroup" class="create-new-group">申请新的小组</a></li>
 					</ul>
 				</li>
 				<li class="nav">
@@ -34,7 +34,7 @@
 							<li>
 								<a href="#groupid=<%+item.id%>"><%-item.name%></a>
 								<%if(item.auth){%>
-									<span><a data-toggle="modal" data-id="<%+item.id%>" cmd="manage" data-target="#manageWin">管理</a></span>
+									<span><a data-id="<%+item.id%>" class="manage-one-group">管理</a></span>
 								<%}%>
 							</li>						
 						<%}%>

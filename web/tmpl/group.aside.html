@@ -1,4 +1,5 @@
 			<h3 class="selected"><%-name%></h3>
+			<%if(!pt){%>
 			<div class="group-desc" id="groupDesc">
 				<h6>小组公告: &nbsp;&nbsp;<%if(auth){%><a class="group-desc-edit">编辑</a><%}%></h6> 
 				<p>
@@ -15,7 +16,7 @@
 					<textarea><%-content%></textarea>
 				</p>
 			</div>		
-
+			<%}%>
 			<div class="group-board" id="groupBoard">
 
 

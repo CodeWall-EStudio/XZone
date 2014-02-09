@@ -22,20 +22,26 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	function crTit(obj){
 
 		var tpl = 'file.tit';
-		if(nowPrep){
+		var data = {
+			gid : nowGid,
+			gname : nowGinfo.name || '',
+			filetype : config.filetype,
+			key : nowKey,
+			fold : obj || 0
+		};		
+		if(nowPrep == 'my'){
 			tpl = 'prep.tit';
+		}else if(nowPrep == 'group'){
+			tpl = 'prep.group.tit'
+			data.group = nowGinfo;
+			data.tag = config.tag;
+			data.grade = config.grade;
 		}
 
 		var view = new View({
 			target : titTarget,
 			tplid : tpl,
-			data : {
-				gid : nowGid,
-				gname : nowGinfo.name || '',
-				filetype : config.filetype,
-				key : nowKey,
-				fold : obj || 0
-			}
+			data : data
 		});
 		view.createPanel();
 	}

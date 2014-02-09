@@ -1,4 +1,4 @@
-define(['config','cache','helper/view','model.group'],function(config,Cache,View){
+define(['config','cache','helper/view','model.group','view.groupprep'],function(config,Cache,View){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
@@ -84,18 +84,25 @@ define(['config','cache','helper/view','model.group'],function(config,Cache,View
 			case 2:
 				groupAsideTarget.show();
 				groupAside();
-				handerObj.triggerHandler('group:board',{
-					groupId : nowGid,
-					pageNum : 10,
-					page : 0,
-					type : 1
-				});
+				if(!d.pt){
+					handerObj.triggerHandler('group:board',{
+						groupId : nowGid,
+						pageNum : 10,
+						page : 0,
+						type : 1
+					});
+				}
 				break;
 			case 3:
 				break;
 		}
-        handerObj.triggerHandler('file:init',data);
-        handerObj.triggerHandler('fold:init',data); 
+		if(d.pt){
+			data.prep = 'group';
+			handerObj.triggerHandler('groupprep:init',data);
+		}else{
+	        handerObj.triggerHandler('file:init',data);
+	        handerObj.triggerHandler('fold:init',data); 
+    	}
 	}
 
 	function newBoard(){

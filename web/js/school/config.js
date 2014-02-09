@@ -1,6 +1,6 @@
 define(function() {
 	var CGI_PATH = '/api/',
-		EXT = ''//,'.php';
+		EXT = '',// '.php';
 
 	return {
 		pagenum : 10,
@@ -15,10 +15,10 @@ define(function() {
 		},
 		cgi : {
 			//个人资料
-			getinfo : CGI_PATH+'user/'+EXT,
+			getinfo : CGI_PATH+'user/',
 			info : CGI_PATH+'user/login'+EXT,
 			gotologin : CGI_PATH+'user/gotoLogin'+EXT,
-			login : CGI_PATH+'user/gotoLogin'+EXT,
+			//login : CGI_PATH+'user/gotoLogin'+EXT,
 			varify : CGI_PATH+'user/verify'+EXT,
 			logout : CGI_PATH+'user/logoff'+EXT,
 			userlist : CGI_PATH+'user/list'+EXT,
@@ -71,10 +71,32 @@ define(function() {
 			boardcreate : CGI_PATH+'board/create'+EXT,
 			boardlist : CGI_PATH+'board/list'+EXT,
 			boarddel : CGI_PATH+'board/delete'+EXT,
-			boardverify : CGI_PATH+'board/verify'+EXT
+			boardverify : CGI_PATH+'board/verify'+EXT,
+
+			//管理相关
+			mlistgroup : CGI_PATH+'/manage/listGroups'+EXT,
+			mappgroup :　CGI_PATH+'/manage/approveGroup'+EXT,
+			mpreplist : CGI_PATH+'/manage/listPrepares'+EXT,
 
 		},
+		grade : {
+			1 : '一年级',
+			2 : '二年级',
+			3 : '三年级',
+			4 : '四年级',
+			5 : '五年级',
+			6 : '六年级',						
+		},
+		tag : {
+			1 : '语文',
+			2 : '数学',
+			3 : '英语',
+			4 : '体育',
+			5 : '音乐',
+			6 : '自然'
+		},
 		msg : {
+			77 : '参数不能为空',
 			100000 : '您还没有登录!',
 			100001 : '您没有访问该资源的权限'
 		}

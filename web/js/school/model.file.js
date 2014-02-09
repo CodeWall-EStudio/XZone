@@ -7,7 +7,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			var item = data[i];
 			var td = {
 				id : item._id,
-				fid : item.fid,
+				fid : item.resource,
 				name : item.name,
 				mark : item.mark,
 				type : item.type,
@@ -278,7 +278,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		'file:shareto' : fileShare,
 		'file:modify' : fileModify,
 		'file:delfiles' : delFile,
-		'file:serach' : searchFile,
+		'file:search' : searchFile,
 		'file:coll' : coll,
 		'file:uncoll' : unColl,
 		'file:edit' : editmark

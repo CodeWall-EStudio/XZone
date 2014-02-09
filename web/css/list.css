@@ -453,3 +453,7 @@ td{
 	padding:6px 0 12px 0;
 	font-size:16px;
 }
+.group-member-list{
+	height:170px;
+	overflow-y:auto;
+}

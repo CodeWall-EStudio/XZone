@@ -68,6 +68,12 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var fdid = d.fdid,
 			gid = d.gid;
 
+		var data = {
+			fdid : fdid
+		}
+		if(gid){
+			data.gid = gid;
+		}
 		var opt = {
 			cgi : config.cgi.foldinfo,
 			data : {

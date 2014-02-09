@@ -1,0 +1,112 @@
+<div class="fold-list-link">
+        <a href="/group/prep" style="float:left">备课检查</a>&nbsp;
+        <?if($prid):?>
+          <a href="javascript:history.go(-1)">返回上一页</a>
+        <?endif?>&nbsp;
+        <?if($fdid):?>
+          <a href="/group/prep?prid=<?=$prid?>&gr=<?=$gr?>&tag=<?=$tag?>&fdid=<?=$parent['id']?>&ud=<?=$ud?>"><?=htmlspecialchars($parent['name'])?></a>
+        <?endif?>
+</div> 
+
+        <ul class="act-zone">
+          <li class="all-file file-type dropdown" id="changeFileType">
+            <a id="drop-type" "button" data-toggle="dropdown" >
+              所有
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+              <%
+                for(var i in tag){
+                  var item = tag[i];
+              %>
+                <li><a href="#<%if(gid){%>groupid=<%+gid%>&<%}%><%if(fold){%>fdid=<%+fold.id%>&<%}%>type=<%+i%>"><%-item%></a></li>
+              <%}%>
+            </ul>
+          </li>
+        </ul> 
+
+        <ul class="act-zone">
+          <li class="all-file file-type dropdown" id="changeFileType">
+            <a id="drop-type" "button" data-toggle="dropdown" >
+              所有
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+              <%
+                for(var i in tag){
+                  var item = tag[i];
+              %>
+                <li><a href="#<%if(gid){%>groupid=<%+gid%>&<%}%><%if(fold){%>fdid=<%+fold.id%>&<%}%>type=<%+i%>"><%-item%></a></li>
+              <%}%>
+            </ul>
+          </li>
+        </ul> 
+
+        <ul class="act-zone">
+          <li class="all-file file-type dropdown" id="changeFileType">
+            <a id="drop-type" "button" data-toggle="dropdown" >
+              所有
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+              <%
+                for(var i in tag){
+                  var item = tag[i];
+              %>
+                <li><a href="#<%if(gid){%>groupid=<%+gid%>&<%}%><%if(fold){%>fdid=<%+fold.id%>&<%}%>type=<%+i%>"><%-item%></a></li>
+              <%}%>
+            </ul>
+          </li>
+        </ul> 
+
+        <ul class="act-zone">
+          <li class="all-file file-type dropdown" id="changeFileType">
+            <a id="drop-type" "button" data-toggle="dropdown" >
+              所有
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+              <%
+                for(var i in tag){
+                  var item = tag[i];
+              %>
+                <li><a href="#<%if(gid){%>groupid=<%+gid%>&<%}%><%if(fold){%>fdid=<%+fold.id%>&<%}%>type=<%+i%>"><%-item%></a></li>
+              <%}%>
+            </ul>
+          </li>
+        </ul>  
+     
+        <div style="float:right">
+          <select id="prepName">
+            <?foreach($plist as $row):?>
+              <?if($row['parent']==0):?>
+              <option value="<?=$row['id']?>" <?if(isset($row['selected'])):?>selected<?endif?>><?=$row['name']?></option>
+              <?endif?>
+            <?endforeach?>
+          </select>
+
+          <select id="gradeList">
+            <option value="0">所有</option>
+            <option value="1" <?if($gr==1):?>selected<?endif?>>一年级</option>
+            <option value="2" <?if($gr==2):?>selected<?endif?>>二年级</option>
+            <option value="3" <?if($gr==3):?>selected<?endif?>>三年级</option>
+            <option value="4" <?if($gr==4):?>selected<?endif?>>四年级</option>
+            <option value="5" <?if($gr==5):?>selected<?endif?>>五年级</option>
+            <option value="6" <?if($gr==6):?>selected<?endif?>>六年级</option>
+          </select>  
+          
+          <select id="typeList">
+            <option value="0">所有</option>
+            <option value="1" <?if($tag==1):?>selected<?endif?>>语文</option>
+            <option value="2" <?if($tag==2):?>selected<?endif?>>数学</option>
+            <option value="3" <?if($tag==3):?>selected<?endif?>>英语</option>
+            <option value="4" <?if($tag==4):?>selected<?endif?>>体育</option>
+            <option value="5" <?if($tag==5):?>selected<?endif?>>音乐</option>
+            <option value="6" <?if($tag==6):?>selected<?endif?>>自然</option>
+          </select> 
+
+          <?if(count($ulist)>0):?>
+          <select id="uList">
+            <option value="0">所有</option>
+            <?foreach($ulist as $row):?>
+            <option value="<?=$row['id']?>"  <?if($row['id']==$ud):?>selected<?endif?>><?=htmlspecialchars($row['nick'])?></option>
+            <?endforeach?>
+          </select>           
+          <?endif?>
+        </div>

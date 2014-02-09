@@ -1,0 +1,49 @@
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">创建新的小组</h4>
+				</div>
+				<div class="modal-body">
+					<div style="height:500px">
+	<table class="table" width="90%" align="center">
+		<tr>
+			<td width="100">小组名称:</td>
+			<td>
+				<input type="text" class="new-group-name" value="" style="width:400px;" />
+			</td>
+		</tr>
+		<tr>
+			<td width="100">小组简介:</td>
+			<td>
+				<textarea class="new-group-desc" style="width:400px;height:120px;"></textarea>
+			</td>
+		</tr>	
+		<tr>
+			<td width="100">成员管理:</td>
+			<td>
+				<div class="share-act-zone">
+					<p><input type="text" value="搜索用户" data-def="搜索用户" class="act-search-input" /><i class="act-search-btn"></i></p>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+					用户列表
+					<ul id="searchResult" class="group-member-list">
+						<%
+							for(var i = 0,l=list.length;i<l;i++){
+								var item = list[i];
+						%>
+							<li class="tag<%+item.id%>"><input type="checkbox" value="<%-item.id%>" /> <%-item.nick%></li>
+						<%}%>
+					</ul>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-post"  data-dismiss="modal">确定</button>				
+			</td>
+		</tr>
+	</tabel>
+					</div>
+				</div>				

@@ -3,7 +3,6 @@ define(['config','helper/request','cache'],function(config,request,cache){
 	var	handerObj = $(Schhandler);
 
 	function convent(data){
-		console.log(data);
 		var o = {};
 		o.nick = data.user.nick;
 		o.name = data.user.name;
@@ -11,7 +10,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 		o.used = data.user.used;
 		o.auth = data.user.auth;
 		o.mailnum = data.user.mailnum;
-		o.pre = data.user.pre;
+		o.pre = data.user.used/data.user.size;
 		o.group = [];
 		o.dep = [];
 		o.prep = [];
@@ -26,6 +25,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 			item.id = item._id;
 			item.rootFolder.id = item.rootFolder._id;
 			o.group2key[item.id] = item;
+			item.pt = item.pt || 0;
 			switch(item.type){
 				case 0: //学校
 					o.school = 1;
@@ -47,7 +47,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 		return o;
 	}
 
-	function init(){
+	function init(e,d){
 
 		var opt = {
 			cgi : config.cgi.getinfo,
@@ -65,7 +65,8 @@ define(['config','helper/request','cache'],function(config,request,cache){
 	}
 
 	var handlers = {
-		'nav:init' : init
+		'nav:init' : init,
+
 	}
 
 	for(var i in handlers){

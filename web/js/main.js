@@ -11,9 +11,10 @@
 
     var handerObj = $(Schhandler);
 
-    console.log(util.getCookie('skey'));
+    
     if(!util.getCookie('skey')){
-      //window.location = config.cgi.gotologin;
+      window.location = config.cgi.gotologin;
+      return;
     }
 
     nav.init(); 

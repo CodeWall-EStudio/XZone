@@ -79,6 +79,21 @@ define(['helper/util','helper/templateManager'],function($u,$tm){
 
 			this.after.call(this);
 		},
+		beforePanel : function(){
+			this.before.call(this);
+
+			var opts = {
+				html : $u.encodeHTML,
+				attr : $u.encodeAttr
+			};
+			if(this.data){
+				$.extend(this.data,opts);
+				beforePanel(this.target,this.tplid,this.data);
+				bindHandlers(this.target,this.handlers, this.events);
+			}
+
+			this.after.call(this);
+		},
 		getHtml : function(){
 			return getHtml(this.tplid,this.data);
 		}
@@ -183,6 +198,12 @@ define(['helper/util','helper/templateManager'],function($u,$tm){
 		var html = $u.template(template,data);	
 		return target.prepend(html);	
 	}
+
+	function beforePanel(target,tplid,data){
+		var template = $tm.get(tplid);
+		var html = $u.template(template,data);	
+		return target.before(html);	
+	}	
 
 	function getHtml(tplid,data){
 		var template = $tm.get(tplid);

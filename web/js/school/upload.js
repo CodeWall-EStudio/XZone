@@ -42,25 +42,6 @@ define(['config'],function(config){
         dragdrop: true,
 
         file_data_name: 'file',
-        /*
-         filters : {
-         // Maximum file size
-         max_file_size : '500mb',
-         // Specify what files to browse for
-         mime_types: [
-         {title : "图片", extensions : "jpg,gif,png"},
-         {title : "文档", extensions : "doc,txt"},
-         {title : "音乐", extensions : "mid,mp3"},
-         {title : "视频", extensions : "avi,mp4"},
-         {title : "应用", extensions : "exe"},
-         {title : "压缩文件", extensions : "zip"}
-         // {title : "文本", extensions : "txt"},
-         ]
-         },
-         */
-
-        // Resize images on clientside if we can
-        //resize : {width : 320, height : 240, quality : 90},
 
         flash_swf_url : '../../js/lib/moxie.swf',
         silverlight_xap_url : '../../js/lib/moxie.xap'
@@ -72,7 +53,7 @@ define(['config'],function(config){
 
     $("#uploader").pluploadQueue(upload_settings).bind('allcomplete',function(){
     	if($('.plupload_failed').length == 0){
-    		window.location.reload();	
+    		//window.location.reload();	
     	}
 		//
 	});
