@@ -37,11 +37,16 @@ exports.create = function(params, callback){
         if(err){
             return callback(err);
         }
-        result = result[0];
+        var file = result[0];
         db.folder.findAndModify({ _id: ObjectID(folderId) }, [], 
                 { $set: { hasChild: true } }, { 'new':true }, function(err, newFolder){
 
-            callback(null, result);
+            // 将 resource 的引用计数加一
+            db.resource.findAndModify({ _id: file.resource.oid }, [], 
+                    { $inc: { ref: -1 } }, function(err, newRes){
+                        callback(null, file);
+                    });
+
         });
     });
 }
@@ -60,7 +65,7 @@ exports.delete = function(fileId, callback){
     db.file.findAndRemove({ _id: new ObjectID(fileId)}, [], function(err, file){
 
         if(!err){ // 将 resource 的引用计数减一
-            db.resource.findAndModify({ _id: ObjectID(file.resource) }, [], 
+            db.resource.findAndModify({ _id: file.resource.oid }, [], 
                     { $inc: { ref: -1 } }, callback);
         }else{
             callback(err);

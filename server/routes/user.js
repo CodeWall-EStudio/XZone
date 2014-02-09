@@ -156,8 +156,6 @@ exports.login = function(req, res){
 exports.loginSuccess = function(req, res, next){
     req.redirectUrl = '/';
 
-    console.log('loginSuccess', 'validate');
-
     exports.login(req, res, next);
 
 }
