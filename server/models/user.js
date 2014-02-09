@@ -5,6 +5,35 @@ var ERR = require('../errorcode');
 var mGroup = require('../models/group');
 var mFolder = require('../models/folder');
 
+exports.create = function(params, callback){
+    var user = {
+        nick: params.nick || '',
+        name: params.name || '',
+        auth: 0,
+        size: params.spaceSize || 0,
+        used: 0,
+        mailnum: 0,
+        lastGroup: null
+    }
+    db.user.save(user, function(err, result){
+        if(err){
+            return callback(err);
+        }
+        mFolder.create({
+            creator: user._id.toString(),
+            name: 'root folder'
+        }, function(err, folder){
+            if(err){
+                return callback(err);
+            }
+            user.rootFolder = DBRef('folder', folder._id.toString());
+            db.user.save(user, function(err, result){
+                callback(err, user);
+            });
+        });
+    });
+}
+
 exports.getUserById = function(id, callback){
 
     db.user.findOne({ _id: new ObjectID(id)}, callback);
@@ -35,31 +64,18 @@ exports.getUserInfoByName = function(name, callback){
     });
 }
 
-exports.create = function(params, callback){
-    var user = {
-        nick: params.nick || '',
-        name: params.name || '',
-        auth: 0,
-        size: params.spaceSize || 0,
-        used: 0,
-        mailnum: 0,
-        lastGroup: null
-    }
-    db.user.save(user, function(err, result){
-        if(err){
-            return callback(err);
-        }
-        mFolder.create({
-            creator: user._id.toString(),
-            name: 'root folder'
-        }, function(err, folder){
-            if(err){
-                return callback(err);
-            }
-            user.rootFolder = DBRef('folder', folder._id.toString());
-            db.user.save(user, function(err, result){
-                callback(err, user);
-            });
-        });
-    });
+
+exports.search = function(params, callback){
+    var keyword = params.keyword || '';
+
+    var extendQuery = params.extendQuery || {};
+
+    var query = { 
+        nick: new RegExp('.*' + keyword + '.*')
+    };
+
+    query = us.extend(query, extendQuery);
+
+    db.search('user', query, params, callback);
+
 }

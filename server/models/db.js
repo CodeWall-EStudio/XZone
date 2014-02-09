@@ -91,6 +91,35 @@ exports.dereferences = function(docs, keys, callback){
     });
 }
 
+exports.search = function(collectionName, query, options, callback){
+    var order = options.order || null;
+    var page = Number(options.page) || 1;
+    var pageNum = Number(options.pageNum) || 0;
+    var skipNum = pageNum * (page - 1);
+
+    db.getCollection(collectionName, function(err, collection){
+        
+        var cursor = collection.find(query);
+        var ep = EventProxy.create('total', 'result', function(total, list){
+            callback(null, total || 0, list);
+        });
+        ep.fail(callback);
+
+        cursor.count(ep.done('total'));
+
+        if(order){
+            cursor.sort(order);
+        }
+        if(skipNum){
+            cursor.skip(skipNum);
+        }
+        if(pageNum){
+            cursor.limit(pageNum);
+        }
+        cursor.toArray(ep.done('result'));
+    });
+}
+
 exports.batchAddMethod = function(context, collectionName, methods){
     context = context[collectionName] = {};
     methods.forEach(function(method){

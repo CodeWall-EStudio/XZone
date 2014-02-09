@@ -140,37 +140,14 @@ exports.getGroup = function(groupId, callback){
 
 
 exports.search = function(params, callback){
-
-
-    var order = params.order || [];
-    var page = Number(params.page) || 1;
-    var pageNum = Number(params.pageNum) || 0;
-    var skipNum = pageNum * (page - 1);
-
     var extendQuery = params.extendQuery || {};
 
-    db.getCollection('group', function(err, collection){
-        var query = { };
+    var query = { };
 
-        query = us.extend(query, extendQuery);
+    query = us.extend(query, extendQuery);  
 
-        var cursor = collection.find(query);
-        var proxy = EventProxy.create('total', 'result', function(total, result){
-            callback(null, total || 0, result);
-        });
-        proxy.fail(callback);
+    db.search('group', query, params, callback);
 
-        cursor.count(proxy.done('total'));
-        cursor.sort(order);
-        if(skipNum){
-            cursor.skip(skipNum);
-        }
-        if(pageNum){
-            cursor.limit(pageNum);
-        }
-        cursor.toArray(proxy.done('result'));
-
-    });
 }
 
 

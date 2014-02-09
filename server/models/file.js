@@ -114,42 +114,20 @@ exports.search = function(params, callback){
     var keyword = params.keyword || '';
     var type = Number(params.type) || 0; // FIXME 按类型分类未实现
 
-    var order = params.order || [];
-    var page = Number(params.page) || 1;
-    var pageNum = Number(params.pageNum) || 0;
-    var skipNum = pageNum * (page - 1);
-
     var extendQuery = params.extendQuery || {};
 
-    db.getCollection('file', function(err, collection){
-        var query = { 
-            name: new RegExp('.*' + keyword + '.*'),
-            del: false
-        };
-        if(folderId){
-            query['folder.$id'] = ObjectID(folderId);
-        }
-        if(userId){
-            query['user.$id'] = ObjectID(userId);
-        }
-        query = us.extend(query, extendQuery);
+    var query = { 
+        name: new RegExp('.*' + keyword + '.*'),
+        del: false
+    };
+    if(folderId){
+        query['folder.$id'] = ObjectID(folderId);
+    }
+    if(userId){
+        query['user.$id'] = ObjectID(userId);
+    }
+    query = us.extend(query, extendQuery);
 
-        var cursor = collection.find(query);
-        var proxy = EventProxy.create('total', 'result', function(total, result){
-            callback(null, total || 0, result);
-        });
-        proxy.fail(callback);
-
-        cursor.count(proxy.done('total'));
-        cursor.sort(order);
-        if(skipNum){
-            cursor.skip(skipNum);
-        }
-        if(pageNum){
-            cursor.limit(pageNum);
-        }
-        cursor.toArray(proxy.done('result'));
-
-    });
+    db.search('file', query, params, callback);
 }
 

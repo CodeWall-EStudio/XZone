@@ -32,48 +32,31 @@ exports.search = function(params, callback){
     var userId = params.uid || null;
     var keyword = params.keyword || '';
 
-    var order = params.order || [];
-    var page = Number(params.page) || 1;
-    var pageNum = Number(params.pageNum) || 0;
-    var skipNum = pageNum * (page - 1);
+    var query = { 
+        name: new RegExp('.*' + keyword + '.*'),
+        $or: [
+            { 'parent.$id': new ObjectID(folderId) },
+            { idpath: new RegExp('.*' + folderId + '.*') }
+        ]
+    };
+    if(userId){
+        query['user.$id'] = ObjectID(userId);
+    }
 
-    db.getCollection('folder', function(err, collection){
-        var query = { 
-            name: new RegExp('.*' + keyword + '.*'),
-            $or: [
-                { 'parent.$id': new ObjectID(folderId) },
-                { idpath: new RegExp('.*' + folderId + '.*') }
-            ]
-        };
-        if(userId){
-            query['user.$id'] = ObjectID(userId);
+    db.search('folder', query, params, function(err, total, result){
+        if(err){
+            callback(err);
+        }else if(total && result){
+            db.dereferences(result, {'creator': ['_id', 'nick']}, function(err, result){
+                if(err){
+                    callback(err)
+                }else{
+                    callback(null, total || 0, result);
+                }
+            });
+        }else{
+            callback(null, total || 0, result);
         }
-        var cursor = collection.find(query);
-        var proxy = EventProxy.create('total', 'result', function(total, result){
-            if(total && result){
-                db.dereferences(result, {'creator': ['_id', 'nick']}, function(err, result){
-                    if(err){
-                        callback(err)
-                    }else{
-                        callback(null, total || 0, result);
-                    }
-                });
-            }else{
-                callback(null, total || 0, result);
-            }
-        });
-        proxy.fail(callback);
-
-        cursor.count(proxy.done('total'));
-        cursor.sort(order);
-        if(skipNum){
-            cursor.skip(skipNum);
-        }
-        if(pageNum){
-            cursor.limit(pageNum);
-        }
-        cursor.toArray(proxy.done('result'));
-
     });
 }
 
@@ -164,8 +147,6 @@ exports.create = function(params, callback){
 exports.delete = function(params, callback){
     var groupId = params.groupId;
     var folderId = params.folderId;
-
-
 
     db.folder.findAndRemove({ _id: new ObjectID(folderId)}, [], function(err, folder){
         if(err){

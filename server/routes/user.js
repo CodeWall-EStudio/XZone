@@ -165,5 +165,19 @@ exports.logoff = function(req, res){
 }
 
 exports.search = function(req, res){
-    //TODO
+    var params = req.query;
+
+    mUser.search(params, function(err, total, docs){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else{
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    total: total,
+                    list: docs
+                }
+            });
+        }
+    });
 }
