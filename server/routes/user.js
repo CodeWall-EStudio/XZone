@@ -89,16 +89,12 @@ exports.validate = function(ticket, callback){
 
                 mUser.save(user, loginProxy.done('saveUser'));
             }else{
-                user = {
+                mUser.create({
                     nick: nick,
                     name: name,
-                    auth: 0,
+                    auth: 0, // 15 是管理员
                     size: config.DEFAULT_USER_SPACE,
-                    used: 0,
-                    mailnum: 0,
-                    lastGroup: null
-                }
-                mUser.create(user, loginProxy.done('saveUser'));
+                }, loginProxy.done('saveUser'));
             }
         });
     }); // end userInfoProxy

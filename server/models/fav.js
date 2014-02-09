@@ -11,6 +11,7 @@ exports.create = function(params, callback){
     var doc = {
         user: DBRef('user', ObjectID(params.creator)),
         resource: DBRef('resource', ObjectID(params.resourceId)),
+        name: params.name || '',
         remark: params.remark || '',
         createTime: Date.now(),
         type: 0

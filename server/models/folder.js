@@ -15,7 +15,13 @@ exports.list = function(params, callback){
 
     var query = { 'parent.$id': ObjectID(folderId)};
 
-    db.folder.find(query, { sort: order}, callback);
+    db.folder.find(query, { sort: order}, function(err, docs){
+        if(err){
+            callback(err)
+        }else{
+            db.dereferences(docs, {'creator': ['_id', 'nick']}, callback);
+        }
+    });
 
 }
 
@@ -44,7 +50,17 @@ exports.search = function(params, callback){
         }
         var cursor = collection.find(query);
         var proxy = EventProxy.create('total', 'result', function(total, result){
-            callback(null, total || 0, result);
+            if(total && result){
+                db.dereferences(result, {'creator': ['_id', 'nick']}, function(err, result){
+                    if(err){
+                        callback(err)
+                    }else{
+                        callback(null, total || 0, result);
+                    }
+                });
+            }else{
+                callback(null, total || 0, result);
+            }
         });
         proxy.fail(callback);
 

@@ -48,21 +48,42 @@ exports.dereference = function(doc, keys, callback){
             });
             proxy.fail(callback);
 
-            keys.forEach(function(key){
+            for(var key in keys){
                 if(doc[key]){
                     db.dereference(doc[key], proxy.group('deref', 
-                    (function(key){
+                    (function(key, keepProps){
                         return function(data){
-                            doc[key] = data;
+                            if(keepProps){
+                                doc[key] = {};
+                                keepProps.forEach(function(prop){
+                                    doc[key][prop] = data[prop];
+                                });
+                            }else{
+                                doc[key] = data;
+                            }
                             return null;
                         }
-                    })(key)
+                    })(key, keys[key])
                     ));
                 }else{
                     proxy.group('deref')(null);
                 }
-            });
+            };
         }
+    });
+}
+
+exports.dereferences = function(docs, keys callback){
+    var ep = new EventProxy();
+
+    ep.after('deref', docs.length, function(list){
+        callback(null, docs);
+    });
+
+    ep.fail(callback);
+
+    docs.forEach(function(doc){
+        exports.dereference(doc, keys, ep.group('deref'));
     });
 }
 

@@ -11,7 +11,7 @@ function dereferenceGroup(groupId, ext, callback){
             return callback(err);
         }
         if(doc){
-            db.dereference(doc, ['creator', 'parent', 'rootFolder'], function(err, result){
+            db.dereference(doc, { 'creator': null, 'parent': null, 'rootFolder': null }, function(err, result){
                 doc.auth = ext.auth;
                 callback(err, doc);
             });
@@ -68,7 +68,17 @@ exports.create = function(params, callback){
     }
 
     db.group.save(doc, function(err, result){
+        callback(err, doc);
         
+    });
+}
+
+exports.createGroupRootFolder = function(groupId, callback){
+    db.group.findOne({ _id: ObjectID(groupId) }, function(err, doc){
+
+        if(err){
+            return callback('group "' + groupId + '" is not exist');
+        }
         mFolder.create({ groupId: doc._id.toString() }, function(err, folder){
             if(err){
                 callback('create group root folder error');
@@ -81,3 +91,19 @@ exports.create = function(params, callback){
         });
     });
 }
+
+exports.modify = function(groupId, doc, callback){
+
+    doc.updatetime = Date.now();
+
+    db.group.findAndModify({ _id: new ObjectID(groupId) }, [], { $set: doc }, 
+            { 'new':true }, callback);
+
+}
+
+exports.getGroup = function(groupId, callback){
+
+    db.group.findOne({ _id: new ObjectID(groupId) }, callback);
+
+}
+

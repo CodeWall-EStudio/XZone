@@ -35,7 +35,16 @@ exports.getUserInfoByName = function(name, callback){
     });
 }
 
-exports.create = function(user, callback){
+exports.create = function(params, callback){
+    var user = {
+        nick: params.nick || '',
+        name: params.name || '',
+        auth: 0,
+        size: params.spaceSize || 0,
+        used: 0,
+        mailnum: 0,
+        lastGroup: null
+    }
     db.user.save(user, function(err, result){
         if(err){
             return callback(err);
