@@ -12,7 +12,7 @@ exports.listGroups = function(req, res){
 
     if(params.status  === 1){
         params.extendQuery = {
-            status: true
+            status: 1
         };
     }
 
@@ -33,8 +33,9 @@ exports.approveGroup = function(req, res){
     var params = req.query;
     var loginUser = req.loginUser;
     var doc = {
+        status: 0,
         validateText: params.validateText || '',//审核评语
-        validateStatus: Number(params.validateStatus) || 0, //0 通过 1 不通过
+        validateStatus: Number(params.validateStatus) || 0, //0 不通过 1 通过
         validateTime: Date.now(),//审核时间
         validator: DBRef('user', ObjectID(loginUser._id))
     };
@@ -117,4 +118,22 @@ exports.listPrepares = function(req, res){
         }
     });
 }
+
+// exports.searchFiles = function(req, res){
+//     var params = req.query;
+
+//     mFile.search(params, function(err, total, docs){
+//         if(err){
+//             res.json({ err: ERR.SERVER_ERROR, msg: err});
+//         }else{
+//             res.json({
+//                 err: ERR.SUCCESS,
+//                 result: {
+//                     total: total,
+//                     list: docs
+//                 }
+//             });
+//         }
+//     });
+// }
 

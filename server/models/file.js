@@ -7,6 +7,7 @@ var us = require('underscore');
 var db = require('./db');
 var ERR = require('../errorcode');
 var U = require('../util');
+var mRes = require('./resource');
 
 
 exports.create = function(params, callback){
@@ -23,10 +24,11 @@ exports.create = function(params, callback){
         content: params.content || '', // 文件说明
         mark: params.mark || '', // 文件评论
         del: false,//是否删除
+        
         status: params.status || 0, // 0 上传 1 分享
 
         validateText: null,//审核评语
-        validateStatus: null, //0 通过 1 不通过
+        validateStatus: null, //0 不通过 1 通过
         validateTime: null,//审核时间
         validator: null
     };
@@ -44,10 +46,9 @@ exports.create = function(params, callback){
                 { $set: { hasChild: true } }, { 'new':true }, function(err, newFolder){
 
             // 将 resource 的引用计数加一
-            db.resource.findAndModify({ _id: file.resource.oid }, [], 
-                    { $inc: { ref: -1 } }, function(err, newRes){
-                        callback(null, file);
-                    });
+            mRes.updateRef(file.resource.oid, 1, function(err, newRes){
+                callback(null, file);
+            });
 
         });
     });
@@ -67,8 +68,11 @@ exports.delete = function(fileId, callback){
     db.file.findAndRemove({ _id: new ObjectID(fileId)}, [], function(err, file){
 
         if(!err){ // 将 resource 的引用计数减一
-            db.resource.findAndModify({ _id: file.resource.oid }, [], 
-                    { $inc: { ref: -1 } }, callback);
+            
+            mRes.updateRef(file.resource.oid, -1, function(err, newRes){
+                callback(null, file);
+            });
+
         }else{
             callback(err);
         }
@@ -112,6 +116,7 @@ exports.getFile = function(fileId, callback){
 exports.search = function(params, callback){
     var folderId = params.folderId;
     var groupId = params.groupId || null;
+    // TODO 普通用户不允许搜uid
     var userId = params.uid || null;
     var keyword = params.keyword || '';
     var type = Number(params.type) || 0; // FIXME 按类型分类未实现

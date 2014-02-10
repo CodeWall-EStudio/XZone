@@ -7,19 +7,20 @@ var db = require('./db');
 var mFolder = require('./folder');
 
 exports.create = function(params, callback){
+    // TODO 管理员添加的不用审核的
     var doc = {
         name: params.name,
         content: params.content || '',
         type: Number(params.type) || 0,
         parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
         creator: DBRef('user', ObjectID(params.creator)),
-        status: true, // 标示新申请的
+        status: 1, // 标示小组审核状态 1 审核中 0 已审核
         pt: params.pt || null,
         tag: params.tag || null,
         grade: params.grade || null,
 
         validateText: null,//审核评语
-        validateStatus: null, //0 通过 1 不通过
+        validateStatus: null, //0 不通过 1 通过
         validateTime: null,//审核时间
         validator: null
     }
