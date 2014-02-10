@@ -12,6 +12,16 @@ define(['config','helper/request','cache'],function(config,request,cache){
 		return list;
 	}
 
+	function conventUid2key(data){
+		var list = {};
+		for(var i =0,l=data.length;i<l;i++){
+			var item = data[i];
+			item.id = item._id;
+			list[item.id] = item;
+		}
+		handerObj.triggerHandler('cache:set',{key: 'alluser2key',data: list});
+	}
+
 	function conventGroup(data){
 		data.id = data.id;
 		return data;
@@ -22,7 +32,11 @@ define(['config','helper/request','cache'],function(config,request,cache){
 			data = d.data;
 		var ul = cache.get('alluser');
 		if(ul){
-			handerObj.triggerHandler('nav:userload',{list:obj,type:type,data:data});
+			if(type != 'prep'){
+				handerObj.triggerHandler('nav:userload',{list:ul,type:type,data:data});
+			}else{
+				handerObj.triggerHandler('groupprep:userload',{list:ul,type:type,data:data});
+			}
 			return;
 		}
 
@@ -34,8 +48,13 @@ define(['config','helper/request','cache'],function(config,request,cache){
 		var success = function(d){
 			if(d.err == 0){
 				var obj = convent(d.result.list);
+				conventUid2key(d.result.list);
 				handerObj.triggerHandler('cache:set',{key: 'alluser',data: obj});
-				handerObj.triggerHandler('nav:userload',{list:obj,type:type,data:data});
+				if(type != 'prep'){
+					handerObj.triggerHandler('nav:userload',{list:obj,type:type,data:data});
+				}else{
+					handerObj.triggerHandler('groupprep:userload');
+				}
 			}
 		}
 		request.get(opt,success);		

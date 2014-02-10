@@ -457,3 +457,16 @@ td{
 	height:170px;
 	overflow-y:auto;
 }
+.prep-list{
+	position:absolute;
+	top:0;
+	right:0;
+}
+.section-tit .prep-list ul.act-zone{
+	position:static;
+	float:left;
+}
+
+.section-tit .prep-list .section-tit-menu1{
+	min-width:220px;
+}

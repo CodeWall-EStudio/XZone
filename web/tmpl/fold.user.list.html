@@ -6,14 +6,14 @@
 			<td width="30"><input type="checkbox" name="file" class="fdclick liclick" value="<%+item.id%>" data-type="fold" /></td>
 			<td>
 				<%if(gid){%>
-				<a href="#groupid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold"></i></a>
+				<a href="#gid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold"></i></a>
 				<%}else{%>
 				<a href="#fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold"></i></a>
 				<%}%>
 				<dl>
 					<dt>
 						<%if(gid){%>
-							<a class="fdname<%+item.id%>" href="#groupid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
+							<a class="fdname<%+item.id%>" href="#gid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
 						<%}else{%>
 							<a class="fdname<%+item.id%>" href="#fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
 						<%}%>							

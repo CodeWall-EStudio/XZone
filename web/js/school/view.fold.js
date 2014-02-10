@@ -29,13 +29,11 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			key : nowKey,
 			fold : obj || 0
 		};		
+		console.log(nowPrep);
 		if(nowPrep == 'my'){
 			tpl = 'prep.tit';
 		}else if(nowPrep == 'group'){
-			tpl = 'prep.group.tit'
-			data.group = nowGinfo;
-			data.tag = config.tag;
-			data.grade = config.grade;
+			return;
 		}
 
 		var view = new View({

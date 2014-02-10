@@ -33,8 +33,9 @@
         'mycoll=:id' : 'coll',
         'myshare' : 'share',
         'myrecy=:id' : 'recy',
-        "groupid=:id" : 'group',
-        "groupid=:id&fdid=:fdid" : 'group',
+        "gid=:id" : 'group',
+        'groupprep=:id' : 'groupprep',
+        "gid=:id&fdid=:fdid" : 'group',
         "myprep=:1" : 'myPrep', //备课
         "my" : 'myFile',     //个人文件
         "key=:id" : 'myFile',     //个人文件
@@ -121,7 +122,7 @@
         starget.hide();
         mtarget.hide(); 
 
-        var gid = data.groupid,
+        var gid = data.gid,
             fdid = data.fdid || 0;
         var od = data.od || 0,
             on = data.on || 0,
@@ -167,13 +168,45 @@
         handerObj.triggerHandler('my:init',d);
         handerObj.triggerHandler('model:change','file');     
       },
+      groupprep : function(data){
+        ftarget.show();
+        starget.hide();
+        mtarget.hide(); 
+        var fdid = data.fdid || 0,
+            gid = data.gid || 0,
+            pid = data.pid || 0,
+            grade = data.grade || 0,
+            tag = data.tag || 0,
+            od = data.od || 0,
+            on = data.on || 0,
+            key = data.key || 0;
+        var d = {
+          fdid : fdid,
+          gid : gid,
+          pid : pid,
+          tag : tag,
+          grade : grade
+        }
+        if(od){
+          d.order = {};
+          d.order[on] = od;
+        }
+        if(key){
+          d.key = key;
+        }        
+ 
+        handerObj.triggerHandler('groupprep:init',d);
+        //handerObj.triggerHandler('group:init',d);  
+        handerObj.triggerHandler('model:change','file');           
+      },
       myPrep : function(data){
 
         ftarget.show();
         starget.hide();
         mtarget.hide(); 
+
         var fdid = data.fdid || 0,
-            gid = data.groupId || 0,
+            gid = data.gid || 0,
             od = data.od || 0,
             on = data.on || 0,
             key = data.key || 0;
