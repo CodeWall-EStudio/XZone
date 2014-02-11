@@ -1,0 +1,10 @@
+<table width="100%"  class="table table-striped table-hover table-list table-files">
+	<%
+		for(var i in list){
+			var item = list[i];
+	%>
+		<tr>
+			<td><%-item.name%></td>
+		</tr>
+	<%}%>
+</table>

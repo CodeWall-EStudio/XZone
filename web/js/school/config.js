@@ -1,6 +1,6 @@
 define(function() {
 	var CGI_PATH = '/api/',
-		EXT = ''//'.php';
+		EXT = '.php';
 
 	return {
 		pagenum : 10,
@@ -74,9 +74,10 @@ define(function() {
 			boardverify : CGI_PATH+'board/verify'+EXT,
 
 			//管理相关
-			mlistgroup : CGI_PATH+'/manage/listGroups'+EXT,
-			mappgroup :　CGI_PATH+'/manage/approveGroup'+EXT,
-			mpreplist : CGI_PATH+'/manage/listPrepares'+EXT,
+			mlistgroup : CGI_PATH+'manage/listGroups'+EXT,
+			mappgroup :　CGI_PATH+'manage/approveGroup'+EXT,
+			mpreplist : CGI_PATH+'manage/listPrepares'+EXT,
+			mnewgroup : CGI_PATH+'manage/createGroup'+EXT
 
 		},
 		grade : {
