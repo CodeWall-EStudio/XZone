@@ -38,7 +38,6 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 	}
 
 	function crTit(){
-		console.log(nowGrade,nowTag,nowTag);
 		var view = new View({
 			target : stitTarget,
 			tplid : 'prep.group.tit',

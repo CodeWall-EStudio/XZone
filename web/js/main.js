@@ -141,7 +141,8 @@
 
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('group:init',d);  
-        handerObj.triggerHandler('model:change','file');     
+        handerObj.triggerHandler('model:change','file'); 
+        handerObj.triggerHandler('upload:param',d);    
       },
       myFile : function(data){
 
@@ -166,7 +167,8 @@
 
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('my:init',d);
-        handerObj.triggerHandler('model:change','file');     
+        handerObj.triggerHandler('model:change','file');  
+        handerObj.triggerHandler('upload:param',d);
       },
       groupprep : function(data){
         ftarget.show();

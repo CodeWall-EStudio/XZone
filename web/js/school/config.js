@@ -1,6 +1,6 @@
 define(function() {
 	var CGI_PATH = '/api/',
-		EXT = '',//'.php';
+		EXT = ''//'.php';
 
 	return {
 		pagenum : 10,
@@ -25,7 +25,7 @@ define(function() {
 			usearch : CGI_PATH+'user/search'+EXT,
 
 			//文件操作
-			upload : CGI_PATH+'file/upload'+EXT,
+			upload : '/upload'+EXT,
 			filelist : CGI_PATH+'file/list'+EXT,
 			filesearch : CGI_PATH+'file/search'+EXT,
 			filereview : CGI_PATH+'file'+EXT,

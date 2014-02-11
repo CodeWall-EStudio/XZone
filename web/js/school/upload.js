@@ -51,11 +51,29 @@ define(['config'],function(config){
     //     upload_settings.chunk_size = '1mb';
     // }
 
-    $("#uploader").pluploadQueue(upload_settings).bind('allcomplete',function(){
-    	if($('.plupload_failed').length == 0){
-    		//window.location.reload();	
+	//$.pluploadQueue.changeUrl('dddddd');
+
+    function paramChange(e,d){
+
+    	var url = config.cgi.upload+'?';
+    	if(d.gid){
+    		url += 'groupId='+d.gid+'&';
+    	}	
+    	if(d.fdid){
+    		url += 'folderId='+d.fdid;
     	}
-		//
-	});
+
+    	upload_settings.url = url;
+    	
+
+	    $("#uploader").pluploadQueue(upload_settings).bind('allcomplete',function(){
+	    	if($('.plupload_failed').length == 0){
+	    		//window.location.reload();	
+	    	}
+			//
+		});
+    }
+
+	handerObj.bind('upload:param',paramChange);
 	
 })

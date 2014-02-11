@@ -161,7 +161,12 @@ used as it is.
 					container : id
 				}, settings));
 
+
 				uploaders[id] = uploader;
+
+				// console.log(uploader);
+
+				//console.log(uploader.getOption('url'));
 
 				function handleStatus(file) {
 					var actionClass;
@@ -366,6 +371,10 @@ used as it is.
 				});
 
 				uploader.init();
+
+				uploader.bind('BeforeUpload',function(){
+					console.log(3333);
+				});
 
 				uploader.bind('StateChanged', function() {
 					if (uploader.state === plupload.STARTED) {
