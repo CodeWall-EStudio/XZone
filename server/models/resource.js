@@ -50,4 +50,3 @@ exports.updateRef = function(resId, value, callback){
     });
 }
 
-

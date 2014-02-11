@@ -1,18 +1,68 @@
+var fs = require('fs');
+var path = require('path');
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
+var EventProxy = require('eventproxy');
+
 var config = require('../config');
 var ERR = require('../errorcode');
-
 var mFile = require('../models/file');
-var mRes = require('../models/resource')
+var mRes = require('../models/resource');
+var U = require('../util');
 
 
 exports.upload = function(req, res){
     var params = req.query;
-    console.log(params);
-    var res = {}
+    var folderId = params.folderId;
+    var body = req.body;
+    var loginUser = req.loginUser;
 
-    res.send('ok');
+    //1. 先把文件保存到 data 目录
+    var dir = '/data/71xiaoxue/' + U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
+    var filePath = dir + body.file_md5 + path.extname(body.file_name);
+    var fileName = body.file_name;
+
+    var ep = new EventProxy();
+
+    ep.fail(function(err, code){
+        res.json({ err: code || ERR.SERVER_ERROR, msg: err });
+    });
+
+    ep.on('moveFile', function(){
+        // 添加 resource 记录
+        var resource = {
+            path: filePath,
+            md5: body.file_md5,
+            size: body.file_size,
+
+            mimes: body.file_content_type
+        }
+
+        mRes.create(resource, ep.done('saveRes'));
+
+    });
+
+    ep.on('saveRes', function(resource){
+        // 添加文件记录
+        var file = {
+            creator: loginUser._id,
+            folderId: folderId,
+            resourceId: resource._id.toString()
+        }
+        mFile.create(file, ep.done('createFile'));
+    });
+
+    ep.on('createFile', function(file){
+        rs.json({
+            err: ERR.SUCCESS,
+            result: {
+                data: file
+            }
+        })
+    });
+
+    U.moveFile(body.file_path, '../..' + filePath, ep.done('moveFile'));
+
 }
 
 exports.create = function(req, res){

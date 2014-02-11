@@ -10,8 +10,6 @@ exports.create = function(req, res){
 
     var loginUser = req.loginUser;
 
-    var params = req.query;
-    
     params.creator = loginUser._id;
     
     mMessage.create(params, function(err, doc){
