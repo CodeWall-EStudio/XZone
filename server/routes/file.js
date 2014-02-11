@@ -4,6 +4,16 @@ var config = require('../config');
 var ERR = require('../errorcode');
 
 var mFile = require('../models/file');
+var mRes = require('../models/resource')
+
+
+exports.upload = function(req, res){
+    var params = req.query;
+    console.log(params);
+    var res = {}
+
+    res.send('ok');
+}
 
 exports.create = function(req, res){
     var params = req.query;
