@@ -12,6 +12,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				for(var j =0,m=item.list.length;j<m;j++){
 					var obj = item.list[j];
 					obj.id = obj._id;
+					obj.pid = item.id;
 					tl.push(obj);
 					plist.push(obj);
 				}

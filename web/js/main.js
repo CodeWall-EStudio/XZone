@@ -23,6 +23,7 @@
 
     var ftarget = $('#fileList'),
         mtarget = $('#boxList'),
+        btarget = $('#btnZone'),
         starget = $('#shareBox');
 
 
@@ -43,7 +44,7 @@
         "fdid=:id" : 'myFile'
       },
       mailbox : function(data){
-
+        btarget.hide();
         ftarget.hide();
         starget.hide();
         mtarget.show();        
@@ -59,14 +60,14 @@
           d.key = key;
         }
         if(od){
-          d.order = {};
-          d.order[on] = od;
+          d.order = [on,od];
         }               
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('mail:init',d);
         handerObj.triggerHandler('model:change','mail');
       },
       share : function(data){
+        btarget.hide();
         ftarget.hide();
         starget.show();
         mtarget.hide();        
@@ -76,6 +77,7 @@
         handerObj.triggerHandler('model:change','share');
       },      
       coll : function(data){
+        btarget.hide();
         ftarget.hide();
         starget.hide();
         mtarget.show();
@@ -84,8 +86,7 @@
             key = data.key || 0;     
         var d = {}
         if(od){
-          d.order = {};
-          d.order[on] = od;
+          d.order = [on,od];
         } 
         if(key){
           d.key = key;
@@ -96,7 +97,7 @@
         handerObj.triggerHandler('model:change','coll');
       },
       recy : function(data){
-
+        btarget.hide();
         ftarget.hide();
         starget.hide();
         mtarget.show();
@@ -106,8 +107,7 @@
             key = data.key || 0;   
         var d = {}
         if(od){
-          d.order = {};
-          d.order[on] = od;
+          d.order = [on,od];
         } 
         if(key){
           d.key = key;
@@ -117,7 +117,7 @@
         handerObj.triggerHandler('model:change','recy');
       },
       group : function(data){
-
+        btarget.show();
         ftarget.show();
         starget.hide();
         mtarget.hide(); 
@@ -132,8 +132,7 @@
           fdid : fdid
         }
         if(od){
-          d.order = {};
-          d.order[on] = od;
+          d.order = [on,od];
         }     
         if(key){
           d.key = key;
@@ -146,6 +145,7 @@
       },
       myFile : function(data){
 
+        btarget.show();
         ftarget.show();
         starget.hide();
         mtarget.hide(); 
@@ -158,8 +158,7 @@
           fdid : fdid
         }
         if(od){
-          d.order = {};
-          d.order[on] = od;
+          d.order = [on,od];
         }
         if(key){
           d.key = key;
@@ -171,12 +170,14 @@
         handerObj.triggerHandler('upload:param',d);
       },
       groupprep : function(data){
+        btarget.hide();
         ftarget.show();
         starget.hide();
         mtarget.hide(); 
         var fdid = data.fdid || 0,
             gid = data.gid || 0,
             pid = data.pid || 0,
+            uid = data.uid || 0,
             grade = data.grade || 0,
             tag = data.tag || 0,
             od = data.od || 0,
@@ -187,11 +188,11 @@
           gid : gid,
           pid : pid,
           tag : tag,
+          uid : uid,
           grade : grade
         }
         if(od){
-          d.order = {};
-          d.order[on] = od;
+          d.order = [on,od];
         }
         if(key){
           d.key = key;
@@ -202,7 +203,7 @@
         handerObj.triggerHandler('model:change','file');           
       },
       myPrep : function(data){
-
+        btarget.show();
         ftarget.show();
         starget.hide();
         mtarget.hide(); 
@@ -217,8 +218,7 @@
           gid : gid
         }
         if(od){
-          d.order = {};
-          d.order[on] = od;
+          d.order = [on,od];
         }
         if(key){
           d.key = key;

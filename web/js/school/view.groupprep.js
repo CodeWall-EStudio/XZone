@@ -11,9 +11,7 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 		nowKey = '',
 		nowFd = 0,
 		userList = null,
-		nowOrder  = { 
-			'createtime': 1
-		},
+		nowOrder  = ['createtime',1],
 		nowGrade = 0,
 		nowTag = 0,
 		nowPrep = 0, //当前是否是备课
@@ -56,7 +54,6 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 	}
 
 	function init(e,d){
-		console.log(d);
 		d.prep = 'group';
 		if(d){
 			nowD = d;
@@ -112,7 +109,11 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 			tplid : 'prep.group.list',
 			data : {
 				list : plist,
-				ul : userList
+				ul : userList,
+				pid : nowPid,
+				tag : nowTag,
+				grade : nowGrade,
+				uid : nowUid				
 			}
 		});
 		view.createPanel();

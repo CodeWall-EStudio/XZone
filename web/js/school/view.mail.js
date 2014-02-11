@@ -4,9 +4,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 	var nowType = 0,//我的贡献 ,1 收件 2 发件
 		action = 0,//活动状态
 		nextPage = 0,
-		nowOrder  = { 
-			'createtime': 1
-		},
+		nowOrder  = ['createtime',1],
 		nowKey = '';
 
 	var tmpTarget = $('#boxTableList'),

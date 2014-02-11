@@ -17,9 +17,7 @@
                 for(var i in list){
                   var item = list[i];
               %>
-                <%if(pid == 0){%>
                 <li><a href="#groupprep=1&pid=<%+item.id%>&grade=<%+grade%>&tag=<%+tag%>"><%-item.name%></a></li>
-                <%}%>
               <%}%>
             </ul>
           </li>
@@ -70,7 +68,7 @@
         <ul class="act-zone">
           <li class="all-file file-type dropdown" id="changeFileType">
             <a id="drop-type" "button" data-toggle="dropdown" >
-             <%if(ulist){%>
+             <%if(uid != 0){%>
                 <%-ulist[uid].nick%>
               <%}else{%>
                 所有用户

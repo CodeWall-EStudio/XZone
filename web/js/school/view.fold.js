@@ -8,9 +8,8 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		nowKey = '',
 		nowFd = 0,
 		nowPrep = 0, //当前是否是备课
-		nowOrder  = { 
-			'createtime': 1
-		},
+		nowOrder  = ['createtime',1],
+		nowUid = 0,
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -116,6 +115,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			nowFd = d.fdid || 0;
 			nowKey = d.key || '';
 			nowPrep = d.prep || 0;
+			nowUid = d.uid || 0;
 		}
 
 		//没有fdid  是个人的.
@@ -125,10 +125,13 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			if(nowGid){
 				fid = nowGinfo.rootFolder;
 			}
-			handerObj.triggerHandler('fold:one',{
-				fdid: fid,
+			var data = {
 				gid : nowGid
-			});		
+			};
+			if(fid){
+				data.folderId = fid;
+			}
+			handerObj.triggerHandler('fold:one',data);		
 		//如果是备课		
 		}else if(nowPrep){
 		 	crTit();
@@ -158,8 +161,8 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 				handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:d.list});
 			}else{
 				handerObj.triggerHandler('fold:get',{
-					gid : nowGid,
-					fdid : nowGinfo.rootFolder,
+					groupId : nowGid,
+					folderId : nowGinfo.rootFolder,
 					target : foldTarget
 				});				
 			}
@@ -179,43 +182,57 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		view.beginPanel();		
 	}
 
-	function orderChange(e,d){
-		tmpTarget.find('.fold').remove();
-		nowOrder = d.order;
-		nowKey = d.key;
-		nextPage = 0;
-		nowFd = 0;
-		handerObj.triggerHandler('fold:search',{
-			gid:nowGid,
-			keyword : nowKey,
-			folderId : nowFd,
-			page:nextPage,
-			pageNum : config.pagenum,
-			order : nowOrder
-		});	
-	}
+	// function orderChange(e,d){
+	// 	tmpTarget.find('.fold').remove();
+	// 	nowOrder = d.order;
+	// 	nowKey = d.key;
+	// 	nextPage = 0;
+	// 	nowFd = 0;
+	// 	handerObj.triggerHandler('fold:search',{
+	// 		gid:nowGid,
+	// 		keyword : nowKey,
+	// 		folderId : nowFd,
+	// 		page:nextPage,
+	// 		pageNum : config.pagenum,
+	// 		order : nowOrder
+	// 	});	
+	// }
 
 	function search(e,d){
 		tmpTarget.find('.fold').remove();
 		nowKey = d.key;
-		
-		handerObj.triggerHandler('fold:serach',{
-			gid:nowGid,
+
+		var data = {
 			keyword : nowKey,
-			folderId : nowFd,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder
-		});			
+			order : nowOrder			
+		}
+
+		if(nowGid){
+			data.groupId = nowGid;
+		}
+		if(nowFd){
+			data.folderId = nowFd;
+		}
+		
+		handerObj.triggerHandler('fold:serach',data);			
 	}	
 
 	function createFold(e,d){
 		var data = {
-			gid : nowGid,
 			fdid : nowFd,
 			name : d.name
 		}
-		handerObj.triggerHandler('fold:new',data);1
+
+		if(nowGid){
+			data.gid = nowGid;
+		}
+		if(nowFd){
+			data.folderId = nowFd;
+		}
+
+		handerObj.triggerHandler('fold:new',data);
 	}
 
 	function delSuc(e,d){
@@ -264,7 +281,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		'fold:edit' : foldEdit,
 		'fold:delsuc' : delSuc,
 		'fold:create' : createFold,
-		'order:change' : orderChange,
+		//'order:change' : orderChange,
 		'search:start' : search,
 		'fold:marksuc' : marksuc,
 		'fold:init' : foldInit,

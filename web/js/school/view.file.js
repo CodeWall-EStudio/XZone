@@ -5,9 +5,8 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		action = 0,
 		nowKey = '',
 		nowFd = 0,
-		nowOrder  = { 
-			'createtime': 1
-		},
+		nowOrder  = ['createtime',1],
+		nowUid = 0,
 		nowPrep = 0, //当前是否是备课
 		nextPage = 0;
 
@@ -51,6 +50,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			if(d.order){
 				nowOrder = d.order;
 			}
+			nowUid = d.uid || 0;
 			nowKey = d.key || '';
 			nowPrep = d.prep || 0;
 		}
@@ -84,14 +84,24 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			data.groupId = nowGid;
 		}
 
-		handerObj.triggerHandler('file:search',{
-			groupId:nowGid,
+		var data = {
 			keyword : nowKey,
-			folderId : nowFd,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder
-		});	
+			order : nowOrder		
+		}
+
+		if(nowGid){
+			data.groupId = nowGid;
+		}
+		if(nowFd){
+			data.folderId = nowFd;
+		}
+		if(nowUid){
+			data.uid = nowUid;
+		}
+
+		handerObj.triggerHandler('file:search',data);	
 	}
 
 	function fileLoad(e,d){
@@ -165,6 +175,9 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		if(nowGid){
 			obj.groupId = nowGid;
 		}
+		if(nowUid){
+			data.uid = nowUid;
+		}
 
 		handerObj.triggerHandler('file:search',obj);			
 	}
@@ -192,6 +205,9 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		}
 		if(nowGid){
 			obj.groupId = nowGid;
+		}
+		if(nowUid){
+			data.uid = nowUid;
 		}
 
 		handerObj.triggerHandler('file:search',obj);				

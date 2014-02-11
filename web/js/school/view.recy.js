@@ -4,9 +4,7 @@ define(['config','helper/view','model.recy'],function(config,View){
 
 	var nextPage = 0,
 		action = 0,
-		nowOrder  = { 
-			'createtime': 1
-		},
+		nowOrder  = ['createtime',1],
 		nowType = 0,
 		nowKey = '';	
 

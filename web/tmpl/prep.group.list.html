@@ -1,17 +1,27 @@
 		<%
 			for(var i in list){
 				var item = list[i];
-				var members = item.members;
-				for(var j=0,l=members.length;j<l;j++){
-					var nick = ul[members[j]].nick,
-						uid = members[j];
+				if(pid == 0 || item.pid == pid){
+
+
+					if((grade != 0 && item.grade != grade) || (tag != 0 && item.tag != tag) ){
+						continue;
+					}
+
+					var members = item.members;
+					for(var j=0,l=members.length;j<l;j++){
+						if(uid != 0 && members[j] != uid){
+							continue;
+						}
+						var nick = ul[members[j]].nick,
+							nuid = members[j];
 		%>
 		<tr class="fold fold<%+item.id%>">
 			<td>
-				<a href="#groupprep=1&gid=<%+item.id%>&fdid=<%+item.rootfold%>&uid=<%+uid%>" data-id="<%+item.id%>"><i class="fold"></i></a>
+				<a href="#groupprep=1&gid=<%+item.id%>&fdid=<%+item.rootfold%>&uid=<%+nuid%>" data-id="<%+item.id%>"><i class="fold"></i></a>
 				<dl>
 					<dt>
-						<a class="fdname<%+item.id%>" href="#groupprep=1&gid=<%+item.id%>&fdid=<%+item.rootfold%>&uid=<%+uid%>" data-id="<%+item.id%>"><%- nick%> <%-item.name%></a>
+						<a class="fdname<%+item.id%>" href="#groupprep=1&gid=<%+item.id%>&fdid=<%+item.rootfold%>&uid=<%+nuid%>" data-id="<%+item.id%>"><%- nick%> <%-item.name%></a>
 					</dt>
 				</dl>							
 			</td>		
@@ -20,6 +30,7 @@
 			<td width="120"><span><%-item.time%></span></td>
 		</tr>
 		<%
+					}
 				}
 			}
 		%>
