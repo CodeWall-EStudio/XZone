@@ -41,7 +41,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 		}
 
 		var opt = {
-			cgi : config.cgi.userlist,
+			cgi : config.cgi.usearch,//userlist,
 			data : {}
 		}
 

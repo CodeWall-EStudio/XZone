@@ -65,21 +65,10 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function foldOne(e,d){
-		var fdid = d.fdid,
-			gid = d.gid;
 
-		var data = {
-			fdid : fdid
-		}
-		if(gid){
-			data.gid = gid;
-		}
 		var opt = {
 			cgi : config.cgi.foldinfo,
-			data : {
-				fdid : fdid,
-				gid : gid
-			}
+			data : d
 		}
 
 		var success = function(d){
@@ -104,10 +93,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 
 		var opt = {
 			cgi : config.cgi.foldlist,
-			data : {
-				gid : gid,
-				fdid : fdid
-			}
+			data : d
 		}
 
 		var success = function(d){

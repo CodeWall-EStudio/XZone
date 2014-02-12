@@ -142,7 +142,7 @@ define(['config'],function(config){
 	}
 
 	function editMark(id,mark,type,target){
-		handerObj.triggerHandler(type+':edit',{id:id,gid:nowGid,target:target,mark:mark});
+		handerObj.triggerHandler(type+':edit',{folderId:id,groupId:nowGid,target:target,mark:mark});
 	}
 	/***********************************/
 
@@ -277,13 +277,13 @@ define(['config'],function(config){
     function renameObj(){
     	if($('.table-files .fclick:checked').length > 0){
     		var id = $('.table-files .fclick:checked').val();
-    		handerObj.triggerHandler('file:edit',{
+    		handerObj.triggerHandler('file:viewedit',{
     			id : id,
     			name : $('.fdname'+id).text()
     		});
     	}else{
     		var id = $('.table-files .fdclick:checked').val();
-    		handerObj.triggerHandler('fold:edit',{
+    		handerObj.triggerHandler('fold:viewedit',{
     			id : id,
     			name : $('.fdname'+id).text()
     		});

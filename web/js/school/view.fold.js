@@ -126,7 +126,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 				fid = nowGinfo.rootFolder;
 			}
 			var data = {
-				gid : nowGid
+				groupId : nowGid
 			};
 			if(fid){
 				data.folderId = fid;
@@ -137,10 +137,14 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		 	crTit();
 		}
 
-		handerObj.triggerHandler('fold:get',{
-			gid : nowGid,
-			fdid : nowFd
-		});		
+		var obj = {
+			folderId : nowFd
+		}
+		if(nowGid){
+			obj.groupId = nowGid;
+		}
+
+		handerObj.triggerHandler('fold:get',obj);		
 	}
 
 	function foldOne(e,d){
@@ -221,12 +225,11 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 
 	function createFold(e,d){
 		var data = {
-			fdid : nowFd,
 			name : d.name
 		}
 
 		if(nowGid){
-			data.gid = nowGid;
+			data.groupId = nowGid;
 		}
 		if(nowFd){
 			data.folderId = nowFd;
@@ -259,7 +262,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 						var n = actTarget.find('.obj-name').val();
 						if(n != ''){
 							handerObj.triggerHandler('fold:modify',{
-								fileId : d.id,
+								folderId : d.id,
 								groupId : nowGid,
 								name : n
 							});
@@ -278,7 +281,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	var handlers = {
 		'fold:treeload' : foldTree,
 		'fold:modifysuc' : modifySuc,
-		'fold:edit' : foldEdit,
+		'fold:viewedit' : foldEdit,
 		'fold:delsuc' : delSuc,
 		'fold:create' : createFold,
 		//'order:change' : orderChange,

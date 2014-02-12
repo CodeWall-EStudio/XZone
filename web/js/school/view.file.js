@@ -621,7 +621,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		'file:share' : fileShare,
 		'file:shareload' : shareLoad,
 		'file:modifysuc' : modifySuc,
-		'file:edit' : fileEdit,
+		'file:viewedit' : fileEdit,
 		'file:delsuc' : delSuc,
 		'model:change' : modelChange,
 		'search:start' : search,
