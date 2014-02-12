@@ -19,7 +19,8 @@ exports.upload = function(req, res){
 
     //1. 先把文件保存到 data 目录
     var dir = '/data/71xiaoxue/' + U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
-    var filePath = dir + body.file_md5 + path.extname(body.file_name);
+    var folderPath = path.resolve('../' + dir);
+    var filePath = path.join(folderPath, body.file_md5 + path.extname(body.file_name));
     var fileName = body.file_name;
 
     var ep = new EventProxy();
@@ -34,10 +35,9 @@ exports.upload = function(req, res){
             path: filePath,
             md5: body.file_md5,
             size: body.file_size,
-
             mimes: body.file_content_type
         }
-
+        console.log('saveRes');
         mRes.create(resource, ep.done('saveRes'));
 
     });
@@ -49,11 +49,14 @@ exports.upload = function(req, res){
             folderId: folderId,
             resourceId: resource._id.toString()
         }
+        console.log('createFile');
         mFile.create(file, ep.done('createFile'));
     });
 
     ep.on('createFile', function(file){
-        rs.json({
+        console.log('json');
+        // 更新用户size
+        res.json({
             err: ERR.SUCCESS,
             result: {
                 data: file
@@ -61,7 +64,11 @@ exports.upload = function(req, res){
         })
     });
 
-    U.moveFile(body.file_path, '../..' + filePath, ep.done('moveFile'));
+    // TODO 检查空间是否用完
+    console.log('mkdirsSync: ',folderPath);
+    U.mkdirsSync(folderPath);
+    console.log('moveFile');
+    U.moveFile(body.file_path, filePath, ep.done('moveFile'));
 
 }
 

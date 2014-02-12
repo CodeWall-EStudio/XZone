@@ -36,6 +36,9 @@ exports.create = function(params, callback){
         doc.group = DBRef('group', ObjectID(groupId));
         doc.fromGroup = params.fromGroup ? DBRef('group', ObjectID(params.fromGroup)) : doc.group;
     }
+    // if(params.fromGroup){
+
+    // }
 
     db.file.insert(doc, function(err, result){
         if(err){
@@ -44,9 +47,14 @@ exports.create = function(params, callback){
         var file = result[0];
         db.folder.findAndModify({ _id: ObjectID(folderId) }, [], 
                 { $set: { hasChild: true } }, { 'new':true }, function(err, newFolder){
-
+            if(err){
+                return callback(err);
+            }
             // 将 resource 的引用计数加一
             mRes.updateRef(file.resource.oid, 1, function(err, newRes){
+                if(err){
+                    return callback(err);
+                }
                 callback(null, file);
             });
 

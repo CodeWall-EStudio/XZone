@@ -97,7 +97,13 @@ exports.moveFile = function(src, dst, callback){
     var is = fs.createReadStream(src)
     var os = fs.createWriteStream(dst);
 
-    is.on('end', callback);
+    is.on('end', function(){
+        fs.unlinkSync(src);
+        callback(null);
+    });
+    os.on('error', function(err){
+        callback(err);
+    });
 
     is.pipe(os);
 }
