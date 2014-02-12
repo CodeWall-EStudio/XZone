@@ -61,7 +61,7 @@ function testCase(){
 
     evt.on('save user', function(user){
         uid = user._id.toString();
-        userRootFolderId = user.rootFolder.oid;
+        userRootFolderId = user.rootFolder.oid.toString();
         evt.on('create folder', function(folder){
             createFiles(folder);
 

@@ -97,7 +97,7 @@ exports.getGroupMembers = function(groupId, needDetail, callback){
                         _id: doc.user.oid
                     });
                 }else{
-                    db.user.findOne({ _id: new ObjectID(doc.user.oid)}, 
+                    db.user.findOne({ _id: doc.user.oid)}, 
                             { fields: {_id: 1, nick: 1} }, ep.group('fetchUser'));
                 }
             });

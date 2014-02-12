@@ -51,7 +51,7 @@ exports.create = function(params, callback){
                 return callback(err);
             }
             // 将 resource 的引用计数加一
-            mRes.updateRef(file.resource.oid, 1, function(err, newRes){
+            mRes.updateRef(file.resource.oid.toString(), 1, function(err, newRes){
                 if(err){
                     return callback(err);
                 }
@@ -77,7 +77,7 @@ exports.delete = function(fileId, callback){
 
         if(!err){ // 将 resource 的引用计数减一
             
-            mRes.updateRef(file.resource.oid, -1, function(err, newRes){
+            mRes.updateRef(file.resource.oid.toString(), -1, function(err, newRes){
                 callback(null, file);
             });
 
