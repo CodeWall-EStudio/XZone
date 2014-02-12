@@ -12,7 +12,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				mark : item.mark,
 				size : item.size,
 				type : item.type,
-				time : util.time(item.createtime),
+				time : util.time(item.createTime),
 				coll : item.coll
 			})
 		}

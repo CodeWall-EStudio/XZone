@@ -11,7 +11,8 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				name : item.name,
 				mark : item.mark,
 				type : item.type,
-				time : util.time(item.createtime),
+				size : util.getSize(item.size),
+				time : util.time(item.createTime),
 				coll : item.coll
 			}
 			list.push(td);

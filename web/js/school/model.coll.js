@@ -12,7 +12,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				fid : item.fid,
 				coll : item.coll,
 				remark : item.remark,
-				time : util.time(item.time),
+				time : util.time(item.createTime),
 				type : item.type
 			})
 		}

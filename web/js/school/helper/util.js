@@ -322,6 +322,19 @@ define(['../config'], function($, config) {
         }
     };	
 
+    var getSize = function(size){
+        var prec = 3;
+        var size = Math.round(Math.abs(size));
+    	var units = ['B','KB','MB',"GB","TB"];
+
+    	var unit =  Math.min(4, Math.floor(Math.log(size) / Math.log(2) / 10));
+
+        size = size * Math.pow(2, -10 * unit);
+        var digi = prec - 1 - Math.floor(Math.log(size) / Math.log(10));
+        size = Math.round(size * Math.pow(10, digi)) * Math.pow(10, -digi);
+        return size + units[unit];    	
+    }
+
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -334,6 +347,7 @@ define(['../config'], function($, config) {
 	util.time = formatTime;
 	util.cookie = cookie;
 	util.getParam = getParam;
+	util.getSize = getSize;
 
 	return util;
 

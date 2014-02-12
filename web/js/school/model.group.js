@@ -8,7 +8,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			list.push({
 				id : item._id,
 				name : item.name,
-				time : util.time(item.createtime),
+				time : util.time(item.createTime),
 				content : item.content
 			});
 		}
