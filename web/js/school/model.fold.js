@@ -11,7 +11,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				name : item.name,
 				mark : item.mark,
 				hasChild : item.hasChild,
-				time : util.time(item.createtime),
+				time : util.time(item.createTime),
 			})
 		}
 		return list;
@@ -119,10 +119,12 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	function editmark(e,d){
 
 		var data = {
-			id : d.id,
-			info : d.mark,
-			gid : d.gid
+			folderId : d.folderId,
+			mark : d.mark
 		};
+		if(d.groupId){
+			data.groupId = d.groupId;
+		}
 		var target = d.target,
 			mark = d.mark;
 		var opt = {

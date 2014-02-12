@@ -590,7 +590,6 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			act = 1;
 		}
 
-		console.log(target);
 		var view = new View({
 			target : target,
 			tplid : 'file.user.list',

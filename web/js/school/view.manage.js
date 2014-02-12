@@ -122,6 +122,11 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 		handerObj.triggerHandler('manage:create',obj);
 	});
 
+	$('#aside a').bind('click',function(e){
+		addTarget.removeClass('hide');
+		listTarget.addClass('hide');
+	})
+
 	$('.group-type').bind('click',function(e){
 		var v = $(this).val();
 		if(v == 3){

@@ -305,7 +305,7 @@ define(['../config'], function($, config) {
 	}
 
 	var formatTime = function(time) {
-		var d = new Date(time*1000);
+		var d = new Date(time);
 
 		return d.getFullYear(d)+'-'+(d.getMonth()+1)+'-'+d.getDay() + ' ' + d.getHours()+':'+d.getMinutes();
 	}
