@@ -19,9 +19,10 @@ exports.upload = function(req, res){
 
     //1. 先把文件保存到 data 目录
     var dir = '/data/71xiaoxue/' + U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
+    var filename = body.file_md5 + path.extname(body.file_name);
     var folderPath = path.resolve('../' + dir);
-    var filePath = path.join(folderPath, body.file_md5 + path.extname(body.file_name));
-    var fileName = body.file_name;
+    var filePath = path.join(folderPath, filename);
+    var name = body.file_name;
 
     var ep = new EventProxy();
 
@@ -32,7 +33,7 @@ exports.upload = function(req, res){
     ep.on('moveFile', function(){
         // 添加 resource 记录
         var resource = {
-            path: filePath,
+            path: dir + filename,
             md5: body.file_md5,
             size: body.file_size,
             mimes: body.file_content_type
