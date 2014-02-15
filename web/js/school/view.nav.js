@@ -181,8 +181,9 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		var myinfo = Cache.get('myinfo');
 		myinfo.group.push(d);
 		myinfo.group2key[d.id] = d;
+
 		handerObj.triggerHandler('cache:set',{key: 'myinfo',data: myinfo});
-		handerObj.triggerHandler('nav:load',obj);
+		handerObj.triggerHandler('nav:load',myinfo);
 	}
 
 	var handlers = {

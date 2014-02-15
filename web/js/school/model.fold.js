@@ -19,6 +19,9 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 
 	function conventOne(data){
 		var t = {};
+		if(!data){
+			return t;
+		}
 		t.idpath = data.idpath.split(',');
 		t.pid = data.pid;
 		t.tid = data.tid;

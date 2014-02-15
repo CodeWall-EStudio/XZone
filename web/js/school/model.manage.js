@@ -13,7 +13,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function conventGroup(data){
-		data.id = data.id;
+		data.id = data._id;
 		return data;
 	}	
 
@@ -97,7 +97,29 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		request.get(opt,success);		
 	}
 
+	function appRove(e,d){
+		var opt = {
+			cgi : config.cgi.mappgroup,
+			data : d
+		}
+		var id = d.groupId;
+		var type = d.validateStatus;
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('manage:appsuc',{
+					id : id,
+					type : type
+				});
+			}else{
+
+			}
+		}
+		request.post(opt,success);
+	}
+
+
 	var handlers = {
+		'manage:approve' : appRove,
 		'manage:user' : getUser,
 		'manage:alluser' : allUser,
 		'manage:create' : creatGroup,

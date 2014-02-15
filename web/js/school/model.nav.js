@@ -23,7 +23,9 @@ define(['config','helper/request','cache'],function(config,request,cache){
 		for(var i =0,l=data.groups.length;i<l;i++){
 			var item = data.groups[i];
 			item.id = item._id;
-			item.rootFolder.id = item.rootFolder._id;
+			if(item.rootFolder){
+				item.rootFolder.id = item.rootFolder._id;
+			}
 			o.group2key[item.id] = item;
 			item.pt = item.pt || 0;
 			switch(item.type){

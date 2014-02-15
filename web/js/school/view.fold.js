@@ -20,6 +20,11 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 
 	function crTit(obj){
 
+		if($.isEmptyObject(obj)){
+			obj = 0;
+		}
+
+
 		var tpl = 'file.tit';
 		var data = {
 			gid : nowGid,
@@ -28,7 +33,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			key : nowKey,
 			fold : obj || 0
 		};		
-		console.log(nowPrep);
 		if(nowPrep == 'my'){
 			tpl = 'prep.tit';
 		}else if(nowPrep == 'group'){
@@ -40,6 +44,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			tplid : tpl,
 			data : data
 		});
+
 		view.createPanel();
 	}
 
@@ -118,6 +123,15 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			nowUid = d.uid || 0;
 		}
 
+		if(nowGinfo.rootFolder){
+			nowFd = nowGinfo.rootFolder.id;
+		}
+		if(nowGid && !nowFd){
+			$('#btnZone').hide();
+		}else{
+			$('#btnZone').show();
+		}
+
 		//没有fdid  是个人的.
 		if(!nowFd){
 			crTit();
@@ -137,8 +151,9 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		 	crTit();
 		}
 
-		var obj = {
-			folderId : nowFd
+		var obj = {};
+		if(nowFd){
+			obj.folderId = nowFd;
 		}
 		if(nowGid){
 			obj.groupId = nowGid;
@@ -154,7 +169,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	}
 
 	function foldLoad(e,d){
-
 		//个人的首页
 		if(!nowGid && !nowFd){
 			makeTree(d.list,foldTarget);
@@ -164,11 +178,15 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 				makeTree(d.list,foldTarget);
 				handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:d.list});
 			}else{
-				handerObj.triggerHandler('fold:get',{
+				var obj = {
 					groupId : nowGid,
-					folderId : nowGinfo.rootFolder,
 					target : foldTarget
-				});				
+				}
+				if(nowGinfo.rootFolder){
+					obj.folderId = nowGinfo.rootFolder;
+				}
+				handerObj.triggerHandler('fold:get',obj);
+			
 			}
 		}else{
 			//console.log(1234);
@@ -234,6 +252,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		if(nowFd){
 			data.folderId = nowFd;
 		}
+		console.log(nowGid,nowFd);
 
 		handerObj.triggerHandler('fold:new',data);
 	}

@@ -40,7 +40,6 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 	}
 
 	function groupLoad(e,d){
-		console.log(d);
 		var view = new View({
 			target : $("#groupList"),
 			tplid : 'manage.group.list',
@@ -51,7 +50,17 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 		view.createPanel();			
 	}
 
+	function appSuc(e,d){
+		console.log(d);
+		if(d.type == 1){
+			$('.group'+d.id).html('审核通过');
+		}else{
+			$('.group'+d.id).html('审核不通过');
+		}
+	}
+
 	var handlers = {
+		'manage:appsuc' : appSuc,
 		'manage:createsuc' : createSuc,
 		'manage:userloadsuc' : userloadSuc,
 		'manage:alluserloadsuc' : alluserloadSuc,
@@ -61,6 +70,30 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 	for(var i in handlers){
 		handerObj.bind(i,handlers[i]);
 	}
+
+	$('#groupList').bind('click',function(e){
+		var target = $(e.target),
+			cmd = target.attr('cmd');
+		
+			var id = target.attr('data-id');
+		
+		switch(cmd){
+			case 'pass':
+				handerObj.triggerHandler('manage:approve',{
+					groupId:id,
+					validateText : '',
+					validateStatus : 1
+				});
+			break;
+			case 'notpass':
+				handerObj.triggerHandler('manage:approve',{
+					groupId:id,
+					validateText : '',
+					validateStatus : 0
+				});	
+			break;
+		}
+	});
 
 	$('#newGroupBtn').bind('click',function(e){
 		var gn = $('#groupNmae').val(),

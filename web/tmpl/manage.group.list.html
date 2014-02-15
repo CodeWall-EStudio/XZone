@@ -1,10 +1,21 @@
 <table width="100%"  class="table table-striped table-hover table-list table-files">
+	<tr>
+		<th>小组名</th>
+		<th>状态</th>
+	</tr>
 	<%
 		for(var i in list){
 			var item = list[i];
 	%>
 		<tr>
 			<td><%-item.name%></td>
+			<td class="group<%+item.id%>" >
+				 <%if(item.status){%>
+				 	<a cmd="pass" data-id="<%+item.id%>">审核通过</a>  <a cmd="notpass"  data-id="<%+item.id%>">审核不通过</a>
+				 <%}else{%>
+				 	已审核
+				 <%}%>
+			</td>
 		</tr>
 	<%}%>
 </table>

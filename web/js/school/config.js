@@ -21,7 +21,7 @@ define(function() {
 			//login : CGI_PATH+'user/gotoLogin'+EXT,
 			varify : CGI_PATH+'user/verify'+EXT,
 			logout : CGI_PATH+'user/logoff'+EXT,
-			userlist : CGI_PATH+'user/list'+EXT,
+			userlist : CGI_PATH+'user/search'+EXT,
 			usearch : CGI_PATH+'user/search'+EXT,
 
 			//文件操作
@@ -37,7 +37,7 @@ define(function() {
 			fileshare : CGI_PATH+'file/share'+EXT,
 
 			//文件夹
-			foldinfo : CGI_PATH+'folder/info'+EXT,
+			foldinfo : CGI_PATH+'folder'+EXT,
 			foldcreate : CGI_PATH+'folder/create'+EXT,
 			foldmodify : CGI_PATH+'folder/modify'+EXT,
 			foldlist : CGI_PATH+'folder/list'+EXT,
@@ -69,7 +69,7 @@ define(function() {
 
 			//留言板
 			boardcreate : CGI_PATH+'board/create'+EXT,
-			boardlist : CGI_PATH+'board/list'+EXT,
+			boardlist : CGI_PATH+'board/search'+EXT,
 			boarddel : CGI_PATH+'board/delete'+EXT,
 			boardverify : CGI_PATH+'board/verify'+EXT,
 
