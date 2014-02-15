@@ -441,6 +441,8 @@ define(['config'],function(config){
 				down(e);
 				break;
 			default :
+				$('.editmark').hide();
+				$('.f-mark').show();			
 				if(file){
 					if(!target.hasClass('liclick') && !target.hasClass('name-edit') && !target.hasClass('share-file') && !target.hasClass('no-act')){
 						var p = target.parents("tr");

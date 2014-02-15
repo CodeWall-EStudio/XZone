@@ -22,6 +22,7 @@
     var router = new router();
 
     var ftarget = $('#fileList'),
+        fatarget = $('#fileActZone'),
         mtarget = $('#boxList'),
         btarget = $('#btnZone'),
         starget = $('#shareBox');
@@ -47,7 +48,9 @@
         btarget.hide();
         ftarget.hide();
         starget.hide();
-        mtarget.show();        
+        mtarget.show(); 
+        $('.tool-zone').removeClass('hide');
+        fatarget.addClass('hide');       
 
         var type = data.mailbox;
         var od = data.od || 0,
@@ -70,7 +73,9 @@
         btarget.hide();
         ftarget.hide();
         starget.show();
-        mtarget.hide();        
+        mtarget.hide(); 
+        $('.tool-zone').removeClass('hide');
+        fatarget.addClass('hide');       
 
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('share:init');
@@ -81,6 +86,9 @@
         ftarget.hide();
         starget.hide();
         mtarget.show();
+        $('.tool-zone').removeClass('hide');
+        fatarget.addClass('hide');
+
         var od = data.od || 0,
             on = data.on || 0,
             key = data.key || 0;     
@@ -101,6 +109,8 @@
         ftarget.hide();
         starget.hide();
         mtarget.show();
+        $('.tool-zone').removeClass('hide');
+        fatarget.addClass('hide');
 
         var od = data.order || 0,
             on = data.ordername || 0,
@@ -121,6 +131,8 @@
         ftarget.show();
         starget.hide();
         mtarget.hide(); 
+        $('.tool-zone').removeClass('hide');
+        fatarget.addClass('hide');
 
         var gid = data.gid,
             fdid = data.fdid || 0;
@@ -149,6 +161,8 @@
         ftarget.show();
         starget.hide();
         mtarget.hide(); 
+        $('.tool-zone').removeClass('hide');
+        fatarget.addClass('hide');
 
         var fdid = data.fdid;
         var od = data.od || 0,
@@ -174,6 +188,8 @@
         ftarget.show();
         starget.hide();
         mtarget.hide(); 
+        $('.tool-zone').removeClass('hide');
+        fatarget.addClass('hide');
         var fdid = data.fdid || 0,
             gid = data.gid || 0,
             pid = data.pid || 0,
@@ -207,6 +223,8 @@
         ftarget.show();
         starget.hide();
         mtarget.hide(); 
+        $('.tool-zone').removeClass('hide');
+        fatarget.addClass('hide');
 
         var fdid = data.fdid || 0,
             gid = data.gid || 0,

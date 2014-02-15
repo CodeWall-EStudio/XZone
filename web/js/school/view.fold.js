@@ -275,7 +275,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	}
 
 	function modifySuc(e,d){
-		$('.fdname'+d.fileId).text(d.name);
+		$('.fdname'+d.folderId).text(d.name);
 	}
 
 	var handlers = {
