@@ -60,7 +60,9 @@ exports.get = function(req, res){
 }
 
 exports.modify = function(req, res){
-    var params = req.query;
+    //var params = req.query;
+    var params = req.body;
+ 
 
     var doc = {
     };
@@ -88,9 +90,6 @@ exports.create = function(req, res){
 
     //var params = req.query;
     var params = req.body;
-    
-    console.log(req);
-    console.log(params);
     
     params.creator = loginUser._id;
     

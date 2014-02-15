@@ -1,6 +1,6 @@
 define(function() {
 	var CGI_PATH = '/api/',
-		EXT = '.php';
+		EXT = '';//'.php';
 
 	return {
 		pagenum : 10,
