@@ -54,7 +54,7 @@ module.exports = {
         method: GET,
         require: {
             folderId: ObjectID,
-            page: ['number', 1],
+            page: ['number', 0],
             pageNum: ['number', 0]
         },
         optional: {
@@ -102,7 +102,7 @@ module.exports = {
         method: GET,
         require: {
             folderId: ObjectID,
-            page: ['number', 1],
+            page: ['number', 0],
             pageNum: ['number', 0]
         },
         optional: {
@@ -129,7 +129,7 @@ module.exports = {
     '/api/fav/search': {
         method: GET,
         require: {
-            page: ['number', 1],
+            page: ['number', 0],
             pageNum: ['number', 0]
         },
         optional: {

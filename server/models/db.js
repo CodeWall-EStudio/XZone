@@ -94,9 +94,9 @@ exports.dereferences = function(docs, keys, callback){
 
 exports.search = function(collectionName, query, options, callback){
     var order = options.order || null;
-    var page = Number(options.page) || 1;
+    var page = Number(options.page) || 0;
     var pageNum = Number(options.pageNum) || 0;
-    var skipNum = pageNum * (page - 1);
+    var skipNum = pageNum * page;
 
     console.log(collectionName, 'query', query);
     exports.getCollection(collectionName, function(err, collection){
