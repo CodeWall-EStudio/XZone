@@ -47,6 +47,7 @@ exports.create = function(params, callback){
         var file = result[0];
         db.folder.findAndModify({ _id: ObjectID(folderId) }, [], 
                 { $set: { hasChild: true } }, { 'new':true }, function(err, newFolder){
+            
             if(err){
                 return callback(err);
             }

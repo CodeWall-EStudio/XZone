@@ -20,8 +20,12 @@ exports.create = function(params, callback){
         createTime: Date.now(),
         updateTime: Date.now()
     }
-    console.log(doc);
+
     db.resource.insert(doc, function(err, result){
+        console.log(result);
+        db.resource.findOne({_id: doc._id }, function(err, data){
+            console.log('read', err, data);
+        })
         callback(err, doc);
     });
 }
