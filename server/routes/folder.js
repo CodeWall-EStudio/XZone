@@ -18,6 +18,7 @@ exports.list = function(req, res){
             res.json({
                 err: ERR.SUCCESS,
                 result: {
+                    total: docs ? docs.length : 0,
                     list: docs
                 }
             });
