@@ -373,7 +373,6 @@ used as it is.
 				uploader.init();
 
 				uploader.bind('BeforeUpload',function(){
-					console.log(3333);
 				});
 
 				uploader.bind('StateChanged', function() {
