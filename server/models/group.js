@@ -7,14 +7,19 @@ var db = require('./db');
 var mFolder = require('./folder');
 
 exports.create = function(params, callback){
-    // TODO 管理员添加的不用审核的
+    // 管理员添加的不用审核的
+    // 标示小组审核状态 1 审核中 0 已审核
+    var status = ('status' in params) ? Number(params.status) : 1;
+    if(isNaN(status)){
+        status = 1;
+    }
     var doc = {
         name: params.name,
         content: params.content || '',
         type: Number(params.type) || 0,
         parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
         creator: DBRef('user', ObjectID(params.creator)),
-        status: 1, // 标示小组审核状态 1 审核中 0 已审核
+        status: status, 
         pt: params.pt || null,
         tag: params.tag || null,
         grade: params.grade || null,

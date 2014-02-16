@@ -12,7 +12,7 @@ exports.create = function(params, callback){
         nick: params.nick || '',
         name: params.name || '',
         auth: 0,
-        size: params.spaceSize || 0,
+        size: params.size || 0,
         used: 0,
         mailnum: 0,
         lastGroup: null
@@ -49,6 +49,12 @@ exports.save = function(user, callback){
     db.user.save(user, function(err, result){
         callback(err, user);
     });
+}
+
+exports.update = function(docId, doc, callback){
+
+    db.user.findAndModify({ _id: ObjectID(docId) }, [], 
+            { $set: { ref: value } }, { $new: true }, callback);
 }
 
 exports.getUserInfoByName = function(name, callback){

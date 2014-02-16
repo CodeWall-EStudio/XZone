@@ -11,7 +11,7 @@ module.exports = exports = {
     NOT_AUTH: 1010,
     PARAM_ERROR: 1011,
     
-    
+    SPACE_FULL: 1013,
 
 
 

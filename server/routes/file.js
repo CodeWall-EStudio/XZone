@@ -8,6 +8,7 @@ var config = require('../config');
 var ERR = require('../errorcode');
 var mFile = require('../models/file');
 var mRes = require('../models/resource');
+var mUser = require('../models/user');
 var U = require('../util');
 
 
@@ -22,7 +23,7 @@ exports.upload = function(req, res){
     var filename = body.file_md5 + path.extname(body.file_name);
     var folderPath = path.resolve('../' + dir);
     var filePath = path.join(folderPath, filename);
-    var name = body.file_name;
+    var name = body.name;
 
     var ep = new EventProxy();
 
@@ -38,9 +39,20 @@ exports.upload = function(req, res){
             size: body.file_size,
             mimes: body.file_content_type
         }
-        console.log('saveRes');
+
         mRes.create(resource, ep.done('saveRes'));
 
+        //TODO 生成 pdf 格式文件
+
+        // if(in_array($file['mimes'],$docs))
+        //     {
+        //         exec('java -jar '.$this->config->item('jodconverter', 'upload').' '.$file['path'].' '.$file['path'].'.pdf');
+        //         exec('pdf2swf '.$file['path'].'.pdf -s flashversion=9 -o '.$file['path'].'.swf');
+        //     }
+        //     if (in_array($file['mime'],$pdfs))
+        //     {
+        //         exec('pdf2swf '.$file['path'].' -s flashversion=9 -o '.$file['path'].'.swf');
+        //     }
     });
 
     ep.on('saveRes', function(resource){
@@ -48,15 +60,15 @@ exports.upload = function(req, res){
         var file = {
             creator: loginUser._id,
             folderId: folderId,
+            name: name,
             resourceId: resource._id.toString()
         }
-        console.log('createFile');
+
         mFile.create(file, ep.done('createFile'));
     });
 
     ep.on('createFile', function(file){
-        console.log('json');
-        // 更新用户size
+
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -65,11 +77,18 @@ exports.upload = function(req, res){
         })
     });
 
-    // TODO 检查空间是否用完
-    console.log('mkdirsSync: ',folderPath);
-    U.mkdirsSync(folderPath);
-    console.log('moveFile');
-    U.moveFile(body.file_path, filePath, ep.done('moveFile'));
+    ep.on('updateSpaceUsed', function(){
+        U.mkdirsSync(folderPath);
+        U.moveFile(body.file_path, filePath, ep.done('moveFile'));
+    })
+
+    if(loginUser.size < loginUser.used + body.file_size){
+        ep.emit('error', '空间已经用完', ERR.SPACE_FULL);
+    }else{
+        // 更新用户size
+        loginUser.used = loginUser.used + body.file_size;
+        mUser.update(loginUser._id, { used: loginUser.used }, ep.done('updateSpaceUsed'));
+    }
 
 }
 
