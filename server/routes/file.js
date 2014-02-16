@@ -97,9 +97,48 @@ exports.upload = function(req, res){
     }else{
         // 更新用户size
         loginUser.used = loginUser.used + fileSize;
+        var skey = req.cookies.skey;
+        req.session[skey] = loginUser; // 更新 session
         mUser.update(loginUser._id, { used: loginUser.used }, ep.done('updateSpaceUsed'));
     }
 
+}
+
+exports.download = function(req, res){
+    var fileId = req.query.fileId;
+
+    var ep = new EventProxy();
+
+    ep.fail(function(err){
+        res.json({
+            err: ERR.NOT_FOUND,
+            msg: 'no such file'
+        });
+    });
+
+    ep.on('getFile', function(file){
+        if(!file){
+            ep.emit('error');
+        }else{
+            mRes.getResource(file.resource.oid.toString(), ep.done('getRes'));
+        }
+    });
+
+    ep.all('getFile', 'getRes', function(file, resource){
+        if(!resource){
+            ep.emit('error');
+        }else{
+            res.set({
+                'Content-Type': resource.mimes,
+                'Content-Disposition': 'attachment; filename=' + file.name,
+                'Content-Length': resource.size,
+                'X-Accel-Redirect': '/file/' + resource.path
+            });
+            res.send();
+        }
+    });
+
+    mFile.getFile(fileId, ep.done('getFile'));
 }
 
 exports.create = function(req, res){
