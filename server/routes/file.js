@@ -37,7 +37,8 @@ exports.upload = function(req, res){
             path: dir + filename,
             md5: body.file_md5,
             size: body.file_size,
-            mimes: body.file_content_type
+            mimes: body.file_content_type,
+            type: U.formatFileType(body.file_content_type)
         }
 
         mRes.create(resource, ep.done('saveRes'));
@@ -212,10 +213,20 @@ exports.delete = function(req, res){
 exports.search = function(req, res){
     var params = req.query;
 
-
     mFile.search(params, function(err, total, docs){
+
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else if(docs && docs.length){
+            db.dereferences(docs, { resource: ['_id', 'type', 'size'] }, function(){
+                res.json({
+                    err: ERR.SUCCESS,
+                    result: {
+                        total: total,
+                        list: docs
+                    }
+                });
+            });
         }else{
             res.json({
                 err: ERR.SUCCESS,

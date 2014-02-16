@@ -54,7 +54,7 @@ exports.save = function(user, callback){
 exports.update = function(docId, doc, callback){
 
     db.user.findAndModify({ _id: ObjectID(docId) }, [], 
-            { $set: { ref: value } }, { $new: true }, callback);
+            { $set: doc }, { $new: true }, callback);
 }
 
 exports.getUserInfoByName = function(name, callback){
