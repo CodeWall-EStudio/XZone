@@ -390,6 +390,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		}else{
 			fold = Cache.get('myfold');
 		}
+		console.log(fold);
 		if(!fold){
 			fold = [];
 		}

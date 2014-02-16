@@ -1,16 +1,20 @@
-define(['config','helper/request','cache'],function(config,request,cache){
+define(['config','helper/request','cache','helper/util'],function(config,request,cache,util){
 
 	var	handerObj = $(Schhandler);
 
 	function convent(data){
 		var o = {};
 		o.nick = data.user.nick;
+		o.pre = Math.round(data.user.used/data.user.size*100)/100;
+		if(o.pre < 0.001){
+			o.pre = 0.001;
+		}
+		console.log(o.pre);
 		o.name = data.user.name;
-		o.size = data.user.size;
-		o.used = data.user.used;
+		o.size = util.getSize(data.user.size);
+		o.used = util.getSize(data.user.used);
 		o.auth = data.user.auth;
 		o.mailnum = data.user.mailnum;
-		o.pre = data.user.used/data.user.size;
 		o.group = [];
 		o.dep = [];
 		o.prep = [];

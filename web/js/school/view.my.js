@@ -33,7 +33,7 @@ define(['config','cache','helper/view','model.file'],function(config,Cache,View)
 			myInfo = Cache.get('myinfo');
 		}
 
-		d.fdid = myInfo.rootFolder.id;
+		d.rootfdid = myInfo.rootFolder.id;
 
         handerObj.triggerHandler('file:init',d);
         handerObj.triggerHandler('fold:init',d);		

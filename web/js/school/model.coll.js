@@ -9,7 +9,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			list.push({
 				id : item._id,
 				name : item.name,
-				fid : item.fid,
+				fid : item.resource.$id,
 				coll : item.coll,
 				remark : item.remark,
 				time : util.time(item.createTime),

@@ -7,6 +7,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		nowFdInfo = {},
 		nowKey = '',
 		nowFd = 0,
+		rootFd = 0,
 		nowPrep = 0, //当前是否是备课
 		nowOrder  = ['createtime',1],
 		nowUid = 0,
@@ -121,6 +122,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			nowKey = d.key || '';
 			nowPrep = d.prep || 0;
 			nowUid = d.uid || 0;
+			rootFd = d.rootfdid || 0;
 		}
 
 		if(nowGinfo.rootFolder){
@@ -154,6 +156,8 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		var obj = {};
 		if(nowFd){
 			obj.folderId = nowFd;
+		}else if(rootFd){
+			obj.folderId = rootFd;
 		}
 		if(nowGid){
 			obj.groupId = nowGid;
@@ -170,9 +174,11 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 
 	function foldLoad(e,d){
 		//个人的首页
-		if(!nowGid && !nowFd){
-			makeTree(d.list,foldTarget);
-			handerObj.triggerHandler('cache:set',{key: 'myfold',data:d.list});
+		if(!nowGid){ // && !nowFd){
+			if(!nowFd || nowFd == rootFd){
+				makeTree(d.list,foldTarget);
+				handerObj.triggerHandler('cache:set',{key: 'myfold',data:d.list});
+			}
 		}else if(nowGinfo.rootFolder){
 			if(nowGinfo.rootFolder.id == nowFd){
 				makeTree(d.list,foldTarget);

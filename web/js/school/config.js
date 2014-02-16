@@ -47,7 +47,7 @@ define(function() {
 			//文件收藏
 			favcreate : CGI_PATH+'fav/create'+EXT,
 			favlist : CGI_PATH+'fav/list'+EXT,
-			favdel : CGI_PATH+'fav/del'+EXT,
+			favdel : CGI_PATH+'fav/delete'+EXT,
 			favsearch : CGI_PATH+'fav/search'+EXT,
 
 			//回收站
