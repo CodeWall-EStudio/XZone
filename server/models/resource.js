@@ -13,15 +13,15 @@ exports.create = function(params, callback){
     var doc = {
         path: params.path,
         md5: params.md5,
-        size: params.size,
+        size: Number(params.size),
         type: Number(params.type) || 0,
         mimes: params.mimes,
         ref: 0,
         createTime: Date.now(),
         updateTime: Date.now()
     }
-
-    db.resource.save(doc, function(err, result){
+    console.log(doc);
+    db.resource.insert(doc, function(err, result){
         callback(err, doc);
     });
 }

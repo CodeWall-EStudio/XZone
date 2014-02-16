@@ -60,7 +60,7 @@ exports.upload = function(req, res){
         //         exec('pdf2swf '.$file['path'].' -s flashversion=9 -o '.$file['path'].'.swf');
         //     }
     });
-
+    var savedRes = null;
     ep.on('saveRes', function(resource){
         // 添加文件记录
         var file = {
@@ -69,12 +69,14 @@ exports.upload = function(req, res){
             name: name,
             resourceId: resource._id.toString()
         }
-
+        savedRes = resource;
         mFile.create(file, ep.done('createFile'));
     });
 
     ep.on('createFile', function(file){
-
+        if(savedRes){
+            file.resource = savedRes;
+        }
         res.json({
             err: ERR.SUCCESS,
             result: {
