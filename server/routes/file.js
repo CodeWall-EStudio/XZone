@@ -13,6 +13,7 @@ var mUser = require('../models/user');
 var U = require('../util');
 
 
+
 exports.upload = function(req, res){
     var params = req.query;
     var folderId = params.folderId;
@@ -107,7 +108,17 @@ exports.create = function(req, res){
 
     params.creator = loginUser._id;
     
-    mFile.create(params, function(err, doc){
+    var resource = {
+        path: 'dir + filename',
+        md5: 'body.file_md5',
+        size: 123,
+        mimes: 'sdf',
+        type: 4
+    }
+
+    mRes.create(resource, function(err, doc){
+
+    // mFile.create(params, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
