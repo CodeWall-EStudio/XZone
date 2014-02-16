@@ -58,7 +58,7 @@ exports.dereference = function(doc, keys, callback){
                     db.dereference(doc[key], ep.group('deref', 
                     (function(key, keepProps){
                         return function(data){
-                            if(keepProps){
+                            if(data && keepProps){
                                 doc[key] = {};
                                 keepProps.forEach(function(prop){
                                     doc[key][prop] = data[prop];

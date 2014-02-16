@@ -24,7 +24,11 @@ exports.upload = function(req, res){
     var filename = body.file_md5 + path.extname(body.file_name);
     var folderPath = path.resolve('../' + dir);
     var filePath = path.join(folderPath, filename);
+
     var name = body.name;
+    var fileSize = parseInt(body.file_size);
+
+    loginUser.used = Number(loginUser.used);
 
     var ep = new EventProxy();
 
@@ -37,7 +41,7 @@ exports.upload = function(req, res){
         var resource = {
             path: dir + filename,
             md5: body.file_md5,
-            size: body.file_size,
+            size: fileSize,
             mimes: body.file_content_type,
             type: U.formatFileType(body.file_content_type)
         }
@@ -83,12 +87,12 @@ exports.upload = function(req, res){
         U.mkdirsSync(folderPath);
         U.moveFile(body.file_path, filePath, ep.done('moveFile'));
     })
-console.log(loginUser.size, body.file_size, loginUser.used);
-    if(loginUser.size < loginUser.used + body.file_size){
+
+    if(loginUser.size < loginUser.used + fileSize){
         ep.emit('error', '空间已经用完', ERR.SPACE_FULL);
     }else{
         // 更新用户size
-        loginUser.used = loginUser.used + body.file_size;
+        loginUser.used = loginUser.used + fileSize;
         mUser.update(loginUser._id, { used: loginUser.used }, ep.done('updateSpaceUsed'));
     }
 
