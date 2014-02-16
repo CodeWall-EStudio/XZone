@@ -4,6 +4,7 @@ var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var EventProxy = require('eventproxy');
 
+var db = require('../models/db');
 var config = require('../config');
 var ERR = require('../errorcode');
 var mFile = require('../models/file');
