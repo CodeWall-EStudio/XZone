@@ -83,7 +83,7 @@ exports.upload = function(req, res){
         U.mkdirsSync(folderPath);
         U.moveFile(body.file_path, filePath, ep.done('moveFile'));
     })
-
+console.log(loginUser.size, body.file_size, loginUser.used);
     if(loginUser.size < loginUser.used + body.file_size){
         ep.emit('error', '空间已经用完', ERR.SPACE_FULL);
     }else{

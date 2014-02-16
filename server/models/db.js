@@ -63,7 +63,7 @@ exports.dereference = function(doc, keys, callback){
                                 keepProps.forEach(function(prop){
                                     doc[key][prop] = data[prop];
                                 });
-                            }else{
+                            }else if(data){
                                 doc[key] = data;
                             }
                             return null;
