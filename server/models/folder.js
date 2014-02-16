@@ -17,8 +17,8 @@ exports.list = function(params, callback){
     var order = params.order || null;
 
     var query = { 
-        'parent.$id': ObjectID(folderId),
-        'creator.$id': ObjectID(params.creator)
+        'parent.$id': ObjectID(folderId)
+        /*'creator.$id': ObjectID(params.creator)*/
     };
 
     db.folder.find(query, { sort: order}, function(err, docs){
@@ -80,7 +80,7 @@ exports.modify = function(params, doc, callback){
     doc.updatetime = Date.now();
 
 
-    db.folder.findAndModify({ _id: new ObjectID(folderId) ,'creator.$id': ObjectID(creator)}, [], { $set: doc }, 
+    db.folder.findAndModify({ _id: new ObjectID(folderId) /*,'creator.$id': ObjectID(creator)*/}, [], { $set: doc }, 
             { 'new':true }, callback);
 }
 
@@ -156,7 +156,7 @@ exports.delete = function(params, callback){
     var folderId = params.folderId;
     var creator = params.creator;
 
-    db.folder.findAndRemove({ _id: new ObjectID(folderId), 'creator.$id': ObjectID(creator)}, [], function(err, folder){
+    db.folder.findAndRemove({ _id: new ObjectID(folderId)/*, 'creator.$id': ObjectID(creator)*/}, [], function(err, folder){
         if(err){
             return callback(err);
         }

@@ -53,7 +53,7 @@ function verifyParams(req, config){
         for(field in map){
             condition = map[field];
             value = req.param(field);
-            if(typeof value !== 'undifined'){
+            if(typeof value !== 'undefined'){
                 if(msg = getVerifyMsg(field, value, condition)){
                     return msg;
                 }
@@ -66,7 +66,8 @@ function verifyParams(req, config){
         for(field in map){
             condition = map[field];
             value = req.param(field);
-            if(typeof value !== 'undifined'){
+
+            if(typeof value !== 'undefined'){
                 if(msg = getVerifyMsg(field, value, condition)){
                     return msg;
                 }

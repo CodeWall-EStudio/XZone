@@ -111,10 +111,34 @@ module.exports = {
             type: ['number'],
             order: ['string']
         }
-    }
+    },
 
     // fav
-
+    '/api/fav/create': {
+        method: POST,
+        require: {
+            fileId: ObjectID
+        }  
+    },
+    '/api/fav/delete': {
+        method: POST,
+        require: {
+            favId: ObjectID
+        }  
+    },
+    '/api/fav/search': {
+        method: GET,
+        require: {
+            page: ['number', 1],
+            pageNum: ['number', 0]
+        },
+        optional: {
+            groupId: ObjectID,
+            keyword: ['string'],
+            type: ['number'],
+            order: ['string']
+        }
+    },
 };
 
 

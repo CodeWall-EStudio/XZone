@@ -8,39 +8,55 @@ var db = require('./db');
 var ERR = require('../errorcode');
 var U = require('../util');
 var mRes = require('./resource');
+var mFile = require('./file');
 
 exports.create = function(params, callback){
 
-    var resourceId = params.resourceId;
-    mRes.getResource(resourceId, function(err, resource){
+    mFile.getFolder(params.fileId, function(err, file){
         if(err){
             return callback(err);
         }
-        var doc = {
-            user: DBRef('user', ObjectID(params.creator)),
-            resource: DBRef('resource', ObjectID(resourceId)),
-            name: params.name || '',
-            remark: params.remark || '',
-            createTime: Date.now(),
-            type: resource.type,
-            size: resource.size
+        if(!file){
+            return callback('no such file', ERR.NOT_FOUND);
         }
-        if(params.groupId){
-            doc.group = DBRef('group', ObjectID(params.groupId));
-        }
+        var resourceId = file.resource.oid.toString();
 
-        db.fav.save(doc, function(err, result){
+        mRes.getResource(resourceId, function(err, resource){
+            if(err){
+                return callback(err);
+            }
+            if(!resource){
+                return callback('no such resource', ERR.NOT_FOUND);
+            }
+            var doc = {
+                user: DBRef('user', ObjectID(params.creator)),
+                resource: DBRef('resource', ObjectID(resourceId)),
+                name: params.name || file.name || '',
+                remark: params.remark || file.name || '',
+                createTime: Date.now(),
+                updateTime: Date.now(),
+                type: resource.type,
+                size: resource.size
+            }
+            if(params.groupId){
+                doc.group = DBRef('group', ObjectID(params.groupId));
+            }
 
-            // 将 resource 的引用计数加一
-            mRes.updateRef(resourceId, 1, function(err, newRes){
-                if(err){
-                    return callback(err);
-                }
-                callback(null, doc);
+            db.fav.save(doc, function(err, result){
+
+                // 将 resource 的引用计数加一
+                mRes.updateRef(resourceId, 1, function(err, newRes){
+                    if(err){
+                        return callback(err);
+                    }
+                    callback(null, doc);
+                });
+
             });
-
         });
+
     });
+
 
 }
 
