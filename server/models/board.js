@@ -45,7 +45,7 @@ exports.create = function(params, callback){
 exports.modify = function(boardId, doc, callback){
 
     db.board.findAndModify({ _id: ObjectID(boardId) }, [], { $set: doc }, 
-            { $new: true }, callback);
+            { 'new': true }, callback);
 
 }
 
