@@ -41,7 +41,7 @@ define(['config'],function(config){
 			id = [id];
 			target = [target];
 		}
-		handerObj.triggerHandler('file:tocoll',{resourceId:id,target:target});
+		handerObj.triggerHandler('file:tocoll',{fileId:id,target:target});
 
 	}
 	//取消收藏文件
@@ -411,8 +411,8 @@ define(['config'],function(config){
 				handerObj.triggerHandler('recy:del',{id:[id]});
 				break;				
 			case 'coll':
-				var fid = target.attr('data-fid');
-				coll(fid,target);
+				var id = target.attr('data-id');
+				coll(id,target);
 				break;
 			case 'uncoll':
 				var fid = target.attr('data-fid');

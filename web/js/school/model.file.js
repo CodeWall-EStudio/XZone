@@ -40,11 +40,11 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function coll(e,d){
-		var id = d.resourceId,
+		var id = d.fileId,
 			target = d.target,
 			gid = d.groupId;
 		var obj = {
-			resourceId : id
+			fileId : id
 		}
 		if(gid){
 			obj.groupId = gid;
