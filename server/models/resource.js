@@ -22,10 +22,6 @@ exports.create = function(params, callback){
     }
 
     db.resource.insert(doc, function(err, result){
-        console.log(result);
-        db.resource.findOne({_id: doc._id }, function(err, data){
-            console.log('read', err, data);
-        })
         callback(err, doc);
     });
 }
@@ -43,9 +39,9 @@ exports.getResource = function(resId, callback){
 exports.updateRef = function(resId, value, callback){
 
     db.resource.findAndModify({ _id: ObjectID(resId) }, [], 
-            { $inc: { ref: value } }, { $new: true }, function(err, doc){
-
+            { $inc: { ref: value } }, { 'new': true }, function(err, doc){
         if(doc && doc.ref <= 0){ // 引用为0了, 删除文件
+            
             db.resource.findAndRemove({ _id: doc._id }, [], callback);
         }else{
             callback(err, doc);

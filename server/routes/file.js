@@ -70,13 +70,14 @@ exports.upload = function(req, res){
             name: name,
             resourceId: resource._id.toString()
         }
+        resource.ref = 1;
         savedRes = resource;
         mFile.create(file, ep.done('createFile'));
     });
 
     ep.on('createFile', function(file){
         if(savedRes){
-            file.resource = savedRes;
+            file.resource = U.filterProp(savedRes, ['_id', 'type', 'size']);
         }
         res.json({
             err: ERR.SUCCESS,
