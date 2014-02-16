@@ -56,7 +56,7 @@ exports.delete = function(boardId, callback){
 
 exports.search = function(params, callback){
 
-    var userId = params.creator || null;
+    var userId = params.uid || null;
     var keyword = params.keyword || '';
 
     var query = {};
@@ -65,9 +65,9 @@ exports.search = function(params, callback){
         query.content = new RegExp('.*' + keyword + '.*');
     }
 
-    // if(userId){
-    //     query['user.$id'] = ObjectID(userId);
-    // }
+    if(userId){
+        query['user.$id'] = ObjectID(userId);
+    }
 
     db.search('board', query, params, callback);
 

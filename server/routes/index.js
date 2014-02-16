@@ -1,5 +1,7 @@
 var ERR = require('../errorcode');
 var routeUser = require('./user');
+var U = require('../util');
+var CFG = require('../config');
 
 var ROUTER_CONFIG = require('./router_config');
 
@@ -8,6 +10,8 @@ var WHITE_LIST = [
     '/api/user/gotoLogin',
     '/api/user/loginSuccess'
 ];
+
+var ADMIN_CGI = '/api/manage/';
 
 function getRouter(path, method){
 
@@ -37,9 +41,15 @@ function getVerifyMsg(field, value, condition){
                 return msg;
             }
         }
+    }else if(type === 'object'){
+        try{
+            value = U.jsonParse(value);
+        }catch(e){
+            return field + ' must be an object';
+        }
     }else if(type === 'string'){
         if(condition.length > 1 && value.length < condition[1]){
-            return field + ' is too short, require ' + condition[1] + ' letters';
+            return field + ' is too short, at least ' + condition[1] + ' letters';
         }
     }else if(type === 'number'){
         value = Number(value);
@@ -59,33 +69,45 @@ function getVerifyMsg(field, value, condition){
     }*/
 }
 
-function verifyParams(req, config){
-    var field, condition, value, msg, map;
-    if(map = config.require){
-        for(field in map){
-            condition = map[field];
+function verifyParam(req, map, required, all){
+    var field, condition, value, msg, parameter;
+    if(req.method === 'POST'){
+        parameter = req.body;
+    }else if(req.method === 'GET'){
+        parameter = req.query;
+    }
+
+    for(field in map){
+        condition = map[field];
+        if(all){
             value = req.param(field);
-            if(typeof value !== 'undefined' && !isNaN(value)){
-                if(msg = getVerifyMsg(field, value, condition)){
-                    return msg;
-                }
-            }else{
-                return field + ' is required';
+        }else{
+            value = parameter[field];
+        }
+        if(typeof value !== 'undefined'){
+            if(msg = getVerifyMsg(field, value, condition)){
+                return msg;
             }
+        }else if(required){
+            console.log('verifyParams:', field, value, condition);
+            return field + ' is required';
         }
     }
-    if(map = config.optional){
-        for(field in map){
-            condition = map[field];
-            value = req.param(field);
+    return null;
+}
 
-            if(typeof value !== 'undefined' && !isNaN(value)){
-                if(msg = getVerifyMsg(field, value, condition)){
-                    return msg;
-                }
-            }
-        }
+function verifyParams(req, config){
+    var msg, map;
+    if((map = config.require) && (msg = verifyParam(req, map, true)) ){
+        return msg;
+    }
 
+    if((map = config.optional) && (msg = verifyParam(req, map, false)) ){
+        return msg;
+    }
+
+    if((map = config.all) && (msg = verifyParam(req, map, false, true)) ){
+        return msg;
     }
     return null;
 }
@@ -102,7 +124,8 @@ exports.verifyAndLogin = function(req, res, next){
 }
 
 exports.verify = function(req, res, next){
-    if(WHITE_LIST.indexOf(req.path) >= 0){
+    var path = req.path;
+    if(WHITE_LIST.indexOf(path) >= 0){
         next();
     }else{
         var skey = req.cookies.skey;
@@ -110,10 +133,15 @@ exports.verify = function(req, res, next){
 
         if(!loginUser){
             res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
-        }else{
-            req.loginUser = loginUser;
-            next();
+            return;
         }
+        if(path.indexOf(ADMIN_CGI) > -1 && !U.hasRight(loginUser.auth, CFG.AUTH_MANAGER)){
+            // 是后台管理的 cgi
+            res.json({err: ERR.NOT_AUTH, msg: 'not auth'});
+            return;
+        }
+        req.loginUser = loginUser;
+        next();
     }
 }
 
@@ -134,10 +162,8 @@ exports.route = function(req, res, next){
                 res.json({ err: ERR.PARAM_ERROR, msg: verifyMsg });
                 return;
             }
-            router(req, res, next);
-        }else{
-            router(req, res, next);
         }
+        router(req, res, next);
     }else{
         next();
     }

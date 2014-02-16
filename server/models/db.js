@@ -98,7 +98,7 @@ exports.search = function(collectionName, query, options, callback){
     var pageNum = Number(options.pageNum) || 0;
     var skipNum = pageNum * page;
 
-    console.log(collectionName, 'query', query);
+    console.log('dbSearch', collectionName, 'query', query);
     exports.getCollection(collectionName, function(err, collection){
         
         var cursor = collection.find(query);

@@ -96,7 +96,7 @@ exports.upload = function(req, res){
     })
 
     if(loginUser.size < loginUser.used + fileSize){
-        ep.emit('error', '空间已经用完', ERR.SPACE_FULL);
+        ep.emit('error', 'Ran out of space', ERR.SPACE_FULL);
     }else{
         // 更新用户size
         loginUser.used = loginUser.used + fileSize;
@@ -248,6 +248,7 @@ exports.delete = function(req, res){
     // 设置删除标志位
     var fileId = params.fileId;
     var groupId = params.groupId;
+    //TODO params.creator = req.loginUser._id;
 
     mFile.softDelete(fileId, function(err, doc){
         if(err){
@@ -263,7 +264,8 @@ exports.delete = function(req, res){
 
 exports.search = function(req, res){
     var params = req.query;
-
+    delete params.uid;
+    
     mFile.search(params, function(err, total, docs){
 
         if(err){

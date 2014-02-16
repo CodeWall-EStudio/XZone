@@ -33,5 +33,13 @@ exports.PDF_TYPES = ['application/pdf'];
 exports.JOD_CONVERTER = '/data/run/jodconverter/lib/jodconverter-core-3.0-beta-4.jar';
 
 // 权限的常量
-exports.AUTH_SYS_MANAGER = 15;
-exports.AUTH_USER = 0;
+// 权限 0x0 普通 0x1 小组管理员 0x2 部门管理员 0x4 管理员 0x8 系统管理员
+exports.AUTH_USER = 0x0;
+exports.AUTH_GROUP_MANAGER = 0X1;
+exports.AUTH_DEPART_MANAGER = 0X2;
+exports.AUTH_MANAGER = 0X4 | 0x2 | 0x1;
+exports.AUTH_SYS_MANAGER = 0X8 | 0x4 | 0x2 | 0x1;
+
+
+
+

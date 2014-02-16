@@ -2,11 +2,11 @@ var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var config = require('../config');
 var ERR = require('../errorcode');
-
+var U = require('../util');
 var mBoard = require('../models/board');
 
 exports.create = function(req, res){
-    var params = req.query;
+    var params = req.body;
 
     var loginUser = req.loginUser;
 
@@ -27,7 +27,7 @@ exports.create = function(req, res){
 }
 
 exports.approve = function(req, res){
-    var params = req.query;
+    var params = req.body;
 
     var loginUser = req.loginUser;
     
@@ -52,8 +52,8 @@ exports.approve = function(req, res){
 
 exports.delete = function(req, res){
 
-    var params = req.query;
-
+    var params = req.body;
+    // TODO 删了别人的怎办
     mBoard.delete(params.boardId, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
@@ -68,6 +68,11 @@ exports.delete = function(req, res){
 
 exports.search = function(req, res){
     var params = req.query;
+
+    var loginUser = req.loginUser;
+    if(loginUser.auth === config.AUTH_USER){
+        params.uid = loginUser._id; //TODO 普通用户只能搜索自己的
+    }
 
     mBoard.search(params, function(err, total, docs){
         if(err){

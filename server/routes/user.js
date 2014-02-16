@@ -66,7 +66,7 @@ exports.get = function(req, res){
     });
 }
 
-exports.validate = function(ticket, callback){
+var validateTicket = function(ticket, callback){
     var ep = EventProxy.create('validate', 'userInfo', 'saveUser', 
             function(valData, userInfo, user){
         
@@ -128,7 +128,7 @@ exports.login = function(req, res){
     if(!ticket){
         res.json({err: ERR.NOT_LOGIN});
     }else{
-        exports.validate(ticket, function(err, valData, user){
+        validateTicket(ticket, function(err, valData, user){
             if(err){
                 res.json({err: valData || ERR.NOT_LOGIN, msg: err});
             }else{

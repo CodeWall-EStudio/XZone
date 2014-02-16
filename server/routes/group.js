@@ -2,13 +2,21 @@ var http = require('http');
 var EventProxy = require('eventproxy');
 
 var config = require('../config');
+var U = require('../util');
 var ERR = require('../errorcode');
 var mGroup = require('../models/group');
 
 exports.create = function(req, res){
-    var params = req.query;
+    var params = req.body;
     var uid = req.loginUser._id;
     params.creator = uid;
+
+    if(U.hasRight(req.loginUser.auth, config.AUTH_MANAGER)){
+        params.status = 0; // 管理员以上创建小组不用审核
+    }else{
+        delete params.status;
+    }
+
     var members = params.members || null;
     mGroup.create(params, function(err, group){
         if(err){
@@ -34,7 +42,7 @@ exports.create = function(req, res){
             mGroup.addUserToGroup({
                 uid: uid,
                 groupId: groupId,
-                auth: 1 // 创建者默认为小组管理员
+                auth: config.AUTH_GROUP_MANAGER // 创建者默认为小组管理员
             }, ep.group('applyMember'));
 
             if(members){ // 给小组分配成员
@@ -42,7 +50,7 @@ exports.create = function(req, res){
                     mGroup.addUserToGroup({
                         uid: member,
                         groupId: groupId,
-                        auth: 0
+                        auth: config.AUTH_USER
                     }, ep.group('applyMember'));
                 });
             }
@@ -71,7 +79,7 @@ exports.list = function(req, res){
 }
 
 exports.modify = function(req, res){
-    var params = req.query;
+    var params = req.body;
 
     var doc = {};
 

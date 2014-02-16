@@ -185,3 +185,12 @@ exports.formatFileType = function(mimes){
             return 0;
     }
 }
+
+
+exports.jsonParse = function(jsonStr){
+    return Function('return ' + jsonStr)();
+}
+
+exports.hasRight = function(auth, needAuth){
+    return auth & needAuth;
+}
