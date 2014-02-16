@@ -44,7 +44,7 @@
 					</td>
 					<td width="90"><%-item.size%></td>	
 					<td width="150">
-						<span><%-item.time%></span> <i <%if(item.coll){%>class="fav<%+item.fid%> colls s" cmd="uncoll" title="取消收藏"<%}else{%>cmd="coll" class="fav<%+item.fid%> colls" title="收藏"<%}%> data-type="file" data-id="<%+item.id%>" data-fid="<%+item.fid%>"></i>
+						<span><%-item.time%></span> <i <%if(item.coll){%>class="fav<%+item.id%> colls s" cmd="uncoll" title="取消收藏"<%}else{%>cmd="coll" class="fav<%+item.id%> colls" title="收藏"<%}%> data-type="file" data-id="<%+item.id%>" data-fid="<%+item.fid%>"></i>
 					</td>
 			</tr>
 		<%}%>		

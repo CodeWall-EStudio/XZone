@@ -45,12 +45,13 @@ define(['config'],function(config){
 
 	}
 	//取消收藏文件
-	function uncoll(id,target){
+	function uncoll(id,favid,target){
 		if(typeof id != 'object'){
 			id = [id];
+			favid = [favid];
 			target = [target];
 		}
-		handerObj.triggerHandler('file:touncoll',{favId:id,target:target});
+		handerObj.triggerHandler('file:touncoll',{id:id,favId:favid,target:target});
 	}
 
 	//下载文件
@@ -415,9 +416,9 @@ define(['config'],function(config){
 				coll(id,target);
 				break;
 			case 'uncoll':
-				var fid = target.attr('data-fid');
+				var id = target.attr('data-id');
 				var favid = target.attr('data-favid');
-				uncoll(favid,target);
+				uncoll(id,favid,target);
 				break;
 			case 'edit':
 				$('.editmark').hide();

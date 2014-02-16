@@ -35,8 +35,10 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			gid = d.gid,
 			target = d.target;
 
+		//console.log(d);
 		for(var i = 0,l= id.length;i<l;i++){
-			$('.fav'+id[i]).addClass('s').attr('cmd','uncoll').attr('data-favid',favid);
+			$('.fav'+id[i]).addClass('s').attr('cmd','uncoll').attr('data-favid',favid[i]);
+			//target[i].removeClass('s').attr('cmd','coll').attr('data-favid',favid[i]);
 		}
 	}
 
@@ -45,9 +47,9 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			gid = d.gid,
 			target = d.target;
 
-		for(var i = 0,l= target.length;i<l;i++){
-			//$('.fav'+id[i]).removeClass('s').attr('cmd','coll').attr('data-favid',0);
-			target[i].removeClass('s').attr('cmd','coll').attr('data-favid',0);
+		for(var i = 0,l= id.length;i<l;i++){
+			$('.fav'+id[i]).removeClass('s').attr('cmd','coll').attr('data-favid',0);
+			//target[i].removeClass('s').attr('cmd','coll').attr('data-favid',0);
 		}
 	}
 

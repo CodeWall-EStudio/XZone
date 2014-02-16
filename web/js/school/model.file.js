@@ -56,7 +56,11 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}			
 		var success = function(d){
 			if(d.err == 0){
-				handerObj.triggerHandler('fav:collsuc',{favid:d.result.data._id,id:id,target:target,gid:gid});
+				var favid = [];
+				for(var i in d.result.list){
+					favid.push(d.result.list[i]._id);
+				}
+				handerObj.triggerHandler('fav:collsuc',{favid:favid,id:id,target:target,gid:gid});
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}
@@ -65,11 +69,12 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function unColl(e,d){
-		var id = d.favId,
+		var favid = d.favId,
+			id = d.id,
 			target = d.target,
 			gid = d.groupId;
 		var obj = {
-			favId : id
+			favId : favid
 		}
 		if(gid){
 			obj.groupId = gid;
@@ -81,7 +86,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}			
 		var success = function(d){
 			if(d.err == 0){
-				handerObj.triggerHandler('fav:uncollsuc',{favId:id,target:target,gid:gid});
+				handerObj.triggerHandler('fav:uncollsuc',{favId:favid,id:id,target:target,gid:gid});
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}
