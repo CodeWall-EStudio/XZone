@@ -117,7 +117,7 @@ module.exports = {
     '/api/fav/create': {
         method: POST,
         require: {
-            fileId: ObjectID
+            fileId: ['array', 'string', 24]
         }  
     },
     '/api/fav/delete': {
