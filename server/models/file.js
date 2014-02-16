@@ -21,6 +21,8 @@ exports.create = function(params, callback){
         creator: DBRef('user', ObjectID(params.creator)),
         createTime: Date.now(),
         updateTime: Date.now(),
+        type: params.type || 0,
+        size: params.size || 0,
         content: params.content || '', // 文件说明
         mark: params.mark || '', // 文件评论
         del: false,//是否删除
@@ -128,7 +130,8 @@ exports.search = function(params, callback){
     // TODO 普通用户不允许搜uid
     var userId = params.uid || null;
     var keyword = params.keyword || '';
-    var type = Number(params.type) || 0; // FIXME 按类型分类未实现
+    var hasType = 'type' in params;
+    var type = Number(params.type) || 0;
 
     var extendQuery = params.extendQuery || {};
 
@@ -141,6 +144,9 @@ exports.search = function(params, callback){
     }
     if(userId){
         query['user.$id'] = ObjectID(userId);
+    }
+    if(hasType){
+        query['type'] = type;
     }
     query = us.extend(query, extendQuery);
 

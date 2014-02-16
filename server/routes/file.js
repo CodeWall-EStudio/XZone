@@ -3,6 +3,8 @@ var path = require('path');
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var EventProxy = require('eventproxy');
+var process = require('child_process');
+
 
 var db = require('../models/db');
 var config = require('../config');
@@ -23,11 +25,12 @@ exports.upload = function(req, res){
     //1. 先把文件保存到 data 目录
     var dir = '/data/71xiaoxue/' + U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
     var filename = body.file_md5 + path.extname(body.file_name);
-    var folderPath = path.resolve('../' + dir);
+    var folderPath = path.resolve(dir);
     var filePath = path.join(folderPath, filename);
 
     var name = body.name;
     var fileSize = parseInt(body.file_size);
+    var fileType = U.formatFileType(body.file_content_type);
 
     loginUser.used = Number(loginUser.used);
 
@@ -44,22 +47,20 @@ exports.upload = function(req, res){
             md5: body.file_md5,
             size: fileSize,
             mimes: body.file_content_type,
-            type: U.formatFileType(body.file_content_type)
+            type: fileType
         }
 
         mRes.create(resource, ep.done('saveRes'));
 
-        //TODO 生成 pdf 格式文件
-
-        // if(in_array($file['mimes'],$docs))
-        //     {
-        //         exec('java -jar '.$this->config->item('jodconverter', 'upload').' '.$file['path'].' '.$file['path'].'.pdf');
-        //         exec('pdf2swf '.$file['path'].'.pdf -s flashversion=9 -o '.$file['path'].'.swf');
-        //     }
-        //     if (in_array($file['mime'],$pdfs))
-        //     {
-        //         exec('pdf2swf '.$file['path'].' -s flashversion=9 -o '.$file['path'].'.swf');
-        //     }
+        //TODO 未完成  
+        //生成 pdf 格式文件
+        // if(config.DOC_TYPES.indexOf(resource.mimes) > -1){
+        //     process.exec('java -jar ' + config.JOD_CONVERTER + ' ' + resource.path + ' ' + resource.path + '.pdf');
+        //     process.exec('pdf2swf ' + resource.path + '.pdf -s flashversion=9 -o ' + resource.path + '.swf');
+        // }
+        // if(config.PDF_TYPES.indexOf(resource.mimes) > -1){
+        //     process.exec('pdf2swf ' + resource.path + '.pdf -s flashversion=9 -o ' + resource.path + '.swf');
+        // }
     });
     var savedRes = null;
     ep.on('saveRes', function(resource){
@@ -68,6 +69,8 @@ exports.upload = function(req, res){
             creator: loginUser._id,
             folderId: folderId,
             name: name,
+            type: fileType,
+            size: fileSize,
             resourceId: resource._id.toString()
         }
         resource.ref = 1;
@@ -141,40 +144,30 @@ exports.download = function(req, res){
     mFile.getFile(fileId, ep.done('getFile'));
 }
 
-exports.create = function(req, res){
-    var params = req.query;
+// exports.create = function(req, res){
+//     var params = req.query;
 
-    var loginUser = req.loginUser;
+//     var loginUser = req.loginUser;
 
-    params.creator = loginUser._id;
+//     params.creator = loginUser._id;
     
-    var resource = {
-        path: 'dir + filename',
-        md5: 'body.file_md5',
-        size: 123,
-        mimes: 'sdf',
-        type: 4
-    }
-
-    mRes.create(resource, function(err, doc){
-
-    // mFile.create(params, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    data: doc
-                }
-            });
-        }
-    });
-}
+//     mFile.create(params, function(err, doc){
+//         if(err){
+//             res.json({ err: ERR.SERVER_ERROR, msg: err});
+//         }else{
+//             res.json({
+//                 err: ERR.SUCCESS,
+//                 result: {
+//                     data: doc
+//                 }
+//             });
+//         }
+//     });
+// }
 
 exports.modify = function(req, res){
 
-    var params = req.query;
+    var params = req.body;
     var doc = {};
     if(params.mark){
         doc.mark = params.mark;

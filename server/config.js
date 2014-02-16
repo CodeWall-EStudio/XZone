@@ -11,7 +11,9 @@ exports.CAS_SERVICE = 'http://xzone.codewalle.com/api/user/loginSuccess';
 
 exports.DEFAULT_USER_SPACE = 3 * 1024 * 1024 * 1024;
 
-exports.DOC_TO_PDF_TYPES = [
+
+// 文档类型转换的配置
+exports.DOC_TYPES = [
         'application/msword',
         'application/vnd.ms-word',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -25,3 +27,11 @@ exports.DOC_TO_PDF_TYPES = [
         'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
         'application/kswps'
 ];
+
+exports.PDF_TYPES = ['application/pdf'];
+
+exports.JOD_CONVERTER = '/data/run/jodconverter/lib/jodconverter-core-3.0-beta-4.jar';
+
+// 权限的常量
+exports.AUTH_SYS_MANAGER = 15;
+exports.AUTH_USER = 0;

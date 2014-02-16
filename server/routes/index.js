@@ -1,6 +1,8 @@
 var ERR = require('../errorcode');
 var routeUser = require('./user');
 
+var ROUTER_CONFIG = require('./router_config');
+
 var WHITE_LIST = [
     '/api/user/login',
     '/api/user/gotoLogin',
@@ -20,6 +22,8 @@ function getRouter(path, method){
     }
     return null;
 }
+
+function
 
 exports.verifyAndLogin = function(req, res, next){
     var skey = req.cookies.skey;
@@ -51,6 +55,9 @@ exports.verify = function(req, res, next){
 exports.route = function(req, res, next){
     var router = getRouter(req.path, req.method);
     if(router){
+
+
+
         router(req, res, next);
     }else{
         next();
