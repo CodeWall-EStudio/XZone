@@ -36,6 +36,7 @@ exports.create = function(params, callback){
                 resource: DBRef('resource', ObjectID(resourceId)),
                 name: params.name || file.name || '',
                 remark: params.remark || file.name || '',
+                fromFile: DBRef('file', file._id),
                 createTime: Date.now(),
                 updateTime: Date.now(),
                 type: resource.type,
@@ -66,11 +67,18 @@ exports.create = function(params, callback){
 
 }
 
-exports.delete = function(favId, callback){
+exports.delete = function(params, callback){
+    var favId = params.favId;
+    var creator = params.creator;
 
     db.fav.findAndRemove({ _id: new ObjectID(favId)}, [], function(err, fav){
 
         if(!err && fav){ // 将 resource 的引用计数减一
+            if(fav.fromFile){
+                db.file.findAndModify({ _id: fav.fromFile._id, 'creator.$id': ObjectID(creator) }, [],  
+                        { $set: { isFav: false } }, function(err){});
+            }
+
             mRes.updateRef(fav.resource.oid.toString(), -1, function(err, newRes){
                 // if(err){
                 //     return callback(err);

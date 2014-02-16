@@ -27,9 +27,9 @@ exports.create = function(req, res){
 exports.delete = function(req, res){
     var params = req.body;
 
-    var favId = params.favId;
+    params.creator = req.loginUser._id;
 
-    mFav.delete(favId, function(err){
+    mFav.delete(params, function(err){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: 'delete failure' });
         }else{
