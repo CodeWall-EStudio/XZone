@@ -9,7 +9,8 @@ var mFolder = require('../models/folder');
 
 exports.list = function(req, res){
     var params = req.query;
-
+    params.creator = req.loginUser._id;
+    
     mFolder.list(params, function(err, docs){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
@@ -62,7 +63,7 @@ exports.get = function(req, res){
 exports.modify = function(req, res){
     //var params = req.query;
     var params = req.body;
- 
+    params.creator = req.loginUser._id;
 
     var doc = {
     };
@@ -108,7 +109,8 @@ exports.create = function(req, res){
 }
 
 exports.delete = function(req, res){
-    var params = req.query;
+    var params = req.body;
+    params.creator = req.loginUser._id;
 
     mFolder.delete(params, function(err, number){
         if(err){

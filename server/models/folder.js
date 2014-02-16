@@ -14,9 +14,12 @@ exports.list = function(params, callback){
 
     var folderId = params.folderId;
     var groupId = params.groupId || 0;
-    var order = params.order || [];
+    var order = params.order || null;
 
-    var query = { 'parent.$id': ObjectID(folderId)};
+    var query = { 
+        'parent.$id': ObjectID(folderId),
+        'creator.$id': ObjectID(params.creator)
+    };
 
     db.folder.find(query, { sort: order}, function(err, docs){
         if(err){
@@ -72,11 +75,12 @@ exports.getFolder = function(folderId, callback){
 exports.modify = function(params, doc, callback){
     var folderId = params.folderId;
     var groupId = params.groupId;
+    var creator = params.creator;
 
     doc.updatetime = Date.now();
 
 
-    db.folder.findAndModify({ _id: new ObjectID(folderId) }, [], { $set: doc }, 
+    db.folder.findAndModify({ _id: new ObjectID(folderId) ,'creator.$id': ObjectID(creator)}, [], { $set: doc }, 
             { 'new':true }, callback);
 }
 
@@ -150,8 +154,9 @@ exports.create = function(params, callback){
 exports.delete = function(params, callback){
     var groupId = params.groupId;
     var folderId = params.folderId;
+    var creator = params.creator;
 
-    db.folder.findAndRemove({ _id: new ObjectID(folderId)}, [], function(err, folder){
+    db.folder.findAndRemove({ _id: new ObjectID(folderId), 'creator.$id': ObjectID(creator)}, [], function(err, folder){
         if(err){
             return callback(err);
         }
@@ -177,7 +182,7 @@ exports.delete = function(params, callback){
                 proxy.fail(callback);
                 docs.forEach(function(doc){
 
-                    mFile.batchDelete({ 'parent.$id': doc._id }, proxy.group('delete'));
+                    mFile.batchDelete({ 'folder.$id': doc._id }, proxy.group('delete'));
 
                     db.folder.remove({ _id: doc._id }, proxy.group('delete'));
                 });

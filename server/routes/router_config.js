@@ -1,61 +1,123 @@
 
+var ObjectID = ['string', 24];
+var POST = 'POST';
+var GET = 'GET';
+
 module.exports = {
     // file 
     '/api/file/upload': {
-        method: 'POST',
+        method: POST,
         require: {
-            folderId: ['string', 24]
+            folderId: ObjectID,
+            name: ['string']
         }
     },
     '/api/file/download': {
-        method: 'GET',
+        method: GET,
         require: {
-            fileId: ['string', 24]
+            fileId: ObjectID
         }
     },
     '/api/file/modify': {
-        method: 'POST',
+        method: POST,
         require: {
-            fileId: ['string', 24]
+            fileId: ObjectID
         }
     },
     '/api/file/copy': {
-        method: 'POST',
+        method: POST,
         require: {
-            fileId: ['string', 24],
-            targetId: ['string', 24]
+            fileId: ObjectID,
+            targetId: ObjectID
         },
         optional: {
-            groupId: ['string', 24]
+            groupId: ObjectID
         }
     },
     '/api/file/move': {
-        method: 'POST',
+        method: POST,
         require: {
-            fileId: ['string', 24],
-            targetId: ['string', 24]
+            fileId: ObjectID,
+            targetId: ObjectID
         },
         optional: {
-            groupId: ['string', 24]
+            groupId: ObjectID
         }
     },
     '/api/file/delete': {
-        method: 'POST',
+        method: POST,
         require: {
-            fileId: ['string', 24]
+            fileId: ObjectID
         }
     },
     '/api/file/search': {
-        method: 'GET',
+        method: GET,
         require: {
-            folderId: ['string', 24]
+            folderId: ObjectID,
+            page: ['number', 1],
+            pageNum: ['number', 0]
         },
         optional: {
-            groupId: ['string', 24],
+            groupId: ObjectID,
             keyword: ['string'],
-            type: ['number', 0]
+            type: ['number'],
+            order: ['string']
+        }
+    },
+
+    // folder
+    '/api/folder/create': {
+        method: POST,
+        require: {
+            folderId: ObjectID,
+            name: ['string']
+        },
+        optional: {
+            topId: ObjectID,
+            groupId: ObjectID
+        }
+    },
+    '/api/folder/delete': {
+        method: POST,
+        require: {
+            folderId: ObjectID
+        },
+        optional: {
+            groupId: ObjectID
+        }
+    },
+    '/api/folder/modify': {
+        method: POST,
+        require: {
+            folderId: ObjectID
+        }    
+    },
+    '/api/folder/list': {
+        method: GET,
+        require: {
+            folderId: ObjectID
+        }    
+    },
+    '/api/folder/search': {
+        method: GET,
+        require: {
+            folderId: ObjectID,
+            page: ['number', 1],
+            pageNum: ['number', 0]
+        },
+        optional: {
+            groupId: ObjectID,
+            keyword: ['string'],
+            type: ['number'],
+            order: ['string']
         }
     }
 
-    // folder
+    // fav
+
 };
+
+
+
+
+

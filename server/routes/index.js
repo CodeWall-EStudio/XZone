@@ -23,37 +23,56 @@ function getRouter(path, method){
     return null;
 }
 
+function getVerifyMsg(field, value, condition){
+    var type = condition[0];
+    if(type === 'string'){
+        if(condition.length > 1 && value.length < condition[1]){
+            return field + ' is too short, require ' + condition[1] + ' letters';
+        }
+    }else if(type === 'number'){
+        value = Number(value);
+        if(isNaN(value)){
+            return field + ' must be an number.';
+        }
+        if(condition.length > 1 &&  value < condition[1]){
+            return field + ' must greater than ' + condition[1];
+        }
+        if(condition.length > 2 && value > condition[2]){
+            return field + ' must less than ' + condition[2];
+        }
+    }/*else if(type === 'boolean'){
+        if(value === 'true' || value === '0'){
+            value = true;
+        }
+    }*/
+}
+
 function verifyParams(req, config){
-    var field, condition, value, type;
-    if(config.require){
-        for(field in config.require){
-            condition = config.require[field];
-            type = condition[0];
-            if(value = req.param(field)){
-                if(type === 'string'){
-                    if(value.length < condition[1]){
-                        return field + ' is too short, require ' + condition[1] + ' letters';
-                    }
-                }else if(type === 'number'){
-                    value = Number(number);
-                    if(isNaN(value)){
-                        return field + ' must be an number.';
-                    }
-                    if(value < condition[1]){
-                        return field + ' must be greater than ' + condition[1];
-                    }
-                    if(condition[2] && value > condition[2]){
-                        return field + ' must be less than ' + condition[2];
-                    }
-                }/*else if(type === 'boolean'){
-                    if(value === 'true' || value === '0'){
-                        value = true;
-                    }
-                }*/
+    var field, condition, value, msg, map;
+    if(map = config.require){
+        for(field in map){
+            condition = map[field];
+            value = req.param(field);
+            if(typeof value !== 'undifined'){
+                if(msg = getVerifyMsg(field, value, condition)){
+                    return msg;
+                }
             }else{
                 return field + ' is required';
             }
         }
+    }
+    if(map = config.optional){
+        for(field in map){
+            condition = map[field];
+            value = req.param(field);
+            if(typeof value !== 'undifined'){
+                if(msg = getVerifyMsg(field, value, condition)){
+                    return msg;
+                }
+            }
+        }
+
     }
     return null;
 }
