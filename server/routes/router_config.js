@@ -4,56 +4,56 @@ module.exports = {
     '/api/file/upload': {
         method: 'POST',
         require: {
-            folderId: [String, 24]
+            folderId: ['string', 24]
         }
     },
     '/api/file/download': {
         method: 'GET',
         require: {
-            fileId: [String, 24]
+            fileId: ['string', 24]
         }
     },
     '/api/file/modify': {
         method: 'POST',
         require: {
-            fileId: [String, 24]
+            fileId: ['string', 24]
         }
     },
     '/api/file/copy': {
         method: 'POST',
         require: {
-            fileId: [String, 24],
-            targetId: [String, 24]
+            fileId: ['string', 24],
+            targetId: ['string', 24]
         },
         optional: {
-            groupId: [String, 24]
+            groupId: ['string', 24]
         }
     },
     '/api/file/move': {
         method: 'POST',
         require: {
-            fileId: [String, 24],
-            targetId: [String, 24]
+            fileId: ['string', 24],
+            targetId: ['string', 24]
         },
         optional: {
-            groupId: [String, 24]
+            groupId: ['string', 24]
         }
     },
     '/api/file/delete': {
         method: 'POST',
         require: {
-            fileId: [String, 24]
+            fileId: ['string', 24]
         }
     },
     '/api/file/search': {
         method: 'GET',
         require: {
-            folderId: [String, 24]
+            folderId: ['string', 24]
         },
         optional: {
-            groupId: [String, 24],
-            keyword: [String],
-            type: [Number, 0]
+            groupId: ['string', 24],
+            keyword: ['string'],
+            type: ['number', 0]
         }
     }
 

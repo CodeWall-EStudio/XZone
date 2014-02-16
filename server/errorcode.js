@@ -1,6 +1,7 @@
 
 module.exports = exports = {
     SERVER_ERROR: 100,
+    NOT_SUPPORT: 101,
 
     NOT_LOGIN: 1001,
     TICKET_ERROR: 1002,

@@ -26,6 +26,7 @@ exports.create = function(params, callback){
         content: params.content || '', // 文件说明
         mark: params.mark || '', // 文件评论
         del: false,//是否删除
+        isFav: false, // 是否被自己收藏了
         
         status: params.status || 0, // 0 上传 1 分享
 

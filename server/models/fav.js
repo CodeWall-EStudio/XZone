@@ -48,7 +48,7 @@ exports.delete = function(favId, callback){
 
     db.fav.findAndRemove({ _id: new ObjectID(favId)}, [], function(err, fav){
 
-        if(!err){ // 将 resource 的引用计数减一
+        if(!err && fav){ // 将 resource 的引用计数减一
             mRes.updateRef(fav.resource.oid.toString(), -1, function(err, newRes){
                 // if(err){
                 //     return callback(err);

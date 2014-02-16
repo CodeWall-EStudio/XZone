@@ -98,6 +98,7 @@ exports.search = function(collectionName, query, options, callback){
     var pageNum = Number(options.pageNum) || 0;
     var skipNum = pageNum * (page - 1);
 
+    console.log(collectionName, 'query', query);
     exports.getCollection(collectionName, function(err, collection){
         
         var cursor = collection.find(query);
@@ -159,7 +160,7 @@ exports.addHelper(exports, 'resource');
 exports.addHelper(exports, 'groupuser');
 exports.addHelper(exports, 'file');
 exports.addHelper(exports, 'folder');
-exports.addHelper(exports, 'usercollection');
+exports.addHelper(exports, 'fav');
 exports.addHelper(exports, 'board');
 exports.addHelper(exports, 'message');
 

@@ -15,10 +15,12 @@ var app = express();
 // all environments
 app.set('port', process.env.PORT || config.PORT);
 
+app.enable('trust proxy');
+
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.cookieParser());
-app.use(express.session({ secret: 'xzone' }));
+app.use(express.cookieSession({ secret: 'xzone' }));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);

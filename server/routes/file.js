@@ -195,7 +195,7 @@ exports.modify = function(req, res){
 }
 
 exports.copy = function(req, res){
-    var params = req.query;
+    var params = req.body;
     var fileId = params.fileId;
     var groupId = params.groupId;
     var targetId = params.targetId;
@@ -244,7 +244,7 @@ exports.move = function(req, res){
 
 exports.delete = function(req, res){
 
-    var params = req.query;
+    var params = req.body;
     // 设置删除标志位
     var fileId = params.fileId;
     var groupId = params.groupId;
