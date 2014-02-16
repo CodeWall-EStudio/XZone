@@ -12,7 +12,10 @@ var mFile = require('./file');
 
 exports.create = function(params, callback){
 
-    mFile.getFolder(params.fileId, function(err, file){
+    var creator = params.creator;
+    var fileId = params.fileId;
+
+    mFile.getFolder(fileId, function(err, file){
         if(err){
             return callback(err);
         }
@@ -29,7 +32,7 @@ exports.create = function(params, callback){
                 return callback('no such resource', ERR.NOT_FOUND);
             }
             var doc = {
-                user: DBRef('user', ObjectID(params.creator)),
+                user: DBRef('user', ObjectID(creator)),
                 resource: DBRef('resource', ObjectID(resourceId)),
                 name: params.name || file.name || '',
                 remark: params.remark || file.name || '',
@@ -43,6 +46,9 @@ exports.create = function(params, callback){
             }
 
             db.fav.save(doc, function(err, result){
+
+                db.file.findAndModify({ _id: new ObjectID(fileId), 'creator.$id': ObjectID(creator) }, [],  
+                        { $set: { isFav: true } }, function(err){});
 
                 // 将 resource 的引用计数加一
                 mRes.updateRef(resourceId, 1, function(err, newRes){

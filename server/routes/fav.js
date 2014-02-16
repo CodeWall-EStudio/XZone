@@ -6,7 +6,8 @@ var mFav = require('../models/fav');
 
 exports.create = function(req, res){
 
-    var params = req.query;
+    var params = req.body;
+    params.creator = req.loginUser._id;
 
     mFav.create(params, function(err, doc){
         if(err){
@@ -24,7 +25,7 @@ exports.create = function(req, res){
 
 
 exports.delete = function(req, res){
-    var params = req.query;
+    var params = req.body;
 
     var favId = params.favId;
 
