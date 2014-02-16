@@ -7,11 +7,11 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			var item = data[i];
 			var td = {
 				id : item._id,
-				fid : item.resource,
+				fid : item.resource._id,
 				name : item.name,
 				mark : item.mark,
-				type : item.type,
-				size : util.getSize(item.size),
+				type : item.resource.type,
+				size : util.getSize(item.resource.size),
 				time : util.time(item.createTime),
 				coll : item.coll
 			}
@@ -40,17 +40,19 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function coll(e,d){
-		var id = d.id,
+		var id = d.resourceId,
 			target = d.target,
-			gid = d.gid;
-
+			gid = d.groupId;
+		var obj = {
+			resourceId : id
+		}
+		if(gid){
+			obj.groupId = gid;
+		}
 		var opt = {
 			method : 'POST',
 			cgi : config.cgi.favcreate,
-			data : {
-				id : id,
-				gid : gid
-			}
+			data : obj
 		}			
 		var success = function(d){
 			if(d.err == 0){
@@ -63,17 +65,19 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function unColl(e,d){
-		var id = d.id,
+		var id = d.resourceId,
 			target = d.target,
-			gid = d.gid;
-
+			gid = d.groupId;
+		var obj = {
+			resourceId : id
+		}
+		if(gid){
+			obj.groupId = gid;
+		}
 		var opt = {
 			method : 'POST',
 			cgi : config.cgi.favdel,
-			data : {
-				id : id,
-				gid : gid
-			}
+			data : obj
 		}			
 		var success = function(d){
 			if(d.err == 0){

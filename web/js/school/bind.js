@@ -41,7 +41,7 @@ define(['config'],function(config){
 			id = [id];
 			target = [target];
 		}
-		handerObj.triggerHandler('file:coll',{id:id,gid:nowGid,target:target});
+		handerObj.triggerHandler('file:tocoll',{resourceId:id,target:target});
 
 	}
 	//取消收藏文件
@@ -50,7 +50,7 @@ define(['config'],function(config){
 			id = [id];
 			target = [target];
 		}
-		handerObj.triggerHandler('file:uncoll',{id:id,gid:nowGid,target:target});
+		handerObj.triggerHandler('file:touncoll',{resourceId:id,target:target});
 	}
 
 	//下载文件

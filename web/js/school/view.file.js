@@ -15,6 +15,20 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		actWin = $('#actWin'),
 		tabletitTarget = $("#tableTit");
 
+	function toColl(e,d){
+		if(nowGid){
+			d.groupId = nowGid;
+		}
+		handerObj.triggerHandler('file:coll',d);
+	}
+
+	function toUnColl(e,d){
+		if(nowGid){
+			d.groupId = nowGid;
+		}		
+		handerObj.triggerHandler('file:uncoll',d);
+	}
+
 	function collSuc(e,d){
 		var id = d.id,
 			gid = d.gid,
@@ -88,7 +102,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			keyword : nowKey,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder		
+			order : [nowOrder]
 		}
 
 		if(nowGid){
@@ -100,7 +114,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		if(nowUid){
 			data.uid = nowUid;
 		}
-
+		console.log(data,nowOrder);
 		handerObj.triggerHandler('file:search',data);	
 	}
 
@@ -627,6 +641,8 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		'file:del' : fileDel,
 		'file:init' : fileInit,
 		'file:load' : fileLoad,
+		'file:tocoll' : toColl,
+		'file:touncoll' : toUnColl,
 		'fav:collsuc' : collSuc,
 		'fav:uncollsuc' : uncollSUc,
 		'file:marksuc' : marksuc,
