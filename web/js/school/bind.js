@@ -50,7 +50,7 @@ define(['config'],function(config){
 			id = [id];
 			target = [target];
 		}
-		handerObj.triggerHandler('file:touncoll',{resourceId:id,target:target});
+		handerObj.triggerHandler('file:touncoll',{favId:id,target:target});
 	}
 
 	//下载文件
@@ -416,7 +416,8 @@ define(['config'],function(config){
 				break;
 			case 'uncoll':
 				var fid = target.attr('data-fid');
-				uncoll(fid,target);
+				var favid = target.attr('data-favid');
+				uncoll(favid,target);
 				break;
 			case 'edit':
 				$('.editmark').hide();

@@ -31,11 +31,12 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 
 	function collSuc(e,d){
 		var id = d.id,
+			favid = d.favid
 			gid = d.gid,
 			target = d.target;
 
 		for(var i = 0,l= id.length;i<l;i++){
-			$('.fav'+id[i]).addClass('s').attr('cmd','uncoll');
+			$('.fav'+id[i]).addClass('s').attr('cmd','uncoll').attr('data-favid',favid);
 		}
 	}
 
@@ -44,8 +45,9 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			gid = d.gid,
 			target = d.target;
 
-		for(var i = 0,l= id.length;i<l;i++){
-			$('.fav'+id[i]).removeClass('s').attr('cmd','coll');
+		for(var i = 0,l= target.length;i<l;i++){
+			//$('.fav'+id[i]).removeClass('s').attr('cmd','coll').attr('data-favid',0);
+			target[i].removeClass('s').attr('cmd','coll').attr('data-favid',0);
 		}
 	}
 

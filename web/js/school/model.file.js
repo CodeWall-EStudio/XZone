@@ -56,7 +56,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}			
 		var success = function(d){
 			if(d.err == 0){
-				handerObj.triggerHandler('fav:collsuc',{id:id,target:target,gid:gid});
+				handerObj.triggerHandler('fav:collsuc',{favid:d.result.data._id,id:id,target:target,gid:gid});
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}
@@ -65,11 +65,11 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function unColl(e,d){
-		var id = d.resourceId,
+		var id = d.favId,
 			target = d.target,
 			gid = d.groupId;
 		var obj = {
-			resourceId : id
+			favId : id
 		}
 		if(gid){
 			obj.groupId = gid;
@@ -81,7 +81,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}			
 		var success = function(d){
 			if(d.err == 0){
-				handerObj.triggerHandler('fav:uncollsuc',{id:id,target:target,gid:gid});
+				handerObj.triggerHandler('fav:uncollsuc',{favId:id,target:target,gid:gid});
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}
