@@ -24,15 +24,27 @@ function getRouter(path, method){
 }
 
 function getVerifyMsg(field, value, condition){
+    console.log('verifyParams:', field, value, condition);
     var type = condition[0];
-    if(type === 'string'){
+    if(type === 'array'){
+        if(!value.forEach){
+            return field + ' must be an array';
+        }
+        var msg, con = condition.slice(1);
+        for(var i = 0; i < value.length; i++){
+            msg = getVerifyMsg(field+'[' + i + ']', value[i], con);
+            if(msg){
+                return msg;
+            }
+        }
+    }else if(type === 'string'){
         if(condition.length > 1 && value.length < condition[1]){
             return field + ' is too short, require ' + condition[1] + ' letters';
         }
     }else if(type === 'number'){
         value = Number(value);
         if(isNaN(value)){
-            return field + ' must be an number.';
+            return field + ' must be an number';
         }
         if(condition.length > 1 &&  value < condition[1]){
             return field + ' must greater than ' + condition[1];
@@ -53,7 +65,7 @@ function verifyParams(req, config){
         for(field in map){
             condition = map[field];
             value = req.param(field);
-            if(typeof value !== 'undefined'){
+            if(typeof value !== 'undefined' && !isNaN(value)){
                 if(msg = getVerifyMsg(field, value, condition)){
                     return msg;
                 }
@@ -67,7 +79,7 @@ function verifyParams(req, config){
             condition = map[field];
             value = req.param(field);
 
-            if(typeof value !== 'undefined'){
+            if(typeof value !== 'undefined' && !isNaN(value)){
                 if(msg = getVerifyMsg(field, value, condition)){
                     return msg;
                 }
