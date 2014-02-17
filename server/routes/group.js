@@ -1,5 +1,6 @@
 var http = require('http');
 var EventProxy = require('eventproxy');
+var us = require('underscore');
 
 var config = require('../config');
 var U = require('../util');
@@ -8,8 +9,8 @@ var mGroup = require('../models/group');
 
 exports.create = function(req, res){
     var params = req.body;
-    var uid = req.loginUser._id;
-    params.creator = uid;
+
+    params.creator = req.loginUser._id;
 
     if(U.hasRight(req.loginUser.auth, config.AUTH_MANAGER)){
         params.status = 0; // 管理员以上创建小组不用审核
@@ -17,44 +18,40 @@ exports.create = function(req, res){
         delete params.status;
     }
 
-    var members = params.members || null;
-    mGroup.create(params, function(err, group){
-        if(err){
-            res.json({ err: group || ERR.SERVER_ERROR, msg: err});
-        }else{
-            var groupId = group._id.toString();
+    var members = params.members || [];
+    members.push(params.creator);
+    members = us.uniq(members); // 唯一化, 防止出现两个相同的用户
 
-            var ep = new EventProxy();
-            var memberCount = (members ? members.length : 0) + 1; 
-            ep.after('applyMember', memberCount, function(list){
-                res.json({
-                    err: ERR.SUCCESS,
-                    result: {
-                        data: group
-                    }
-                });
-            });
+    var ep = new EventProxy();
 
-            ep.fail(function(err, errCode){
-                res.json({ err: errCode || ERR.SERVER_ERROR, msg: 'add memeber error'})
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    mGroup.create(params, ep.doneLater('create'));
+
+    ep.on('create', function(group){
+        var groupId = group._id.toString();
+
+        ep.after('applyMember', members.length, function(list){
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    data: group
+                }
             });
+        });
+        members.forEach(function(member){
+            // 创建者默认为小组管理员
+            var auth = member === params.creator ? config.AUTH_GROUP_MANAGER : config.AUTH_USER;
 
             mGroup.addUserToGroup({
-                uid: uid,
+                userId: member,
                 groupId: groupId,
-                auth: config.AUTH_GROUP_MANAGER // 创建者默认为小组管理员
+                auth: auth
             }, ep.group('applyMember'));
-
-            if(members){ // 给小组分配成员
-                members.forEach(function(member){
-                    mGroup.addUserToGroup({
-                        uid: member,
-                        groupId: groupId,
-                        auth: config.AUTH_USER
-                    }, ep.group('applyMember'));
-                });
-            }
-        }
+        });
+        
     });
 }
 

@@ -39,6 +39,7 @@ exports.create = function(params, callback){
         }
 
         db.group.save(doc, function(err, result){
+            //TODO 创建完 group 要创建 rootFolder
             callback(err, doc);
         });
     });
@@ -84,7 +85,7 @@ exports.getGroupByUser = function(uid, callback){
 
 exports.addUserToGroup = function(params, callback){
     var doc = {
-        user: DBRef('user', ObjectID(params.uid)),
+        user: DBRef('user', ObjectID(params.userId)),
         group: DBRef('group', ObjectID(params.groupId)),
         auth: Number(params.auth) || 0
     };
