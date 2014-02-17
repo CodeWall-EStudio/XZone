@@ -149,9 +149,12 @@ exports.search = function(params, callback){
     var extendQuery = params.extendQuery || {};
 
     var query = { 
-        name: new RegExp('.*' + keyword + '.*'),
         del: false
     };
+
+    if(keyword){
+        query['name'] = new RegExp('.*' + keyword + '.*');
+    }
     if(folderId){
         query['folder.$id'] = ObjectID(folderId);
     }

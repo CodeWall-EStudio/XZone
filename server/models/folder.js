@@ -14,12 +14,17 @@ exports.list = function(params, callback){
 
     var folderId = params.folderId;
     var groupId = params.groupId || null;
-    var order = params.order || null;
-
+    var order = null;
+    
     var query = { 
         'parent.$id': ObjectID(folderId)
-        /*'creator.$id': ObjectID(params.creator)*/
     };
+    if(params.creator){
+        query['creator.$id'] = ObjectID(params.creator);
+    }
+    if(params.order){
+        order = U.jsonParse(order);
+    }
 
     db.folder.find(query, { sort: order}, function(err, docs){
         if(err){
@@ -35,20 +40,24 @@ exports.search = function(params, callback){
 
     var folderId = params.folderId;
     var groupId = params.groupId || null;
-    var userId = params.uid || null;
+    var creator = params.creator || null;
     var keyword = params.keyword || '';
 
     var query = { 
-        name: new RegExp('.*' + keyword + '.*'),
         $or: [
             { 'parent.$id': new ObjectID(folderId) },
             { idpath: new RegExp('.*' + folderId + '.*') }
         ]
     };
-    if(userId){
-        query['user.$id'] = ObjectID(userId);
+    if(keyword){
+        query['name'] = new RegExp('.*' + keyword + '.*');
     }
-
+    if(creator){
+        query['creator.$id'] = ObjectID(creator);
+    }
+    if(groupId){
+        query['group.$id'] = ObjectID(groupId);
+    }
     db.search('folder', query, params, function(err, total, result){
         if(err){
             callback(err);
@@ -78,9 +87,18 @@ exports.modify = function(params, doc, callback){
     var creator = params.creator;
 
     doc.updatetime = Date.now();
+    var query = {
+        _id: new ObjectID(folderId)
+    }
 
+    if(creator){
+        query['creator.$id'] = ObjectID(creator);
+    }
+    if(groupId){
+        query['group.$id'] = ObjectID(groupId);
+    }
 
-    db.folder.findAndModify({ _id: new ObjectID(folderId) /*,'creator.$id': ObjectID(creator)*/}, [], { $set: doc }, 
+    db.folder.findAndModify(query, [], { $set: doc }, 
             { 'new':true }, callback);
 }
 
@@ -156,39 +174,55 @@ exports.delete = function(params, callback){
     var folderId = params.folderId;
     var creator = params.creator;
 
-    db.folder.findAndRemove({ _id: new ObjectID(folderId)/*, 'creator.$id': ObjectID(creator)*/}, [], function(err, folder){
-        if(err){
-            return callback(err);
-        }
+    var query = {
+        _id: new ObjectID(folderId)
+    }
+
+    if(creator){
+        query['creator.$id'] = ObjectID(creator);
+    }
+    if(groupId){
+        query['group.$id'] = ObjectID(groupId);
+    }
+
+    var ep = new EventProxy();
+
+    ep.fail(callback);
+
+    db.folder.findAndRemove(query, [], ep.doneLater('findAndRemove'));
+
+    ep.on('findAndRemove', function(folder){
         if(!folder){
-            return callback('no such folder', ERR.NOT_FOUND);
+            return ep.emit('error', 'no such folder', ERR.NOT_FOUND);
         }
         if(folder.hasChild){
 
             var query = { 
                 idpath: new RegExp('.*' + folderId + '.*')
             };
-            db.folder.find(query, function(err, docs){
-                if(err){
-                    return callback(err);
-                }
-                if(!docs.length){
-                    return callback(null, 1);
-                }
-                var proxy = new EventProxy();
-                proxy.after('delete', docs.length * 2, function(list){
-                    callback(null, U.calculate(list) + 1);
-                });
-                proxy.fail(callback);
-                docs.forEach(function(doc){
 
-                    mFile.batchDelete({ 'folder.$id': doc._id }, proxy.group('delete'));
-
-                    db.folder.remove({ _id: doc._id }, proxy.group('delete'));
-                });
-            });
+            db.folder.find(query, ep.done('findAllChild'));
+        }else{
+            callback(null, 1);
         }
     }); // findAndRemove
+
+    ep.on('findAllChild', function(docs){
+        if(!docs.length){
+            return callback(null, 1);
+        }
+
+        ep.after('delete', docs.length * 2, function(list){
+            callback(null, U.calculate(list) + 1);
+        });
+
+        docs.forEach(function(doc){
+
+            mFile.batchDelete({ 'folder.$id': doc._id }, ep.group('delete'));
+
+            db.folder.remove({ _id: doc._id }, ep.group('delete'));
+        });
+    });
 }
 
 exports.isFolderCreator = function(folderId, userId, callback){

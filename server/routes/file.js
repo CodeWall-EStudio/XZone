@@ -144,6 +144,7 @@ exports.download = function(req, res){
                 'Content-Length': resource.size,
                 'X-Accel-Redirect': config.FILE_SAVE_DIR + resource.path
             });
+            // TODO 未调通
             res.send();
         }
     });
@@ -273,7 +274,7 @@ exports.copy = function(req, res){
 }
 
 exports.move = function(req, res){
-    var params = req.query;
+    var params = req.body;
         params.creator = req.loginUser._id;
 
 

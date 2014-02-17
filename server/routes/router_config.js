@@ -84,7 +84,9 @@ module.exports = {
         },
         optional: {
             topId: ObjectID,
-            groupId: ObjectID
+            groupId: ObjectID,
+            closeTime: ['number'],
+            prepare: ObjectID
         }
     },
     '/api/folder/': {
