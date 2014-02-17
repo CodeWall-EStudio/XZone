@@ -88,12 +88,17 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var success = function(d){
 			if(d.err == 0){
 				var list = d.result.list;
+				var prep = [];
 				for(var i in list){
 					list[i] = conventGroup(list[i]);
+					if(list[i].type == 3 && !list[i].parent){
+						prep.push(list[i]);
+					}
 				}
 				//handerObj.triggerHandler('cache:set',{key: 'myinfo',data: obj});
 				handerObj.triggerHandler('manage:groupload',{
-					list : list
+					list : list,
+					prep : prep
 				});
 			}
 		}

@@ -1,8 +1,10 @@
 <table width="100%"  class="table table-striped table-hover table-list table-files">
+	<%if(show){%>
 	<tr>
 		<th>小组名</th>
 		<th>状态</th>
 	</tr>
+	<%}%>
 	<%
 		for(var i in list){
 			var item = list[i];

@@ -147,9 +147,10 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			}
 			if(fid){
 				data.folderId = fid;
-			}else{
+			}else if(rootFd){
 				data.folderId = rootFd;
 			}
+			console.log(data);
 			handerObj.triggerHandler('fold:one',data);		
 		//如果是备课		
 		}else if(nowPrep){
@@ -165,6 +166,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		if(nowGid){
 			obj.groupId = nowGid;
 		}
+		console.log(obj);
 
 		handerObj.triggerHandler('fold:get',obj);		
 	}

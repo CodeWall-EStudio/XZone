@@ -36,15 +36,49 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 	}
 
 	function createSuc(e,d){
+		addTarget.addClass('hide');
+		listTarget.removeClass('hide');		
+		var obj = d.list;
+		if(obj.type == 3 && !obj.parent){
+		var view = new View({
+			target : $('#prepYearList'),
+			tplid : 'manage.prep.year',
+			data : {
+				list : [obj]
+			}
+		});
+		view.appendPanel();
+		}
 
-	}
-
-	function groupLoad(e,d){
 		var view = new View({
 			target : $("#groupList"),
 			tplid : 'manage.group.list',
 			data : {
-				list : d.list
+				list : [d.list],
+				show : 0
+			}			
+		});
+		view.appendPanel();			
+
+	}
+
+	function groupLoad(e,d){
+		console.log(d);
+		var view = new View({
+			target : $('#prepYearList'),
+			tplid : 'manage.prep.year',
+			data : {
+				list : d.prep
+			}
+		});
+		view.appendPanel();
+
+		var view = new View({
+			target : $("#groupList"),
+			tplid : 'manage.group.list',
+			data : {
+				list : d.list,
+				show : 1
 			}			
 		});
 		view.createPanel();			
@@ -97,13 +131,10 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 
 	$('#newGroupBtn').bind('click',function(e){
 		var gn = $('#groupNmae').val(),
-			type = $('.group-type:checked').val(),
+			type = parseInt($('.group-type:checked').val()),
 			desc = $("#desc").val();
 
-		if(gn == ''){
-			alert('小组名称不能为空!');
-			return;
-		}
+
 		var ul = [],
 			ml = [];
 		//managers
@@ -120,11 +151,11 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 		if(type == 3){
 			var tag =  $('.check-prep:checked');
 			if(tag){
-				pid = tag.val();
+				pid = parseInt(tag.val());
 			}
 			if(pid){
-				grade = $('.check-grade').val();
-				tag = $('.check-tag').val();
+				grade = $('.check-grade:checked').val();
+				tag = $('.check-tag:checked').val();
 			}
 		}else if(type == 2){
 			if($('.prep-type:checked').length){
@@ -144,22 +175,59 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 		if(pt){
 			obj.pt = pt;
 		}
-		if(pid != 0){
-			obj.parentId = pid;
+		console.log(pid,type);
+		
+		if(pid){
+			var parent = $('.check-prepyear:checked').val();
+			if(parent){
+				obj.parentId = parent;
+			}
 			if(grade){
 				obj.grade = grade;
 			}
 			if(tag){
 				obj.tag = tag;
 			}
+			console.log(parent,grade,tag);
+			if(type == 3){
+				if(!parent){
+					alert('备课小组必须选择学年！');
+					return;
+				}
+				if((!grade || !tag)){
+					alert('备课小组必须选择年级和科目！');
+					return;
+				}
+			}
+			obj.name = config.grade[grade]+config.tag[tag];
+		}else{
+			if(type == 3){
+
+			}
 		}
+
+		if(obj.name == ''){
+			alert('小组名称不能为空!');
+			return;
+		}		
+		console.log(obj);
+		//return ;
 
 		handerObj.triggerHandler('manage:create',obj);
 	});
 
 	$('#aside a').bind('click',function(e){
+		var target = $(e.target),
+			type = target.attr('type');
+		if(type == 'add'){
 		addTarget.removeClass('hide');
 		listTarget.addClass('hide');
+
+		}else{
+		addTarget.addClass('hide');
+		listTarget.removeClass('hide');
+
+		}
 	})
 
 	$('.group-type').bind('click',function(e){
