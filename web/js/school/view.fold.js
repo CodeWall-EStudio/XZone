@@ -141,11 +141,14 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			if(nowGid){
 				fid = nowGinfo.rootFolder;
 			}
-			var data = {
-				groupId : nowGid
-			};
+			var data = {};
+			if(nowGid){
+				data.groupId = nowGid;
+			}
 			if(fid){
 				data.folderId = fid;
+			}else{
+				data.folderId = rootFd;
 			}
 			handerObj.triggerHandler('fold:one',data);		
 		//如果是备课		
