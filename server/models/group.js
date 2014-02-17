@@ -3,6 +3,7 @@ var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var us = require('underscore');
 
+var ERR = require('../errorcode');
 var db = require('./db');
 var mFolder = require('./folder');
 
@@ -13,27 +14,35 @@ exports.create = function(params, callback){
     if(isNaN(status)){
         status = 1;
     }
-    var doc = {
-        name: params.name,
-        content: params.content || '',
-        type: Number(params.type) || 0,
-        parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
-        creator: DBRef('user', ObjectID(params.creator)),
-        status: status, 
-        pt: params.pt || null,
-        tag: params.tag || null,
-        grade: params.grade || null,
 
-        validateText: null,//审核评语
-        validateStatus: null, //0 不通过 1 通过
-        validateTime: null,//审核时间
-        validator: null
-    }
+    // 小组的名字要唯一
+    db.group.findOne({ name: params.name }, function(err, doc){
+        if(doc){
+            callback('already has a group naming "' + params.name + '" ', ERR.DUPLICATE);
+            return;
+        }
+        var doc = {
+            name: params.name,
+            content: params.content || '',
+            type: Number(params.type) || 0,
+            parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
+            creator: DBRef('user', ObjectID(params.creator)),
+            status: status, 
+            pt: params.pt || null,
+            tag: params.tag || null,
+            grade: params.grade || null,
 
-    db.group.save(doc, function(err, result){
-        callback(err, doc);
-        
+            validateText: null,//审核评语
+            validateStatus: null, //0 不通过 1 通过
+            validateTime: null,//审核时间
+            validator: null
+        }
+
+        db.group.save(doc, function(err, result){
+            callback(err, doc);
+        });
     });
+    
 }
 
 function dereferenceGroup(groupId, ext, callback){
@@ -106,6 +115,21 @@ exports.getGroupMembers = function(groupId, needDetail, callback){
                             { fields: {_id: 1, nick: 1} }, ep.group('fetchUser'));
                 }
             });
+        }
+    });
+}
+
+exports.isGroupMember = function(groupId, userId, callback){
+    var query = { 
+        'group.$id': ObjectID(groupId), 
+        'user.$id': ObjectID(userId) 
+    };
+
+    db.groupuser.findOne(query, function(err, doc){
+        if(doc){
+            callback(null, true, doc);
+        }else{
+            callback(null, false);
         }
     });
 }

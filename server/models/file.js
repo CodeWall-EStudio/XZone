@@ -37,7 +37,7 @@ exports.create = function(params, callback){
     };
     if(groupId){
         doc.group = DBRef('group', ObjectID(groupId));
-        doc.fromGroup = params.fromGroup ? DBRef('group', ObjectID(params.fromGroup)) : doc.group;
+        // doc.fromGroup = params.fromGroup ? DBRef('group', ObjectID(params.fromGroup)) : doc.group;
     }
     // if(params.fromGroup){
 
@@ -66,18 +66,27 @@ exports.create = function(params, callback){
     });
 }
 
-exports.modify = function(fileId, doc, callback){
+exports.modify = function(params, doc, callback){
 
     doc.updateTime = Date.now();
 
-    db.file.findAndModify({ _id: new ObjectID(fileId) }, [],  { $set: doc }, 
+    var query = { _id: new ObjectID(params.fileId) };
+    if(params.creator){
+        query['creator.$id'] = ObjectID(params.creator);
+    }
+
+    db.file.findAndModify(query, [],  { $set: doc }, 
             { 'new':true}, callback);
 }
 
-exports.delete = function(fileId, callback){
+exports.delete = function(params, callback){
 
+    var query = { _id: new ObjectID(params.fileId) };
+    if(params.creator){
+        query['creator.$id'] = ObjectID(params.creator);
+    }
 
-    db.file.findAndRemove({ _id: new ObjectID(fileId)}, [], function(err, file){
+    db.file.findAndRemove(query, [], function(err, file){
 
         if(!err){ // 将 resource 的引用计数减一
             
@@ -109,14 +118,16 @@ exports.batchDelete = function(query, callback){
     });
 }
 
-exports.softDelete = function(fileId, callback){
+exports.softDelete = function(params, callback){
 
-    exports.modify(fileId, { del: true }, callback);
+    exports.modify(params, { del: true }, callback);
 
 }
 
-exports.revertDelete = function(fileId, callback){
-    exports.modify(fileId, { del: false }, callback);
+exports.revertDelete = function(params, callback){
+
+
+    exports.modify(params, { del: false }, callback);
 }
 
 exports.getFile = function(fileId, callback){
@@ -128,8 +139,9 @@ exports.getFile = function(fileId, callback){
 exports.search = function(params, callback){
     var folderId = params.folderId;
     var groupId = params.groupId || null;
-    // TODO 普通用户不允许搜uid
-    var userId = params.uid || null;
+
+    var userId = params.creator || null;
+
     var keyword = params.keyword || '';
     var hasType = 'type' in params;
     var type = Number(params.type) || 0;
@@ -144,7 +156,10 @@ exports.search = function(params, callback){
         query['folder.$id'] = ObjectID(folderId);
     }
     if(userId){
-        query['user.$id'] = ObjectID(userId);
+        query['creator.$id'] = ObjectID(userId);
+    }
+    if(groupId){
+        query['group.$id'] = ObjectID(groupId);
     }
     if(hasType){
         query['type'] = type;

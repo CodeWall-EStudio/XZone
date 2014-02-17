@@ -106,7 +106,7 @@ function verifyParams(req, config){
         return msg;
     }
 
-    if((map = config.all) && (msg = verifyParam(req, map, false, true)) ){
+    if((map = config.all) && (msg = verifyParam(req, map, true, true)) ){
         return msg;
     }
     return null;

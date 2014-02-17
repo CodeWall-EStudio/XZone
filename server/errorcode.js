@@ -13,7 +13,8 @@ module.exports = exports = {
     PARAM_ERROR: 1011,
     
     SPACE_FULL: 1013,
-
+    DUPLICATE: 1014,
+    NOT_MATCH: 1015,
 
 
     SUCCESS: 0

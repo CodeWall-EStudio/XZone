@@ -191,5 +191,18 @@ exports.delete = function(params, callback){
     }); // findAndRemove
 }
 
+exports.isFolderCreator = function(folderId, userId, callback){
+    var query = { 
+        '_id': ObjectID(folderId), 
+        'user.$id': ObjectID(userId) 
+    };
 
+    db.folder.findOne(query, function(err, doc){
+        if(doc){
+            callback(null, true, doc);
+        }else{
+            callback(null, false);
+        }
+    });
+}
 

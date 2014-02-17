@@ -26,6 +26,9 @@ module.exports = {
         method: POST,
         require: {
             fileId: ObjectID
+        },
+        optional: {
+            groupId: ObjectID
         }
     },
     '/api/file/copy': {
@@ -52,6 +55,9 @@ module.exports = {
         method: POST,
         require: {
             fileId: ObjectID
+        },
+        optional: {
+            groupId: ObjectID
         }
     },
     '/api/file/search': {
@@ -81,6 +87,15 @@ module.exports = {
             groupId: ObjectID
         }
     },
+    '/api/folder/': {
+        method: GET,
+        require: {
+            folderId: ObjectID
+        },
+        optional: {
+            groupId: ObjectID
+        }
+    },
     '/api/folder/delete': {
         method: POST,
         require: {
@@ -94,13 +109,19 @@ module.exports = {
         method: POST,
         require: {
             folderId: ObjectID
-        }    
+        },
+        optional: {
+            groupId: ObjectID
+        }
     },
     '/api/folder/list': {
         method: GET,
         require: {
             folderId: ObjectID
-        }    
+        },
+        optional: {
+            groupId: ObjectID
+        }
     },
     '/api/folder/search': {
         method: GET,

@@ -10,8 +10,10 @@ var db = require('../models/db');
 var config = require('../config');
 var ERR = require('../errorcode');
 var mFile = require('../models/file');
+var mFolder = require('../models/folder');
 var mRes = require('../models/resource');
 var mUser = require('../models/user');
+var mGroup = require('../models/group');
 var U = require('../util');
 
 
@@ -66,7 +68,7 @@ exports.upload = function(req, res){
             process.exec('pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf');
         }
     });
-    var savedRes = null;
+
     ep.on('saveRes', function(resource){
         // 添加文件记录
         var file = {
@@ -78,11 +80,11 @@ exports.upload = function(req, res){
             resourceId: resource._id.toString()
         }
         resource.ref = 1;
-        savedRes = resource;
+
         mFile.create(file, ep.done('createFile'));
     });
 
-    ep.on('createFile', function(file){
+    ep.all('saveRes', 'createFile', function(savedRes, file){
         if(savedRes){
             file.resource = U.filterProp(savedRes, ['_id', 'type', 'size']);
         }
@@ -173,6 +175,8 @@ exports.download = function(req, res){
 exports.modify = function(req, res){
 
     var params = req.body;
+    params.creator = req.loginUser._id;
+
     var doc = {};
     if(params.mark){
         doc.mark = params.mark;
@@ -184,7 +188,7 @@ exports.modify = function(req, res){
         doc.content = params.content;
     }
 
-    mFile.modify(params.fileId, doc, function(err, doc){
+    mFile.modify(params, doc, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
@@ -205,44 +209,118 @@ exports.copy = function(req, res){
     var groupId = params.groupId;
     var targetId = params.targetId;
 
-    mFile.getFile(fileId, function(err, file){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-            return;
-        }else if(!file){
-            res.json({ err: ERR.NOT_FOUND, msg: 'no such file' });
-        }else{
-            // FIXME 这里需要检查 target 是否是同一个用户或小组的
-            delete file._id;
-            file.folder = DBRef('folder', ObjectID(targetId));
-            // FIXME 还要处理
-            db.file.insert(file, function(err, result){
-                if(err){
-                    return callback(err);
-                }
-                callback(null, result[0]);
-            });
-        }
+    var ep = new EventProxy();
+
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
+
+    mFile.getFile(fileId, ep.doneLater('getFile'));
+
+    mFolder.getFolder(targetId, ep.doneLater('getFolder'));
+
+    ep.on('getFile', 'getFolder', function(file, folder){
+        if(!file){
+            ep.emit('error', 'no such file', ERR.NOT_FOUND);
+            return;
+        }
+        if(!folder){
+            ep.emit('error', 'no such target folder', ERR.NOT_FOUND);
+            return;
+        }
+        //  这里需要检查 target 是否是同一个用户或小组的
+        if(groupId){
+            if(groupId !== file.group.oid.toString()){
+                // 传入的 groupId 跟 file 的不一致
+                ep.emit('error', 'the groupId not match file.group', ERR.NOT_MATCH);
+                return;
+            }
+            if(groupId !== folder.group.oid.toString()){
+                // 目标 folder 不在同一个 group的
+                ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
+                return;
+            }
+        }else{
+            // 这次操作是个人文件夹操作
+            if(file.creator.oid.toString() !== params.creator){
+                // , 但是不是同一个用户的目录
+                ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
+                return;
+            }
+        }
+        // 权限检查没问题
+        file.resourceId = file.resource.oid.toString();
+
+        file.groupId = groupId;
+        file.folderId  = targetId;
+        file.creator = params.creator;
+        
+        mFile.create(file, ep.done('createFile'));
+
+
+    });
+
+    ep.on('createFile', function(doc){
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                data: doc
+            }
+        });
+
+    });
+
 }
 
 exports.move = function(req, res){
     var params = req.query;
-    var doc = {
-        folder: DBRef('folder', ObjectID(params.targetId))
-    };
-    // FIXME 这里需要检查 target 是否是同一个用户或小组的
-    mFile.modify(params.fileId, doc, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    data: doc
-                }
-            });
+        params.creator = req.loginUser._id;
+
+
+    var ep = new EventProxy();
+
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    mFolder.getFolder(params.targetId, ep.doneLater('getFolder'));
+
+    ep.on('getFolder', function(folder){
+        if(!folder){
+            ep.emit('error', 'no such target folder', ERR.NOT_FOUND);
+            return;
         }
+        if(params.groupId){
+            // 这次操作是小组操作
+            if(folder.group.oid.toString() !== params.groupId){
+                // , 但是小组不匹配
+                ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
+                return;
+            }
+        }else{
+            // 这次操作是个人文件夹操作
+            if(folder.creator.oid.toString() !== params.creator){
+                // , 但是不是同一个用户的目录
+                ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
+                return;
+            }
+        }
+
+        var doc = {
+            folder: DBRef('folder', folder._id)
+        };
+
+        mFile.modify(params, doc, ep.done('modify'));
+
+    });
+
+    ep.on('modify', function(doc){
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                data: doc
+            }
+        });
     });
 
 }
@@ -250,12 +328,11 @@ exports.move = function(req, res){
 exports.delete = function(req, res){
 
     var params = req.body;
-    // 设置删除标志位
     var fileId = params.fileId;
-    var groupId = params.groupId;
-    //TODO params.creator = req.loginUser._id;
+    params.creator = req.loginUser._id;
 
-    mFile.softDelete(fileId, function(err, doc){
+    // 设置删除标志位
+    mFile.softDelete(params, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
@@ -269,13 +346,35 @@ exports.delete = function(req, res){
 
 exports.search = function(req, res){
     var params = req.query;
-    delete params.uid;
-    
-    mFile.search(params, function(err, total, docs){
+    var folderId = params.folderId;
+    var groupId = params.groupId || null;
 
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else if(docs && docs.length){
+    params.creator = req.loginUser._id;
+    
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    // 检查文件夹是否是该用户的, 以及 该用户是否是小组成员
+    if(groupId){ // 检查该用户是否是小组成员
+        mGroup.isGroupMember(groupId, params.creator, ep.doneLater('checkRight'));
+
+    }else{ // 检查该用户是否是该文件夹所有者
+        mFolder.isFolderCreator(folderId, params.creator, ep.doneLater('checkRight'));
+    }
+
+    ep.on('checkRight', function(hasRight){
+        if(!hasRight){
+            ep.emit('error', 'not auth to search this folder', ERR.NOT_AUTH);
+            return;
+        }
+        mFile.search(params, ep.done('search'));
+    });
+
+    ep.on('search', function(total, docs){
+
+        if(docs && docs.length){
             db.dereferences(docs, { resource: ['_id', 'type', 'size'] }, function(){
                 res.json({
                     err: ERR.SUCCESS,
