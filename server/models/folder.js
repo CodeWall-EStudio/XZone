@@ -194,7 +194,7 @@ exports.delete = function(params, callback){
 exports.isFolderCreator = function(folderId, userId, callback){
     var query = { 
         '_id': ObjectID(folderId), 
-        'user.$id': ObjectID(userId) 
+        'creator.$id': ObjectID(userId) 
     };
 
     db.folder.findOne(query, function(err, doc){
