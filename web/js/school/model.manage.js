@@ -79,7 +79,10 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	function getGroup(e,d){
 		var opt = {
 			cgi : config.cgi.mlistgroup,
-			data : {}
+			data : {
+				page : 0,
+				pageNum : 100
+			}
 		}
 
 		var success = function(d){

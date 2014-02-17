@@ -144,7 +144,7 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 		if(pt){
 			obj.pt = pt;
 		}
-		if(pid){
+		if(pid != 0){
 			obj.parentId = pid;
 			if(grade){
 				obj.grade = grade;
@@ -153,6 +153,7 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 				obj.tag = tag;
 			}
 		}
+
 		handerObj.triggerHandler('manage:create',obj);
 	});
 
@@ -167,6 +168,15 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 			$('#prepYear').removeClass('hide');
 		}else{
 			$('#prepYear').addClass('hide');
+		}
+	});
+
+	$('.check-prep').bind('click',function(e){
+		var v = $(this).val();
+		if(v == 1){
+			$('#prepTag').removeClass('hide');
+		}else{
+			$('#prepTag').addClass('hide');
 		}
 	});
 
