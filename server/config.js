@@ -30,7 +30,7 @@ exports.DOC_TYPES = [
 
 exports.PDF_TYPES = ['application/pdf'];
 
-exports.JOD_CONVERTER = '/data/run/jodconverter/lib/jodconverter-core-3.0-beta-4.jar';
+exports.JOD_CONVERTER = '/var/run/jodconverter/lib/jodconverter-core-3.0-beta-4.jar';
 
 // 权限的常量
 // 权限 0x0 普通 0x1 小组管理员 0x2 部门管理员 0x4 管理员 0x8 系统管理员

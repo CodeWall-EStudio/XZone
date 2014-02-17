@@ -52,15 +52,14 @@ exports.upload = function(req, res){
 
         mRes.create(resource, ep.done('saveRes'));
 
-        //TODO 未完成  
         //生成 pdf 格式文件
-        // if(config.DOC_TYPES.indexOf(resource.mimes) > -1){
-        //     process.exec('java -jar ' + config.JOD_CONVERTER + ' ' + resource.path + ' ' + resource.path + '.pdf');
-        //     process.exec('pdf2swf ' + resource.path + '.pdf -s flashversion=9 -o ' + resource.path + '.swf');
-        // }
-        // if(config.PDF_TYPES.indexOf(resource.mimes) > -1){
-        //     process.exec('pdf2swf ' + resource.path + '.pdf -s flashversion=9 -o ' + resource.path + '.swf');
-        // }
+        if(config.DOC_TYPES.indexOf(resource.mimes) > -1){
+            process.exec('java -jar ' + config.JOD_CONVERTER + ' ' + resource.path + ' ' + resource.path + '.pdf');
+            process.exec('pdf2swf ' + resource.path + '.pdf -s flashversion=9 -o ' + resource.path + '.swf');
+        }
+        if(config.PDF_TYPES.indexOf(resource.mimes) > -1){
+            process.exec('pdf2swf ' + resource.path + '.pdf -s flashversion=9 -o ' + resource.path + '.swf');
+        }
     });
     var savedRes = null;
     ep.on('saveRes', function(resource){
