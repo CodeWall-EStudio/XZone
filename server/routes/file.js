@@ -23,9 +23,11 @@ exports.upload = function(req, res){
     var loginUser = req.loginUser;
 
     //1. 先把文件保存到 data 目录
-    var dir = '/data/71xiaoxue/' + U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
+    //FIXME 这里的命令太奇怪了, 要fix 它
+    var savePath = '/' + U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
+
     var filename = body.file_md5 + path.extname(body.file_name);
-    var folderPath = path.resolve(dir);
+    var folderPath = path.resolve(config.FILE_SAVE_DIR + savePath);
     var filePath = path.join(folderPath, filename);
 
     var name = body.name;
@@ -43,7 +45,7 @@ exports.upload = function(req, res){
     ep.on('moveFile', function(){
         // 添加 resource 记录
         var resource = {
-            path: dir + filename,
+            path: savePath + filename,
             md5: body.file_md5,
             size: fileSize,
             mimes: body.file_content_type,
@@ -54,8 +56,11 @@ exports.upload = function(req, res){
 
         //生成 pdf 格式文件
         if(config.DOC_TYPES.indexOf(resource.mimes) > -1){
-            process.exec('java -jar ' + config.JOD_CONVERTER + ' ' + resource.path + ' ' + resource.path + '.pdf');
-            process.exec('pdf2swf ' + resource.path + '.pdf -s flashversion=9 -o ' + resource.path + '.swf');
+            process.exec('java -jar ' + config.JOD_CONVERTER + ' ' + resource.path + ' ' + resource.path + '.pdf', function(err){
+                if(!err){
+                    process.exec('pdf2swf ' + resource.path + '.pdf -s flashversion=9 -o ' + resource.path + '.swf');
+                }
+            });
         }
         if(config.PDF_TYPES.indexOf(resource.mimes) > -1){
             process.exec('pdf2swf ' + resource.path + '.pdf -s flashversion=9 -o ' + resource.path + '.swf');
@@ -134,7 +139,7 @@ exports.download = function(req, res){
                 'Content-Type': resource.mimes,
                 'Content-Disposition': 'attachment; filename=' + file.name,
                 'Content-Length': resource.size,
-                'X-Accel-Redirect': '/file/' + resource.path
+                'X-Accel-Redirect': config.FILE_SAVE_DIR + resource.path
             });
             res.send();
         }
