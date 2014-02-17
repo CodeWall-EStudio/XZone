@@ -24,7 +24,7 @@ exports.upload = function(req, res){
 
     //1. 先把文件保存到 data 目录
     //FIXME 这里的命令太奇怪了, 要fix 它
-    var savePath = '/' + U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
+    var savePath = U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
 
     var filename = body.file_md5 + path.extname(body.file_name);
     var folderPath = path.resolve(config.FILE_SAVE_DIR + savePath);
@@ -135,6 +135,7 @@ exports.download = function(req, res){
         if(!resource){
             ep.emit('error');
         }else{
+            console.log('redirect to :' + config.FILE_SAVE_DIR + resource.path);
             res.set({
                 'Content-Type': resource.mimes,
                 'Content-Disposition': 'attachment; filename=' + file.name,

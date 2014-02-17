@@ -11,7 +11,7 @@ exports.CAS_SERVICE = 'http://xzone.codewalle.com/api/user/loginSuccess';
 
 exports.DEFAULT_USER_SPACE = 3 * 1024 * 1024 * 1024;
 
-exports.FILE_SAVE_DIR = '/data/71xiaoxue/file';
+exports.FILE_SAVE_DIR = '/data/71xiaoxue/file/';
 
 // 文档类型转换的配置
 exports.DOC_TYPES = [
