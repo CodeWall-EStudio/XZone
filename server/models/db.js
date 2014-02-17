@@ -97,6 +97,10 @@ exports.search = function(collectionName, query, options, callback){
     var page = Number(options.page) || 0;
     var pageNum = Number(options.pageNum) || 0;
     var skipNum = pageNum * page;
+    if(order){
+        order = U.jsonParse(order);
+        console.log('dbSearch', collectionName, 'order', order);
+    }
 
     console.log('dbSearch', collectionName, 'query', query);
     exports.getCollection(collectionName, function(err, collection){

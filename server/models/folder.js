@@ -13,7 +13,7 @@ var mFile = require('./file');
 exports.list = function(params, callback){
 
     var folderId = params.folderId;
-    var groupId = params.groupId || 0;
+    var groupId = params.groupId || null;
     var order = params.order || null;
 
     var query = { 
