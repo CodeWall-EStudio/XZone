@@ -76,8 +76,10 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 
 		var success = function(d){
 			if(d.err == 0){
+				if(d.result.data){
 				var data = conventOne(d.result.data);
-				handerObj.triggerHandler('fold:oneinfo',data);			
+				handerObj.triggerHandler('fold:oneinfo',data);
+				}			
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}

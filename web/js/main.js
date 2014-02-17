@@ -181,7 +181,7 @@
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('my:init',d);
         handerObj.triggerHandler('model:change','file');  
-        handerObj.triggerHandler('upload:param',d);
+        //.triggerHandler('upload:param',d);
       },
       groupprep : function(data){
         btarget.hide();

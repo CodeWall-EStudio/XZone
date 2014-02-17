@@ -136,6 +136,7 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 		var obj = {
 			name : gn,
 			content : desc,
+			status : 0,
 			type : type,
 			members : ul,
 			managers : ml,

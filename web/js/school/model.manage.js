@@ -63,7 +63,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 
 		console.log(d);
 		var opt = {
-			cgi : config.cgi.mnewgroup,
+			cgi : config.cgi.groupcreate,
 			data : d
 		}
 
