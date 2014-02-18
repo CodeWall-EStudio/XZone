@@ -4,13 +4,16 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	function convent(data){
 		var list = [];
 		for(var i = 0,l= data.length;i<l;i++){
-			var item = data[i]
-			list.push({
+			var item = data[i];
+			var obj = {
 				id : item._id,
-				name : item.name,
 				time : util.time(item.createTime),
 				content : item.content
-			});
+			};
+			if(item.creator){
+				obj.name = item.creator.nick;
+			}
+			list.push(obj);
 		}
 		return list;
 	}

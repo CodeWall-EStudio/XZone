@@ -24,14 +24,14 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}
 		t.idpath = data.idpath.split(',');
 		if(data.parent){
-			t.pid = data.parent.$id;
+			t.pid = data.parent._id;
 			t.pname = data.parent.name;
 		}else{
 			t.pid = 0;
 			t.pname = '';
 		}
 		if(data.top){
-			t.tid = data.top.$id;
+			t.tid = data.top._id;
 			t.tname = data.top.name;
 		}else{
 			t.tid = 0;
