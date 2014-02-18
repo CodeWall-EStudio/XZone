@@ -15,7 +15,7 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 
 
 	function navLoad(e,d){
-		console.log(d);
+
 		var opt = {
 			target : navTarget,
 			tplid : 'nav',

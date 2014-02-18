@@ -30,6 +30,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				var list = convent(d.result.list);
 				handerObj.triggerHandler('file:load',{
 					list : list,
+					total : d.result.total,
 					next : d.result.next
 				});
 			}else{

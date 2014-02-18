@@ -36,11 +36,12 @@ define(['config','cache','helper/view','model.file'],function(config,Cache,View)
 		d.rootfdid = myInfo.rootFolder.id;
 
 		var obj = d;
-		if(d.fdid != 0){
+		if(d.fdid){
 			obj.fdid = d.fdid;
 		}else{
 			obj.fdid = d.rootfdid;
 		}
+
         handerObj.triggerHandler('file:init',obj);
         handerObj.triggerHandler('fold:init',obj);	
         handerObj.triggerHandler('upload:param',obj);

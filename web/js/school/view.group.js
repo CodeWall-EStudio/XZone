@@ -27,7 +27,6 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 				myGroups = myInfo.group2key;
 		}
 		nowGroup = myGroups[nowGid];
-		console.log(nowGroup);
 		// handerObj.triggerHandler('group:init',myGroups[nowGid]);
 		if(myGroups[nowGid]){
 			handerObj.triggerHandler('group:infosuc',myGroups[nowGid]);
@@ -78,7 +77,9 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 			info : d
 		}
 		if(!nowFd){
+			if(info.rootFolder){
 			data.fdid = info.rootFolder.id;
+			}
 		}	
 		$('#aside .aside-divs').hide();
 		switch(d.type){
@@ -122,7 +123,7 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 						var desc = $.trim(actTarget.find('textarea').val());
 						if(desc != ''){
 							handerObj.triggerHandler('board:new',{
-								groupdId : nowGid,
+								groupId : nowGid,
 								content : desc,
 								type : 1
 							});

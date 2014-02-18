@@ -28,10 +28,12 @@
 									<%
 										for(var i = 0,l=prep.length;i<l;i++){
 											var item = prep[i];
+											if(item.parent){
 									%>
 									<li>
-										<i cmd="next" class="plus" data-gid="<%+item.id%>" data-id="<%+item.rootfold%>"></i><a title="<%+item.name%>" class="list-link"> <%=item.name%></a>				
+										<i cmd="next" class="plus" data-gid="<%+item.id%>" <%if(item.rootFolder){%>data-id="<%+item.rootFolder.id%>"<%}%>></i><a title="<%+item.name%>" class="list-link"> <%=item.name%></a>				
 									</li>		
+									<%}%>
 									<%}%>
 								<%}else{%>
 									<li>您还没有创建文件夹</li>

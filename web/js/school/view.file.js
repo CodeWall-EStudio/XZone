@@ -10,6 +10,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		nowUid = 0,
 		nowPrep = 0, //当前是否是备课
 		rootFd = 0,
+		nowTotal = 0,
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -61,9 +62,10 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 	}
 
 	function fileInit(e,d){
+		nowTotal = 0;
 		nextPage = 0;
 		action = 1;
-		console.log(d);
+
 		if(d){
 			nowGid = d.gid || 0;
 			nowFd = d.fdid || 0;
@@ -74,7 +76,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			nowUid = d.uid || 0;
 			nowKey = d.key || '';
 			nowPrep = d.prep || 0;
-			rootFd = d.rootfdid || 0;
+			//rootFd = d.rootfdid || 0;
 		}
 
 		tmpTarget.html('');
@@ -110,8 +112,8 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		}
 		if(nowFd != 0){
 			data.folderId = nowFd;
-		}else if(rootFd){
-			data.folderId = rootFd;
+		// }else if(rootFd){
+		// 	data.folderId = rootFd;
 		}
 		if(nowUid){
 			data.uid = nowUid;
@@ -121,8 +123,13 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 	}
 
 	function fileLoad(e,d){
-
-		nextPage = d.next;
+		nowTotal = d.total;
+		//nextPage = d.next;
+		if($(".file").length < nowTotal){
+			nextPage = 1;
+		}else{
+			nextPage = 0;
+		}
 
 		var view = new View({
 			target : tmpTarget,
@@ -141,7 +148,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			target : $('#pageZone'),
 			tplid : 'page',
 			data : {
-				next : d.next
+				next : nextPage
 			}
 		});
 
@@ -185,7 +192,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		ods[nowOrder[0]] = ods[nowOrder[1]];
 		var obj = {
 			keyword : nowKey,
-			folderId : nowFd || rootFd,
+			folderId : nowFd,
 			page:nextPage,
 			pageNum : config.pagenum,
 			order : nowOds
@@ -218,7 +225,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		ods[nowOrder[0]] = nowOrder[1];
 		var obj = {
 			keyword : nowKey,
-			folderId : nowFd || rootFd,
+			folderId : nowFd,
 			page:nextPage,
 			pageNum : config.pagenum,
 			order : nowOds
@@ -427,6 +434,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 
 						var p = target.parent('li');
 						if(p.find('ul').length > 0){
+							var ul = p.find('ul')[0];
 							if(target.hasClass("minus")){
 								target.removeClass('minus');
 								p.find('ul').hide();
@@ -435,13 +443,15 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 								p.find('ul').show();
 							}
 							return;
-						}							
-						handerObj.triggerHandler('fold:get',{
-							gid : nowGid,
-							fdid : id,
-							target : p,
-							tplid : 1
-						});
+						}else{	
+							target.addClass('minus');						
+							handerObj.triggerHandler('fold:get',{
+								groupId : nowGid,
+								folderId : id,
+								target : p,
+								tplid : 1
+							});
+						}
 					}
 				},
 				'.btn-sub' : {
@@ -468,6 +478,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		if(!prep){
 			prep = [];
 		}
+
 		var fileid = [];
 		var ids = [];
 		for(var i in d.fl){
@@ -505,13 +516,14 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 								p.find('ul').show();
 							}
 							return;
-						}							
-						handerObj.triggerHandler('fold:get',{
-							gid : gid,
-							fdid : id,
-							target : p,
-							tplid : 1
-						});
+						}else{							
+							handerObj.triggerHandler('fold:get',{
+								groupId : gid,
+								folderId : id,
+								target : p,
+								tplid : 1
+							});
+						}
 					}
 				},
 				'.btn-sub' : {
@@ -534,6 +546,11 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 
 	function foldTree(e,d){
 		target = d.target;
+		if(!d.list.length){
+			target.find('i').attr('class','');
+		}else{
+			target.find('i').addClass('minus');
+		}
 		var view = new View({
 			target : target,
 			tplid : 'copy.tree',
@@ -559,13 +576,14 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 								p.find('ul').show();
 							}
 							return;
-						}							
-						handerObj.triggerHandler('fold:get',{
-							gid : nowGid,
-							fdid : id,
-							target : p,
-							tplid : 1
-						});
+						}else{							
+							handerObj.triggerHandler('fold:get',{
+								gid : nowGid,
+								fdid : id,
+								target : p,
+								tplid : 1
+							});
+						}
 					}
 				}
 			}
