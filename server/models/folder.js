@@ -58,19 +58,19 @@ exports.search = function(params, callback){
     if(groupId){
         query['group.$id'] = ObjectID(groupId);
     }
-    db.search('folder', query, params, function(err, total, result){
+    db.search('folder', query, params, function(err, total, docs){
         if(err){
             callback(err);
-        }else if(total && result){
-            db.dereferences(result, {'creator': ['_id', 'nick']}, function(err, result){
+        }else if(total && docs){
+            db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
                 if(err){
                     callback(err)
                 }else{
-                    callback(null, total || 0, result);
+                    callback(null, total || 0, docs);
                 }
             });
         }else{
-            callback(null, total || 0, result);
+            callback(null, total || 0, docs);
         }
     });
 }

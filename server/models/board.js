@@ -75,11 +75,25 @@ exports.search = function(params, callback){
         query['validateStatus'] = params.validateStatus;
     }
 
-    db.search('board', query, params, callback);
+    db.search('board', query, params, function(err, total, docs){
+        if(err){
+            callback(err);
+        }else if(total && docs){
+            db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
+                if(err){
+                    callback(err)
+                }else{
+                    callback(null, total || 0, docs);
+                }
+            });
+        }else{
+            callback(null, total || 0, docs);
+        }
+    });
 
 }
 
 exports.getBoard = function(boardId, callback){
-    
+
     db.board.findOne({ _id: ObjectID(boardId)}, callback);
 }

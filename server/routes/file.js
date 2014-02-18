@@ -385,25 +385,14 @@ exports.search = function(req, res){
     });
 
     ep.on('search', function(total, docs){
-
-        if(docs && docs.length){
-            db.dereferences(docs, { resource: ['_id', 'type', 'size'] }, function(){
-                res.json({
-                    err: ERR.SUCCESS,
-                    result: {
-                        total: total,
-                        list: docs
-                    }
-                });
-            });
-        }else{
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    total: total,
-                    list: docs
-                }
-            });
-        }
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                total: total,
+                list: docs
+            }
+        });
     });
 }
+
+

@@ -169,6 +169,20 @@ exports.search = function(params, callback){
     }
     query = us.extend(query, extendQuery);
 
-    db.search('file', query, params, callback);
+    db.search('file', query, params, function(err, total, docs){
+        if(err){
+            callback(err);
+        }else if(total && docs){
+            db.dereferences(docs, { resource: ['_id', 'type', 'size'] }, function(err, docs){
+                if(err){
+                    callback(err)
+                }else{
+                    callback(null, total || 0, docs);
+                }
+            });
+        }else{
+            callback(null, total || 0, docs);
+        }
+    });
 }
 

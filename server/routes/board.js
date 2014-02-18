@@ -19,6 +19,10 @@ exports.create = function(req, res){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
+            doc.creator = {
+                _id: loginUser._id,
+                nick: loginUser.nick
+            }
             res.json({
                 err: ERR.SUCCESS,
                 result: {
