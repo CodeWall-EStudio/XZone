@@ -29,7 +29,7 @@ exports.upload = function(req, res){
     var savePath = U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
 
     var filename = body.file_md5 + path.extname(body.file_name);
-    var folderPath = path.resolve(config.FILE_SAVE_DIR + savePath);
+    var folderPath = path.resolve('../data' + config.FILE_SAVE_DIR + savePath);
     var filePath = path.join(folderPath, filename);
 
     var name = body.name;
@@ -137,12 +137,13 @@ exports.download = function(req, res){
         if(!resource){
             ep.emit('error');
         }else{
-            console.log('redirect to :' + config.FILE_SAVE_DIR + resource.path);
+            var filePath = path.join('/data/', config.FILE_SAVE_DIR, resource.path);
+            console.log('redirect to :' + filePath);
             res.set({
                 'Content-Type': resource.mimes,
                 'Content-Disposition': 'attachment; filename=' + file.name,
                 'Content-Length': resource.size,
-                'X-Accel-Redirect': config.FILE_SAVE_DIR + resource.path
+                'X-Accel-Redirect': filePath
             });
             // TODO 未调通
             res.send();
