@@ -77,7 +77,13 @@ exports.search = function(params, callback){
 
 exports.getFolder = function(folderId, callback){
 
-    db.folder.findOne({ _id: new ObjectID(folderId) }, callback);
+    db.folder.findOne({ _id: new ObjectID(folderId) }, function(err, doc){
+        if(err || !doc){
+            callback(err, doc);
+            return;
+        }
+        db.dereference(doc, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, callback);
+    });
 
 }
 
