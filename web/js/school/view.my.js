@@ -33,14 +33,17 @@ define(['config','cache','helper/view','model.file'],function(config,Cache,View)
 			myInfo = Cache.get('myinfo');
 		}
 
+		if(d.fdid == 0){
+			d.fdid = myInfo.rootFolder.id;
+		}
 		d.rootfdid = myInfo.rootFolder.id;
 
 		var obj = {}
-		if(d.fdid){
-			obj.fdid = d.fdid;
-		}else{
-			obj.fdid = d.rootfdid;
-		}
+		// if(d.fdid){
+		// 	obj.fdid = d.fdid;
+		// }else{
+		// 	obj.fdid = d.rootfdid;
+		// }
         handerObj.triggerHandler('file:init',d);
         handerObj.triggerHandler('fold:init',d);	
         handerObj.triggerHandler('upload:param',obj);
