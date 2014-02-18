@@ -1,9 +1,12 @@
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
+var EventProxy = require('eventproxy');
+
 var config = require('../config');
 var ERR = require('../errorcode');
 var U = require('../util');
 var mBoard = require('../models/board');
+var mGroup = require('../models/group');
 
 exports.create = function(req, res){
     var params = req.body;
@@ -39,7 +42,7 @@ exports.approve = function(req, res){
         validator: DBRef('user', ObjectID(loginUser._id))
     };
     
-    mBoard.modify(params.boardId, doc, function(err, doc){
+    mBoard.modify({ boardId: params.boardId }, doc, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
@@ -53,16 +56,47 @@ exports.approve = function(req, res){
 exports.delete = function(req, res){
 
     var params = req.body;
-    // TODO 删了别人的怎办
-    mBoard.delete(params.boardId, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
+    var loginUser = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    mBoard.getBoard(params.boardId, ep.doneLater('getBoard'));
+    ep.on('getBoard', function(doc){
+        if(!doc){
+            ep.emit('error', 'no such board', ERR.NOT_FOUND);
+            return;
+        }
+        if(U.hasRight(loginUser.auth, config.AUTH_MANAGER)){
+            // 管理员可以直接删
+            ep.emit('ready');
         }else{
-            res.json({
-                err: ERR.SUCCESS
-            });
+            mGroup.isGroupMember(doc.group.oid.toString(), loginUser._id, ep.done('checkAuth'));
         }
     });
+
+    ep.on('checkAuth', function(result, doc){
+        if(result && U.hasRight(doc.auth, config.AUTH_GROUP_MANAGER)){
+            ep.emit('ready');
+        }else{
+            ep.emit('error', 'not auth', ERR.NOT_AUTH);
+        }
+    });
+
+    ep.on('ready', function(){
+        mBoard.delete(params.boardId, function(err, doc){
+            if(err){
+                res.json({ err: ERR.SERVER_ERROR, msg: err});
+            }else{
+                res.json({
+                    err: ERR.SUCCESS
+                });
+            }
+        });
+    });
+    
 }
 
 
@@ -71,7 +105,8 @@ exports.search = function(req, res){
 
     var loginUser = req.loginUser;
     if(loginUser.auth === config.AUTH_USER){
-        params.uid = loginUser._id; //TODO 普通用户只能搜索自己的
+        params.uid = loginUser._id; //普通用户只能搜索自己的
+        params.validateStatus = 1; // 普通用户只能搜索审核通过的
     }
 
     mBoard.search(params, function(err, total, docs){

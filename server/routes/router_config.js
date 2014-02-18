@@ -240,10 +240,10 @@ module.exports = {
     '/api/board/create': {
         method: POST,
         require: {
-            content: ['string', 1]
+            content: ['string', 1],
+            groupId: ObjectID
         },
         optional: {
-            groupId: ObjectID,
             parentId: ObjectID,
             resourceId: ObjectID
         }
@@ -254,12 +254,6 @@ module.exports = {
             boardId: ObjectID,
             validateText: ['string', 1],
             validateStatus: ['number', 0]
-        }
-    },
-    '/api/board/delete': {
-        method: POST,
-        require: {
-            boardId: ObjectID
         }
     },
     '/api/board/delete': {
