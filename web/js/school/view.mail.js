@@ -5,6 +5,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 		action = 0,//活动状态
 		nextPage = 0,
 		nowOrder  = ['createtime',1],
+		nowOds = '',
 		nowKey = '';
 
 	var tmpTarget = $('#boxTableList'),
@@ -32,6 +33,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 		if(d.order){
 			nowOrder = d.order;
 		}
+		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		nowKey = d.key || '';
 
 		crTit();
@@ -40,7 +42,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 			target : titTarget,
 			tplid : 'coll.table.tit',
 			data : {
-				order : nowOrder,
+				order : nowOds,
 				name : 'mailbox',
 				type : nowType
 			}			
@@ -53,7 +55,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 			page:nextPage,
 			pageNum : config.pagenum,
 			type : nowType,
-			order : nowOrder
+			order : nowOds
 		});			
 
 	}
@@ -106,7 +108,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 			page:nextPage,
 			pageNum : config.pagenum,
 			type : nowType,
-			order : nowOrder
+			order : nowOds
 		});			
 	}
 

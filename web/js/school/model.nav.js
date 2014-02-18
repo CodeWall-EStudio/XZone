@@ -9,7 +9,6 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		if(o.pre < 0.001){
 			o.pre = 0.001;
 		}
-		console.log(o.pre);
 		o.name = data.user.name;
 		o.size = util.getSize(data.user.size);
 		o.used = util.getSize(data.user.used);

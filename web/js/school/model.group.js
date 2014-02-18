@@ -28,7 +28,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				handerObj.triggerHandler('msg:error',d.err);
 			}
 		}
-		request.get(opt,success);	
+		request.post(opt,success);	
 	}	
 
 	function board(e,d){

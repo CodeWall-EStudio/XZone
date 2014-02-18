@@ -137,6 +137,7 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 							return;
 						}
 						var obj = {
+							'groupId' : d.data.id,
 							'name' : name,
 							'type' : 1,
 							'content' : desc,

@@ -21,11 +21,9 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		titTarget = $('#sectionTit');
 
 	function crTit(obj){
-
 		if($.isEmptyObject(obj)){
 			obj = 0;
 		}
-
 
 		var tpl = 'file.tit';
 		var data = {
@@ -61,7 +59,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			data : {
 				list : list,
 				gid : nowGid,
-				order : nowOrder
+				order : nowOds
 			},
 			handlers : {
 				'.plus' : {
@@ -106,7 +104,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	}
 
 	function foldInit(e,d){
-
 		action = 1;
 
 		foldTarget.hide().removeAttr('show');
@@ -155,7 +152,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			}else if(rootFd){
 				data.folderId = rootFd;
 			}
-			console.log(data);
 			handerObj.triggerHandler('fold:one',data);		
 		//如果是备课		
 		}else if(nowPrep){
@@ -171,7 +167,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		if(nowGid){
 			obj.groupId = nowGid;
 		}
-		console.log(obj);
 
 		handerObj.triggerHandler('fold:get',obj);		
 	}
@@ -244,7 +239,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			keyword : nowKey,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder			
+			order : nowOds			
 		}
 
 		if(nowGid){
@@ -268,7 +263,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		if(nowFd){
 			data.folderId = nowFd;
 		}
-		console.log(nowGid,nowFd);
 
 		handerObj.triggerHandler('fold:new',data);
 	}

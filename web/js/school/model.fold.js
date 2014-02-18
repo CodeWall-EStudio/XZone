@@ -23,12 +23,13 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			return t;
 		}
 		t.idpath = data.idpath.split(',');
-		t.pid = data.pid;
-		t.tid = data.tid;
+		t.pid = data.parent;
+		t.tid = data.top;
 		t.id = data._id;
 		t.name = data.name;
 		t.tname = data.tname;
 		t.pname = data.pname;
+		console.log(t);
 		return t;
 	}
 

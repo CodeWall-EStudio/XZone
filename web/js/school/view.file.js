@@ -61,9 +61,9 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 	}
 
 	function fileInit(e,d){
-
+		nextPage = 0;
 		action = 1;
-
+		console.log(d);
 		if(d){
 			nowGid = d.gid || 0;
 			nowFd = d.fdid || 0;
@@ -84,9 +84,9 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			tpl = 'prep.table.tit';
 		}
 
-		if(!nowFd && rootFd){
-			nowFd = rootFd;
-		}
+		// if(!nowFd && rootFd){
+		// 	nowFd = rootFd;
+		// }
 		var view = new View({
 			target : tabletitTarget,
 			tplid : tpl,
@@ -116,7 +116,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		if(nowUid){
 			data.uid = nowUid;
 		}
-		console.log(data);
+
 		handerObj.triggerHandler('file:search',data);	
 	}
 
@@ -396,7 +396,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		}else{
 			fold = Cache.get('myfold');
 		}
-		console.log(fold);
+
 		if(!fold){
 			fold = [];
 		}
@@ -604,6 +604,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 
 	function uploadSuc(e,d){
 
+		d.fid = d.resource._id;
 		var target = tmpTarget,
 			act = 0;
 		if(tmpTarget.find('.file').length > 0){

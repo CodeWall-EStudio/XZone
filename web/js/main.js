@@ -53,7 +53,7 @@
         fatarget.addClass('hide');       
 
         var type = data.mailbox;
-        var od = data.od || 0,
+        var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0; 
         var d = {
@@ -62,7 +62,7 @@
         if(key){
           d.key = key;
         }
-        if(od){
+        if(Math.abs(od)){
           d.order = [on,od];
         }               
         handerObj.triggerHandler('page:change');   
@@ -89,11 +89,11 @@
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');
 
-        var od = data.od || 0,
+        var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0;     
         var d = {}
-        if(od){
+        if(Math.abs(od)){
           d.order = [on,od];
         } 
         if(key){
@@ -112,11 +112,11 @@
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');
 
-        var od = data.order || 0,
+        var od = parseInt(data.od) || 0,
             on = data.ordername || 0,
             key = data.key || 0;   
         var d = {}
-        if(od){
+        if(Math.abs(od)){
           d.order = [on,od];
         } 
         if(key){
@@ -136,14 +136,14 @@
 
         var gid = data.gid,
             fdid = data.fdid || 0;
-        var od = data.od || 0,
+        var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0;
         var d = {
           gid : gid,
           fdid : fdid
         }
-        if(od){
+        if(Math.abs(od)){
           d.order = [on,od];
         }     
         if(key){
@@ -165,13 +165,13 @@
         fatarget.addClass('hide');
 
         var fdid = data.fdid;
-        var od = data.od || 0,
+        var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0;
         var d = {
           fdid : fdid
         }
-        if(od){
+        if(Math.abs(od)){
           d.order = [on,od];
         }
         if(key){
@@ -196,7 +196,7 @@
             uid = data.uid || 0,
             grade = data.grade || 0,
             tag = data.tag || 0,
-            od = data.od || 0,
+            od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0;
         var d = {
@@ -207,7 +207,7 @@
           uid : uid,
           grade : grade
         }
-        if(od){
+        if(Math.abs(od)){
           d.order = [on,od];
         }
         if(key){
@@ -228,14 +228,14 @@
 
         var fdid = data.fdid || 0,
             gid = data.gid || 0,
-            od = data.od || 0,
+            od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0;
         var d = {
           fdid : fdid,
           gid : gid
         }
-        if(od){
+        if(Math.abs(od)){
           d.order = [on,od];
         }
         if(key){
