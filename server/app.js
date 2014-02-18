@@ -20,7 +20,7 @@ app.enable('trust proxy');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.cookieParser());
-app.use(express.cookieSession({ secret: 'xzone' }));
+app.use(express.cookieSession({ secret: 'xzone' }));//FIXME session要存到数据库
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);

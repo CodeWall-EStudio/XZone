@@ -82,8 +82,11 @@ exports.search = function(params, callback){
     var extendQuery = params.extendQuery || {};
 
     var query = { 
-        nick: new RegExp('.*' + keyword + '.*')
     };
+
+    if(keyword){
+        query['nick'] = new RegExp('.*' + keyword + '.*');
+    }
 
     query = us.extend(query, extendQuery);
 

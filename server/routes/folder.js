@@ -158,7 +158,7 @@ exports.create = function(req, res){
 
 exports.delete = function(req, res){
     var params = req.body;
-    params.creator = req.loginUser._id;
+    params.creator = req.loginUser._id; // TODO 批量删除
 //TODO 检查是否有不属于自己的文件, 有就不能删
     mFolder.delete(params, function(err, number){
         if(err){

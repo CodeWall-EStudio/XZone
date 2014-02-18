@@ -340,7 +340,7 @@ exports.move = function(req, res){
 exports.delete = function(req, res){
 
     var params = req.body;
-    var fileId = params.fileId;
+    var fileId = params.fileId; // TODO 要批量删除
     params.creator = req.loginUser._id;
     // TODO 管理员也能删除
     // 设置删除标志位
