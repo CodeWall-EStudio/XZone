@@ -5,7 +5,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		action = 0,
 		nowKey = '',
 		nowFd = 0,
-		nowOrder  = ['createtime',1],
+		nowOrder  = ['createTime',1],
 		nowOds = '',
 		nowUid = 0,
 		nowPrep = 0, //当前是否是备课

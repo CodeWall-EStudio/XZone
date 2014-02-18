@@ -9,7 +9,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		nowFd = 0,
 		rootFd = 0,
 		nowPrep = 0, //当前是否是备课
-		nowOrder  = ['createtime',1],
+		nowOrder  = ['createTime',1],
 		nowOds = '';
 		nowUid = 0,
 		nextPage = 0;
