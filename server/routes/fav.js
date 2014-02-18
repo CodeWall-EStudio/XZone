@@ -8,7 +8,9 @@ var mFav = require('../models/fav');
 exports.create = function(req, res){
 
     var fildIds = req.body.fileId;
+    var groupId = req.body.groupId;
     var creator = req.loginUser._id;
+
 
     var ep = new EventProxy();
 
@@ -26,7 +28,7 @@ exports.create = function(req, res){
     });
 
     fildIds.forEach(function(fileId){
-        mFav.create({ fileId: fileId, creator: creator }, ep.group('create'));
+        mFav.create({ fileId: fileId, creator: creator, groupId: groupId}, ep.group('create'));
     });
 
 }

@@ -144,7 +144,10 @@ module.exports = {
         method: POST,
         require: {
             fileId: ArrayObjectID
-        }  
+        },
+        optional: {
+            groupId: ObjectID
+        }
     },
     '/api/fav/delete': {
         method: POST,
