@@ -5,6 +5,7 @@ var DBRef = require('mongodb').DBRef;
 
 var config = require('../config');
 var ERR = require('../errorcode');
+var db = require('../models/db');
 var mGroup = require('../models/group');
 
 exports.listGroups = function(req, res){
