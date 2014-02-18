@@ -62,7 +62,9 @@ exports.create = function(params, callback){
 
         group.rootFolder = DBRef('folder', folder._id);
 
-        db.group.save(group, callback);
+        db.group.findAndModify({ _id: group._id }, [],  { $set: {rootFolder: group.rootFolder } }, 
+                    { 'new':true}, callback)
+
     });
     
 }
