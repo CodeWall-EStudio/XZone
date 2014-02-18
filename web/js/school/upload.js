@@ -54,7 +54,7 @@ define(['config'],function(config){
 	//$.pluploadQueue.changeUrl('dddddd');
 
     function paramChange(e,d){
-
+    	
     	var url = config.cgi.upload+'?';
     	if(d.gid){
     		url += 'groupId='+d.gid+'&';

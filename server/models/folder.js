@@ -58,26 +58,32 @@ exports.search = function(params, callback){
     if(groupId){
         query['group.$id'] = ObjectID(groupId);
     }
-    db.search('folder', query, params, function(err, total, result){
+    db.search('folder', query, params, function(err, total, docs){
         if(err){
             callback(err);
-        }else if(total && result){
-            db.dereferences(result, {'creator': ['_id', 'nick']}, function(err, result){
+        }else if(total && docs){
+            db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
                 if(err){
                     callback(err)
                 }else{
-                    callback(null, total || 0, result);
+                    callback(null, total || 0, docs);
                 }
             });
         }else{
-            callback(null, total || 0, result);
+            callback(null, total || 0, docs);
         }
     });
 }
 
 exports.getFolder = function(folderId, callback){
 
-    db.folder.findOne({ _id: new ObjectID(folderId) }, callback);
+    db.folder.findOne({ _id: new ObjectID(folderId) }, function(err, doc){
+        if(err || !doc){
+            callback(err, doc);
+            return;
+        }
+        db.dereference(doc, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, callback);
+    });
 
 }
 
@@ -118,7 +124,7 @@ exports.create = function(params, callback){
             updateTime: Date.now(),
             type: 0,
             parent: null,
-            top: params.topId ? DBRef('folder', params.topId) : null,
+            top: null, //params.topId ? DBRef('folder', params.topId) : null,
             hasChild: false
         };
         if(groupId){
@@ -129,6 +135,8 @@ exports.create = function(params, callback){
         }
         if(folder){
             doc.parent = DBRef('folder', folder._id);
+            doc.top = folder.top || doc.parent;
+
             folder.hasChild = true;
             db.folder.save(folder, function(err){
                 if(err){
@@ -136,7 +144,7 @@ exports.create = function(params, callback){
                 }
             });
         }else{
-            doc.parent = doc.top;
+            doc.parent = doc.top = null;
         }
         db.folder.insert(doc, function(err, result){
             if(err){

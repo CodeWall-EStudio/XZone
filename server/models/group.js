@@ -15,8 +15,14 @@ exports.create = function(params, callback){
         status = 1;
     }
 
+    var ep = new EventProxy();
+
+    ep.fail(callback);
+
     // 小组的名字要唯一
-    db.group.findOne({ name: params.name }, function(err, doc){
+    db.group.findOne({ name: params.name }, ep.done('findGroup'));
+
+    ep.on('findGroup', function(doc){
         if(doc){
             callback('already has a group naming "' + params.name + '" ', ERR.DUPLICATE);
             return;
@@ -38,10 +44,27 @@ exports.create = function(params, callback){
             validator: null
         }
 
-        db.group.save(doc, function(err, result){
-            //TODO 创建完 group 要创建 rootFolder
-            callback(err, doc);
-        });
+        db.group.save(doc, ep.done('createGroup'));
+
+    });
+
+    ep.on('createGroup',  function(group){
+
+        mFolder.create({
+            creator: params.creator,
+            name: 'group root folder',
+            groupId: group._id.toString()
+        }, ep.done('createFolder'));
+
+    });
+
+    ep.all('createGroup', 'createFolder', function(group, folder){
+
+        group.rootFolder = DBRef('folder', folder._id);
+
+        db.group.findAndModify({ _id: group._id }, [],  { $set: {rootFolder: group.rootFolder } }, 
+                    { 'new':true}, callback)
+
     });
     
 }
@@ -136,24 +159,24 @@ exports.isGroupMember = function(groupId, userId, callback){
 }
 
 
-exports.createGroupRootFolder = function(groupId, callback){
-    db.group.findOne({ _id: ObjectID(groupId) }, function(err, doc){
+// exports.createGroupRootFolder = function(groupId, callback){
+//     db.group.findOne({ _id: ObjectID(groupId) }, function(err, doc){
 
-        if(err){
-            return callback('group "' + groupId + '" is not exist');
-        }
-        mFolder.create({ groupId: doc._id.toString() }, function(err, folder){
-            if(err){
-                callback('create group root folder error');
-            }else{
-                doc.rootFolder = DBRef('folder', folder._id);
+//         if(err){
+//             return callback('group "' + groupId + '" is not exist');
+//         }
+//         mFolder.create({ groupId: doc._id.toString() }, function(err, folder){
+//             if(err){
+//                 callback('create group root folder error');
+//             }else{
+//                 doc.rootFolder = DBRef('folder', folder._id);
 
-                db.group.findAndModify({ _id: doc._id }, [],  { $set: {rootFolder: doc.rootFolder} }, 
-                    { 'new':true}, callback)
-            }
-        });
-    });
-}
+//                 db.group.findAndModify({ _id: doc._id }, [],  { $set: {rootFolder: doc.rootFolder} }, 
+//                     { 'new':true}, callback)
+//             }
+//         });
+//     });
+// }
 
 exports.modify = function(groupId, doc, callback){
 

@@ -116,6 +116,11 @@ exports.upload = function(req, res){
 exports.download = function(req, res){
     var fileId = req.query.fileId;
 
+    // TODO
+    // 自己能预览所有和自己相关的文件.包括
+    // 收件箱中其他人发过来的邮件,
+    // 自己所在的小组中的文件.
+
     var ep = new EventProxy();
 
     ep.fail(function(err){
@@ -138,14 +143,14 @@ exports.download = function(req, res){
             ep.emit('error');
         }else{
             var filePath = path.join('/data/71xiaoxue/', resource.path);
-            console.log('redirect to :' + filePath);
+            // console.log('redirect to :' + filePath);
             res.set({
                 'Content-Type': resource.mimes,
                 'Content-Disposition': 'attachment; filename=' + file.name,
                 'Content-Length': resource.size,
                 'X-Accel-Redirect': filePath
             });
-            // TODO 未调通
+
             res.send();
         }
     });
@@ -173,6 +178,11 @@ exports.download = function(req, res){
 //         }
 //     });
 // }
+
+exports.share = function(req, res){
+    // TODO 分享未完成
+    res.json({ err: ERR.SERVER_ERROR, msg: 'api not ready'});
+}
 
 exports.modify = function(req, res){
 
@@ -332,7 +342,7 @@ exports.delete = function(req, res){
     var params = req.body;
     var fileId = params.fileId;
     params.creator = req.loginUser._id;
-
+    // TODO 管理员也能删除
     // 设置删除标志位
     mFile.softDelete(params, function(err, doc){
         if(err){
@@ -375,25 +385,14 @@ exports.search = function(req, res){
     });
 
     ep.on('search', function(total, docs){
-
-        if(docs && docs.length){
-            db.dereferences(docs, { resource: ['_id', 'type', 'size'] }, function(){
-                res.json({
-                    err: ERR.SUCCESS,
-                    result: {
-                        total: total,
-                        list: docs
-                    }
-                });
-            });
-        }else{
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    total: total,
-                    list: docs
-                }
-            });
-        }
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                total: total,
+                list: docs
+            }
+        });
     });
 }
+
+

@@ -9,7 +9,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		nowFd = 0,
 		rootFd = 0,
 		nowPrep = 0, //当前是否是备课
-		nowOrder  = ['createtime',1],
+		nowOrder  = ['createTime',1],
 		nowOds = '';
 		nowUid = 0,
 		nextPage = 0;
@@ -21,11 +21,9 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		titTarget = $('#sectionTit');
 
 	function crTit(obj){
-
 		if($.isEmptyObject(obj)){
 			obj = 0;
 		}
-
 
 		var tpl = 'file.tit';
 		var data = {
@@ -61,7 +59,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			data : {
 				list : list,
 				gid : nowGid,
-				order : nowOrder
+				order : nowOds
 			},
 			handlers : {
 				'.plus' : {
@@ -106,7 +104,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	}
 
 	function foldInit(e,d){
-
 		action = 1;
 
 		foldTarget.hide().removeAttr('show');
@@ -140,27 +137,34 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		}
 
 		//没有fdid  是个人的.
-		if(!nowFd){
-			crTit();
-			var fid = nowFd;
-			if(nowGid){
-				fid = nowGinfo.rootFolder;
-			}
-			var data = {};
-			if(nowGid){
-				data.groupId = nowGid;
-			}
-			if(fid){
-				data.folderId = fid;
-			}else if(rootFd){
-				data.folderId = rootFd;
-			}
-			console.log(data);
-			handerObj.triggerHandler('fold:one',data);		
-		//如果是备课		
-		}else if(nowPrep){
-		 	crTit();
+		// if(!nowFd){
+		// 	crTit();
+		// 	var fid = nowFd;
+		// 	if(nowGid){
+		// 		fid = nowGinfo.rootFolder;
+		// 	}
+		// 	var data = {};
+		// 	if(nowGid){
+		// 		data.groupId = nowGid;
+		// 	}
+		// 	if(fid){
+		// 		data.folderId = fid;
+		// 	}else if(rootFd){
+		// 		data.folderId = rootFd;
+		// 	}
+		// 	handerObj.triggerHandler('fold:one',data);		
+		// //如果是备课		
+		// }else if(nowPrep){
+		//  	crTit();
+		// }
+		crTit();
+		var data = {
+			folderId : nowFd
+		};
+		if(nowGid){
+			data.groupId = nowGid;
 		}
+		handerObj.triggerHandler('fold:one',data);			
 
 		var obj = {};
 		if(nowFd){
@@ -171,7 +175,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		if(nowGid){
 			obj.groupId = nowGid;
 		}
-		console.log(obj);
 
 		handerObj.triggerHandler('fold:get',obj);		
 	}
@@ -244,7 +247,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			keyword : nowKey,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder			
+			order : nowOds			
 		}
 
 		if(nowGid){
@@ -268,7 +271,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		if(nowFd){
 			data.folderId = nowFd;
 		}
-		console.log(nowGid,nowFd);
 
 		handerObj.triggerHandler('fold:new',data);
 	}

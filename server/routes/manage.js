@@ -5,6 +5,7 @@ var DBRef = require('mongodb').DBRef;
 
 var config = require('../config');
 var ERR = require('../errorcode');
+var db = require('../models/db');
 var mGroup = require('../models/group');
 
 exports.listGroups = function(req, res){
@@ -65,7 +66,7 @@ function fetchGroupMembers(group, callback){
 
 function fetchGroupDetail(group, callback){
 
-    db.group.find({ 'parent.$id': group._id.toString() }, function(err, result){
+    db.group.find({ 'parent.$id': group._id }, function(err, result){
         group.list = result;
         if(result && result.length){
             var ep = new EventProxy();
@@ -98,7 +99,7 @@ exports.listPrepares = function(req, res){
     ep.fail(function(err){
         res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
-    
+    // TODO buggy
     db.group.find({
             type: 3, // type=3 是备课小组
             parent: null

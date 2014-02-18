@@ -59,7 +59,7 @@ define(function() {
 			//小组&部门
 			groupcreate : CGI_PATH+'group/create'+EXT,
 			groupmodify : CGI_PATH+'group/modify'+EXT,
-			groupinfo : CGI_PATH+'group/info'+EXT,
+			groupinfo : CGI_PATH+'group'+EXT,
 			groupverify : CGI_PATH+'group/verify'+EXT,
 			groupverlist : CGI_PATH+'group/verify/list'+EXT,
 

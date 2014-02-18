@@ -10,7 +10,7 @@ exports.delete = function(req, res){
     var fileId = params.fileId;
     var groupId = params.groupId;
 
-    mFile.delete(fileId, function(err){
+    mFile.delete(params, function(err){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: 'delete failure' });
         }else{
@@ -45,7 +45,7 @@ exports.search = function(req, res){
         del: true,
     }
     if(!params.groupId){ // TODO 小组的回收站要怎么处理
-        params.uid = req.loginUser._id; // 只能搜索自己的回收站
+        params.creator = req.loginUser._id; // 只能搜索自己的回收站
     }
     mFile.search(params, function(err, total, docs){
         if(err){

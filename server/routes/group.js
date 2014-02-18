@@ -17,6 +17,7 @@ exports.create = function(req, res){
     }else{
         delete params.status;
     }
+    // console.log(req.loginUser.auth, config.AUTH_MANAGER, U.hasRight(req.loginUser.auth, config.AUTH_MANAGER));
 
     var members = params.members || [];
     members.push(params.creator);
@@ -77,6 +78,7 @@ exports.list = function(req, res){
 
 exports.modify = function(req, res){
     var params = req.body;
+    var loginUser = req.loginUser;
 
     var doc = {};
 
@@ -87,16 +89,46 @@ exports.modify = function(req, res){
         doc.content = params.content;
     }
 
+    var ep = new EventProxy();
 
-    mGroup.modify(params.groupId, doc, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else if(!doc){
-            res.json({ err: ERR.NOT_FOUND, msg: 'no such group'});
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    mGroup.getGroup(params.groupId, ep.doneLater('getGroup'));
+
+    ep.on('getGroup', function(group){
+        if(!group){
+            ep.emit('error', 'no such group', ERR.NOT_FOUND);
+            return;
+        }
+        if(U.hasRight(loginUser.auth, config.AUTH_MANAGER)){
+            // 当前用户是管理员或者系统管理员
+            ep.emit('ready');
         }else{
-            res.json({ err: ERR.SUCCESS , result: { data: doc }});
+            mGroup.isGroupMember(params.groupId, loginUser._id, ep.done('checkAuth'));
         }
     });
+
+    ep.on('checkAuth', function(result, doc){
+        if(result && U.hasRight(doc.auth, config.AUTH_GROUP_MANAGER)){
+            ep.emit('ready')
+        }else{
+            ep.emit('error', 'not auth to modify this group', ERR.NOT_AUTH);
+        }
+    });
+
+    ep.on('ready', function(){
+        mGroup.modify(params.groupId, doc, function(err, doc){
+            if(err){
+                res.json({ err: ERR.SERVER_ERROR, msg: err});
+            }else if(!doc){
+                res.json({ err: ERR.NOT_FOUND, msg: 'no such group'});
+            }else{
+                res.json({ err: ERR.SUCCESS , result: { data: doc }});
+            }
+        });
+    });// ready
 }
 
 exports.get = function(req, res){

@@ -23,7 +23,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 	}
 
 	function conventGroup(data){
-		data.id = data.id;
+		data.id = data._id;
 		return data;
 	}
 
@@ -72,7 +72,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 				handerObj.triggerHandler('nav:createsuc',{list:obj});
 			}
 		}
-		request.get(opt,success);			
+		request.post(opt,success);			
 	}
 
 	function modifyGroup(e,d){
@@ -87,7 +87,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 				handerObj.triggerHandler('nav:modifysuc',{list:obj});
 			}
 		}
-		request.get(opt,success);		
+		request.post(opt,success);		
 	}
 
 

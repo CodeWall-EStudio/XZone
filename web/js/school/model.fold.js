@@ -23,12 +23,22 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			return t;
 		}
 		t.idpath = data.idpath.split(',');
-		t.pid = data.pid;
-		t.tid = data.tid;
+		if(data.parent){
+			t.pid = data.parent._id;
+			t.pname = data.parent.name;
+		}else{
+			t.pid = 0;
+			t.pname = '';
+		}
+		if(data.top){
+			t.tid = data.top._id;
+			t.tname = data.top.name;
+		}else{
+			t.tid = 0;
+			t.tname = '';
+		}
 		t.id = data._id;
 		t.name = data.name;
-		t.tname = data.tname;
-		t.pname = data.pname;
 		return t;
 	}
 
@@ -90,17 +100,24 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	function foldGet(e,d){
 		var data = d || {};
 		var page = data.page || 0,
-			gid = data.gid || 0,
+			gid = data.groupId || 0,
 			order = data.order || {},
-			fdid = data.fdid || 0,
+			fdid = data.folderId || 0,
 			tplid = data.tplid,
 			target = data.target || 0;
 
-		var opt = {
-			cgi : config.cgi.foldlist,
-			data : d
+		var obj = {
+			folderId : fdid
+		};
+
+		if(gid){
+			obj.groupId = gid;
 		}
 
+		var opt = {
+			cgi : config.cgi.foldlist,
+			data : obj
+		}
 		var success = function(d){
 			if(d.err == 0){
 				var list = convent(d.result.list);

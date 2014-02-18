@@ -83,7 +83,6 @@ module.exports = {
             name: ['string']
         },
         optional: {
-            topId: ObjectID,
             groupId: ObjectID,
             closeTime: ['number'],
             prepare: ObjectID
@@ -145,7 +144,10 @@ module.exports = {
         method: POST,
         require: {
             fileId: ArrayObjectID
-        }  
+        },
+        optional: {
+            groupId: ObjectID
+        }
     },
     '/api/fav/delete': {
         method: POST,
@@ -204,13 +206,21 @@ module.exports = {
         method: POST,
         require: {
             fileId: ObjectID
+        },
+        optional: {
+            groupId: ObjectID
         }
+
     },
     '/api/recycle/revert': {
         method: POST,
         require: {
             fileId: ObjectID
+        },
+        optional: {
+            groupId: ObjectID
         }
+
     },
     '/api/recycle/search': {
         method: GET,
@@ -230,10 +240,10 @@ module.exports = {
     '/api/board/create': {
         method: POST,
         require: {
-            content: ['string', 1]
+            content: ['string', 1],
+            groupId: ObjectID
         },
         optional: {
-            groupId: ObjectID,
             parentId: ObjectID,
             resourceId: ObjectID
         }
@@ -244,12 +254,6 @@ module.exports = {
             boardId: ObjectID,
             validateText: ['string', 1],
             validateStatus: ['number', 0]
-        }
-    },
-    '/api/board/delete': {
-        method: POST,
-        require: {
-            boardId: ObjectID
         }
     },
     '/api/board/delete': {

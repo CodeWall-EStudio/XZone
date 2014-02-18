@@ -76,9 +76,16 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 			fdid : nowFd,
 			info : d
 		}
+<<<<<<< HEAD
 		console.log(d);
 		if(nowFd == 0 && d.rootFolder){
 			data.fdid = d.rootFolder.id;
+=======
+		if(!nowFd){
+			if(info.rootFolder){
+			data.fdid = info.rootFolder.id;
+			}
+>>>>>>> c893c56b6a9c2162d59c19190d9024b141fde8e6
 		}	
 		$('#aside .aside-divs').hide();
 		switch(d.type){
@@ -122,7 +129,7 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 						var desc = $.trim(actTarget.find('textarea').val());
 						if(desc != ''){
 							handerObj.triggerHandler('board:new',{
-								groupdId : nowGid,
+								groupId : nowGid,
 								content : desc,
 								type : 1
 							});

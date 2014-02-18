@@ -43,7 +43,7 @@ exports.create = function(params, callback){
                 size: resource.size
             }
             if(params.groupId){
-                doc.group = DBRef('group', ObjectID(params.groupId));
+                doc.fromGroup = DBRef('group', ObjectID(params.groupId));
             }
 
             db.fav.save(doc, function(err, result){
@@ -101,13 +101,15 @@ exports.search = function(params, callback){
 
     var extendQuery = params.extendQuery || {};
     var query = { 
-        name: new RegExp('.*' + keyword + '.*')
     };
+    if(keyword){
+        query['name'] = new RegExp('.*' + keyword + '.*');
+    }
     if(userId){
         query['user.$id'] = ObjectID(userId);
     }
     if(groupId){
-        query['group.$id'] = ObjectID(groupId);
+        query['fromGroup.$id'] = ObjectID(groupId);
     }
     if(hasType){
         query['type'] = type;

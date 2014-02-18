@@ -5,6 +5,7 @@ define(['config','helper/view','model.recy'],function(config,View){
 	var nextPage = 0,
 		action = 0,
 		nowOrder  = ['createtime',1],
+		nowOds = '',
 		nowType = 0,
 		nowKey = '';	
 
@@ -32,14 +33,14 @@ define(['config','helper/view','model.recy'],function(config,View){
 		if(d.order){
 			nowOrder = d.order;
 		}
-
+		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		nowKey = d.key || '';
 
 		var view = new View({
 			target : titTarget,
 			tplid : 'coll.table.tit',
 			data : {
-				order : nowOrder,
+				order : nowOds,
 				name : 'myrecy'
 			}			
 		});
@@ -49,7 +50,7 @@ define(['config','helper/view','model.recy'],function(config,View){
 			keyword : nowKey,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder
+			order : nowOds
 		});			
 	}
 
@@ -93,7 +94,7 @@ define(['config','helper/view','model.recy'],function(config,View){
 			keyword : nowKey,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder
+			order : nowOds
 		});			
 	}
 

@@ -115,14 +115,14 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 			case 'pass':
 				handerObj.triggerHandler('manage:approve',{
 					groupId:id,
-					validateText : '',
+					validateText : 'pass',
 					validateStatus : 1
 				});
 			break;
 			case 'notpass':
 				handerObj.triggerHandler('manage:approve',{
 					groupId:id,
-					validateText : '',
+					validateText : 'notpass',
 					validateStatus : 0
 				});	
 			break;

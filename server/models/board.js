@@ -13,7 +13,7 @@ exports.create = function(params, callback){
     var groupId = params.groupId;
 
     var doc = {
-        user: DBRef('user', ObjectID(params.creator)),
+        creator: DBRef('user', ObjectID(params.creator)),
         parent: params.parentId ? DBRef('board', ObjectID(params.parentId)) : null,
         content: params.content || '',
 
@@ -23,17 +23,14 @@ exports.create = function(params, callback){
         resource: params.resourceId ? DBRef('resource', ObjectID(params.resourceId)) : null,
         type: 0, //类型 0 个人 1 小组 的文件
 
-        status: 1 // 审核状态 1 审核中 0 已审核
+        group: DBRef('group', ObjectID(groupId)),
+
+        status: 1, // 审核状态 1 审核中 0 已审核
 
         validateText: null,//审核评语
         validateStatus: null, //0 不通过 1 通过
         validateTime: null,//审核时间
         validator: null
-    }
-
-    if(groupId){
-        doc.type = 1;
-        doc.group = DBRef('group', ObjectID(groupId));
     }
 
     db.board.save(doc, function(err, result){
@@ -42,9 +39,14 @@ exports.create = function(params, callback){
     });
 }
 
-exports.modify = function(boardId, doc, callback){
+exports.modify = function(params, doc, callback){
 
-    db.board.findAndModify({ _id: ObjectID(boardId) }, [], { $set: doc }, 
+    var query = {_id: ObjectID(params.boardId)};
+    if(params.creator){
+        query['creator.$id'] = ObjectID(params.creator);
+    }
+
+    db.board.findAndModify(params, [], { $set: doc }, 
             { 'new': true }, callback);
 
 }
@@ -66,11 +68,32 @@ exports.search = function(params, callback){
     }
 
     if(userId){
-        query['user.$id'] = ObjectID(userId);
+        query['creator.$id'] = ObjectID(userId);
     }
 
-    db.search('board', query, params, callback);
+    if('validateStatus' in params){
+        query['validateStatus'] = params.validateStatus;
+    }
+
+    db.search('board', query, params, function(err, total, docs){
+        if(err){
+            callback(err);
+        }else if(total && docs){
+            db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
+                if(err){
+                    callback(err)
+                }else{
+                    callback(null, total || 0, docs);
+                }
+            });
+        }else{
+            callback(null, total || 0, docs);
+        }
+    });
 
 }
 
+exports.getBoard = function(boardId, callback){
 
+    db.board.findOne({ _id: ObjectID(boardId)}, callback);
+}

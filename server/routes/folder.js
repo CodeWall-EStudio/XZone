@@ -1,5 +1,5 @@
 
-
+var EventProxy = require('eventproxy');
 var config = require('../config');
 var ERR = require('../errorcode');
 

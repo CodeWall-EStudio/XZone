@@ -4,6 +4,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 	var nextPage = 0,
 		action = 0,
 		nowOrder  = ['createtime',1], 
+		nowOds = '',
 		nowKey = '';
 
 	var tmpTarget = $('#boxTableList'),
@@ -30,7 +31,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 		if(d.order){
 			nowOrder = d.order;
 		}
-
+		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		nowKey = d.key || '';
 
 		var view = new View({
@@ -47,7 +48,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 			keyword : nowKey,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder
+			order : nowOds
 		});			
 	}
 
@@ -91,7 +92,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 			keyword : nowKey,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder
+			order : nowOds
 		});		
 	}
 
