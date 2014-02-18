@@ -23,7 +23,7 @@ exports.create = function(params, callback){
         resource: params.resourceId ? DBRef('resource', ObjectID(params.resourceId)) : null,
         type: 0, //类型 0 个人 1 小组 的文件
 
-        status: 1 // 审核状态 1 审核中 0 已审核
+        status: 1, // 审核状态 1 审核中 0 已审核
 
         validateText: null,//审核评语
         validateStatus: null, //0 不通过 1 通过
