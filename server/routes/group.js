@@ -17,6 +17,7 @@ exports.create = function(req, res){
     }else{
         delete params.status;
     }
+    console.log(req.loginUser.auth, config.AUTH_MANAGER, U.hasRight(req.loginUser.auth, config.AUTH_MANAGER));
 
     var members = params.members || [];
     members.push(params.creator);

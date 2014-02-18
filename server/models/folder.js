@@ -118,7 +118,7 @@ exports.create = function(params, callback){
             updateTime: Date.now(),
             type: 0,
             parent: null,
-            top: params.topId ? DBRef('folder', params.topId) : null,
+            top: null, //params.topId ? DBRef('folder', params.topId) : null,
             hasChild: false
         };
         if(groupId){
@@ -129,6 +129,8 @@ exports.create = function(params, callback){
         }
         if(folder){
             doc.parent = DBRef('folder', folder._id);
+            doc.top = folder.top || doc.parent;
+
             folder.hasChild = true;
             db.folder.save(folder, function(err){
                 if(err){
@@ -136,7 +138,7 @@ exports.create = function(params, callback){
                 }
             });
         }else{
-            doc.parent = doc.top;
+            doc.parent = doc.top = null;
         }
         db.folder.insert(doc, function(err, result){
             if(err){

@@ -138,14 +138,14 @@ exports.download = function(req, res){
             ep.emit('error');
         }else{
             var filePath = path.join('/data/71xiaoxue/', resource.path);
-            console.log('redirect to :' + filePath);
+            // console.log('redirect to :' + filePath);
             res.set({
                 'Content-Type': resource.mimes,
                 'Content-Disposition': 'attachment; filename=' + file.name,
                 'Content-Length': resource.size,
                 'X-Accel-Redirect': filePath
             });
-            // TODO 未调通
+
             res.send();
         }
     });
