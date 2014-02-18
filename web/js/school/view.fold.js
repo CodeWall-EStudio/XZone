@@ -10,6 +10,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		rootFd = 0,
 		nowPrep = 0, //当前是否是备课
 		nowOrder  = ['createtime',1],
+		nowOds = '';
 		nowUid = 0,
 		nextPage = 0;
 
@@ -123,6 +124,10 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			nowPrep = d.prep || 0;
 			nowUid = d.uid || 0;
 			rootFd = d.rootfdid || 0;
+			if(d.order){
+				nowOrder = d.order;
+			}
+			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		}
 
 		if(nowGinfo.rootFolder){

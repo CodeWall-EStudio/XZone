@@ -8,9 +8,9 @@
 	<tr>
 		<th width="30"><input type="checkbox" id="selectAllFold" /></th>
 		<th>
-			<a href="#<%+name%>=1&on=name&od=<%if(on=='name' && od){%>0<%}else{%>1<%}%>">
+			<a href="#<%+name%>=1&on=name&od=<%if(on=='name' && od){%>-1<%}else{%>1<%}%>">
 			<span>文件名</span>  
-			<%if(on == 'name' && od==0){%>
+			<%if(on == 'name' && od== -1){%>
 				<i class="ad"></i>
 			<%}else if(on =='name' && od== 1){%>
 				<i class="au"></i>
@@ -31,9 +31,9 @@
 			</th>
 		<%}%>
 		<th width="90">
-		<a href="#<%+name%>=1&on=type&od=<%if(on=='type' && od){%>0<%}else{%>1<%}%>">
+		<a href="#<%+name%>=1&on=type&od=<%if(on=='type' && od == 1){%>-1<%}else{%>1<%}%>">
 			<span>类型</span> 
-			<%if(on == 'type' && od==0){%>
+			<%if(on == 'type' && od== 1){%>
 				<i class="ad"></i>
 			<%}else if(on =='type' && od== 1){%>
 				<i class="au"></i>
@@ -43,9 +43,9 @@
 		</a>
 		</th>
 		<th width="90">
-			<a href="#<%+name%>=1&on=size&od=<%if(on=='size' && od){%>0<%}else{%>1<%}%>">
+			<a href="#<%+name%>=1&on=size&od=<%if(on=='size' && od==1){%>-1<%}else{%>1<%}%>">
 			<span>大小</span>  
-			<%if(on == 'size' && od==0){%>
+			<%if(on == 'size' && od== -1){%>
 				<i class="ad"></i>
 			<%}else if(on =='size' && od== 1){%>
 				<i class="au"></i>
@@ -55,9 +55,9 @@
 			</a>							
 		</th>
 		<th width="120" align="right">
-			<a href="#<%+name%>=1&on=createtime&od=<%if(on=='createtime' && od){%>0<%}else{%>1<%}%>">
+			<a href="#<%+name%>=1&on=createtime&od=<%if(on=='createtime' && od==1){%>-1<%}else{%>1<%}%>">
 			<span>时间</span>  
-			<%if(on == 'createtime' && od==0){%>
+			<%if(on == 'createtime' && od== -1){%>
 				<i class="ad"></i>
 			<%}else if(on =='createtime' && od== 1){%>
 				<i class="au"></i>

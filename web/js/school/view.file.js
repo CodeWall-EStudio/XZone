@@ -6,6 +6,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		nowKey = '',
 		nowFd = 0,
 		nowOrder  = ['createtime',1],
+		nowOds = '',
 		nowUid = 0,
 		nowPrep = 0, //当前是否是备课
 		rootFd = 0,
@@ -69,6 +70,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			if(d.order){
 				nowOrder = d.order;
 			}
+			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 			nowUid = d.uid || 0;
 			nowKey = d.key || '';
 			nowPrep = d.prep || 0;
@@ -82,6 +84,9 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			tpl = 'prep.table.tit';
 		}
 
+		if(!nowFd && rootFd){
+			nowFd = rootFd;
+		}
 		var view = new View({
 			target : tabletitTarget,
 			tplid : tpl,
@@ -95,26 +100,15 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 
 		var data = {
 			keyword : nowKey,
-			folderId : nowFd,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder			
-		}
-		if(nowGid){
-			data.groupId = nowGid;
-		}
-
-		var data = {
-			keyword : nowKey,
-			page:nextPage,
-			pageNum : config.pagenum,
-			order : [nowOrder]
+			order : nowOds
 		}
 
 		if(nowGid){
 			data.groupId = nowGid;
 		}
-		if(nowFd){
+		if(nowFd != 0){
 			data.folderId = nowFd;
 		}else if(rootFd){
 			data.folderId = rootFd;
@@ -122,7 +116,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		if(nowUid){
 			data.uid = nowUid;
 		}
-		console.log(data,nowOrder);
+		console.log(data);
 		handerObj.triggerHandler('file:search',data);	
 	}
 
@@ -187,12 +181,14 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		tmpTarget.find('.file').remove();
 		nowKey = d.key;
 		
+		var ods = {};
+		ods[nowOrder[0]] = ods[nowOrder[1]];
 		var obj = {
 			keyword : nowKey,
 			folderId : nowFd || rootFd,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder
+			order : nowOds
 		}
 		if(nowGid){
 			obj.groupId = nowGid;
@@ -218,12 +214,14 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			return;
 		}
 
+		var ods = {};
+		ods[nowOrder[0]] = nowOrder[1];
 		var obj = {
 			keyword : nowKey,
 			folderId : nowFd || rootFd,
 			page:nextPage,
 			pageNum : config.pagenum,
-			order : nowOrder
+			order : nowOds
 		}
 		if(nowGid){
 			obj.groupId = nowGid;
