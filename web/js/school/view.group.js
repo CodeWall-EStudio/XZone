@@ -76,6 +76,9 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 			fdid : nowFd,
 			info : d
 		}
+		if(!nowFd){
+			data.fdid = info.rootFolder.id;
+		}	
 		$('#aside .aside-divs').hide();
 		switch(d.type){
 			case 0:

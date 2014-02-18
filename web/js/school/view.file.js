@@ -8,6 +8,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		nowOrder  = ['createtime',1],
 		nowUid = 0,
 		nowPrep = 0, //当前是否是备课
+		rootFd = 0,
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -71,6 +72,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			nowUid = d.uid || 0;
 			nowKey = d.key || '';
 			nowPrep = d.prep || 0;
+			rootFd = d.rootfdid || 0;
 		}
 
 		tmpTarget.html('');
@@ -114,6 +116,8 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		}
 		if(nowFd){
 			data.folderId = nowFd;
+		}else if(rootFd){
+			data.folderId = rootFd;
 		}
 		if(nowUid){
 			data.uid = nowUid;
@@ -185,7 +189,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		
 		var obj = {
 			keyword : nowKey,
-			folderId : nowFd,
+			folderId : nowFd || rootFd,
 			page:nextPage,
 			pageNum : config.pagenum,
 			order : nowOrder
@@ -216,7 +220,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 
 		var obj = {
 			keyword : nowKey,
-			folderId : nowFd,
+			folderId : nowFd || rootFd,
 			page:nextPage,
 			pageNum : config.pagenum,
 			order : nowOrder
