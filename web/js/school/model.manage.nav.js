@@ -23,7 +23,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 	}
 
 	function conventGroup(data){
-		data.id = data.id;
+		data.id = data._id;
 		return data;
 	}
 

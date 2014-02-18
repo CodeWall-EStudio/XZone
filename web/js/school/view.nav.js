@@ -15,6 +15,7 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 
 
 	function navLoad(e,d){
+		console.log(d);
 		var opt = {
 			target : navTarget,
 			tplid : 'nav',
@@ -75,7 +76,6 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 			data.group = d.data;
 			tplid = 'group.manage'
 		}
-
 		var view = new View({
 			target : actTarget,
 			tplid : tplid,
@@ -137,11 +137,13 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 							return;
 						}
 						var obj = {
-							'groupId' : d.data.id,
 							'name' : name,
 							'type' : 1,
 							'content' : desc,
 							'members' : members
+						}
+						if(d.data){
+							obj.groupId = d.data.id;
 						}
 						if(tplid == 'group.new'){
 							handerObj.triggerHandler('manage.nav:new',obj);
@@ -180,8 +182,8 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 
 	function createSuc(e,d){
 		var myinfo = Cache.get('myinfo');
-		myinfo.group.push(d);
-		myinfo.group2key[d.id] = d;
+		myinfo.group.push(d.list);
+		myinfo.group2key[d.list.id] = d.list;
 
 		handerObj.triggerHandler('cache:set',{key: 'myinfo',data: myinfo});
 		handerObj.triggerHandler('nav:load',myinfo);
