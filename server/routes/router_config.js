@@ -83,7 +83,6 @@ module.exports = {
             name: ['string']
         },
         optional: {
-            topId: ObjectID,
             groupId: ObjectID,
             closeTime: ['number'],
             prepare: ObjectID
@@ -204,13 +203,21 @@ module.exports = {
         method: POST,
         require: {
             fileId: ObjectID
+        },
+        optional: {
+            groupId: ObjectID
         }
+
     },
     '/api/recycle/revert': {
         method: POST,
         require: {
             fileId: ObjectID
+        },
+        optional: {
+            groupId: ObjectID
         }
+
     },
     '/api/recycle/search': {
         method: GET,
