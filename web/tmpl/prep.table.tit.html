@@ -10,7 +10,7 @@
 		<th width="30"><input type="checkbox" cmd="selectall" /></th>
 		<th>
 			文件夹和文件
-			<a href="#myprep=1&fdid=<%+fdid%>&on=name&od=<%if(on=='name' && od == 1){%>-1<%}else{%>1<%}%>">
+			<a href="#myprep=1&gid=<%+gid%>&fdid=<%+fdid%>&on=name&od=<%if(on=='name' && od == 1){%>-1<%}else{%>1<%}%>">
 			<span>文件名</span>  
 			<%if(on == 'name' && od== 1){%>
 				<i class="ad"></i>
@@ -30,7 +30,7 @@
 		<th width="60">来源</th>	
 		<%}%>	
 		<th width="90">
-		<a href="#myprep=1&fdid=<%+fdid%>&on=type&od=<%if(on=='type' && od ==1 ){%>-1<%}else{%>1<%}%>">
+		<a href="#myprep=1&gid=<%+gid%>&fdid=<%+fdid%>&on=type&od=<%if(on=='type' && od ==1 ){%>-1<%}else{%>1<%}%>">
 			<span>类型</span> 
 			<%if(on == 'type' && od== 1){%>
 				<i class="ad"></i>
@@ -42,7 +42,7 @@
 		</a>
 		</th>
 		<th width="90">
-			<a href="#myprep=1&fdid=<%+fdid%>&on=size&od=<%if(on=='size' && od == 1){%>-1<%}else{%>1<%}%>">
+			<a href="#myprep=1&gid=<%+gid%>&fdid=<%+fdid%>&on=size&od=<%if(on=='size' && od == 1){%>-1<%}else{%>1<%}%>">
 			<span>大小</span>  
 			<%if(on == 'size' && od== 1){%>
 				<i class="ad"></i>
@@ -54,7 +54,7 @@
 			</a>							
 		</th>
 		<th width="120" align="right">
-			<a href="#myprep=1&fdid=<%+fdid%>&on=createTime&od=<%if(on=='createTime' && od ==1){%>-1<%}else{%>1<%}%>">
+			<a href="#myprep=1&gid=<%+gid%>&fdid=<%+fdid%>&on=createTime&od=<%if(on=='createTime' && od ==1){%>-1<%}else{%>1<%}%>">
 			<span>时间</span>  
 			<%if(on == 'createTime' && od==1){%>
 				<i class="ad"></i>

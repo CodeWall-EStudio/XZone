@@ -549,11 +549,11 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 					'click' : function(e){
 						var t = $(".act-fold-list a.selected");
 						if(t.length){
-							var id = t.attr('data-id');
-							handerObj.triggerHandler('file:copyto',{
+							var gid = t.attr('data-gid'),
+								id = t.attr('data-id');
+							handerObj.triggerHandler('file:shareto',{
 								fileId : ids,
-								groupId : gid,
-								targetId : id
+								toGroupId : [gid]
 							});
 						}
 					}

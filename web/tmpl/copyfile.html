@@ -31,7 +31,7 @@
 											if(item.parent){
 									%>
 									<li>
-										<i cmd="next" class="plus" data-gid="<%+item.id%>" <%if(item.rootFolder){%>data-id="<%+item.rootFolder.id%>"<%}%>></i><a title="<%+item.name%>" class="list-link"> <%=item.name%></a>				
+										<i cmd="next" class="plus" data-gid="<%+item.id%>" <%if(item.rootFolder){%>data-id="<%+item.rootFolder.id%>"<%}%>></i><a title="<%+item.name%>"  data-gid="<%+item.id%>" <%if(item.rootFolder){%>data-id="<%+item.rootFolder.id%>"<%}%> class="list-link"> <%=item.name%></a>				
 									</li>		
 									<%}%>
 									<%}%>
@@ -45,5 +45,5 @@
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-					<button type="button" class="btn btn-primary btn-share"  data-dismiss="modal">确定</button>
+					<button type="button" class="btn btn-primary btn-sub"  data-dismiss="modal">确定</button>
 				</div>				

@@ -7,7 +7,7 @@
     }    
   });
 
-  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','bind','upload'], function(config,router,util,nav) {
+  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','bind','upload','msg'], function(config,router,util,nav) {
 
     var handerObj = $(Schhandler);
 
@@ -138,7 +138,8 @@
             fdid = data.fdid || 0;
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
-            key = data.key || 0;
+            key = data.key || 0,
+            type = data.type || 0;
         var d = {
           gid : gid,
           fdid : fdid
@@ -167,7 +168,8 @@
         var fdid = data.fdid;
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
-            key = data.key || 0;
+            key = data.key || 0,
+            type = data.type || 0;
         var d = {
           fdid : fdid
         }

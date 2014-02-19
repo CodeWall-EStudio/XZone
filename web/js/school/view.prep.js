@@ -23,6 +23,9 @@ define(['config','helper/view','cache'],function(config,View,Cache){
 		if(!d.gid){
 			nowGid = prepList[0].id;
 			nowFd = prepList[0].rootFolder.id;
+		}else{
+			nowGid = d.gid;
+			nowFd = d.fdid;
 		}
 		if(!d.fdid){
 			nowFd = prepKey[nowGid].rootFolder.id;
@@ -37,7 +40,8 @@ define(['config','helper/view','cache'],function(config,View,Cache){
 
 
         handerObj.triggerHandler('file:init',data);
-        handerObj.triggerHandler('fold:init',data); 		
+        handerObj.triggerHandler('fold:init',data); 
+        handerObj.triggerHandler('upload:param',d);		
 
 		$('#aside .aside-divs').hide();
 		var view = new View({
