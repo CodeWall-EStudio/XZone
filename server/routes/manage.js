@@ -99,11 +99,11 @@ exports.listPrepares = function(req, res){
     ep.fail(function(err){
         res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
-    // TODO buggy
+
     db.group.find({
-            type: 3, // type=3 是备课小组
-            parent: null
-        }, function(err, result){
+        type: 3, // type=3 是备课小组
+        parent: null
+    }, function(err, result){
         if(err){
             ep.emit('error');
         }else if(result && result.length){

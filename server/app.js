@@ -4,6 +4,7 @@
  */
 
 var express = require('express');
+var MongoStore = require('connect-mongo')(express);
 var http = require('http');
 var path = require('path');
 
@@ -20,7 +21,13 @@ app.enable('trust proxy');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.cookieParser());
-app.use(express.cookieSession({ secret: 'xzone' }));
+// app.use(express.cookieSession({ secret: 'xzone' }));//FIXME session 要存到数据库
+app.use(express.session({
+    secret: config.COOKIE_SECRET,
+    store: new MongoStore({
+        url: config.DB_URI
+    })
+}));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);

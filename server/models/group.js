@@ -38,6 +38,8 @@ exports.create = function(params, callback){
             tag: params.tag || null,
             grade: params.grade || null,
 
+            //TODO 小组配额没有加
+
             validateText: null,//审核评语
             validateStatus: null, //0 不通过 1 通过
             validateTime: null,//审核时间
@@ -131,7 +133,7 @@ exports.getGroupMembers = function(groupId, needDetail, callback){
             ep.fail(callback);
             docs.forEach(function(doc){
                 if(!needDetail){
-                    ep.emit('fetchUser', { // FIXME 这里是不是要传个 null 作为第一个参数
+                    ep.emit('fetchUser', {
                         _id: doc.user.oid
                     });
                 }else{
