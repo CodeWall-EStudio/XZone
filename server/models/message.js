@@ -49,6 +49,11 @@ exports.delete = function(msgId, callback){
     db.message.findAndRemove({ _id: new ObjectID(msgId)}, [], callback);
 }
 
+exports.getMessage = function(query, callback){
+
+    db.message.findOne(query, callback);
+}
+
 exports.search = function(params, callback){
 
     var userId = params.creator || null;

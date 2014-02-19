@@ -22,6 +22,7 @@ var U = require('../util');
 exports.upload = function(req, res){
     var params = req.query;
     var folderId = params.folderId;
+    //TODO 如果这个文件夹关闭了上传, 就不能传了
     var body = req.body;
     var loginUser = req.loginUser;
 
@@ -116,12 +117,8 @@ exports.upload = function(req, res){
 
 exports.download = function(req, res){
     var fileId = req.query.fileId;
-
-    // TODO
-    // 自己能预览所有和自己相关的文件.包括
-    // 收件箱中其他人发过来的邮件,
-    // 自己所在的小组中的文件.
-
+    var creator = req.loginUser._id;
+    
     var ep = new EventProxy();
 
     ep.fail(function(err){
@@ -131,32 +128,86 @@ exports.download = function(req, res){
         });
     });
 
+    mFile.getFile(fileId, ep.doneLater('getFile'));
+
     ep.on('getFile', function(file){
         if(!file){
             ep.emit('error');
-        }else{
-            mRes.getResource(file.resource.oid.toString(), ep.done('getRes'));
+            return;
         }
+        
+        mFolder.getFolder(file.folder.oid.toString(), ep.done('getFolder'));
+
+        mRes.getResource(file.resource.oid.toString(), ep.done('getRes'));
+
     });
 
-    ep.all('getFile', 'getRes', function(file, resource){
+    ep.all('getFile', 'getFolder', 'getRes', function(file, folder, resource){
         if(!resource){
             ep.emit('error');
-        }else{
-            var filePath = path.join('/data/71xiaoxue/', resource.path);
-            // console.log('redirect to :' + filePath);
-            res.set({
-                'Content-Type': resource.mimes,
-                'Content-Disposition': 'attachment; filename=' + file.name,
-                'Content-Length': resource.size,
-                'X-Accel-Redirect': filePath
-            });
+            return;
+        }
 
-            res.send();
+        // 检查权限
+        if(file.creator._id.toString() === creator){
+            // 自己的文件, 可以下载
+            console.log('download: from self');
+            ep.emit('ready', file, resource);
+        }else{
+            // 检查是否是自己收件箱的文件
+            mMessage.getMessage({ 
+                'resource.$id': resource._id,
+                'toUser.$id': ObjectID(creator)
+            }, function(err, msg){
+                if(msg){ // 是自己收到的, 可以下载
+                    console.log('download: from inbox');
+                    ep.emit('ready', file, resource);
+                }else if(folder.group){// 检查是否是自己所在小组的
+                    mGroup.isGroupMember(folder.group.oid.toString(), creator, 
+                            ep.done('checkRight', function(hasRight){
+
+                        if(hasRight){
+                            return { file: file, resource: resource };
+                        }
+                        return null;
+                    }));
+                }else{ // 没有权限
+                    ep.emit('error', 'not auth to download this resource', ERR.NOT_AUTH);
+                }
+            });
         }
     });
 
-    mFile.getFile(fileId, ep.done('getFile'));
+    ep.on('checkRight', function(data){
+        if(data){ // 是自己所在小组的
+            console.log('download: from group');
+            ep.emit('ready', data.file, data.resource);
+        }
+    });
+
+    ep.on('ready', function(file, resource){
+
+        var filePath = path.join('/data/71xiaoxue/', resource.path);
+        // console.log('redirect to :' + filePath);
+        res.set({
+            'Content-Type': resource.mimes,
+            'Content-Disposition': 'attachment; filename=' + file.name,
+            'Content-Length': resource.size,
+            'X-Accel-Redirect': filePath
+        });
+
+        res.send();
+    });
+
+    
+}
+
+exports.preview = function(req, res){
+    // TODO
+    // 自己能预览所有和自己相关的文件.包括
+    // 收件箱中其他人发过来的邮件,
+    // 自己所在的小组中的文件.
+
 }
 
 // exports.create = function(req, res){
