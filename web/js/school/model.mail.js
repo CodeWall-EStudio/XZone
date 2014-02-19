@@ -8,16 +8,16 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			var item = data[i];
 			list.push({
 				id : item._id,
-				fname : item.fnick,
+				fname : item.fromUser.nick,
 				fid : item.fid,
 				name : item.fileName,
 				content : item.content,
 				time : util.time(item.createTime),
 				save : item.save,
-				fuid : item.fuid,
-				tuid : item.tuid,
-				type : item.type,
-				size : item.size
+				fuid : item.fromUser._id,
+				tuid : item.toUser._Id,
+				type : item.resource.type,
+				size : util.getSize(item.resource.size || 0)
 			})
 		}
 		return list;
