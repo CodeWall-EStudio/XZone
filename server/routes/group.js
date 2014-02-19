@@ -140,7 +140,10 @@ exports.get = function(req, res){
         }else if(!doc){
             res.json({ err: ERR.NOT_FOUND, msg: 'no such group'});
         }else{
-            res.json({ err: ERR.SUCCESS , result: { data: doc }});
+            mGroup.getGroupMembers(params.groupId, true, function(err, members){
+                doc.members = members;
+                res.json({ err: ERR.SUCCESS , result: { data: doc }});
+            });
         }
     });
 }

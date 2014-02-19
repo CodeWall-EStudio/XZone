@@ -151,7 +151,7 @@ exports.download = function(req, res){
         // 检查权限
         if(file.creator._id.toString() === creator){
             // 自己的文件, 可以下载
-            console.log('download: from self');
+            console.log('download: from self',fileId);
             ep.emit('ready', file, resource);
         }else{
             // 检查是否是自己收件箱的文件
@@ -160,7 +160,7 @@ exports.download = function(req, res){
                 'toUser.$id': ObjectID(creator)
             }, function(err, msg){
                 if(msg){ // 是自己收到的, 可以下载
-                    console.log('download: from inbox');
+                    console.log('download: from inbox',fileId);
                     ep.emit('ready', file, resource);
                 }else if(folder.group){// 检查是否是自己所在小组的
                     mGroup.isGroupMember(folder.group.oid.toString(), creator, 
@@ -180,7 +180,7 @@ exports.download = function(req, res){
 
     ep.on('checkRight', function(data){
         if(data){ // 是自己所在小组的
-            console.log('download: from group');
+            console.log('download: from group',fileId);
             ep.emit('ready', data.file, data.resource);
         }
     });
