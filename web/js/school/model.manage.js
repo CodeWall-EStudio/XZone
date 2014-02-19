@@ -61,7 +61,6 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 
 	function creatGroup(e,d){
 
-		console.log(d);
 		var opt = {
 			cgi : config.cgi.groupcreate,
 			data : d

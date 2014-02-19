@@ -214,7 +214,6 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 
 	function fileMove(e,d){
 		var fids = d.fileId;
-		console.log(fids);
 		var opt = {
 			cgi : config.cgi.filemove,
 			data : d

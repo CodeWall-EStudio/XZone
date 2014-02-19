@@ -63,7 +63,7 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 	}
 
 	function groupLoad(e,d){
-		console.log(d);
+
 		var view = new View({
 			target : $('#prepYearList'),
 			tplid : 'manage.prep.year',
@@ -85,7 +85,7 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 	}
 
 	function appSuc(e,d){
-		console.log(d);
+
 		if(d.type == 1){
 			$('.group'+d.id).html('审核通过');
 		}else{
@@ -175,7 +175,7 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 		if(pt){
 			obj.pt = pt;
 		}
-		console.log(pid,type);
+
 		
 		if(pid){
 			var parent = $('.check-prepyear:checked').val();
@@ -188,7 +188,7 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 			if(tag){
 				obj.tag = tag;
 			}
-			console.log(parent,grade,tag);
+
 			if(type == 3){
 				if(!parent){
 					alert('备课小组必须选择学年！');
@@ -210,7 +210,6 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 			alert('小组名称不能为空!');
 			return;
 		}		
-		console.log(obj);
 		//return ;
 
 		handerObj.triggerHandler('manage:create',obj);

@@ -93,7 +93,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			data : d
 		}
 		var success = function(d){
-			console.log(d);
+
 			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				var data = convent([d.result.data]);

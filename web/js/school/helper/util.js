@@ -322,6 +322,29 @@ define(['../config'], function($, config) {
         }
     };	
 
+    var getNums = function(x){
+		var f_x = parseFloat(x);  
+		if (isNaN(f_x))  
+		{  
+		alert('function:changeTwoDecimal->parameter error');  
+		return false;  
+		}  
+		var f_x = Math.round(x*100)/100;  
+		var s_x = f_x.toString();  
+		var pos_decimal = s_x.indexOf('.');  
+		if (pos_decimal < 0)  
+		{
+			return f_x;  
+			// pos_decimal = s_x.length;  
+			// s_x += '.';  
+		}  
+		while (s_x.length <= pos_decimal + 2)  
+		{  
+			s_x += '0';  
+		}  
+		return s_x;      	
+    }
+
     var getSize = function(size){
         var prec = 3;
         var size = Math.round(Math.abs(size));
@@ -332,7 +355,9 @@ define(['../config'], function($, config) {
         size = size * Math.pow(2, -10 * unit);
         var digi = prec - 1 - Math.floor(Math.log(size) / Math.log(10));
         size = Math.round(size * Math.pow(10, digi)) * Math.pow(10, -digi);
-        return size + units[unit];    	
+
+
+        return getNums(size) + units[unit];    	
     }
 
 	//expose
