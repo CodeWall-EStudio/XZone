@@ -14,6 +14,7 @@ exports.create = function(params, callback){
         fromUser: DBRef('user', ObjectID(params.fromUserId)),
         toUser: null,
         content: params.content || '',
+        fileName: params.fileName || '',
         resource: DBRef('resource', ObjectID(params.resourceId)),
         // parent: params.parentId ? DBRef('message', ObjectID(params.parentId)) : null,
 

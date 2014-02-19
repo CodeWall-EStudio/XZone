@@ -196,18 +196,21 @@ function shareToUser(params, callback){
     ep.on('getFile', function(file){
         if(!file){
             ep.emit('error', 'no such file', ERR.NOT_FOUND);
+            return;
         }
         // 2. 获取资源
         mRes.getResource(file.resource.oid.toString(), ep.done('getResource'));
     });
-    ep.on('getResource', function(resource){
+    ep.all('getFile', 'getResource', function(file, resource){
         if(!resource){
             ep.emit('error', 'no such file', ERR.NOT_FOUND);
+            return;
         }
         var msg = {
             content: content,
             toUserId: toUserId,
             fromUserId: fromUserId,
+            fileName: file.name,
             resourceId: resource._id.toString()
         }
         
@@ -252,9 +255,11 @@ function shareToGroup(params, callback){
     ep.all('getFile', 'getGroup', function(file, group){
         if(!file){
             ep.emit('error', 'no such file', ERR.NOT_FOUND);
+            return;
         }
         if(!group){
             ep.emit('error', 'no such group', ERR.NOT_FOUND);
+            return;
         }
         if(!toFolderId){
             toFolderId = group.rootFolder.oid.toString();
