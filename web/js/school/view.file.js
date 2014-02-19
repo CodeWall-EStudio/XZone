@@ -459,7 +459,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 							}
 							return;
 						}else{	
-							target.addClass('minus');						
+							target.addClass('minus');	
 							handerObj.triggerHandler('fold:get',{
 								groupId : nowGid,
 								folderId : id,
@@ -474,11 +474,15 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 						var t = $(".act-fold-list a.selected");
 						if(t.length){
 							var id = t.attr('data-id');
-							handerObj.triggerHandler('file:moveto',{
+							var obj = {
 								fileId : ids,
-								groupId : nowGid,
-								targetId : id
-							});
+								targetId : id								
+							}
+							if(nowGid){
+								obj.groupId = nowGid;
+							}
+
+							handerObj.triggerHandler('file:moveto',obj);
 						}
 					}
 				}
