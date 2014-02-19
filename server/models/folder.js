@@ -30,7 +30,7 @@ exports.create = function(params, callback){
         };
         if(groupId){
             doc.group = DBRef('group', ObjectID(groupId));
-            doc.closeTime = params.closeTime || 0;
+            doc.closeTime = Number(params.closeTime) || 0;
         }else{
             doc.prepare = params.prepareId ? DBRef('group', ObjectID(params.prepareId)) : null;
         }

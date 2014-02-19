@@ -98,20 +98,35 @@ exports.modify = function(req, res){
 
 exports.delete = function(req, res){
     var params = req.body;
-    params.creator = req.loginUser._id; // TODO 批量删除
-//TODO 检查是否有不属于自己的文件, 有就不能删
-    mFolder.delete(params, function(err, number){
-        if(err){
-            res.json({ err: number || ERR.SERVER_ERROR, msg: err});
-        }else{
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    count: number
-                }
-            });
-        }
+    var folderIds = params.folderId;
+    var groupId = params.groupId;
+
+    var creator = req.loginUser._id;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
+
+    ep.after('delete', folderIds.length, function(list){
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                count: U.calculate(list)
+            }
+        });
+    });
+
+    folderIds.forEach(function(folderId){
+
+        //TODO 检查是否有不属于自己的文件, 有就不能删
+        mFolder.delete({
+            folderId: folderId,
+            groupId: groupId,
+            creator: creator
+        }, ep.group('delete'));
+    });
+
 }
 
 exports.list = function(req, res){
