@@ -21,7 +21,7 @@ app.enable('trust proxy');
 app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.cookieParser());
-// app.use(express.cookieSession({ secret: 'xzone' }));//FIXME session 要存到数据库
+
 app.use(express.session({
     secret: config.COOKIE_SECRET,
     store: new MongoStore({

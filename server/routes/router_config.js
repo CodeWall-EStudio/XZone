@@ -111,7 +111,7 @@ module.exports = {
     '/api/folder/delete': {
         method: POST,
         require: {
-            folderId: ObjectID
+            folderId: ArrayObjectID
         },
         optional: {
             groupId: ObjectID

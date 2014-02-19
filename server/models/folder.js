@@ -9,105 +9,6 @@ var ERR = require('../errorcode');
 var U = require('../util');
 var mFile = require('./file');
 
-
-exports.list = function(params, callback){
-
-    var folderId = params.folderId;
-    var groupId = params.groupId || null;
-    var order = null;
-    
-    var query = { 
-        'parent.$id': ObjectID(folderId)
-    };
-    if(params.creator){
-        query['creator.$id'] = ObjectID(params.creator);
-    }
-    if(params.order){
-        order = U.jsonParse(order);
-    }
-
-    db.folder.find(query, { sort: order}, function(err, docs){
-        if(err){
-            callback(err)
-        }else{
-            db.dereferences(docs, {'creator': ['_id', 'nick']}, callback);
-        }
-    });
-
-}
-
-exports.search = function(params, callback){
-
-    var folderId = params.folderId;
-    var groupId = params.groupId || null;
-    var creator = params.creator || null;
-    var keyword = params.keyword || '';
-
-    var query = { 
-        $or: [
-            { 'parent.$id': new ObjectID(folderId) },
-            { idpath: new RegExp('.*' + folderId + '.*') }
-        ]
-    };
-    if(keyword){
-        query['name'] = new RegExp('.*' + keyword + '.*');
-    }
-    if(creator){
-        query['creator.$id'] = ObjectID(creator);
-    }
-    if(groupId){
-        query['group.$id'] = ObjectID(groupId);
-    }
-    db.search('folder', query, params, function(err, total, docs){
-        if(err){
-            callback(err);
-        }else if(total && docs){
-            db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
-                if(err){
-                    callback(err)
-                }else{
-                    callback(null, total || 0, docs);
-                }
-            });
-        }else{
-            callback(null, total || 0, docs);
-        }
-    });
-}
-
-exports.getFolder = function(folderId, callback){
-
-    db.folder.findOne({ _id: new ObjectID(folderId) }, function(err, doc){
-        if(err || !doc){
-            callback(err, doc);
-            return;
-        }
-        db.dereference(doc, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, callback);
-    });
-
-}
-
-exports.modify = function(params, doc, callback){
-    var folderId = params.folderId;
-    var groupId = params.groupId;
-    var creator = params.creator;
-
-    doc.updatetime = Date.now();
-    var query = {
-        _id: new ObjectID(folderId)
-    }
-
-    if(creator){
-        query['creator.$id'] = ObjectID(creator);
-    }
-    if(groupId){
-        query['group.$id'] = ObjectID(groupId);
-    }
-
-    db.folder.findAndModify(query, [], { $set: doc }, 
-            { 'new':true }, callback);
-}
-
 exports.create = function(params, callback){
     var groupId = params.groupId;
     var folderId = params.folderId;
@@ -176,6 +77,38 @@ exports.create = function(params, callback){
     }
 }
 
+exports.getFolder = function(folderId, callback){
+
+    db.folder.findOne({ _id: new ObjectID(folderId) }, function(err, doc){
+        if(err || !doc){
+            callback(err, doc);
+            return;
+        }
+        db.dereference(doc, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, callback);
+    });
+
+}
+
+exports.modify = function(params, doc, callback){
+    var folderId = params.folderId;
+    var groupId = params.groupId;
+    var creator = params.creator;
+
+    doc.updatetime = Date.now();
+    var query = {
+        _id: new ObjectID(folderId)
+    }
+
+    if(creator){
+        query['creator.$id'] = ObjectID(creator);
+    }
+    if(groupId){
+        query['group.$id'] = ObjectID(groupId);
+    }
+
+    db.folder.findAndModify(query, [], { $set: doc }, 
+            { 'new':true }, callback);
+}
 
 exports.delete = function(params, callback){
     var groupId = params.groupId;
@@ -248,3 +181,67 @@ exports.isFolderCreator = function(folderId, userId, callback){
     });
 }
 
+exports.list = function(params, callback){
+
+    var folderId = params.folderId;
+    var groupId = params.groupId || null;
+    var order = null;
+    
+    var query = { 
+        'parent.$id': ObjectID(folderId)
+    };
+    if(params.creator){
+        query['creator.$id'] = ObjectID(params.creator);
+    }
+    if(params.order){
+        order = U.jsonParse(order);
+    }
+
+    db.folder.find(query, { sort: order}, function(err, docs){
+        if(err){
+            callback(err)
+        }else{
+            db.dereferences(docs, {'creator': ['_id', 'nick']}, callback);
+        }
+    });
+
+}
+
+exports.search = function(params, callback){
+
+    var folderId = params.folderId;
+    var groupId = params.groupId || null;
+    var creator = params.creator || null;
+    var keyword = params.keyword || '';
+
+    var query = { 
+        $or: [
+            { 'parent.$id': new ObjectID(folderId) },
+            { idpath: new RegExp('.*' + folderId + '.*') }
+        ]
+    };
+    if(keyword){
+        query['name'] = new RegExp('.*' + keyword + '.*');
+    }
+    if(creator){
+        query['creator.$id'] = ObjectID(creator);
+    }
+    if(groupId){
+        query['group.$id'] = ObjectID(groupId);
+    }
+    db.search('folder', query, params, function(err, total, docs){
+        if(err){
+            callback(err);
+        }else if(total && docs){
+            db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
+                if(err){
+                    callback(err)
+                }else{
+                    callback(null, total || 0, docs);
+                }
+            });
+        }else{
+            callback(null, total || 0, docs);
+        }
+    });
+}
