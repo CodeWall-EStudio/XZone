@@ -395,7 +395,7 @@ define(['config'],function(config){
 			case 'other':
 			case 'group':
 			case 'dep':
-				var fid = target.attr('data-fid'),
+				var id = target.attr('data-id'),
 					name = target.attr('data-name'),
 					obj = {
 						id : id,

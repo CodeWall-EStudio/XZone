@@ -4,7 +4,8 @@ define(['config','helper/view','model.mail'],function(config,View){
 	var nowType = 0,//我的贡献 ,1 收件 2 发件
 		action = 0,//活动状态
 		nextPage = 0,
-		nowOrder  = ['createtime',1],
+		nowTotal = 0,
+		nowOrder  = ['createTime',-1],
 		nowOds = '',
 		nowKey = '';
 
@@ -29,20 +30,21 @@ define(['config','helper/view','model.mail'],function(config,View){
 		tmpTarget.html('');
 
 		nextPage = 0;
+		nowTotal = 0;
+
 		nowType = d.type;
 		if(d.order){
 			nowOrder = d.order;
 		}
 		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		nowKey = d.key || '';
-
 		crTit();
 
 		var view = new View({
 			target : titTarget,
 			tplid : 'coll.table.tit',
 			data : {
-				order : nowOds,
+				order : nowOrder,
 				name : 'mailbox',
 				type : nowType
 			}			
@@ -67,6 +69,13 @@ define(['config','helper/view','model.mail'],function(config,View){
 	function load(e,d){
 
 		nextPage = d.next;
+		nowTotal = d.total;
+
+		if($(".file").length < nowTotal){
+			nextPage = 1;
+		}else{
+			nextPage = 0;
+		}
 
 		var view = new View({
 			target : tmpTarget,
@@ -84,7 +93,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 			target : $('#boxpageZone'),
 			tplid : 'page',
 			data : {
-				next : d.next
+				next : nextPage
 			}
 		});
 

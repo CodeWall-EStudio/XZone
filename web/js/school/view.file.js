@@ -5,7 +5,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		action = 0,
 		nowKey = '',
 		nowFd = 0,
-		nowOrder  = ['createTime',1],
+		nowOrder  = ['createTime',-1],
 		nowOds = '',
 		nowUid = 0,
 		nowPrep = 0, //当前是否是备课
@@ -377,6 +377,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 						for(var i in d.files){
 							fls.push(d.files[i].id);
 						}
+						console.log(d.files,fls);
 						actTarget.find('input:checked').each(function(){
 							li.push($(this).val());
 						});

@@ -10,7 +10,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				id : item._id,
 				fname : item.fnick,
 				fid : item.fid,
-				name : item.name,
+				name : item.fileName,
 				content : item.content,
 				time : util.time(item.createTime),
 				save : item.save,
@@ -33,7 +33,8 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				handerObj.triggerHandler('mail:load',{
 					list : convent(d.result.list),
 					ul : d.result.ul,
-					next : d.result.next
+					next : d.result.next,
+					total : d.result.total
 				});
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
