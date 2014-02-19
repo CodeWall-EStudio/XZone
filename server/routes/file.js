@@ -561,26 +561,32 @@ exports.move = function(req, res){
 
 }
 
-function deleteFile(params, callback){
-
-}
 
 exports.delete = function(req, res){
 
     var params = req.body;
-    var fileId = params.fileId; // TODO 要批量删除
-    params.creator = req.loginUser._id;
-    // TODO 管理员也能删除
-    // 设置删除标志位
-    mFile.softDelete(params, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
-            res.json({
-                err: ERR.SUCCESS
-            });
-        }
+    var fileIds = params.fileId; 
+    var creator = req.loginUser._id;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
+
+    ep.after('delete', fileIds.length, function(list){
+        res.json({
+            err: ERR.SUCCESS
+        });
+    });
+
+    fileIds.forEach(function(fileId){
+        // 设置删除标志位
+        mFile.softDelete({
+            fileId: fileId,
+            creator: creator
+        }, ep.group('delete'));
+    });
+
 }
 
 
