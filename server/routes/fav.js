@@ -7,7 +7,7 @@ var mFav = require('../models/fav');
 
 exports.create = function(req, res){
 
-    var fildIds = req.body.fileId;
+    var fileIds = req.body.fileId;
     var groupId = req.body.groupId;
     var creator = req.loginUser._id;
 
@@ -18,7 +18,7 @@ exports.create = function(req, res){
         res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('create', fildIds.length, function(list){
+    ep.after('create', fileIds.length, function(list){
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -27,7 +27,7 @@ exports.create = function(req, res){
         });
     });
 
-    fildIds.forEach(function(fileId){
+    fileIds.forEach(function(fileId){
         mFav.create({ fileId: fileId, creator: creator, groupId: groupId}, ep.group('create'));
     });
 

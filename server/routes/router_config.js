@@ -216,7 +216,7 @@ module.exports = {
     '/api/recycle/delete': {
         method: POST,
         require: {
-            fileId: ObjectID
+            fileId: ArrayObjectID
         },
         optional: {
             groupId: ObjectID
@@ -226,7 +226,7 @@ module.exports = {
     '/api/recycle/revert': {
         method: POST,
         require: {
-            fileId: ObjectID
+            fileId: ArrayObjectID
         },
         optional: {
             groupId: ObjectID

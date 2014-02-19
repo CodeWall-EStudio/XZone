@@ -149,7 +149,7 @@ exports.download = function(req, res){
         }
 
         // 检查权限
-        if(file.creator._id.toString() === creator){
+        if(file.creator.oid.toString() === creator){
             // 自己的文件, 可以下载
             console.log('download: from self',fileId);
             ep.emit('ready', file, resource);

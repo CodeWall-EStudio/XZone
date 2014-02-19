@@ -7,33 +7,58 @@ var mFile = require('../models/file');
 exports.delete = function(req, res){
     var params = req.body;
 
-    var fileId = params.fileId;
+    var fileIds = params.fileId;
     var groupId = params.groupId;
 
-    mFile.delete(params, function(err){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: 'delete failure' });
-        }else{
-            res.json({ err: ERR.SUCCESS });
-        }
+    var creator = req.loginUser._id;
+
+    var ep = new EventProxy();
+
+    ep.fail(function(err){
+        res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
+
+    ep.after('delete', fileIds.length, function(list){
+        res.json({
+            err: ERR.SUCCESS
+        });
+    });
+
+    fileIds.forEach(function(fileId){
+        mFile.delete({ 
+            fileId: fileId, 
+            groupId: groupId
+        }, ep.group('delete'));
+    });
+
 }
 
 exports.revert = function(req, res){
 
     var params = req.body;
 
-    var fileId = params.fileId;
+    var fileIds = params.fileId;
     var groupId = params.groupId;
 
-    mFile.revertDelete(fileId, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
-            res.json({
-                err: ERR.SUCCESS
-            });
-        }
+    var creator = req.loginUser._id;
+
+    var ep = new EventProxy();
+
+    ep.fail(function(err){
+        res.json({ err: ERR.SERVER_ERROR, msg: err});
+    });
+
+    ep.after('revert', fileIds.length, function(list){
+        res.json({
+            err: ERR.SUCCESS
+        });
+    });
+
+    fileIds.forEach(function(fileId){
+        mFile.revertDelete({ 
+            fileId: fileId, 
+            groupId: groupId
+        }, ep.group('revert'));
     });
 }
 
