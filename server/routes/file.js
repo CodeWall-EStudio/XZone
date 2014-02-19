@@ -25,7 +25,6 @@ exports.upload = function(req, res){
     var loginUser = req.loginUser;
 
     //1. 先把文件保存到 data 目录
-    //FIXME 这里的命令太奇怪了, 要fix 它
     var savePath = U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
 
     var filename = body.file_md5 + path.extname(body.file_name);
@@ -102,6 +101,7 @@ exports.upload = function(req, res){
     })
 
     if(loginUser.size < loginUser.used + fileSize){
+        //TODO 如果上传到小组, 还要检查小组的配额
         ep.emit('error', 'Ran out of space', ERR.SPACE_FULL);
     }else{
         // 更新用户size
