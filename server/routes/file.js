@@ -354,11 +354,7 @@ exports.share = function(req, res){
 
 }
 
-exports.modify = function(req, res){
-
-    var params = req.body;
-    params.creator = req.loginUser._id;
-
+function modifyFile(params, callback){
     var doc = {};
     if(params.mark){
         doc.mark = params.mark;
@@ -372,30 +368,47 @@ exports.modify = function(req, res){
 
     mFile.modify(params, doc, function(err, doc){
         if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
+            callback(err, doc);
+        }else if(!doc){
+            callback('no such file', ERR.NOT_FOUND);
         }else{
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    data: doc
-                }
-            });
+            callback(null, doc);
         }
     });
+}
+
+exports.modify = function(req, res){
+
+    var params = req.body;
+
+    params.creator = req.loginUser._id;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    modifyFile(params, ep.doneLater('modify'));
+
+    ep.on('modify', function(list){
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                list: list
+            }
+        });
+    });
+
 
 }
 
-exports.copy = function(req, res){
-    var params = req.body;
+function copyFile(params, callback){
     var fileId = params.fileId;
     var groupId = params.groupId;
     var targetId = params.targetId;
 
     var ep = new EventProxy();
 
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
-    });
+    ep.fail(callback);
 
     mFile.getFile(fileId, ep.doneLater('getFile'));
 
@@ -437,33 +450,49 @@ exports.copy = function(req, res){
         file.folderId  = targetId;
         file.creator = params.creator;
         
-        mFile.create(file, ep.done('createFile'));
-
+        mFile.create(file, callback);
 
     });
+}
 
-    ep.on('createFile', function(doc){
+exports.copy = function(req, res){
+    var params = req.body;
+    var fileIds = params.fileId;
+    var groupId = params.groupId;
+    var targetId = params.targetId;
+
+    var creator = req.loginUser._id;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    ep.after('copy', fileIds.length, function(list){
         res.json({
             err: ERR.SUCCESS,
             result: {
-                data: doc
+                list: list
             }
         });
+    });
 
+    fileIds.forEach(function(fileId){
+        copyFile({
+            fileId: fileId,
+            creator: creator,
+            targetId: targetId,
+            groupId: groupId
+
+        }, ep.group('copy'));
     });
 
 }
 
-exports.move = function(req, res){
-    var params = req.body;
-        params.creator = req.loginUser._id;
-
-
+function moveFile(params, callback){
     var ep = new EventProxy();
 
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
-    });
+    ep.fail(callback);
 
     mFolder.getFolder(params.targetId, ep.doneLater('getFolder'));
 
@@ -492,37 +521,72 @@ exports.move = function(req, res){
             folder: DBRef('folder', folder._id)
         };
 
-        mFile.modify(params, doc, ep.done('modify'));
+        mFile.modify(params, doc, callback);
 
     });
+}
 
-    ep.on('modify', function(doc){
+exports.move = function(req, res){
+    var params = req.body;
+
+    var fileIds = params.fileId;
+    var groupId = params.groupId;
+    var targetId = params.targetId;
+
+    var creator = req.loginUser._id;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    ep.after('move', fileIds.length, function(list){
         res.json({
             err: ERR.SUCCESS,
             result: {
-                data: doc
+                list: list
             }
         });
     });
 
+    fileIds.forEach(function(fileId){
+        moveFile({
+            fileId: fileId,
+            creator: creator,
+            targetId: targetId,
+            groupId: groupId
+
+        }, ep.group('move'));
+    });
+
 }
+
 
 exports.delete = function(req, res){
 
     var params = req.body;
-    var fileId = params.fileId; // TODO 要批量删除
-    params.creator = req.loginUser._id;
-    // TODO 管理员也能删除
-    // 设置删除标志位
-    mFile.softDelete(params, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
-            res.json({
-                err: ERR.SUCCESS
-            });
-        }
+    var fileIds = params.fileId; 
+    var creator = req.loginUser._id;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
+
+    ep.after('delete', fileIds.length, function(list){
+        res.json({
+            err: ERR.SUCCESS
+        });
+    });
+
+    fileIds.forEach(function(fileId){
+        // 设置删除标志位
+        mFile.softDelete({
+            fileId: fileId,
+            creator: creator
+        }, ep.group('delete'));
+    });
+
 }
 
 
