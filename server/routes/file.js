@@ -14,6 +14,7 @@ var mFolder = require('../models/folder');
 var mRes = require('../models/resource');
 var mUser = require('../models/user');
 var mGroup = require('../models/group');
+var mMessage = require('../models/message');
 var U = require('../util');
 
 
@@ -179,9 +180,173 @@ exports.download = function(req, res){
 //     });
 // }
 
+function shareToUser(params, callback){
+    var fileId = params.fileId;
+    var toUserId = params.toUserId;
+    var fromUserId = params.fromUserId;
+
+    var content = params.content || '';
+
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    // 1. 先获取文件信息
+    mFile.getFile(params.fileId, ep.doneLater('getFile'));
+    
+    ep.on('getFile', function(file){
+        if(!file){
+            ep.emit('error', 'no such file', ERR.NOT_FOUND);
+        }
+        // 2. 获取资源
+        mRes.getResource(file.resource.oid.toString(), ep.done('getResource'));
+    });
+    ep.on('getResource', function(resource){
+        if(!resource){
+            ep.emit('error', 'no such file', ERR.NOT_FOUND);
+        }
+        var msg = {
+            content: content,
+            toUserId: toUserId,
+            fromUserId: fromUserId,
+            resourceId: resource._id.toString()
+        }
+        
+        // 创建一条分享消息
+        mMessage.create(msg, callback);
+        
+    });
+}
+
+function shareToUsers(params, callback){
+    var userIds = params.userIds;
+    var ep = new EventProxy();
+    ep.fail(callback);
+    
+    ep.after('shareToUser', userIds.length, function(list){
+        callback(null);
+    });
+    userIds.forEach(function(userId){
+        shareToUser({
+            fileId: params.fileId,
+            toUserId: userId,
+            fromUserId: params.creator,
+            content: params.content
+        }, ep.group('shareToUser'));
+    });
+}
+
+
+function shareToGroup(params, callback){
+    var fileId = params.fileId;
+    var toGroupId = params.toGroupId;
+    var toFolderId = params.toFolderId;
+
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    // 1. 先获取文件信息
+    mFile.getFile(fileId, ep.doneLater('getFile'));
+    // 2. 获取小组信息
+    mGroup.getGroup(toGroupId, ep.doneLater('getGroup'));
+
+    ep.all('getFile', 'getGroup', function(file, group){
+        if(!file){
+            ep.emit('error', 'no such file', ERR.NOT_FOUND);
+        }
+        if(!group){
+            ep.emit('error', 'no such group', ERR.NOT_FOUND);
+        }
+        if(!toFolderId){
+            toFolderId = group.rootFolder.oid.toString();
+        }
+        // 拷贝 到目标文件夹
+
+        file.resourceId = file.resource.oid.toString();
+
+        file.groupId = toGroupId;
+        file.folderId  = toFolderId;
+        file.creator = params.creator;
+        
+        mFile.create(file, callback);
+
+    });
+    
+}
+
+function shareToGroups(params, callback){
+    var fileId = params.fileId;
+    var groupIds = params.groupIds;
+    var folderIds = params.folderIds || [];
+    var creator = params.creator;
+
+    var ep = new EventProxy();
+    ep.fail(callback);
+    
+    ep.after('shareToGroup', groupIds.length, function(list){
+        callback(null);
+    });
+    for(var i = 0; i < groupIds.length; i++){
+        shareToGroup({
+            fileId: fileId,
+            toGroupId: groupIds[i],
+            toFolderId: folderIds[i],
+            creator: creator
+        }, ep.group('shareToGroup'));
+    }
+
+}
+
 exports.share = function(req, res){
-    // TODO 分享未完成
-    res.json({ err: ERR.SERVER_ERROR, msg: 'api not ready'});
+
+    var params = req.body;
+    var loginUser = req.loginUser;
+    var fileIds = params.fileId;
+    var toUserIds = params.toUserId;
+    var toGroupIds = params.toGroupId;
+    var toFolderIds = params.toFolderId;
+    var content = params.content;
+
+    params.creator = loginUser._id;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    if(!toGroupIds && !toUserIds){
+        ep.emit('error', 'must has a share target', ERR.PARAM_ERROR);
+        return;
+    }else{ 
+        ep.after('share', fileIds.length, function(list){
+            ep.emit('shareSuccess');
+        });
+
+        fileIds.forEach(function(fileId){
+            if(toGroupIds){// 共享给多个小组
+                shareToGroups({
+                    fileId: fileId,
+                    groupIds: toGroupIds,
+                    folderIds: toFolderIds,
+                    creator: loginUser._id
+                }, ep.group('share'));
+            }else{
+                shareToUsers({// 共享给多个人
+                    fileId: fileId,
+                    userIds: toUserIds,
+                    content: content,
+                    creator: loginUser._id
+                }, ep.group('share'));
+            }
+        });
+
+    }
+
+    ep.on('shareSuccess', function(){
+        res.json({
+            err: ERR.SUCCESS
+        });
+    });
+
 }
 
 exports.modify = function(req, res){
