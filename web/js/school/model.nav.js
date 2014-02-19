@@ -7,9 +7,13 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		var o = {};
 		o.nick = data.user.nick;
 		o.pre = Math.round(data.user.used/data.user.size*100)/100;
-		if(o.pre < 0.001 || !o.pre){
+		if(!o.pre){
+			o.pre = 0;
+		}
+		if(o.pre > 0 && o.pre < 0.001){
 			o.pre = 0.001;
 		}
+
 		o.name = data.user.name;
 		if(data.user.size){
 			o.size = util.getSize(data.user.size);

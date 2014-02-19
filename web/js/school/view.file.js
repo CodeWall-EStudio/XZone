@@ -371,13 +371,17 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 					'click' : function(){
 // toUserId
 // toGroupId,
-// toFolderId						
+// toFolderId
+						var fls = [];						
 						var li = [];
+						for(var i in d.files){
+							fls.push(d.files[i].id);
+						}
 						actTarget.find('input:checked').each(function(){
 							li.push($(this).val());
 						});
 						var obj = {
-							fileId : d.files
+							fileId : fls
 						};
 						if(d.type == 'other'){
 							obj.toUserId = li;
