@@ -108,10 +108,10 @@ exports.search = function(req, res){
     var params = req.query;
 
     var loginUser = req.loginUser;
-    if(loginUser.auth === config.AUTH_USER){
-        params.uid = loginUser._id; //普通用户只能搜索自己的
-        params.validateStatus = 1; // 普通用户只能搜索审核通过的
-    }
+    // if(loginUser.auth === config.AUTH_USER){
+    //     params.uid = loginUser._id; //普通用户只能搜索自己的
+    //     params.validateStatus = 1; // 普通用户只能搜索审核通过的
+    // }
 
     mBoard.search(params, function(err, total, docs){
         if(err){

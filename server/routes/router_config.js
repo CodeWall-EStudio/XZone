@@ -51,6 +51,17 @@ module.exports = {
             groupId: ObjectID
         }
     },
+    '/api/file/share': {
+        method: POST,
+        require: {
+            fileId: ArrayObjectID
+        },
+        optional: {
+            toUserId: ArrayObjectID,
+            toGroupId: ArrayObjectID,
+            toFolderId: ArrayObjectID
+        }
+    },
     '/api/file/delete': {
         method: POST,
         require: {
@@ -274,22 +285,11 @@ module.exports = {
         }
     },
 
-    // TODO message 
-    '/api/message/create': {
-        method: POST,
-        require: {
-            content: ['string', 1]
-        }
-    },
-    '/api/message/delete': {
-        method: POST,
-        require: {
-            messageId: ObjectID
-        }
-    },
+    // message 
     '/api/message/search': {
         method: GET,
         require: {
+            type: ['number'],
             page: ['number', 0],
             pageNum: ['number', 0]
         },
