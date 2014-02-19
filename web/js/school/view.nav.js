@@ -55,7 +55,14 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		var view = new View({
 			target : $('#userInfoAside'),
 			tplid : 'my.info',
-			data : d
+			data : d,
+			handlers : {
+				'a.layout' : {
+					click : function(e){
+						window.location = config.cgi.logout;
+					}
+				}
+			}			
 		});
 		view.createPanel();
 		

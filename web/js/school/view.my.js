@@ -33,13 +33,11 @@ define(['config','cache','helper/view','model.file'],function(config,Cache,View)
 			myInfo = Cache.get('myinfo');
 		}
 
-		if(d.fdid == 0){
+		if(d.fdid == 0 || !d.fdid){
 			d.fdid = myInfo.rootFolder.id;
 		}
 		d.rootfdid = myInfo.rootFolder.id;
-
-<<<<<<< HEAD
-		var obj = {}
+		var obj = {};
 		// if(d.fdid){
 		// 	obj.fdid = d.fdid;
 		// }else{
@@ -47,18 +45,7 @@ define(['config','cache','helper/view','model.file'],function(config,Cache,View)
 		// }
         handerObj.triggerHandler('file:init',d);
         handerObj.triggerHandler('fold:init',d);	
-=======
-		var obj = d;
-		if(d.fdid){
-			obj.fdid = d.fdid;
-		}else{
-			obj.fdid = d.rootfdid;
-		}
-
-        handerObj.triggerHandler('file:init',obj);
-        handerObj.triggerHandler('fold:init',obj);	
->>>>>>> c893c56b6a9c2162d59c19190d9024b141fde8e6
-        handerObj.triggerHandler('upload:param',obj);
+        handerObj.triggerHandler('upload:param',d);
 	
 	}
 

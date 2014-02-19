@@ -76,17 +76,13 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 			fdid : nowFd,
 			info : d
 		}
-<<<<<<< HEAD
-		console.log(d);
-		if(nowFd == 0 && d.rootFolder){
+
+		console.log(d,nowFd);
+
+		if((nowFd == 0 || !nowFd) && d.rootFolder){
 			data.fdid = d.rootFolder.id;
-=======
-		if(!nowFd){
-			if(info.rootFolder){
-			data.fdid = info.rootFolder.id;
-			}
->>>>>>> c893c56b6a9c2162d59c19190d9024b141fde8e6
-		}	
+		}
+		console.log(data);
 		$('#aside .aside-divs').hide();
 		switch(d.type){
 			case 0:

@@ -3,15 +3,24 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 	var	handerObj = $(Schhandler);
 
 	function convent(data){
+		console.log(data);
 		var o = {};
 		o.nick = data.user.nick;
 		o.pre = Math.round(data.user.used/data.user.size*100)/100;
-		if(o.pre < 0.001){
+		if(o.pre < 0.001 || !o.pre){
 			o.pre = 0.001;
 		}
 		o.name = data.user.name;
-		o.size = util.getSize(data.user.size);
-		o.used = util.getSize(data.user.used);
+		if(data.user.size){
+			o.size = util.getSize(data.user.size);
+		}else{
+			o.size = 0;
+		}
+		if(data.user.used){
+			o.used = util.getSize(data.user.used);
+		}else{
+			o.used = 0;
+		}
 		o.auth = data.user.auth;
 		o.mailnum = data.user.mailnum;
 		o.group = [];
