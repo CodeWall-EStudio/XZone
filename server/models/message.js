@@ -18,8 +18,8 @@ exports.create = function(params, callback){
         resource: DBRef('resource', ObjectID(params.resourceId)),
         // parent: params.parentId ? DBRef('message', ObjectID(params.parentId)) : null,
 
-        toGroup: null,
-        toFolder: null,
+        // toGroup: null,
+        // toFolder: null,
 
         createTime: Date.now(),
         updateTime: Date.now(),
@@ -74,7 +74,8 @@ exports.search = function(params, callback){
             var keys = {
                 toUser: ['_id', 'nick'], 
                 fromUser: ['_id', 'nick'],
-                toGroup: ['_id', 'name']
+                toGroup: ['_id', 'name'],
+                resource: ['_id', 'type', 'size']
             };
             db.dereferences(docs, keys, function(err, docs){
                 if(err){

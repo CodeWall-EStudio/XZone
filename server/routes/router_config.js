@@ -25,7 +25,7 @@ module.exports = {
     '/api/file/modify': {
         method: POST,
         require: {
-            fileId: ObjectID
+            fileId: ArrayObjectID
         },
         optional: {
             groupId: ObjectID
@@ -34,7 +34,7 @@ module.exports = {
     '/api/file/copy': {
         method: POST,
         require: {
-            fileId: ObjectID,
+            fileId: ArrayObjectID,
             targetId: ObjectID
         },
         optional: {
@@ -44,7 +44,7 @@ module.exports = {
     '/api/file/move': {
         method: POST,
         require: {
-            fileId: ObjectID,
+            fileId: ArrayObjectID,
             targetId: ObjectID
         },
         optional: {
