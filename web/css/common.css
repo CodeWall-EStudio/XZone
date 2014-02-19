@@ -682,3 +682,11 @@ a{
 input[type='checkbox'] {
 	cursor:default;
 }
+.alert-msg{
+	position:absolute;
+	top:50%;
+	left:50%;
+	text-align:center;
+	width:200px;
+	height:52px;
+}

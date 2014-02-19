@@ -77,7 +77,6 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 			info : d
 		}
 
-		console.log(d,nowFd);
 
 		if((nowFd == 0 || !nowFd) && d.rootFolder){
 			data.fdid = d.rootFolder.id;
@@ -95,6 +94,7 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 					handerObj.triggerHandler('group:board',{
 						groupId : nowGid,
 						pageNum : 10,
+						order : '{crateTime:-1}',
 						page : 0,
 						type : 1
 					});

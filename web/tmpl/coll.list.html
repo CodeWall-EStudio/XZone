@@ -2,7 +2,7 @@
 			for(var i in list){
 				var item = list[i];
 		%>
-			<tr class="file" data-id="<?=$item['id']?>">
+			<tr class="file coll<%+item.id%>" data-id="<?=$item['id']?>">
 					<td width="30"><input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" /></td>
 					<td>
 						<a class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
@@ -18,8 +18,8 @@
 							</dt>
 						<dd>
 							<a data-review data-fid="<%+item.fid%>" data-id="<%+item.id%>" >预览</a>
-							<a href="/file/download?fileId=<%+item.fid%>" target="_blank">下载</a>
-							<a data-uncoll data-id="<%+item.id%>">取消收藏</a>
+							<a href="/api/file/download?fileId=<%+item.fid%>" target="_blank">下载</a>
+							<a cmd="uncoll" data-id="<%+item.id%>" data-favid="<%+item.id%>">取消收藏</a>
 						</dd>							
 						</dl>
 					</td>

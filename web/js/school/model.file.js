@@ -56,6 +56,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			data : obj
 		}			
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				var favid = [];
 				for(var i in d.result.list){
@@ -63,7 +64,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				}
 				handerObj.triggerHandler('fav:collsuc',{favid:favid,id:id,target:target,gid:gid});
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				
 			}
 		}
 		request.post(opt,success);	
@@ -86,10 +87,11 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			data : obj
 		}			
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				handerObj.triggerHandler('fav:uncollsuc',{favId:favid,id:id,target:target,gid:gid});
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				
 			}
 		}
 		request.post(opt,success);	
@@ -110,10 +112,11 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}	
 
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				handerObj.triggerHandler('file:marksuc',{id:d.id,target:target,gid:d.gid,mark:mark});
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				
 			}
 		}
 		request.post(opt,success);	
@@ -132,10 +135,11 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			}
 		}
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				handerObj.triggerHandler('file:delsuc',{id: fileId});
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				
 			}
 		}
 		request.post(opt,success);			
@@ -149,33 +153,32 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}
 		var td = d;
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				handerObj.triggerHandler('file:modifysuc',td);
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				
 			}
 		}
 		request.post(opt,success);		
 	}
 
 	function fileShare(e,d){
-		if(d.type == 'other'){
-			var opt = {
-				method : 'POST',
-				cgi : config.cgi.msgcreate,
-				data : {
-					fileId : d.fileId
-				}
-			}
-		}else{
 			var opt = {
 				method : 'POST',
 				cgi : config.cgi.fileshare,
-				data : {
-					fileId : d.fileId
-				}
-			}
-		}
+				data : d
+			};
+		// }else{
+		// 	var opt = {
+		// 		method : 'POST',
+		// 		cgi : config.cgi.fileshare,
+		// 		data : {
+		// 			fileId : d.fileId,
+		// 			toUserId : d.toUserId
+		// 		}
+		// 	}
+		// }
 		var success = function(d){
 			if(d.err == 0){
 				handerObj.triggerHandler('msg:error',d.err);
@@ -196,7 +199,6 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				for(var i = 0,l=data.result.list.length;i<l;i++){
 
 					var item = data.result.list[i];
-					console.log(item);
 					list.push({
 						id : item._id,
 						name : item.nick

@@ -24,6 +24,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 	}
 
 	function init(e,d){
+		nextPage = 0;
 		action = 1;
 		tmpTarget.html('');
 		crTit();

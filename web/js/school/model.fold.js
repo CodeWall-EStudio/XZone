@@ -49,11 +49,12 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			data : d
 		}	
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				var list = convent([d.result.data]);
 				handerObj.triggerHandler('fold:load',{list:list});	
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				
 			}
 		}
 		request.post(opt,success);				
@@ -156,10 +157,11 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}	
 
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				handerObj.triggerHandler('fold:marksuc',{id:d.id,target:target,gid:d.gid,mark:mark});
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				
 			}
 		}
 		request.post(opt,success);	
@@ -178,10 +180,11 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			}
 		}
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				handerObj.triggerHandler('fold:delsuc',{id: folderId});
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				
 			}
 		}
 		request.post(opt,success);						
@@ -195,10 +198,11 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}
 		var td = d;
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				handerObj.triggerHandler('fold:modifysuc',td);
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				
 			}
 		}
 		request.post(opt,success);		

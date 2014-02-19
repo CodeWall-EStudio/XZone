@@ -52,6 +52,7 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 
 		for(var i = 0,l= id.length;i<l;i++){
 			$('.fav'+id[i]).removeClass('s').attr('cmd','coll').attr('data-favid',0);
+			$('.coll'+id[i]).remove();
 			//target[i].removeClass('s').attr('cmd','coll').attr('data-favid',0);
 		}
 	}
@@ -368,14 +369,23 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			handlers : {		
 				'.btn-share' : {
 					'click' : function(){
+// toUserId
+// toGroupId,
+// toFolderId						
 						var li = [];
 						actTarget.find('input:checked').each(function(){
 							li.push($(this).val());
 						});
-						handerObj.triggerHandler('file:shareto',{
-							type : d.type,
-							fileId : li
-						});
+						var obj = {
+							fileId : d.files
+						};
+						if(d.type == 'other'){
+							obj.toUserId = li;
+						}else{
+							obj.toGroupId = li;
+						}
+
+						handerObj.triggerHandler('file:shareto',obj);
 					}
 				}
 			}

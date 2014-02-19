@@ -76,6 +76,8 @@ define([], function() {
     //   cgi = cgi + mark + 'g_tk=' + g_tk;
     // }
 
+    data._t = Math.random();
+
     var ajaxOpt = {
       url: cgi,
       type: method,
