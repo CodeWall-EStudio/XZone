@@ -25,7 +25,7 @@ module.exports = {
     '/api/file/modify': {
         method: POST,
         require: {
-            fileId: ArrayObjectID
+            fileId: ObjectID
         },
         optional: {
             groupId: ObjectID
@@ -65,7 +65,7 @@ module.exports = {
     '/api/file/delete': {
         method: POST,
         require: {
-            fileId: ObjectID
+            fileId: ArrayObjectID
         },
         optional: {
             groupId: ObjectID

@@ -380,16 +380,16 @@ function modifyFile(params, callback){
 exports.modify = function(req, res){
 
     var params = req.body;
-    var fileIds = params.fileId;
 
-    var creator = req.loginUser._id;
+    params.creator = req.loginUser._id;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
+    modifyFile(params, ep.doneLater('modify'));
 
-    ep.after('modify', fileIds.length, function(list){
+    ep.on('modify', function(list){
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -398,15 +398,6 @@ exports.modify = function(req, res){
         });
     });
 
-    fileIds.forEach(function(fileId){
-        modifyFile({
-            fileId: fileId,
-            creator: creator,
-            mark: params.mark,
-            name: params.name,
-            content: params.content
-        }, ep.group('modify'));
-    });
 
 }
 
@@ -567,6 +558,10 @@ exports.move = function(req, res){
 
         }, ep.group('move'));
     });
+
+}
+
+function deleteFile(params, callback){
 
 }
 
