@@ -123,23 +123,20 @@ define(['config'],function(config){
 
 	//批量下载
 	function downFile(){
-  //   	$('#downloadForm').html('');
-		// $('#fileList .fclick:checked').each(function(){
-		// 	var flid = $(this).attr('data-fid');
-		// 	ids.push(flid);
-		// 	$('#downloadForm').append('<input name="ids[]" type="checkbox" checked value="'+flid+'" />');
-		// 	//window.open('/cgi/downfile?fid='+files[$(this).val()].fid);
-		// });	
-		// if(ids.length>1){
-		// 	$('#downloadForm').append('<input name="isprep" type="checkbox" checked value="'+isprep+'" />');
-		// 	$('#downloadForm').append('<input name="gid" type="checkbox" checked value="'+gid+'" />');
-		// 	$('#downloadForm').append('<input name="fdid" type="checkbox" checked value="'+fid+'" />');
-		// 	$('#downloadForm').submit();
-		// }else{
-		// 	if(ids[0]){
-		// 		//window.open('/download?fdid='+fid+'&gid='+gid+'&id='+ids[0]);	
-		// 	}
-		// }		
+     	$('#downloadForm').html('');
+     	var ids = [];
+     	$('.fclick:checked').each(function(){
+     		var flid = $(this).val();
+     		ids.push(flid);
+     		$('#downloadForm').append('<input name="fileId[]" type="checkbox" checked value="'+flid+'" />');
+     	});
+     	if(ids.length>1){
+     		$('#downloadForm').submit();
+     	}else{
+     		if(ids[0]){
+     			window.open('/api/file/download?fileId='+ids[0]);	
+     		}
+     	}		
 	}
 
 	function editMark(id,mark,type,target){

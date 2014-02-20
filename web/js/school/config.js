@@ -11,7 +11,8 @@ define(function() {
 			4 : '视频',
 			5 : '应用',
 			6 : '压缩包',
-			7 : '其他'
+			7 : '其他',
+			8 : 'txt文档'
 		},
 		cgi : {
 			//个人资料
@@ -36,6 +37,8 @@ define(function() {
 			filedel : CGI_PATH+'file/delete'+EXT,
 			fileshare : CGI_PATH+'file/share'+EXT,
 			filesave : CGI_PATH+'file/save'+EXT,
+			filereview : CGI_PATH+'file/preview'+EXT,		
+
 
 			//文件夹
 			foldinfo : CGI_PATH+'folder'+EXT,

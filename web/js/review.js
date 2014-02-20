@@ -7,7 +7,7 @@
     }    
   });
 
-  require(['config','helper/util','helper/request','msg'], function(config,util,request) {
+  require(['config','helper/util','helper/request','helper/view','msg'], function(config,util,request,View) {
 
     var handerObj = $(Schhandler);
 
@@ -15,6 +15,76 @@
     if(!util.getCookie('skey')){
       window.location = config.cgi.gotologin;
       return;
+    }
+
+    function convent(data){
+      var obj = {};
+      obj.fid = data.resource._id;
+      obj.type = data.resource.type;
+      obj.name = data.name;
+      obj.id = data._id;
+      return obj;
+    }
+
+    function render(data){
+      //图片
+      var view = new View({
+        target : $('#reviewDiv'),
+        tplid : 'review',
+        after : function(){
+          if(data.type == 2){
+              $('#documentViewer').FlexPaperViewer(
+                { config : {
+                    SWFFile : encodeURIComponent(data.url),
+                    jsDirectory : '/js/lib/flex/',
+                    Scale : 0.8,
+                    ZoomTransition : 'easeOut',
+                    ZoomTime : 0.5,
+                    ZoomInterval : 0.2,
+                    FitPageOnLoad : true,
+                    FitWidthOnLoad : false,
+                    FullScreenAsMaxWindow : false,
+                    ProgressiveLoading : false,
+                    MinZoomSize : 0.2,
+                    MaxZoomSize : 5,
+                    SearchMatchAll : false,
+                    InitViewMode : 'Portrait',
+                    RenderingOrder : 'flash',
+                    StartAtPage : '',
+                    ViewModeToolsVisible : true,
+                    ZoomToolsVisible : true,
+                    NavToolsVisible : true,
+                    CursorToolsVisible : true,
+                    SearchToolsVisible : true,
+                    WMode : 'window',
+                    localeChain: 'zh_CN'
+                }}
+              );            
+          }
+        },
+        data : {
+          data : data
+        }
+      });
+      view.createPanel();
+    }
+
+    function getReview(id,data){
+      var opt = {
+        cgi : config.cgi.fileinfo,
+        data : {
+          fileId : id
+        }
+      } 
+      var success = function(d){
+        if(d.err == 0){
+          $.extend(data,d.result);
+          render(data);
+        }else{
+          handerObj.triggerHandler('msg:error',d.err);
+        }
+      }
+      request.get(opt,success);            
     }
 
     function getFile(id){
@@ -25,9 +95,10 @@
         }
       }
       var success = function(d){
-        console.log(d)
         if(d.err == 0){
-
+          var finfo = convent(d.result.data);
+          getReview(id,finfo);
+          //render(finfo);
         }else{
           handerObj.triggerHandler('msg:error',d.err);
         }

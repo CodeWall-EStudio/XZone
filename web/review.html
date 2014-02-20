@@ -4,9 +4,79 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="author" content="Tencent" />
   <title>教师工作室</title>
-<link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
   <link rel="stylesheet" type="text/css" href="/css/player/video-js.min.css" />
   <style>
+    .otherType{
+      width:400px;
+      height:200px;
+      margin:100px auto;
+      text-align:center;
+    }
+
+i.icon-type1{
+  display:block;
+  /*margin-top:14px;*/
+  width:32px;
+  height:32px;
+  margin:10px auto;
+  background:url(css/imgs/type-img.png) no-repeat;
+}
+
+i.icon-type2{
+  display:block;
+  /*margin-top:14px;  */
+  width:32px;
+  height:32px;
+  margin:10px auto;
+  background:url(css/imgs/type-doc.png) no-repeat;
+}
+
+i.icon-type3{
+  display:block;
+  margin:10px auto;
+  /*margin-top:14px;  */
+  width:32px;
+  height:32px;
+  background:url(css/imgs/type-music.png) no-repeat;
+}
+
+i.icon-type4{
+  display:block;
+  margin:10px auto;
+  /*margin-top:14px;*/  
+  width:32px;
+  height:32px;
+  background:url(css/imgs/type-vedio.png) no-repeat;
+}
+
+i.icon-type5{
+  display:block;
+  margin:10px auto;
+  /*margin-top:14px;*/  
+  width:32px;
+  height:32px;
+  background:url(css/imgs/type-exe.png) no-repeat;
+}
+
+i.icon-type6{
+  display:block;
+  margin:10px auto;
+  /*margin-top:14px;*/  
+  width:32px;
+  height:32px;
+  background:url(css/imgs/type-zip.png) no-repeat;
+}
+
+i.icon-type0{
+  display:block;
+  margin:10px auto;
+  /*margin-top:14px;*/  
+  width:32px;
+  height:32px;
+  background:url(css/imgs/type-other.png) no-repeat;
+}
+   
   	.file-review{
   		text-align:center;
       height:640px;
@@ -65,11 +135,27 @@
 </head>
 
 <body>
-
+  <div class="modal-body">
+    <div class="file-review" id="reviewDiv">
+    </div>    
+  </div>
 
   <script>
     window.Schhandler = {};
-  </script>
+    function change(obj){
+      if(obj.width >= obj.height){
+        if(obj.width>640){
+          obj.width= 640;
+        }     
+        obj.style.marginTop = (640-obj.height)/2+'px';
+      }else{
+        if(obj.height>640){
+          obj.height= 640;
+        }   
+        obj.style.marginTop = (640-obj.width)/2+'px';
+      }
+    }
+  </script>    
 
   <script src="/js/lib/jquery/jquery-1.9.1.min.js"></script>
   <script type="text/javascript" src="/js/lib/jq.rotate.js" charset="utf-8"></script> 
