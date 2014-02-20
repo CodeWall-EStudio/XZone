@@ -240,6 +240,7 @@ exports.batchDownload = function(req, res){
         var zipDir = config.FILE_ZIP_DIR + dir;
         var zipPath = '/data/zip/' + dir + zipName;
 
+        U.mkdirsSync(zipDir);
         var output = fs.createWriteStream(zipDir + zipName);
         var archive = archiver('zip');
 
@@ -262,7 +263,7 @@ exports.batchDownload = function(req, res){
         archive.pipe(output);
 
         list.forEach(function(data){
-            var filePath = path.join('/data/71xiaoxue/', data.resource.path);
+            var filePath = path.join(config.FILE_SAVE_DIR, data.resource.path);
             archive.file(filePath, { name: data.file.name });
         });
         archive.finalize();

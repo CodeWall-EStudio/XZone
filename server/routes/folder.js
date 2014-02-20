@@ -118,7 +118,7 @@ exports.modify = function(req, res){
                 }else{
                     ep.emit('checkName', true);
                 }
-            }
+            });
         }else{
             ep.emit('checkName', true);
         }
