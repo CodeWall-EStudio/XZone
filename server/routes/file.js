@@ -635,7 +635,7 @@ function modifyFile(params, callback){
                 }else{
                     ep.emit('checkName', true);
                 }
-            }
+            });
         }else{
             ep.emit('checkName', true);
         }
