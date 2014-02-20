@@ -302,7 +302,7 @@ exports.get = function(req, res){
         }else{
 
             db.dereference(doc, { resource: ['_id', 'type', 'size']}, function(err, resource){
-                doc.resource = resource;
+
                 res.json({
                     err: ERR.SUCCESS,
                     result: {
