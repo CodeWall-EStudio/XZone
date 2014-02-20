@@ -16,7 +16,7 @@ module.exports = {
     '/api/file/upload': {
         method: POST,
         require: {
-            name: ['string']
+            name: ['string', 1]
         },
         all: {
             folderId: ObjectID
@@ -106,7 +106,7 @@ module.exports = {
         method: POST,
         require: {
             folderId: ObjectID,
-            name: ['string']
+            name: ['string', 1]
         },
         optional: {
             groupId: ObjectID,

@@ -1,10 +1,9 @@
 
 var EventProxy = require('eventproxy');
+var ObjectID = require('mongodb').ObjectID;
+
 var config = require('../config');
 var ERR = require('../errorcode');
-
-var EventEmitter = require('events').EventEmitter;
-
 var mFolder = require('../models/folder');
 var mGroup = require('../models/group');
 
@@ -14,6 +13,7 @@ exports.create = function(req, res){
     var params = req.body;
     var groupId = params.groupId;
     var folderId = params.folderId;
+    var name = params.name;
 
     params.creator = loginUser._id;
 
@@ -22,13 +22,24 @@ exports.create = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    // 检查文件夹是否是该用户的, 以及 该用户是否是小组成员
-    if(groupId){ // 检查该用户是否是小组成员
-        mGroup.isGroupMember(groupId, params.creator, ep.doneLater('checkRight'));
+    mFolder.getFolder({ 
+        name: name,
+        'parent.$id': ObjectID(folderId)
+    }, function(err, folder){
+        if(folder){
+            ep.emit('error', 'has the same folder name', ERR.DUPLICATE);
+            return;
+        }
 
-    }else{ // 检查该用户是否是该文件夹所有者
-        mFolder.isFolderCreator(folderId, params.creator, ep.doneLater('checkRight'));
-    }
+        // 检查文件夹是否是该用户的, 以及 该用户是否是小组成员
+        if(groupId){ // 检查该用户是否是小组成员
+            mGroup.isGroupMember(groupId, params.creator, ep.doneLater('checkRight'));
+
+        }else{ // 检查该用户是否是该文件夹所有者
+            mFolder.isFolderCreator(folderId, params.creator, ep.doneLater('checkRight'));
+        }
+
+    });
 
     ep.on('checkRight', function(hasRight){
         if(!hasRight){
@@ -54,7 +65,7 @@ exports.create = function(req, res){
 exports.get = function(req, res){
     var params = req.query;
 
-    mFolder.getFolder(params.folderId, function(err, doc){
+    mFolder.getFolder({ _id: ObjectID(params.folderId) }, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{

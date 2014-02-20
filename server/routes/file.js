@@ -145,7 +145,7 @@ exports.download = function(req, res){
             return;
         }
         
-        mFolder.getFolder(file.folder.oid.toString(), ep.done('getFolder'));
+        mFolder.getFolder({ _id: file.folder.oid }, ep.done('getFolder'));
 
         mRes.getResource(file.resource.oid.toString(), ep.done('getRes'));
 
@@ -547,7 +547,7 @@ function copyFile(params, callback){
 
     mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
 
-    mFolder.getFolder(targetId, ep.doneLater('getFolder'));
+    mFolder.getFolder({ _id: ObjectID(targetId) }, ep.doneLater('getFolder'));
 
     ep.on('getFile', 'getFolder', function(file, folder){
         if(!file){
@@ -629,7 +629,7 @@ function moveFile(params, callback){
 
     ep.fail(callback);
 
-    mFolder.getFolder(params.targetId, ep.doneLater('getFolder'));
+    mFolder.getFolder({ _id: ObjectID(params.targetId) }, ep.doneLater('getFolder'));
 
     ep.on('getFolder', function(folder){
         if(!folder){

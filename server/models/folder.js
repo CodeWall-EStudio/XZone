@@ -77,9 +77,9 @@ exports.create = function(params, callback){
     }
 }
 
-exports.getFolder = function(folderId, callback){
+exports.getFolder = function(query, callback){
 
-    db.folder.findOne({ _id: new ObjectID(folderId) }, function(err, doc){
+    db.folder.findOne(query, function(err, doc){
         if(err || !doc){
             callback(err, doc);
             return;
