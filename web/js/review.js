@@ -71,7 +71,7 @@
 
     function getReview(id,data){
       var opt = {
-        cgi : config.cgi.fileinfo,
+        cgi : config.cgi.filereview,
         data : {
           fileId : id
         }
