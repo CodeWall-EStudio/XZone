@@ -132,7 +132,9 @@ exports.modify = function(req, res){
             }else if(!doc){
                 res.json({ err: ERR.NOT_FOUND, msg: 'no such group'});
             }else{
-                res.json({ err: ERR.SUCCESS , result: { data: doc }});
+                db.dereference(doc, { rootFolder: null }, function(){
+                    res.json({ err: ERR.SUCCESS , result: { data: doc }});
+                });
             }
         });
     });// ready
