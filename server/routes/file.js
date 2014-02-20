@@ -223,7 +223,7 @@ exports.download = function(req, res){
 }
 
 exports.batchDownload = function(req, res){
-    var fileIds = req.query.fileId;
+    var fileIds = req.body.fileId;
     var creator = req.loginUser._id;
 
     if(!fileIds.length){
@@ -236,9 +236,10 @@ exports.batchDownload = function(req, res){
     });
     ep.after('verifyDownload', fileIds.length, function(list){
         var zipName = Math.floor(Math.random() * 1000000) + '.zip';
+        var zipDir = config.FILE_ZIP_DIR + U.formatDate(new Date(), 'yyyy-MM-dd/');
         var zipPath = '/data/zip/' + U.formatDate(new Date(), 'yyyy-MM-dd/') + zipName;
 
-        var output = fs.createWriteStream(config.FILE_ZIP_DIR + zipName);
+        var output = fs.createWriteStream(zipDir + zipName);
         var archive = archiver('zip');
 
         output.on('close', function(){
