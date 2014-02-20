@@ -151,7 +151,7 @@ exports.formatFileType = function(mimes){
         case 'text/x-shellscript':
         case 'text/x-perl':
         case 'text/x-sql':
-            return 2;
+            return 8;
             // images
         case 'image/x-ms-bmp':
         case 'image/jpeg':

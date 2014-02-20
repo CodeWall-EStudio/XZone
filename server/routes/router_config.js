@@ -28,6 +28,12 @@ module.exports = {
             fileId: ObjectID
         }
     },
+    '/api/file/batchDownload': {
+        method: GET,
+        require: {
+            fileId: ArrayObjectID
+        }
+    },
     '/api/file/save': {
         method: POST,
         require: {

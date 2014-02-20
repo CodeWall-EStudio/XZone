@@ -15,6 +15,8 @@ exports.DEFAULT_USER_SPACE = 3 * 1024 * 1024 * 1024;
 
 exports.FILE_SAVE_DIR = '/home/swall/xzone/data/71xiaoxue/';
 
+exports.FILE_ZIP_DIR = '/home/swall/xzone/data/zip/';
+
 // 文档类型转换的配置
 exports.DOC_TYPES = [
         'application/msword',

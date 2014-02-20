@@ -4,7 +4,7 @@ var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var EventProxy = require('eventproxy');
 var process = require('child_process');
-
+var archiver = require('archiver');
 
 var db = require('../models/db');
 var config = require('../config');
@@ -124,24 +124,19 @@ exports.upload = function(req, res){
 
 }
 
-exports.download = function(req, res){
-    var fileId = req.query.fileId;
-    var creator = req.loginUser._id;
-    
+function verifyDownload(params, callback){
+    var fileId = params.fileId;
+    var creator = params.creator;
+
     var ep = new EventProxy();
 
-    ep.fail(function(err){
-        res.json({
-            err: ERR.NOT_FOUND,
-            msg: 'no such file'
-        });
-    });
+    ep.fail(callback);
 
     mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
 
     ep.on('getFile', function(file){
         if(!file){
-            ep.emit('error');
+            ep.emit('error', 'no such file: ' + fileId, ERR.NOT_FOUND);
             return;
         }
         
@@ -153,7 +148,7 @@ exports.download = function(req, res){
 
     ep.all('getFile', 'getFolder', 'getRes', function(file, folder, resource){
         if(!resource){
-            ep.emit('error');
+            ep.emit('error', 'no such resource: ' + file.resource.oid, ERR.NOT_FOUND);
             return;
         }
 
@@ -166,10 +161,13 @@ exports.download = function(req, res){
             // 检查是否是自己收件箱的文件
             mMessage.getMessage({ 
                 'resource.$id': resource._id,
-                'toUser.$id': ObjectID(creator)
+                $or: [
+                    { 'fromUser.$id': ObjectID(creator) },
+                    { 'toUser.$id': ObjectID(creator) }
+                ]
             }, function(err, msg){
                 if(msg){ // 是自己收到的, 可以下载
-                    console.log('download: from inbox',fileId);
+                    console.log('download: from in out box',fileId);
                     ep.emit('ready', file, resource);
                 }else if(folder.group){// 检查是否是自己所在小组的
                     mGroup.isGroupMember(folder.group.oid.toString(), creator, 
@@ -181,7 +179,7 @@ exports.download = function(req, res){
                         return null;
                     }));
                 }else{ // 没有权限
-                    ep.emit('error', 'not auth to download this resource', ERR.NOT_AUTH);
+                    ep.emit('error', 'not auth to download this file: ' + fileId, ERR.NOT_AUTH);
                 }
             });
         }
@@ -190,12 +188,27 @@ exports.download = function(req, res){
     ep.on('checkRight', function(data){
         if(data){ // 是自己所在小组的
             console.log('download: from group',fileId);
-            ep.emit('ready', data.file, data.resource);
+            callback(null, data);
+        }else{
+            ep.emit('error', 'not auth to download this file: ' + fileId, ERR.NOT_AUTH);
         }
     });
 
-    ep.on('ready', function(file, resource){
+}
 
+exports.download = function(req, res){
+    var fileId = req.query.fileId;
+    var creator = req.loginUser._id;
+    
+    verifyDownload({
+        fileId: fileId,
+        creator: creator
+    }, function(err, data){
+        if(err){
+            res.json({ err: data || ERR.SERVER_ERROR, msg: err });
+            return;
+        }
+        var file = data.file, resource = data.resource;
         var filePath = path.join('/data/71xiaoxue/', resource.path);
         // console.log('redirect to :' + filePath);
         res.set({
@@ -207,8 +220,57 @@ exports.download = function(req, res){
 
         res.send();
     });
+}
 
-    
+exports.batchDownload = function(req, res){
+    var fileIds = req.query.fileId;
+    var creator = req.loginUser._id;
+
+    if(!fileIds.length){
+        res.json({ err: ERR.PARAM_ERROR, msg: 'no file to download' });
+        return;
+    }
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
+    });
+    ep.after('verifyDownload', fileIds.length, function(list){
+        var zipName = Math.floor(Math.random() * 1000000) + '.zip';
+        var zipPath = '/data/zip/' + U.formatDate(new Date(), 'yyyy-MM-dd/') + zipName;
+
+        var output = fs.createWriteStream(config.FILE_ZIP_DIR + zipName);
+        var archive = archiver('zip');
+
+        output.on('close', function(){
+
+            res.set({
+                'Content-Type': 'application/zip',
+                'Content-Disposition': 'attachment; filename=files.zip',
+                'Content-Length': archive.pointer(),
+                'X-Accel-Redirect': zipPath
+            });
+
+            res.send();
+        });
+
+        archive.on('error', function(err) {
+            ep.emit('error', err);
+        });
+
+        archive.pipe(output);
+
+        list.forEach(function(data){
+            var filePath = path.join('/data/71xiaoxue/', data.resource.path);
+            archive.file(filePath, { name: data.file.name });
+        });
+        archive.finalize();
+
+    });
+
+    fileIds.forEach(function(fileId){
+        verifyDownload({ fileId: fileId, creator: creator }, ep.group('verifyDownload'));
+    });
+
 }
 
 exports.preview = function(req, res){
@@ -224,7 +286,7 @@ exports.save = function(req, res){
     var params = req.body;
     var loginUser = req.loginUser;
     var messageId = params.messageId;
-    var rootFolderId = loginUser.rootFolder.oid;
+    var rootFolderId = loginUser.rootFolder['$id'];
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
