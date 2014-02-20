@@ -102,16 +102,24 @@ exports.upload = function(req, res){
         U.moveFile(body.file_path, filePath, ep.done('moveFile'));
     })
 
-    if(loginUser.size < loginUser.used + fileSize){
-        //TODO 如果上传到小组, 还要检查小组的配额
-        ep.emit('error', 'Ran out of space', ERR.SPACE_FULL);
-    }else{
-        // 更新用户size
-        loginUser.used = loginUser.used + fileSize;
-        var skey = req.cookies.skey;
-        req.session[skey] = loginUser; // 更新 session
-        mUser.update(loginUser._id, { used: loginUser.used }, ep.done('updateSpaceUsed'));
-    }
+    mFile.getFile({
+        name: name
+    }, function(err, file){
+        if(file){
+            ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
+            return;
+        }
+        if(loginUser.size < loginUser.used + fileSize){
+            //TODO 如果上传到小组, 还要检查小组的配额
+            ep.emit('error', 'Ran out of space', ERR.SPACE_FULL);
+        }else{
+            // 更新用户size
+            loginUser.used = loginUser.used + fileSize;
+            var skey = req.cookies.skey;
+            req.session[skey] = loginUser; // 更新 session
+            mUser.update(loginUser._id, { used: loginUser.used }, ep.done('updateSpaceUsed'));
+        }
+    });
 
 }
 
