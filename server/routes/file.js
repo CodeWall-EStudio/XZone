@@ -236,8 +236,9 @@ exports.batchDownload = function(req, res){
     });
     ep.after('verifyDownload', fileIds.length, function(list){
         var zipName = Math.floor(Math.random() * 1000000) + '.zip';
-        var zipDir = config.FILE_ZIP_DIR + U.formatDate(new Date(), 'yyyy-MM-dd/');
-        var zipPath = '/data/zip/' + U.formatDate(new Date(), 'yyyy-MM-dd/') + zipName;
+        var dir = U.formatDate(new Date(), 'yyyy-MM-dd/');
+        var zipDir = config.FILE_ZIP_DIR + dir;
+        var zipPath = '/data/zip/' + dir + zipName;
 
         var output = fs.createWriteStream(zipDir + zipName);
         var archive = archiver('zip');
