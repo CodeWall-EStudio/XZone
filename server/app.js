@@ -24,6 +24,7 @@ app.use(express.cookieParser());
 
 app.use(express.session({
     secret: config.COOKIE_SECRET,
+    cookie: { maxAge: 2 * 60 * 60 * 1000 }, // 2 hour
     store: new MongoStore({
         url: config.DB_URI
     })

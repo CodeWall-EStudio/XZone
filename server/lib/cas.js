@@ -55,7 +55,7 @@ CAS.prototype.getLoginUrl = function(){
     hostname: this.hostname,
     port: this.port,
     pathname: this.base_path+'/login',
-    query: { service: this.service }
+    query: { service: this.service, renew: true }
   });
 }
 

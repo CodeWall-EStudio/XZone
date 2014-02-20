@@ -161,7 +161,10 @@ exports.loginSuccess = function(req, res, next){
 exports.logoff = function(req, res){
     req.session = null;
     res.clearCookie('skey');
-    res.json({ err: ERR.SUCCESS });
+    res.clearCookie('connect.sid');
+
+    res.redirect('/');
+    // res.json({ err: ERR.SUCCESS });
 }
 
 exports.search = function(req, res){
