@@ -128,7 +128,7 @@ exports.download = function(req, res){
         });
     });
 
-    mFile.getFile(fileId, ep.doneLater('getFile'));
+    mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
 
     ep.on('getFile', function(file){
         if(!file){
@@ -210,6 +210,60 @@ exports.preview = function(req, res){
 
 }
 
+// 保存收件箱中的文件到自己的目录
+exports.save = function(req, res){
+    var params = req.body;
+    var loginUser = req.loginUser;
+    var messageId = params.messageId;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    var query = {
+        _id: ObjectID(messageId),
+        $or: [
+            { 'fromUser.$id': ObjectID(loginUser._id) },
+            { 'toUser.$id': ObjectID(loginUser._id) }
+        ]
+    };
+    mMessage.getMessage(query, ep.doneLater('getMessage'));
+
+    ep.on('getMessage', function(msg){
+        if(!msg){
+            ep.emit('error', 'no allow to save', ERR.NOT_AUTH);
+            return;
+        }
+        
+        mRes.getResource(msg.resource.oid.toString(), ep.done('getResource'));
+        
+    });
+
+    ep.all('getMessage', 'getResource', function(msg, resource){
+        var file = {
+            creator: loginUser._id,
+            folderId: loginUser.rootFolder.oid,
+            name: msg.fileName,
+            type: resource.type,
+            size: resource.size,
+            resourceId: resource._id.toString()
+        }
+
+        mFile.create(file, ep.done('createFile'));
+    });
+
+    ep.on('createFile', function(file){
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                data: file
+            }
+        })
+    });
+
+}
+
 exports.get = function(req, res){
     var params = req.query;
     var fileId = params.fileId;
@@ -221,7 +275,7 @@ exports.get = function(req, res){
         'creator.$id': ObjectID(loginUser._id) 
     };
     
-    db.file.findOne(query, function(err, doc){
+    mFile.getFile(query, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else if(!doc){
@@ -237,7 +291,7 @@ exports.get = function(req, res){
                     }
                 });
             });
-            
+
         }
     });
 }
@@ -253,7 +307,7 @@ function shareToUser(params, callback){
     ep.fail(callback);
 
     // 1. 先获取文件信息
-    mFile.getFile(params.fileId, ep.doneLater('getFile'));
+    mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
     
     ep.on('getFile', function(file){
         if(!file){
@@ -310,7 +364,7 @@ function shareToGroup(params, callback){
     ep.fail(callback);
 
     // 1. 先获取文件信息
-    mFile.getFile(fileId, ep.doneLater('getFile'));
+    mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
     // 2. 获取小组信息
     mGroup.getGroup(toGroupId, ep.doneLater('getGroup'));
 
@@ -472,7 +526,7 @@ function copyFile(params, callback){
 
     ep.fail(callback);
 
-    mFile.getFile(fileId, ep.doneLater('getFile'));
+    mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
 
     mFolder.getFolder(targetId, ep.doneLater('getFolder'));
 

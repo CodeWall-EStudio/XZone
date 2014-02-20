@@ -28,6 +28,15 @@ module.exports = {
             fileId: ObjectID
         }
     },
+    '/api/file/save': {
+        method: POST,
+        require: {
+            messageId: ObjectID
+        },
+        optional: {
+            folderId: ObjectID
+        }
+    },
     '/api/file/modify': {
         method: POST,
         require: {
@@ -196,6 +205,7 @@ module.exports = {
             type: ['number'],
             content: ['string'],
             members: ArrayObjectID,
+            managers: ArrayObjectID,
             parentId: ObjectID
         }
     },

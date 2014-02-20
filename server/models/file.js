@@ -130,9 +130,9 @@ exports.revertDelete = function(params, callback){
     exports.modify(params, { del: false }, callback);
 }
 
-exports.getFile = function(fileId, callback){
+exports.getFile = function(query, callback){
 
-    db.file.findOne({ _id: ObjectID(fileId) }, callback);
+    db.file.findOne(query, callback);
 
 }
 

@@ -15,7 +15,7 @@ exports.create = function(params, callback){
     var creator = params.creator;
     var fileId = params.fileId;
 
-    mFile.getFile(fileId, function(err, file){
+    mFile.getFile({_id: ObjectID(fileId) }, function(err, file){
         if(err){
             return callback(err);
         }
