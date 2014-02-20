@@ -58,7 +58,7 @@ exports.search = function(params, callback){
 
     var userId = params.creator || null;
     var keyword = params.keyword || '';
-    var type = params.type || 0; // 0: 我的收件箱, 1: 我的发件箱, 2:xxx
+    var type = Number(params.type) || 0; // 0: 我的收件箱, 1: 我的发件箱, 2:xxx
 
     var query = {};
 
