@@ -89,9 +89,9 @@ exports.modify = function(req, res){
 
     var doc = {};
 
-    if(params.name){
-        doc.name = params.name;
-    }
+    // if(params.name){ // 要检查重名
+    //     doc.name = params.name;
+    // }
     if(params.content){
         doc.content = params.content;
     }

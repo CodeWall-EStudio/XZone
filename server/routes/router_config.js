@@ -55,6 +55,7 @@ module.exports = {
             fileId: ObjectID
         },
         optional: {
+            name: ['string', 1],
             groupId: ObjectID
         }
     },
@@ -150,6 +151,7 @@ module.exports = {
             folderId: ObjectID
         },
         optional: {
+            name: ['string', 1],
             groupId: ObjectID
         }
     },

@@ -600,6 +600,8 @@ exports.share = function(req, res){
 }
 
 function modifyFile(params, callback){
+    var fileId = params.fileId;
+
     var doc = {};
     if(params.mark){
         doc.mark = params.mark;
@@ -611,14 +613,49 @@ function modifyFile(params, callback){
         doc.content = params.content;
     }
 
-    mFile.modify(params, doc, function(err, doc){
-        if(err){
-            callback(err, doc);
-        }else if(!doc){
-            callback('no such file', ERR.NOT_FOUND);
-        }else{
-            callback(null, doc);
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    mFile.getFile({
+        _id: ObjectID(fileId)
+    }, ep.doneLater('getFile'));
+
+    ep.on('getFile', function(file){
+        if(!file){
+            ep.emit('error', 'no such file', ERR.NOT_FOUND);
+            return;
         }
+        if(params.name){
+            mFile.getFile({
+                name: params.name,
+                'folder.$id': file.folder.oid
+            }, function(err, file){
+                if(file){
+                    ep.emit('checkName', false);
+                }else{
+                    ep.emit('checkName', true);
+                }
+            }
+        }else{
+            ep.emit('checkName', true);
+        }
+
+    });
+
+    ep.on('checkName', function(result){
+        if(!result){
+            ep.emit('error', 'has the same fileName in this folder', ERR.DUPLICATE);
+            return;
+        }
+        mFile.modify(params, doc, function(err, doc){
+            if(err){
+                callback(err, doc);
+            }else if(!doc){
+                callback('no such file', ERR.NOT_FOUND);
+            }else{
+                callback(null, doc);
+            }
+        });
     });
 }
 
@@ -628,17 +665,15 @@ exports.modify = function(req, res){
 
     params.creator = req.loginUser._id;
 
-    var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
-    });
-    modifyFile(params, ep.doneLater('modify'));
-
-    ep.on('modify', function(list){
+    modifyFile(params, function(err, doc){
+        if(err){
+            res.json({ err: doc || ERR.SERVER_ERROR, msg: err});
+            return;
+        }
         res.json({
             err: ERR.SUCCESS,
             result: {
-                list: list
+                data: doc
             }
         });
     });

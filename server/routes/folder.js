@@ -82,6 +82,7 @@ exports.get = function(req, res){
 exports.modify = function(req, res){
     // 只能修改自己的
     var params = req.body;
+    var folderId = params.folderId;
 
     params.creator = req.loginUser._id;
 
@@ -93,14 +94,51 @@ exports.modify = function(req, res){
         doc.name = params.name;
     }
 
-    mFolder.modify(params, doc, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else if(!doc){
-            res.json({ err: ERR.NOT_FOUND, msg: 'no such folder'});
-        }else{
-            res.json({ err: ERR.SUCCESS , result: { data: doc }});
+    var ep = new EventProxy();
+    ep.fail(function(err){
+        res.json({ err: ERR.SERVER_ERROR, msg: err});
+    });
+
+    mFolder.getFolder({
+        _id: ObjectID(folderId)
+    }, ep.doneLater('getFolder'));
+
+    ep.on('getFolder', function(folder){
+        if(!folder){
+            ep.emit('error', 'no such folder', ERR.NOT_FOUND);
+            return;
         }
+        if(params.name){
+            mFolder.getFolder({
+                name: params.name,
+                'parent.$id': folder.parent.oid
+            }, function(err, doc){
+                if(doc){
+                    ep.emit('checkName', false);
+                }else{
+                    ep.emit('checkName', true);
+                }
+            }
+        }else{
+            ep.emit('checkName', true);
+        }
+
+    });
+
+    ep.on('checkName', function(result){
+        if(!result){
+            ep.emit('error', 'has the same name in this folder', ERR.DUPLICATE);
+            return;
+        }
+        mFolder.modify(params, doc, function(err, doc){
+            if(err){
+                res.json({ err: ERR.SERVER_ERROR, msg: err});
+            }else if(!doc){
+                res.json({ err: ERR.NOT_FOUND, msg: 'no such folder'});
+            }else{
+                res.json({ err: ERR.SUCCESS , result: { data: doc }});
+            }
+        });
     });
 
 }
