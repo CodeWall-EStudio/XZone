@@ -2,10 +2,10 @@
 			for(var i in list){
 				var item = list[i];
 		%>
-			<tr class="file" data-id="<?=$item['id']?>">
+			<tr class="file mail<%+item.id%>">
 					<td width="30"><input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" /></td>
 					<td>
-						<a  href="/review.html#id=<%+item.id%>" class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
+						<a href="/review.html#id=<%+item.id%>"  target="_blank" class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
 						<%if(item.type<7){%>
 							<i class="icon-type<%+item.type%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
 						<%}else{%>
@@ -13,18 +13,18 @@
 						<%}%>
 						</a>
 						<dl>
-							<dt><a  href="/review.html#id=<%+item.id%>" class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
+							<dt><a  href="/review.html#id=<%+item.id%>"  target="_blank" class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
 								<%-item.content%>
 							</dt>
 						<dd>
 							<%if(!item.save){%>
-							<a cmd="ref"  data-fid="<%+item.fid%>" data-id="<%+item.id%>">保存</a>
+							<a  class="mailsave<%+item.id%>" cmd="save"  data-fid="<%+item.fid%>" data-id="<%+item.id%>">保存</a>
 							<%}%>
 						</dd>							
 						</dl>
 					</td>
 					<td width="90">
-						<%-item.fname%>
+						<%-item.tname%>
 					</td>
 					<td width="90">
 						<%-filetype[item.type]%>

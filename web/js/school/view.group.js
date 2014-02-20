@@ -3,6 +3,7 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 
 	var nowGid = 0,
 		myGroups = null,
+		myInfo = null,
 		nowGroup,
 		nowPage = 0,
 		nowFd = 0;
@@ -23,8 +24,8 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 		nowGid = d.gid;
 		nowFd = d.fdid || 0;
 		if(!myGroups){
-			var myInfo = Cache.get('myinfo'),
-				myGroups = myInfo.group2key;
+			myInfo = Cache.get('myinfo'),
+			myGroups = myInfo.group2key;
 		}
 		nowGroup = myGroups[nowGid];
 		// handerObj.triggerHandler('group:init',myGroups[nowGid]);
@@ -76,8 +77,6 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 			fdid : nowFd,
 			info : d
 		}
-
-
 		if((nowFd == 0 || !nowFd) && d.rootFolder){
 			data.fdid = d.rootFolder.id;
 		}
@@ -166,7 +165,13 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 		view.createPanel();
 	}
 
+	function updateGroup(d){
+		myInfo.group2key[d.id] = d;
+		handerObj.triggerHandler('cache:set',{key: 'myinfo',data: myInfo});
+	}
+
 	function modifySuc(e,d){
+		updateGroup(d);
 		var info = d,
 			desc = d.content;
 		if(info.content == ''){

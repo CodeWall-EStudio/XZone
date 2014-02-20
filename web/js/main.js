@@ -242,8 +242,7 @@
         }
         if(key){
           d.key = key;
-        }        
- 
+        }
         handerObj.triggerHandler('prep:init',d);
         handerObj.triggerHandler('model:change','file');     
       }

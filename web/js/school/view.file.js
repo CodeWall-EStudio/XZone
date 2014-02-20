@@ -119,7 +119,6 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		if(nowUid){
 			data.uid = nowUid;
 		}
-
 		handerObj.triggerHandler('file:search',data);	
 	}
 
@@ -204,7 +203,6 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		if(nowUid){
 			data.uid = nowUid;
 		}
-
 		handerObj.triggerHandler('file:search',obj);			
 	}
 
@@ -237,7 +235,6 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 		if(nowUid){
 			data.uid = nowUid;
 		}
-
 		handerObj.triggerHandler('file:search',obj);				
 	}
 
@@ -551,10 +548,14 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 						if(t.length){
 							var gid = t.attr('data-gid'),
 								id = t.attr('data-id');
-							handerObj.triggerHandler('file:shareto',{
+							var obj = {
 								fileId : ids,
-								toGroupId : [gid]
-							});
+								toGroupId : [gid]								
+							}
+							if(id){
+								obj.toFolderId = [id];
+							}
+							handerObj.triggerHandler('file:shareto',obj);
 						}
 					}
 				}
@@ -574,7 +575,8 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			target : target,
 			tplid : 'copy.tree',
 			data : {
-				list : d.list
+				list : d.list,
+				gid : target.find('i').attr('data-gid')
 			},
 			handlers : {
 				'.list-link' : {

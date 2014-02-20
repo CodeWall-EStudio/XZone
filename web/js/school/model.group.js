@@ -18,6 +18,14 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		return list;
 	}
 
+	function conventMembers(list){
+		var ml = [];
+		for(var i in list){
+			ml.push(list[i]._id);
+		}
+		return ml;
+	}
+
 	function groupEdit(e,d){
 		var opt = {
 			cgi : config.cgi.groupmodify,
@@ -25,6 +33,8 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}	
 		var success = function(d){
 			if(d.err == 0){
+				d.result.data.id = d.result.data._id;
+				d.result.data.auth = 1;
 				handerObj.triggerHandler('msg:error',d.err);
 				handerObj.triggerHandler('group:modifySuc',d.result.data);
 			}else{
@@ -78,6 +88,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var success = function(d){
 			if(d.err == 0){
 				d.result.data.id = d.result.data._id;
+				d.result.data.mlist = conventMembers(d.result.data.members);
 				handerObj.triggerHandler(type+':infosuc',d.result.data);
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);

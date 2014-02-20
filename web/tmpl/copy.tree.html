@@ -4,7 +4,7 @@
 			var item = list[i];
 	%>
 		<li class="list-li">
-			<i <%if(item.hasChild){%>cmd="next" class="plus"<%}%> data-id="<%+item.id%>"></i><a title="<%+item.name%>" class="list-link"> <%=item.name%></a>							
+			<i <%if(item.hasChild){%>cmd="next" class="plus"<%}%> data-id="<%+item.id%>"></i><a title="<%+item.name%>" class="list-link"  data-gid="<%+gid%>" data-id="<%+item.id%>"> <%=item.name%></a>							
 		</li>						
 	<%}%>
 </ul>

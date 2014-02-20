@@ -8,6 +8,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			var item = data[i];
 			list.push({
 				id : item._id,
+				tname : item.toUser.nick,
 				fname : item.fromUser.nick,
 				fid : item.fid,
 				name : item.fileName,
@@ -43,8 +44,28 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		request.get(opt,success);			
 	}
 
+	function save(e,d){
+		var obj = {
+			messageId : d
+		}
+		var opt = {
+			cgi : config.cgi.filesave,
+			data : obj
+		}
+		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
+			if(d.err == 0){
+				handerObj.triggerHandler('mail:savesuc',obj.messageId);
+			}else{
+				
+			}
+		}
+		request.post(opt,success);					
+	}
+
 	var handlers = {
-		'mail:search' : search
+		'mail:search' : search,
+		'mail:save' : save
 	}
 
 	for(var i in handlers){

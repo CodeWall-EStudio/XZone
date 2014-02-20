@@ -35,6 +35,7 @@ define(['config','helper/view','cache'],function(config,View,Cache){
 			gid : nowGid,
 			fdid : nowFd,
 			info : prepKey[nowGid],
+			key : d.key,
 			prep : 'my'
 		}
 

@@ -83,6 +83,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 			data : {
 				list : d.list,
 				ul : d.ul,
+				type : nowType,
 				filetype : config.filetype
 			}
 		});
@@ -121,12 +122,17 @@ define(['config','helper/view','model.mail'],function(config,View){
 		});			
 	}
 
+	function saveSuc(e,d){
+		$('.mailsave'+d).remove();
+	}
+
 	var handlers = {
 		'page:next' : pageNext,
 		'model:change' : modelChange,
 		'mail:init' : init,
 		'mail:get' : mailGet,
-		'mail:load' : load
+		'mail:load' : load,
+		'mail:savesuc' : saveSuc
 	}
 
 	for(var i in handlers){

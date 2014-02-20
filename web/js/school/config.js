@@ -28,13 +28,14 @@ define(function() {
 			upload : '/upload'+EXT,
 			filelist : CGI_PATH+'file/list'+EXT,
 			filesearch : CGI_PATH+'file/search'+EXT,
-			filereview : CGI_PATH+'file'+EXT,
+			fileinfo : CGI_PATH+'file'+EXT,
 			filedown : CGI_PATH+'file/download'+EXT,
 			filemodify : CGI_PATH+'file/modify'+EXT,
 			filecopy : CGI_PATH+'file/copy'+EXT,
 			filemove : CGI_PATH+'file/move'+EXT,
 			filedel : CGI_PATH+'file/delete'+EXT,
 			fileshare : CGI_PATH+'file/share'+EXT,
+			filesave : CGI_PATH+'file/save'+EXT,
 
 			//文件夹
 			foldinfo : CGI_PATH+'folder'+EXT,
@@ -106,7 +107,7 @@ define(function() {
 			1010 : '您没有查看该资源的权限!',
 			1011 : '参数出错拉!',
 			1013 : '出错拉',
-			1014 : '出错拉',
+			1014 : '同名拉!',
 			1015 : '出错拉'
 		}
 	}

@@ -390,7 +390,6 @@ define(['config'],function(config){
 		if(target.parents('.table-list').hasClass('table-files')){
 			file = 1;
 		}
-
 		switch(cmd){
 			case 'other':
 			case 'group':
@@ -439,12 +438,18 @@ define(['config'],function(config){
 				target.parent('span').prev('span').show();
 				target.parent('span').addClass('hide');			
 				break;
+			case 'save':
+				var id = target.attr('data-id');
+				console.log(2222222);
+				handerObj.triggerHandler('mail:save',id);
 			case 'down':
 				down(e);
 				break;
 			default :
-				$('.editmark').hide();
-				$('.f-mark').show();			
+				if(!target.hasClass('name-edit')){
+					$('.editmark').hide();
+					$('.f-mark').show();
+				}
 				if(file){
 					if(!target.hasClass('liclick') && !target.hasClass('name-edit') && !target.hasClass('share-file') && !target.hasClass('no-act')){
 						var p = target.parents("tr");

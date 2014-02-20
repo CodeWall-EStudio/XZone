@@ -158,7 +158,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		// }
 		crTit();
 		var data = {
-			folderId : nowFd
+			folderId : nowFd,
 		};
 		if(nowGid){
 			data.groupId = nowGid;
@@ -177,7 +177,8 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		if(nowKey == ''){
 			handerObj.triggerHandler('fold:get',obj);
 		}else{
-			handerObj.triggerHandler('search:start',obj);
+			obj.key = nowKey;
+			handerObj.triggerHandler('foldsearch:start',obj);
 		}
 	}
 
@@ -324,7 +325,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		'fold:delsuc' : delSuc,
 		'fold:create' : createFold,
 		//'order:change' : orderChange,
-		'search:start' : search,
+		'foldsearch:start' : search,
 		'fold:marksuc' : marksuc,
 		'fold:init' : foldInit,
 		'fold:load' : foldLoad,
