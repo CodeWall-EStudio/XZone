@@ -20,7 +20,10 @@ exports.create = function(req, res){
     // console.log(req.loginUser.auth, config.AUTH_MANAGER, U.hasRight(req.loginUser.auth, config.AUTH_MANAGER));
 
     var members = params.members || [];
-    members.push(params.creator);
+    var managers = params.managers || [];
+    managers.push(params.creator);
+    
+    members = members.concat(managers);
     members = us.uniq(members); // 唯一化, 防止出现两个相同的用户
 
     var ep = new EventProxy();
@@ -44,7 +47,11 @@ exports.create = function(req, res){
         });
         members.forEach(function(member){
             // 创建者默认为小组管理员
-            var auth = member === params.creator ? config.AUTH_GROUP_MANAGER : config.AUTH_USER;
+
+            var auth = config.AUTH_USER;
+            if(managers.indexOf(member) > -1){
+                auth = config.AUTH_GROUP_MANAGER;
+            }
 
             mGroup.addUserToGroup({
                 userId: member,
