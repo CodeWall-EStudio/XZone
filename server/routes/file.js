@@ -156,7 +156,7 @@ function verifyDownload(params, callback){
         if(file.creator.oid.toString() === creator){
             // 自己的文件, 可以下载
             console.log('download: from self',fileId);
-            ep.emit('ready', file, resource);
+            ep.emit('checkRight', { file: file, resource: resource });
         }else{
             // 检查是否是自己收件箱的文件
             mMessage.getMessage({ 
@@ -174,6 +174,7 @@ function verifyDownload(params, callback){
                             ep.done('checkRight', function(hasRight){
 
                         if(hasRight){
+                            console.log('download: from group',fileId);
                             return { file: file, resource: resource };
                         }
                         return null;
@@ -187,7 +188,6 @@ function verifyDownload(params, callback){
 
     ep.on('checkRight', function(data){
         if(data){ // 是自己所在小组的
-            console.log('download: from group',fileId);
             callback(null, data);
         }else{
             ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
