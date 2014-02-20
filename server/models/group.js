@@ -24,7 +24,7 @@ exports.create = function(params, callback){
 
     ep.on('findGroup', function(doc){
         if(doc){
-            callback('already has a group naming "' + params.name + '" ', ERR.DUPLICATE);
+            callback('already has a group naming [' + params.name + '] ', ERR.DUPLICATE);
             return;
         }
         var doc = {
