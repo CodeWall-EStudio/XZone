@@ -319,7 +319,7 @@ module.exports = {
     '/api/message/search': {
         method: GET,
         require: {
-            type: ['number'],
+            type: ['number', 0],
             page: ['number', 0],
             pageNum: ['number', 0]
         },

@@ -58,7 +58,7 @@ exports.search = function(params, callback){
 
     var userId = params.creator || null;
     var keyword = params.keyword || '';
-    var type = Number(params.type) || 0; // 0: 我的收件箱, 1: 我的发件箱, 2:xxx
+    var type = Number(params.type) || 0; // 1: 我的收件箱, 2: 我的发件箱
 
     var query = {};
 
@@ -66,10 +66,13 @@ exports.search = function(params, callback){
         query.content = new RegExp('.*' + keyword + '.*');
     }
 
-    if(type === 0){
+    if(type === 1){
         query['toUser.$id'] = ObjectID(userId);
-    }else if(type === 1){
+    }else if(type === 2){
         query['fromUser.$id'] = ObjectID(userId);
+    }else{
+        callback('params error: type should be 1 or 2', ERR.PARAM_ERROR);
+        return;
     }
     
     db.search('message', query, params, function(err, total, docs){
