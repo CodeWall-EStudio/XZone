@@ -103,7 +103,8 @@ exports.upload = function(req, res){
     })
 
     mFile.getFile({
-        name: name
+        name: name,
+        'folder.$id': ObjectID(folderId)
     }, function(err, file){
         if(file){
             ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
@@ -223,6 +224,7 @@ exports.save = function(req, res){
     var params = req.body;
     var loginUser = req.loginUser;
     var messageId = params.messageId;
+    var rootFolderId = loginUser.rootFolder.oid;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
@@ -245,7 +247,8 @@ exports.save = function(req, res){
         }
 
         mFile.getFile({
-            name: msg.fileName
+            name: msg.fileName,
+            'folder.$id': ObjectID(rootFolderId)
         }, function(err, file){
             if(file){
                 ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
@@ -259,7 +262,7 @@ exports.save = function(req, res){
     ep.all('getMessage', 'getResource', function(msg, resource){
         var file = {
             creator: loginUser._id,
-            folderId: loginUser.rootFolder.oid,
+            folderId: rootFolderId,
             name: msg.fileName,
             type: resource.type,
             size: resource.size,
