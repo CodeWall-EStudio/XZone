@@ -179,7 +179,7 @@ function verifyDownload(params, callback){
                         return null;
                     }));
                 }else{ // 没有权限
-                    ep.emit('error', 'not auth to download this file: ' + fileId, ERR.NOT_AUTH);
+                    ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
                 }
             });
         }
@@ -190,7 +190,7 @@ function verifyDownload(params, callback){
             console.log('download: from group',fileId);
             callback(null, data);
         }else{
-            ep.emit('error', 'not auth to download this file: ' + fileId, ERR.NOT_AUTH);
+            ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
         }
     });
 
@@ -274,10 +274,58 @@ exports.batchDownload = function(req, res){
 }
 
 exports.preview = function(req, res){
-    // TODO
-    // 自己能预览所有和自己相关的文件.包括
-    // 收件箱中其他人发过来的邮件,
-    // 自己所在的小组中的文件.
+    var fileId = req.query.fileId;
+    var creator = req.loginUser._id;
+
+    //1. 图片, 直接给url
+    //2. 文档, 给出swf url
+    //3. txt, 给出 text的文本内容
+    //4. 音频/视频, 直接给出url
+
+    verifyDownload({
+        fileId: fileId,
+        creator: creator
+    }, function(err, data){
+        if(err){
+            res.json({ err: data || ERR.SERVER_ERROR, msg: err });
+            return;
+        }
+        var file = data.file, resource = data.resource;
+        var filePath = path.join('/data/71xiaoxue/', resource.path);
+        var result = {};
+        if(resource.type === 8){//text
+            fs.readFile(config.FILE_SAVE_DIR + resource.path, function(err, data){
+                if(!data){
+                    ep.emit('error', err || 'can not find this file');
+                    return;
+                }
+                result.text = data;
+                res.json({
+                    err: ERR.SUCCESS,
+                    result: result
+                });
+            });
+
+        }else{
+            switch(resource.type){
+                case 2:// 文档
+                    result.url = filePath + '.swf';
+                    break;
+                case 1://image
+                case 3://audio
+                case 4://video
+                case 5://stream
+                    result.url = filePath;
+                    break;
+            }
+
+            res.json({
+                err: ERR.SUCCESS,
+                result: result
+            });
+        }
+
+    });
 
 }
 

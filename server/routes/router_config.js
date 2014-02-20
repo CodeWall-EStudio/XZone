@@ -29,9 +29,15 @@ module.exports = {
         }
     },
     '/api/file/batchDownload': {
-        method: GET,
+        method: POST,
         require: {
             fileId: ArrayObjectID
+        }
+    },
+    '/api/file/preview': {
+        method: GET,
+        require: {
+            fileId: ObjectID
         }
     },
     '/api/file/save': {
