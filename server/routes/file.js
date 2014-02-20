@@ -235,8 +235,16 @@ exports.save = function(req, res){
             ep.emit('error', 'no allow to save', ERR.NOT_AUTH);
             return;
         }
-        
-        mRes.getResource(msg.resource.oid.toString(), ep.done('getResource'));
+
+        mFile.getFile({
+            name: msg.fileName
+        }, function(err, file){
+            if(file){
+                ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
+                return;
+            }
+            mRes.getResource(msg.resource.oid.toString(), ep.done('getResource'));
+        });
         
     });
 
