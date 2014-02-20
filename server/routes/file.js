@@ -210,26 +210,37 @@ exports.preview = function(req, res){
 
 }
 
-// exports.create = function(req, res){
-//     var params = req.query;
+exports.get = function(req, res){
+    var params = req.query;
+    var fileId = params.fileId;
 
-//     var loginUser = req.loginUser;
+    var loginUser = req.loginUser;
 
-//     params.creator = loginUser._id;
+    var query = { 
+        _id: ObjectID(fileId), 
+        'creator.$id': ObjectID(loginUser._id) 
+    };
     
-//     mFile.create(params, function(err, doc){
-//         if(err){
-//             res.json({ err: ERR.SERVER_ERROR, msg: err});
-//         }else{
-//             res.json({
-//                 err: ERR.SUCCESS,
-//                 result: {
-//                     data: doc
-//                 }
-//             });
-//         }
-//     });
-// }
+    db.file.findOne(query, function(err, doc){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else if(!doc){
+            res.json({ err: ERR.NOT_FOUND, msg: 'no such file'});
+        }else{
+
+            db.dereference(doc, { resource: ['_id', 'type', 'size']}, function(err, resource){
+                doc.resource = resource;
+                res.json({
+                    err: ERR.SUCCESS,
+                    result: {
+                        data: doc
+                    }
+                });
+            });
+            
+        }
+    });
+}
 
 function shareToUser(params, callback){
     var fileId = params.fileId;

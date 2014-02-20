@@ -7,6 +7,12 @@ var GET = 'GET';
 
 module.exports = {
     // file 
+    '/api/file/': {
+        method: GET,
+        require: {
+            fileId: ObjectID
+        }
+    },
     '/api/file/upload': {
         method: POST,
         require: {
