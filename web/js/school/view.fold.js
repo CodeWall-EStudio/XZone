@@ -112,7 +112,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		// foldTarget.html('')
 		tmpTarget.html('');
 		nowFdInfo = {};
-		
 		if(d){
 			nowGid = d.gid || 0;
 			nowGinfo = d.info || {};
@@ -175,8 +174,11 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		if(nowGid){
 			obj.groupId = nowGid;
 		}
-
-		handerObj.triggerHandler('fold:get',obj);		
+		if(nowKey == ''){
+			handerObj.triggerHandler('fold:get',obj);
+		}else{
+			handerObj.triggerHandler('search:start',obj);
+		}
 	}
 
 	function foldOne(e,d){
