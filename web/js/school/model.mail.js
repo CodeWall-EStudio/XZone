@@ -25,9 +25,17 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function search(e,d){
-		var opt = {
-			cgi : config.cgi.msgsearch,
-			data : d
+		if(d.type == 0){
+			d.type = 0;
+			var opt = {
+				cgi : config.cgi.filequery,
+				data : d
+			}
+		}else{
+			var opt = {
+				cgi : config.cgi.msgsearch,
+				data : d
+			}
 		}	
 		var success = function(d){
 			if(d.err == 0){

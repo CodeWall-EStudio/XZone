@@ -82,7 +82,6 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 		}
 		data.rootfdid = d.rootFolder.id;
 
-
 		$('#aside .aside-divs').hide();
 		switch(d.type){
 			case 0:

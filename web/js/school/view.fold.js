@@ -110,7 +110,6 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 
 	function foldInit(e,d){
 		action = 1;
-
 		foldTarget.hide().removeAttr('show');
 		foldTarget.css('float','none').css('width','100%');
 
@@ -131,9 +130,9 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		}
 
-		if(nowGinfo.rootFolder){
-			nowFd = nowGinfo.rootFolder.id;
-		}
+		// if(nowGinfo.rootFolder && !nowFd){
+		// 	nowFd = nowGinfo.rootFolder.id;
+		// }
 		if(nowGid && !nowFd){
 			$('#btnZone').hide();
 		}else{
@@ -171,11 +170,12 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		handerObj.triggerHandler('fold:one',data);			
 
 		var obj = {};
-		if(nowFd){
-			obj.folderId = nowFd;
-		}else if(rootFd){
-			obj.folderId = rootFd;
-		}
+		obj.folderId = nowFd;
+		// if(nowFd){
+		// 	obj.folderId = nowFd;
+		// }else if(rootFd){
+		// 	obj.folderId = rootFd;
+		// }
 		if(nowGid){
 			obj.groupId = nowGid;
 		}
@@ -210,8 +210,9 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 					target : foldTarget
 				}
 				if(nowGinfo.rootFolder){
-					obj.folderId = nowGinfo.rootFolder;
+					obj.folderId = nowGinfo.rootFolder.id;
 				}
+				console.log(obj);
 				handerObj.triggerHandler('fold:get',obj);
 			
 			}
@@ -322,6 +323,13 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		view.createPanel();			
 	}
 
+	function editMark(e,d){
+		if(nowGid){
+			d.groupId = nowGid;
+		}
+		handerObj.triggerHandler('fold:edit',d);
+	}
+
 	function modifySuc(e,d){
 		$('.fdname'+d.folderId).text(d.name);
 	}
@@ -337,6 +345,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		'fold:marksuc' : marksuc,
 		'fold:init' : foldInit,
 		'fold:load' : foldLoad,
+		'fold:editmark' : editMark,
 		'fold:oneinfo' : foldOne
 	}
 

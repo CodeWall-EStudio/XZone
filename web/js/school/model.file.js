@@ -98,11 +98,14 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function editmark(e,d){
+
 		var data = {
-			id : d.id,
-			info : d.mark,
-			gid : d.gid
+			fileId : d.folderId,
+			mark : d.mark
 		};
+		if(d.groupId){
+			data.groupId = d.groupId;
+		}
 		var target = d.target,
 			mark = d.mark;
 		var opt = {
@@ -114,7 +117,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var success = function(d){
 			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
-				handerObj.triggerHandler('file:marksuc',{id:d.id,target:target,gid:d.gid,mark:mark});
+				handerObj.triggerHandler('fold:marksuc',{id:d.id,target:target,gid:d.gid,mark:mark});
 			}else{
 				
 			}

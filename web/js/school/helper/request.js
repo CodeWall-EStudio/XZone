@@ -84,31 +84,25 @@ define([], function() {
       async: async,
       timeout: timeout,
       dataType: type,
-      data: data,
+      data: data
       // 跨域传cookie
-      xhrFields: {
-        withCredentials: true
-      },
-      beforeSend: function(xhr, settings) {
-        timer.url = settings.url
-        timer.start = +new Date();
-      }
+      // xhrFields: {
+      //   withCredentials: true
+      // },
+      // beforeSend: function(xhr, settings) {
+      //   timer.url = settings.url
+      //   timer.start = +new Date();
+      // }
     };
 
     ajaxOpt.success = function(res) {
-      var code = res.code,
-        type = 1;
+      // var code = res.code,
+      //   type = 1;
+      //   console.log(code);
 
-      if('undefined' === typeof code) code = res.ret; // 拉腾讯软件的cgi
-      if(code) type = 3;
+      // if('undefined' === typeof code) code = res.ret; // 拉腾讯软件的cgi
+      // if(code) type = 3;
       
-      //report.rc(timer.url, type, code, timer.time);
-      // if(cacheKey){
-      //   Cache.set(cacheKey,res);
-      // }
-      // if(res.code == 1 && res.subcode == -100){
-      //   //report.monitor(339969);
-      // }
       return onSuccess(res);
     };
 
@@ -117,9 +111,7 @@ define([], function() {
 
       return onError(xhr, err);
     };
-
     var xhr = $.ajax(ajaxOpt);
-
     if('function' == typeof always) xhr.always(always);
   };
 

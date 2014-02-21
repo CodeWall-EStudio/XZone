@@ -35,7 +35,7 @@
           if(data.type == 2){
               $('#documentViewer').FlexPaperViewer(
                 { config : {
-                    SWFFile : encodeURIComponent(data.url),
+                    SWFFile : encodeURIComponent(config.cgi.filereview+'?fileId='+data.id),
                     jsDirectory : '/js/lib/flex/',
                     Scale : 0.8,
                     ZoomTransition : 'easeOut',
@@ -60,6 +60,8 @@
                     localeChain: 'zh_CN'
                 }}
               );            
+          }else if(data.type == 3 || data.type == 4){
+            console.log(data);
           }
         },
         data : {
@@ -97,7 +99,15 @@
       var success = function(d){
         if(d.err == 0){
           var finfo = convent(d.result.data);
-          getReview(id,finfo);
+          if(finfo.type == 8){
+            $.get(config.cgi.filereview,{fileId:id},function(d){
+              finfo.text = d;
+              render(finfo);
+            },'text');
+          }else{
+            render(finfo);
+          }
+          //getReview(id,finfo);
           //render(finfo);
         }else{
           handerObj.triggerHandler('msg:error',d.err);

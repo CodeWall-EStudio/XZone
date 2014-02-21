@@ -140,7 +140,7 @@ define(['config'],function(config){
 	}
 
 	function editMark(id,mark,type,target){
-		handerObj.triggerHandler(type+':edit',{folderId:id,groupId:nowGid,target:target,mark:mark});
+		handerObj.triggerHandler(type+':editmark',{folderId:id,target:target,mark:mark});
 	}
 	/***********************************/
 

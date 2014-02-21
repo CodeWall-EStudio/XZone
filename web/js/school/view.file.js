@@ -293,14 +293,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 								fileId : d.id,
 								name : n
 							};
-							if(nowGid){
+							if(nowGid && nowGid != 0){
 								obj.groupId = nowGid;
 							}
-							handerObj.triggerHandler('file:modify',{
-								fileId : d.id,
-								groupId : nowGid,
-								name : n
-							});
+						
+							handerObj.triggerHandler('file:modify',obj);
 						}
 					}
 				}
@@ -684,6 +681,14 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		
 	}
 
+	function editMark(e,d){
+		if(nowGid){
+			d.groupId = nowGid;
+		}
+		console.log(d);
+		handerObj.triggerHandler('file:edit',d);
+	}	
+
 	var handlers = {
 		//'order:change' : orderChange,
 		'recy:recysuc' : recySuc,	
@@ -709,6 +714,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		'fav:uncollsuc' : uncollSUc,
 		'file:marksuc' : marksuc,
 		'page:next' : pageNext,
+		'file:editmark' : editMark,
 		'file:uploadsuc' : uploadSuc
 	}
 
