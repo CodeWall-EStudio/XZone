@@ -97,7 +97,7 @@ exports.upload = function(req, res){
             }
         });
         mLog.create({
-            fromUserId: creator,
+            fromUserId: loginUser._id,
             fromUserName: loginUser.nick,
 
             fileId: file._id.toString(),
@@ -250,7 +250,7 @@ exports.download = function(req, res){
         res.send();
 
         mLog.create({
-            fromUserId: creator,
+            fromUserId: loginUser._id,
             fromUserName: loginUser.nick,
 
             fileId: file._id.toString(),
@@ -316,7 +316,7 @@ exports.batchDownload = function(req, res){
             archive.file(filePath, { name: file.name });
 
             mLog.create({
-                fromUserId: creator,
+                fromUserId: loginUser._id,
                 fromUserName: loginUser.nick,
 
                 fileId: file._id.toString(),
@@ -398,7 +398,7 @@ exports.preview = function(req, res){
             }
         }// else
         mLog.create({
-            fromUserId: creator,
+            fromUserId: loginUser._id,
             fromUserName: loginUser.nick,
 
             fileId: file._id.toString(),
@@ -1059,7 +1059,8 @@ exports.delete = function(req, res){
 
             // 记录该操作
             mLog.create({
-                fromUserId: creator,
+                fromUserId: loginUser._id,
+                fromUserName: loginUser.nick,
 
                 fileId: file._id.toString(),
                 fileName: file.name,

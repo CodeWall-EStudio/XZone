@@ -6,6 +6,7 @@ var config = require('../config');
 var ERR = require('../errorcode');
 var mFolder = require('../models/folder');
 var mGroup = require('../models/group');
+var mLog = require('../models/log');
 
 exports.create = function(req, res){
     var loginUser = req.loginUser;
@@ -51,12 +52,30 @@ exports.create = function(req, res){
 
     });
     
-    ep.on('create', function(doc){
+    ep.on('create', function(folder){
         res.json({
             err: ERR.SUCCESS,
             result: {
-                data: doc
+                data: folder
             }
+        });
+        // 记录该操作
+        mLog.create({
+            fromUserId: loginUser._id,
+            fromUserName: loginUser.nick,
+
+            folderId: folder._id.toString(),
+            folderName: folder.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+            //11: delete(移动到回收站) 12: 创建文件夹
+            operateType: 12,
+
+            srcFolderId: folderId,
+            // distFolderId: params.targetId,
+            fromGroupId: folder.group && folder.group.oid.toString()
+            // toGroupId: toGroupId
         });
     });
 
@@ -83,8 +102,8 @@ exports.modify = function(req, res){
     // 只能修改自己的
     var params = req.body;
     var folderId = params.folderId;
-
-    params.creator = req.loginUser._id;
+    var loginUser = req.loginUser;
+    params.creator = loginUser._id;
 
     var doc = {};
     if(params.mark){
@@ -125,11 +144,12 @@ exports.modify = function(req, res){
 
     });
 
-    ep.on('checkName', function(result){
+    ep.on('getFolder', 'checkName', function(folder, result){
         if(!result){
             ep.emit('error', 'has the same name in this folder', ERR.DUPLICATE);
             return;
         }
+        var oldFolderName = folder.name;
         mFolder.modify(params, doc, function(err, doc){
             if(err){
                 res.json({ err: ERR.SERVER_ERROR, msg: err});
@@ -137,6 +157,25 @@ exports.modify = function(req, res){
                 res.json({ err: ERR.NOT_FOUND, msg: 'no such folder'});
             }else{
                 res.json({ err: ERR.SUCCESS , result: { data: doc }});
+                // 记录该操作
+                mLog.create({
+                    fromUserId: loginUser._id,
+                    fromUserName: loginUser.nick,
+
+                    folderId: doc._id.toString(),
+                    folderName: oldFolderName,
+                    newFolderName: doc.name,
+
+                    //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                    //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+                    //11: delete(移动到回收站) 12: 创建文件夹
+                    operateType: 5,
+
+                    srcFolderId: folder.parent.oid.toString(),
+                    // distFolderId: params.targetId,
+                    fromGroupId: folder.group && folder.group.oid.toString()
+                    // toGroupId: toGroupId
+                });
             }
         });
     });
@@ -149,8 +188,8 @@ exports.delete = function(req, res){
     var params = req.body;
     var folderIds = params.folderId;
     var groupId = params.groupId;
-
-    var creator = req.loginUser._id;
+    var loginUser = req.loginUser;
+    var creator = loginUser._id;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
@@ -174,6 +213,8 @@ exports.delete = function(req, res){
             groupId: groupId,
             creator: creator
         }, ep.group('delete'));
+        // TODO 这里的 log 未完成
+
     });
 
 }
