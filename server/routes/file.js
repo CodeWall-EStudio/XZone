@@ -379,6 +379,7 @@ exports.save = function(req, res){
             name: msg.fileName,
             type: resource.type,
             size: resource.size,
+            status: 1, //分享过来的文件
             resourceId: resource._id.toString()
         }
 
@@ -519,7 +520,8 @@ function shareToGroup(params, callback){
         file.groupId = toGroupId;
         file.folderId  = toFolderId;
         file.creator = params.creator;
-        
+        file.status = 1; // 分享到小组的文件
+
         mFile.create(file, callback);
 
     });
