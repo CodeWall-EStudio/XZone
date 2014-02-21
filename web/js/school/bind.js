@@ -354,6 +354,30 @@ define(['config'],function(config){
 				});
 			}
 			checkAct();    		
+    	}else if(cmd == 'select'){
+			var tag = target.attr('data-tag');
+			if(tag == 'folds'){
+				$('#fileList .fdclick:checked').each(function(){
+					$(this).attr('checked',true);
+				});
+				$('#fileList .fclick:checked').each(function(){
+					$(this).attr('checked',false);
+				});		
+				$('#fileList .fdclick').each(function(){
+					$(this).attr('checked',true);
+				});
+				$('#fileList .fclick').each(function(){
+					$(this).attr('checked',false);
+				});				
+			}else if(tag == 'files'){
+				$('#fileList .fdclick').each(function(){
+					$(this).attr('checked',false);
+				});
+				$('#fileList .fclick').each(function(){
+					$(this).attr('checked',true);
+				});		
+			}
+			checkAct();    	
     	}
     })
 
@@ -370,6 +394,7 @@ define(['config'],function(config){
 		}
 	});
 
+	//文件和文件夹列表的事件代理
 	$(".table-list").bind('click',function(e){
 
 		var gid = $('#fileList').attr('data-gid') || 0;
