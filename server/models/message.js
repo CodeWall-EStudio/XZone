@@ -49,6 +49,12 @@ exports.delete = function(msgId, callback){
     db.message.findAndRemove({ _id: new ObjectID(msgId)}, [], callback);
 }
 
+exports.modify = function(query, doc, callback){
+
+    db.message.findAndModify(query, [],  { $set: doc }, 
+            { 'new':true}, callback);
+}
+
 exports.getMessage = function(query, callback){
 
     db.message.findOne(query, callback);

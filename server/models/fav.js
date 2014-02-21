@@ -39,8 +39,8 @@ exports.create = function(params, callback){
                 fromFile: DBRef('file', file._id),
                 createTime: Date.now(),
                 updateTime: Date.now(),
-                type: resource.type,
-                size: resource.size
+                type: Number(resource.type) || 0,
+                size: Number(resource.size) || 0
             }
             if(params.groupId){
                 doc.fromGroup = DBRef('group', ObjectID(params.groupId));

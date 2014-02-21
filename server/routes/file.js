@@ -914,4 +914,41 @@ exports.search = function(req, res){
     });
 }
 
+exports.query = function(req, res){
+    var params = req.params;
+    var type = Number(params.type);
+    var creator = req.loginUser._id;
 
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    var query = {};
+
+    if(type === 1){
+        if(!params.groupId){
+            ep.emit('error', 'groupId is required', ERR.PARAM_ERROR);
+            return;
+        }
+        query.creator = creator;
+        query.groupId = params.groupId;
+    }else{
+        ep.emit('error', 'not support query type', ERR.PARAM_ERROR);
+        return;
+    }
+    query.order = params.order;
+    query.page = params.page;
+    query.pageNum = params.pageNum;
+
+    mFile.search(query, ep.doneLater('search'));
+    ep.on('search', function(total, docs){
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                total: total,
+                list: docs
+            }
+        });
+    });
+}

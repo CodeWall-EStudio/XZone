@@ -109,7 +109,19 @@ module.exports = {
         optional: {
             groupId: ObjectID,
             keyword: ['string'],
-            type: ['number'],
+            type: ['number', 0],
+            order: ['object']
+        }
+    },
+    '/api/file/query': {
+        method: GET,
+        require: {
+            type: ['number', 1],
+            page: ['number', 0],
+            pageNum: ['number', 0]
+        },
+        optional: {
+            groupId: ObjectID,
             order: ['object']
         }
     },

@@ -21,14 +21,14 @@ exports.create = function(params, callback){
         creator: DBRef('user', ObjectID(params.creator)),
         createTime: Date.now(),
         updateTime: Date.now(),
-        type: params.type || 0,
-        size: params.size || 0,
+        type: Number(params.type) || 0,
+        size: Number(params.size) || 0,
         content: params.content || '', // 文件说明
         mark: params.mark || '', // 文件评论
         del: false,//是否删除
         isFav: false, // 是否被自己收藏了
         
-        status: params.status || 0, // 0 上传 1 分享
+        status: Number(params.status) || 0, // 0 上传 1 分享
 
         validateText: null,//审核评语
         validateStatus: null, //0 不通过 1 通过
