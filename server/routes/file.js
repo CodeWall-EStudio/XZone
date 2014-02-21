@@ -15,6 +15,7 @@ var mRes = require('../models/resource');
 var mUser = require('../models/user');
 var mGroup = require('../models/group');
 var mMessage = require('../models/message');
+var mLog = require('../models/log');
 var U = require('../util');
 
 
@@ -85,7 +86,7 @@ exports.upload = function(req, res){
         mFile.create(file, ep.done('createFile'));
     });
 
-    ep.all('saveRes', 'createFile', function(savedRes, file){
+    ep.all('getFolder', 'saveRes', 'createFile', function(saveFolder, savedRes, file){
         if(savedRes){
             file.resource = U.filterProp(savedRes, ['_id', 'type', 'size']);
         }
@@ -94,18 +95,40 @@ exports.upload = function(req, res){
             result: {
                 data: file
             }
-        })
+        });
+        mLog.create({
+            fromUserId: creator,
+            fromUserName: loginUser.nick,
+
+            fileId: file._id.toString(),
+            fileName: file.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存
+            operateType: 1, 
+
+            // srcFolderId: null,
+            distFolderId: folderId,
+
+            toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+        });
+
     });
 
     ep.on('updateSpaceUsed', function(){
         U.mkdirsSync(folderPath);
         U.moveFile(body.file_path, filePath, ep.done('moveFile'));
-    })
+    });
 
-    mFile.getFile({
-        name: name,
-        'folder.$id': ObjectID(folderId)
-    }, function(err, file){
+    var oFolderId = ObjectID(folderId);
+    mFolder.getFolder({_id: oFolderId}, ep.doneLater('getFolder'));
+    mFile.getFile({ name: name, 'folder.$id': oFolderId }, ep.doneLater('getFile'));
+
+    ep.all('getFolder', 'getFile', function(folder, file){
+        if(!folder){
+            ep.emit('error', 'no such folder', ERR.NOT_FOUND);
+            return;
+        }
         if(file){
             ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
             return;
@@ -156,7 +179,7 @@ function verifyDownload(params, callback){
         if(file.creator.oid.toString() === creator){
             // 自己的文件, 可以下载
             console.log('download: from self',fileId);
-            ep.emit('checkRight', { file: file, resource: resource });
+            ep.emit('checkRight', { file: file, resource: resource, folder: folder });
         }else{
             // 检查是否是自己收件箱的文件
             mMessage.getMessage({ 
@@ -165,26 +188,31 @@ function verifyDownload(params, callback){
                     { 'fromUser.$id': ObjectID(creator) },
                     { 'toUser.$id': ObjectID(creator) }
                 ]
-            }, function(err, msg){
-                if(msg){ // 是自己收到的, 可以下载
-                    console.log('download: from in out box',fileId);
-                    ep.emit('ready', file, resource);
-                }else if(folder.group){// 检查是否是自己所在小组的
-                    mGroup.isGroupMember(folder.group.oid.toString(), creator, 
-                            ep.done('checkRight', function(hasRight){
-
-                        if(hasRight){
-                            console.log('download: from group',fileId);
-                            return { file: file, resource: resource };
-                        }
-                        return null;
-                    }));
-                }else{ // 没有权限
-                    ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
-                }
-            });
+            }, ep.done('getMessage'));
         }
     });
+
+    ep.all('getFile', 'getFolder', 'getRes', 'getMessage', 
+            function(file, folder, resource, msg){
+
+        if(msg){ // 是自己收到的, 可以下载
+            console.log('download: from in out box',fileId);
+            ep.emit('checkRight', { file: file, resource: resource, folder: folder });
+
+        }else if(folder.group){// 检查是否是自己所在小组的
+            mGroup.isGroupMember(folder.group.oid.toString(), creator, 
+                    ep.done('checkRight', function(hasRight){
+
+                if(hasRight){
+                    console.log('download: from group',fileId);
+                    return { file: file, resource: resource, folder: folder };
+                }
+                return null;
+            }));
+        }else{ // 没有权限
+            ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
+        }
+    })
 
     ep.on('checkRight', function(data){
         if(data){ // 是自己所在小组的
@@ -198,7 +226,8 @@ function verifyDownload(params, callback){
 
 exports.download = function(req, res){
     var fileId = req.query.fileId;
-    var creator = req.loginUser._id;
+    var loginUser = req.loginUser;
+    var creator = loginUser._id;
     
     verifyDownload({
         fileId: fileId,
@@ -208,7 +237,7 @@ exports.download = function(req, res){
             res.json({ err: data || ERR.SERVER_ERROR, msg: err });
             return;
         }
-        var file = data.file, resource = data.resource;
+        var file = data.file, resource = data.resource, folder = data.folder;
         var filePath = path.join('/data/71xiaoxue/', resource.path);
         // console.log('redirect to :' + filePath);
         res.set({
@@ -219,12 +248,30 @@ exports.download = function(req, res){
         });
 
         res.send();
+
+        mLog.create({
+            fromUserId: creator,
+            fromUserName: loginUser.nick,
+
+            fileId: file._id.toString(),
+            fileName: file.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存
+            operateType: 2, 
+
+            srcFolderId: file.folder.oid.toString(),
+            // distFolderId: folderId,
+            fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+        });
     });
 }
 
 exports.batchDownload = function(req, res){
     var fileIds = req.body.fileId;
-    var creator = req.loginUser._id;
+    var loginUser = req.loginUser;
+    var creator = loginUser._id;
 
     if(!fileIds.length){
         res.json({ err: ERR.PARAM_ERROR, msg: 'no file to download' });
@@ -263,8 +310,28 @@ exports.batchDownload = function(req, res){
         archive.pipe(output);
 
         list.forEach(function(data){
-            var filePath = path.join(config.FILE_SAVE_DIR, data.resource.path);
-            archive.file(filePath, { name: data.file.name });
+
+            var file = data.file, resource = data.resource, folder = data.folder;
+            var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
+            archive.file(filePath, { name: file.name });
+
+            mLog.create({
+                fromUserId: creator,
+                fromUserName: loginUser.nick,
+
+                fileId: file._id.toString(),
+                fileName: file.name,
+
+                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                //6: delete 7: 预览 8: 保存
+                operateType: 2, 
+
+                srcFolderId: file.folder.oid.toString(),
+                // distFolderId: folderId,
+                fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+                // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+            });
+
         });
         archive.finalize();
 
@@ -278,7 +345,8 @@ exports.batchDownload = function(req, res){
 
 exports.preview = function(req, res){
     var fileId = req.query.fileId;
-    var creator = req.loginUser._id;
+    var loginUser = req.loginUser;
+    var creator = loginUser._id;
 
     //1. 图片, 直接给url
     //2. 文档, 给出swf url
@@ -293,7 +361,7 @@ exports.preview = function(req, res){
             res.json({ err: data || ERR.SERVER_ERROR, msg: err });
             return;
         }
-        var file = data.file, resource = data.resource;
+        var file = data.file, resource = data.resource, folder = data.folder;
         var filePath = path.join('/data/71xiaoxue/', resource.path);
 
         if(resource.type === 8){//text
@@ -318,7 +386,7 @@ exports.preview = function(req, res){
                 case 3://audio
                 case 4://video
                 case 5://stream
-                    result.url = filePath;
+
                     res.set({
                         'Content-Type': resource.type,
                         'X-Accel-Redirect': filePath
@@ -329,7 +397,22 @@ exports.preview = function(req, res){
                     res.json({ err: ERR.NOT_SUPPORT, msg: 'not support mimes' });
             }
         }// else
+        mLog.create({
+            fromUserId: creator,
+            fromUserName: loginUser.nick,
 
+            fileId: file._id.toString(),
+            fileName: file.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存
+            operateType: 7, 
+
+            srcFolderId: file.folder.oid.toString(),
+            // distFolderId: folderId,
+            fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+        });
     });
 
 }
@@ -394,7 +477,23 @@ exports.save = function(req, res){
             result: {
                 data: file
             }
-        })
+        });
+        mLog.create({
+            fromUserId: loginUser._id,
+            fromUserName: loginUser.nick,
+
+            fileId: file._id.toString(),
+            fileName: file.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存
+            operateType: 8, 
+
+            // srcFolderId: file.folder.oid.toString(),
+            distFolderId: file.folder.oid.toString()
+            // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+        });
     });
 
 }
@@ -467,7 +566,25 @@ function shareToUser(params, callback){
         
         // 创建一条分享消息
         mMessage.create(msg, callback);
-        
+
+        // 记录该操作
+        mLog.create({
+            fromUserId: fromUserId,
+
+            toUserId: toUserId,
+
+            fileId: file._id.toString(),
+            fileName: file.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
+            operateType: 9,
+
+            srcFolderId: file.folder.oid.toString()
+            // distFolderId: file.folder.oid.toString()
+            // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+        });
     });
 }
 
@@ -524,8 +641,25 @@ function shareToGroup(params, callback){
         file.creator = params.creator;
         file.status = 1; // 分享到小组的文件
 
+        var srcFolderId = file.folder.oid.toString();
         mFile.create(file, callback);
 
+        // 记录该操作
+        mLog.create({
+            fromUserId: params.creator,
+
+            fileId: fileId,
+            fileName: file.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
+            operateType: 10,
+
+            srcFolderId: srcFolderId,
+            distFolderId: toFolderId,
+            // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            toGroupId: toGroupId
+        });
     });
     
 }
@@ -649,20 +783,32 @@ function modifyFile(params, callback){
 
     });
 
-    ep.on('checkName', function(result){
+    ep.all('getFile', 'checkName', function(file, result){
         if(!result){
             ep.emit('error', 'has the same fileName in this folder', ERR.DUPLICATE);
             return;
         }
-        mFile.modify(params, doc, function(err, doc){
-            if(err){
-                callback(err, doc);
-            }else if(!doc){
-                callback('no such file', ERR.NOT_FOUND);
-            }else{
-                callback(null, doc);
-            }
+        var oldFileName = file.name;
+        mFile.modify(params, doc, callback);
+
+        // 记录该操作
+        mLog.create({
+            fromUserId: params.creator,
+
+            fileId: file._id.toString(),
+            fileName: oldFileName,
+            newFileName: params.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
+            operateType: 5,
+
+            srcFolderId: file.folder.oid.toString()
+            // distFolderId: toFolderId,
+            // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            // toGroupId: toGroupId
         });
+            
     });
 }
 
@@ -672,17 +818,18 @@ exports.modify = function(req, res){
 
     params.creator = req.loginUser._id;
 
-    modifyFile(params, function(err, doc){
+    modifyFile(params, function(err, file){
         if(err){
-            res.json({ err: doc || ERR.SERVER_ERROR, msg: err});
+            res.json({ err: file || ERR.SERVER_ERROR, msg: err});
             return;
         }
         res.json({
             err: ERR.SUCCESS,
             result: {
-                data: doc
+                data: file
             }
         });
+        
     });
 
 
@@ -738,7 +885,22 @@ function copyFile(params, callback){
         file.creator = params.creator;
         
         mFile.create(file, callback);
+        // 记录该操作
+        mLog.create({
+            fromUserId: params.creator,
 
+            fileId: file._id.toString(),
+            fileName: file.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
+            operateType: 3,
+
+            srcFolderId: file.folder.oid.toString()
+            // distFolderId: toFolderId,
+            // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            // toGroupId: toGroupId
+        });
     });
 }
 
@@ -781,9 +943,15 @@ function moveFile(params, callback){
 
     ep.fail(callback);
 
+    mFile.getFile({ _id: ObjectID(params.fileId) }, ep.doneLater('getFile'));
+
     mFolder.getFolder({ _id: ObjectID(params.targetId) }, ep.doneLater('getFolder'));
 
-    ep.on('getFolder', function(folder){
+    ep.all('getFile', 'getFolder', function(file, folder){
+        if(!file){
+            ep.emit('error', 'no such file', ERR.NOT_FOUND);
+            return;
+        }
         if(!folder){
             ep.emit('error', 'no such target folder', ERR.NOT_FOUND);
             return;
@@ -810,6 +978,22 @@ function moveFile(params, callback){
 
         mFile.modify(params, doc, callback);
 
+        // 记录该操作
+        mLog.create({
+            fromUserId: params.creator,
+
+            fileId: file._id.toString(),
+            fileName: file.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
+            operateType: 4,
+
+            srcFolderId: file.folder.oid.toString(),
+            distFolderId: params.targetId,
+            fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            // toGroupId: toGroupId
+        });
     });
 }
 
@@ -871,7 +1055,28 @@ exports.delete = function(req, res){
         mFile.softDelete({
             fileId: fileId,
             creator: creator
-        }, ep.group('delete'));
+        }, ep.group('delete', function(file){
+
+            // 记录该操作
+            mLog.create({
+                fromUserId: creator,
+
+                fileId: file._id.toString(),
+                fileName: file.name,
+
+                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 11: delete(移动到回收站)
+                operateType: 11,
+
+                srcFolderId: file.folder.oid.toString()
+                // distFolderId: params.targetId,
+                // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+                // toGroupId: toGroupId
+            });
+
+            return file;
+        }));
+        
     });
 
 }

@@ -167,6 +167,7 @@ exports.addHelper(exports, 'folder');
 exports.addHelper(exports, 'fav');
 exports.addHelper(exports, 'board');
 exports.addHelper(exports, 'message');
+exports.addHelper(exports, 'log');
 
 // test code
 // exports.open(function(err, db){
