@@ -929,12 +929,15 @@ exports.query = function(req, res){
     var query = {};
 
     if(type === 1){
-        if(!params.groupId){
-            ep.emit('error', 'groupId is required', ERR.PARAM_ERROR);
-            return;
+        if(params.groupId){
+            query.groupId = params.groupId;
+        }else{
+            query.extendQuery = {
+                group: {$exists: true}
+            };
         }
         query.creator = creator;
-        query.groupId = params.groupId;
+        
     }else{
         ep.emit('error', 'not support query type', ERR.PARAM_ERROR);
         return;
