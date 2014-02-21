@@ -295,38 +295,40 @@ exports.preview = function(req, res){
         }
         var file = data.file, resource = data.resource;
         var filePath = path.join('/data/71xiaoxue/', resource.path);
-        var result = {};
+
         if(resource.type === 8){//text
             fs.readFile(config.FILE_SAVE_DIR + resource.path, function(err, data){
                 if(!data){
-                    ep.emit('error', err || 'can not find this file');
+                    res.json({ err: ERR.NOT_FOUND, msg: 'can not find this file' });
                     return;
                 }
-                result.text = data;
-                res.json({
-                    err: ERR.SUCCESS,
-                    result: result
-                });
+                res.send(data);
             });
 
         }else{
             switch(resource.type){
                 case 2:// 文档
-                    result.url = filePath + '.swf';
+                    res.set({
+                        'Content-Type': 'application/x-shockwave-flash',
+                        'X-Accel-Redirect': filePath + '.swf'
+                    });
+                    res.send();
                     break;
                 case 1://image
                 case 3://audio
                 case 4://video
                 case 5://stream
                     result.url = filePath;
+                    res.set({
+                        'Content-Type': resource.type,
+                        'X-Accel-Redirect': filePath
+                    });
+                    res.send();
                     break;
+                default:
+                    res.json({ err: ERR.NOT_SUPPORT, msg: 'not support mimes' });
             }
-
-            res.json({
-                err: ERR.SUCCESS,
-                result: result
-            });
-        }
+        }// else
 
     });
 
