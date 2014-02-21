@@ -37,7 +37,8 @@ define(function() {
 			filedel : CGI_PATH+'file/delete'+EXT,
 			fileshare : CGI_PATH+'file/share'+EXT,
 			filesave : CGI_PATH+'file/save'+EXT,
-			filereview : CGI_PATH+'file/preview'+EXT,		
+			filereview : CGI_PATH+'file/preview'+EXT,	
+			filequery : CGI_PATH+'file/query'+EXT,//order page pageNum type 1 查询我分享给小组的  groupid
 
 
 			//文件夹
