@@ -35,8 +35,14 @@ function getUserInfo(skey, callback){
             response += chunk;
         });
         res.on('end', function(){
-            callback(null, JSON.parse(response));
-        })
+            try{
+                callback(null, JSON.parse(response));
+            }catch(e){
+                console.err('getUserInfo error: ', e, ' response: ', response);
+                callback('sso error: can not get user info');
+            }
+            
+        });
     });
     req.write(data + '\n');
     req.end();
