@@ -249,10 +249,10 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 			handlers : {
 				'.btn-del' : {
 					'click' : function(){
-						if(!$.isEmptyObject(d.fl)){
+						if(d.fl){
 							handerObj.triggerHandler('file:delfiles',d.fl);
 						}
-						if(!$.isEmptyObject(d.fd)){
+						if(d.fd){
 							handerObj.triggerHandler('fold:delfolds',d.fd);
 						}
 					}
@@ -621,23 +621,17 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 	}
 
 	function recyRef(e,d){
-		var obj = {
-			fileId : d.id
-		}
-		if(nowGid){
-			obj.groupId = nowGid;
-		}
-		handerObj.triggerHandler('file:recyref',obj);
+		handerObj.triggerHandler('file:recyref',{
+			fileId : d.id,
+			groupId : nowGid
+		});
 	}
 
 	function recyDel(e,d){
-		var obj = {
-			fileId : d.id
-		}
-		if(nowGid){
-			obj.groupId = nowGid;
-		}
-		handerObj.triggerHandler('file:recydel',obj);
+		handerObj.triggerHandler('file:recydel',{
+			fileId : d.id,
+			groupId : nowGid
+		});
 	}	
 
 	function recySuc(e,d){
