@@ -118,6 +118,7 @@ exports.formatFileType = function(mimes){
         case 'application/x-7z-compressed':
             return 6;
         // documents
+        case 'application/msword':
         case 'application/postscript':
         case 'application/vnd.msword':
         case 'application/vnd.ms-word':
