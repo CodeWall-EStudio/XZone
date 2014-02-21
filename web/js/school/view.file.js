@@ -1,4 +1,4 @@
-define(['config','helper/view','cache','model.file'],function(config,View,Cache){
+define(['config','helper/view','cache','helper/util','model.file'],function(config,View,Cache,util){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
@@ -289,6 +289,13 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 					'click' : function(){
 						var n = actTarget.find('.obj-name').val();
 						if(n != ''){
+							var obj = {
+								fileId : d.id,
+								name : n
+							};
+							if(nowGid){
+								obj.groupId = nowGid;
+							}
 							handerObj.triggerHandler('file:modify',{
 								fileId : d.id,
 								groupId : nowGid,
@@ -650,6 +657,8 @@ define(['config','helper/view','cache','model.file'],function(config,View,Cache)
 	function uploadSuc(e,d){
 
 		d.fid = d.resource._id;
+		d.size = util.getSize(d.resource.size);
+		d.time = util.time(d.createTime);
 		var target = tmpTarget,
 			act = 0;
 		if(tmpTarget.find('.file').length > 0){

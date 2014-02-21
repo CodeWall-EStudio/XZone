@@ -80,6 +80,8 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 		if((nowFd == 0 || !nowFd) && d.rootFolder){
 			data.fdid = d.rootFolder.id;
 		}
+		data.rootfdid = d.rootFolder.id;
+
 
 		$('#aside .aside-divs').hide();
 		switch(d.type){
@@ -108,6 +110,7 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 		}else{
 	        handerObj.triggerHandler('file:init',data);
 	        handerObj.triggerHandler('fold:init',data); 
+	        handerObj.triggerHandler('upload:param',data);
     	}
 	}
 

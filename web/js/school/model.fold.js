@@ -124,9 +124,9 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				var list = convent(d.result.list);
 				if(target){
 					if(tplid){
-						handerObj.triggerHandler('file:treeload',{list:list,target:target});
+						handerObj.triggerHandler('file:treeload',{list:list,target:target,tplid:tplid});
 					}else{
-						handerObj.triggerHandler('fold:treeload',{list:list,target:target,tplid:tplid});
+						handerObj.triggerHandler('fold:treeload',{list:list,target:target});
 					}
 				}else{
 					handerObj.triggerHandler('fold:load',{list:list});

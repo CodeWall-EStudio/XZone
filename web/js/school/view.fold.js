@@ -52,7 +52,10 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	需要拉根目录下的文件夹
 	*/
 	function makeTree(list,target){
-		foldTarget.html('')
+		//foldTarget.html('');
+		if(target == foldTarget){
+			foldTarget.html('');
+		};
 		var view = new View({
 			target : target,
 			tplid : 'fold.tree',
@@ -77,17 +80,19 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 								p.find('ul').show();
 							}
 							return;
-						}							
-						handerObj.triggerHandler('fold:get',{
-							gid : nowGid,
-							fdid : id,
+						}
+						var obj = {
+							folderId : id,
 							target : p
-						});
+						};
+						if(nowGid){
+							obj.folderId = nowGid;
+						}
+						handerObj.triggerHandler('fold:get',obj);
 					}
 				}
 			}
 		});
-
 		view.appendPanel();			
 	}
 
@@ -301,11 +306,14 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 					'click' : function(){
 						var n = actTarget.find('.obj-name').val();
 						if(n != ''){
-							handerObj.triggerHandler('fold:modify',{
+							var obj = {
 								folderId : d.id,
-								groupId : nowGid,
 								name : n
-							});
+							};
+							if(nowGid){
+								obj.groupId = nowGid;
+							}
+							handerObj.triggerHandler('fold:modify',obj);
 						}
 					}
 				}
