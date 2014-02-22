@@ -108,7 +108,7 @@ exports.batchDelete = function(query, callback){
         }else{
             var proxy = new EventProxy();
             proxy.after('delete', docs.length, function(list){
-                callback(null, U.calculate(list));
+                callback(null, docs.length);
             });
             proxy.fail(callback);
             docs.forEach(function(doc){
