@@ -73,6 +73,7 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		}
 
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				var obj = convent(d.result);
 				handerObj.triggerHandler('cache:set',{key: 'myinfo',data: obj});

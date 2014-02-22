@@ -65,7 +65,8 @@
           }
         },
         data : {
-          data : data
+          data : data,
+          url : config.cgi.filereview
         }
       });
       view.createPanel();

@@ -24,7 +24,11 @@
 						</dl>
 					</td>
 					<td width="90">
+						<%if(type==1){%>
+						<%-item.fname%>
+						<%}else if(type ==2 ){%>
 						<%-item.tname%>
+						<%}%>
 					</td>
 					<td width="90">
 						<%-filetype[item.type]%>

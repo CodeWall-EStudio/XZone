@@ -269,6 +269,7 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 		handerObj.triggerHandler('fold:serach',data);			
 	}	
 
+	//新建文件夹
 	function createFold(e,d){
 		var data = {
 			name : d.name

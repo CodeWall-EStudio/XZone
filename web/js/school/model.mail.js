@@ -26,7 +26,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 
 	function search(e,d){
 		if(d.type == 0){
-			d.type = 0;
+			d.type = parseInt(1);
 			var opt = {
 				cgi : config.cgi.filequery,
 				data : d

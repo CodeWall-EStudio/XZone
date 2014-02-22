@@ -1,4 +1,4 @@
-define(['config','helper/request','helper/util'],function(config,request,util){
+define(['config','helper/request','helper/util','helper/cache'],function(config,request,util,Cache){
 
 	var	handerObj = $(Schhandler);
 
@@ -47,12 +47,13 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var opt = {
 			cgi : config.cgi.foldcreate,
 			data : d
-		}	
+		};
+		var td = d;	
 		var success = function(d){
 			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				var list = convent([d.result.data]);
-				handerObj.triggerHandler('fold:load',{list:list});	
+				handerObj.triggerHandler('fold:load',{list:list,old:td});	
 			}else{
 				
 			}
