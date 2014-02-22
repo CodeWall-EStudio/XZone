@@ -7,6 +7,7 @@ var config = require('../config');
 var ERR = require('../errorcode');
 var db = require('../models/db');
 var mGroup = require('../models/group');
+var U = require('../util');
 
 exports.listGroups = function(req, res){
     var params = req.query;
@@ -117,6 +118,7 @@ exports.listPrepares = function(req, res){
         }, ep.done('findPtGroup'));
         ep.on('findPtGroup', function(group){
             if(!group){
+                console.log('>>>listPrepares, no pt=1 group');
                 ep.emitLater('checkRight', false);
             }else{
                 mGroup.isGroupMember(group._id.toString(), loginUser._id, ep.done('checkRight'));
@@ -126,6 +128,7 @@ exports.listPrepares = function(req, res){
 
     ep.on('checkRight', function(bool){
         if(!bool){
+            ep.emit('error', 'not auth', ERR.NOT_AUTH);
             return;
         }
         db.group.find({

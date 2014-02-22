@@ -331,8 +331,7 @@ exports.download = function(req, res){
     // ep.on('getUserInfoSuccess', function(user){
 
     verifyDownload({
-        fileId: fileId,
-        creator: user._id.toString()
+        fileId: fileId
     }, ep.done('verifyDownloadSucc'));
 
     // });
