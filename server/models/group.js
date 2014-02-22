@@ -95,7 +95,7 @@ exports.getGroupByUser = function(uid, callback){
         }
         var proxy = new EventProxy();
         proxy.after('getGroup', docs.length, function(list){
-            callback(null, list);
+            callback(null, us.compact(list));
         });
 
         proxy.fail(function(err){

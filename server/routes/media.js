@@ -208,14 +208,13 @@ function saveUploadFile(params, callback){
 }
 
 exports.upload = function(req, res){
-    var params = req.query;
-    
+
     var body = req.body;
     var loginUser = req.loginUser;
     var uploadFilePath = body.file_path;
     var skey = req.cookies.skey;
 
-    var activityId = params.activityId;
+    var activityId = body.activityId;
 
     var ep = new EventProxy();
     ep.fail(function(err, code){
@@ -272,123 +271,99 @@ exports.upload = function(req, res){
 
 }
 
-// function verifyDownload(params, callback){
-//     var fileId = params.fileId;
-//     var creator = params.creator;
+function verifyDownload(params, callback){
+    var fileId = params.fileId;
+    var creator = params.creator;
 
-//     var ep = new EventProxy();
+    var ep = new EventProxy();
 
-//     ep.fail(callback);
+    ep.fail(callback);
 
-//     mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
+    mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
 
-//     ep.on('getFile', function(file){
-//         if(!file){
-//             ep.emit('error', 'no such file: ' + fileId, ERR.NOT_FOUND);
-//             return;
-//         }
+    ep.on('getFile', function(file){
+        if(!file){
+            ep.emit('error', 'no such file: ' + fileId, ERR.NOT_FOUND);
+            return;
+        }
         
-//         mFolder.getFolder({ _id: file.folder.oid }, ep.done('getFolder'));
+        mFolder.getFolder({ _id: file.folder.oid }, ep.done('getFolder'));
 
-//         mRes.getResource(file.resource.oid.toString(), ep.done('getRes'));
+        mRes.getResource(file.resource.oid.toString(), ep.done('getRes'));
 
-//     });
+    });
 
-//     ep.all('getFile', 'getFolder', 'getRes', function(file, folder, resource){
-//         if(!resource){
-//             ep.emit('error', 'no such resource: ' + file.resource.oid, ERR.NOT_FOUND);
-//             return;
-//         }
+    ep.all('getFile', 'getFolder', 'getRes', function(file, folder, resource){
+        if(!resource){
+            ep.emit('error', 'no such resource: ' + file.resource.oid, ERR.NOT_FOUND);
+            return;
+        }
+        //FIXME 新媒体文件夹的暂时不做权限检查
+        ep.emit('checkRight', { file: file, resource: resource, folder: folder });
+    });
 
-//         // 检查权限
-//         if(file.creator.oid.toString() === creator){
-//             // 自己的文件, 可以下载
-//             console.log('download: from self',fileId);
-//             ep.emit('checkRight', { file: file, resource: resource, folder: folder });
-//         }else{
-//             // 检查是否是自己收件箱的文件
-//             mMessage.getMessage({ 
-//                 'resource.$id': resource._id,
-//                 $or: [
-//                     { 'fromUser.$id': ObjectID(creator) },
-//                     { 'toUser.$id': ObjectID(creator) }
-//                 ]
-//             }, ep.done('getMessage'));
-//         }
-//     });
+    ep.on('checkRight', function(data){
+        if(data){ // 是自己所在小组的
+            callback(null, data);
+        }else{
+            ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
+        }
+    });
 
-//     ep.all('getFile', 'getFolder', 'getRes', 'getMessage', 
-//             function(file, folder, resource, msg){
+}
 
-//         if(msg){ // 是自己收到的, 可以下载
-//             console.log('download: from in out box',fileId);
-//             ep.emit('checkRight', { file: file, resource: resource, folder: folder });
-
-//         }else if(folder.group){// 检查是否是自己所在小组的
-//             mGroup.isGroupMember(folder.group.oid.toString(), creator, 
-//                     ep.done('checkRight', function(hasRight){
-
-//                 if(hasRight){
-//                     console.log('download: from group',fileId);
-//                     return { file: file, resource: resource, folder: folder };
-//                 }
-//                 return null;
-//             }));
-//         }else{ // 没有权限
-//             ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
-//         }
-//     })
-
-//     ep.on('checkRight', function(data){
-//         if(data){ // 是自己所在小组的
-//             callback(null, data);
-//         }else{
-//             ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
-//         }
-//     });
-
-// }
-
-// exports.download = function(req, res){
-//     var fileId = req.query.fileId;
-//     var loginUser = req.loginUser;
-//     var creator = loginUser._id;
+exports.download = function(req, res){
+    var fileId = req.query.fileId;
+    var skey = req.cookies.skey;
     
-//     verifyDownload({
-//         fileId: fileId,
-//         creator: creator
-//     }, function(err, data){
-//         if(err){
-//             res.json({ err: data || ERR.SERVER_ERROR, msg: err });
-//             return;
-//         }
-//         var file = data.file, resource = data.resource, folder = data.folder;
-//         var filePath = path.join('/data/71xiaoxue/', resource.path);
-//         // console.log('redirect to :' + filePath);
-//         res.set({
-//             'Content-Type': resource.mimes,
-//             'Content-Disposition': 'attachment; filename=' + file.name,
-//             'Content-Length': resource.size,
-//             'X-Accel-Redirect': filePath
-//         });
+    var ep = new EventProxy();
+    ep.fail(function(err, code){
+        res.json({ err: code || ERR.SERVER_ERROR, msg: err });
+    });
 
-//         res.send();
+    if(!skey){
+        ep.emit('error', 'need login', ERR.NOT_LOGIN);
+        return;
+    }
+    getUserInfo(skey, ep.doneLater('getUserInfoSuccess'));
 
-//         mLog.create({
-//             fromUserId: loginUser._id,
-//             fromUserName: loginUser.nick,
+    ep.on('getUserInfoSuccess', function(user){
 
-//             fileId: file._id.toString(),
-//             fileName: file.name,
+        verifyDownload({
+            fileId: fileId,
+            creator: user._id.toString()
+        }, ep.done('verifyDownloadSucc'));
 
-//             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-//             //6: delete 7: 预览 8: 保存
-//             operateType: 2, 
+    });
 
-//             srcFolderId: file.folder.oid.toString(),
-//             // distFolderId: folderId,
-//             fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-//             // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
-//         });
-//     });
-// }
+    ep.on('getUserInfoSuccess', 'verifyDownloadSucc', function(loginUser, data){
+        var file = data.file, resource = data.resource, folder = data.folder;
+        var filePath = path.join('/data/71xiaoxue/', resource.path);
+
+        res.set({
+            'Content-Type': resource.mimes,
+            'Content-Disposition': 'attachment; filename=' + file.name,
+            'Content-Length': resource.size,
+            'X-Accel-Redirect': filePath
+        });
+
+        res.send();
+
+        mLog.create({
+            fromUserId: loginUser._id.toString(),
+            fromUserName: loginUser.nick,
+
+            fileId: file._id.toString(),
+            fileName: file.name,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存
+            operateType: 2, 
+
+            srcFolderId: file.folder.oid.toString(),
+            // distFolderId: folderId,
+            fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+        });
+    });
+}

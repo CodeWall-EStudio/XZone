@@ -126,6 +126,21 @@ module.exports = {
         }
     },
 
+    // media
+    '/api/media/upload': {
+        method: POST,
+        require: {
+            name: ['string', 1],
+            activityId: ['string', 1]
+        }
+    },
+    '/api/media/download': {
+        method: GET,
+        require: {
+            fileId: ObjectID
+        }
+    },
+
     // folder
     '/api/folder/create': {
         method: POST,
