@@ -216,7 +216,7 @@ function deleteFolder(params, callback){
             //11: delete(移动到回收站) 12: 创建文件夹
             operateType: 6,
 
-            srcFolderId: folder.parent.oid.toString(),
+            srcFolderId: folder.parent && folder.parent.oid.toString(),
             // distFolderId: params.targetId,
             fromGroupId: folder.group && folder.group.oid.toString()
             // toGroupId: toGroupId

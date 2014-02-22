@@ -38,7 +38,7 @@ function getUserInfo(skey, callback){
         }else{
             ep.emit('error', 'get userInfo error.');
         }
-    }));
+    });
     
     // 查询 user 数据库, 更新资料
     ep.on('getUserInfoSuccess', function(userInfo){
@@ -336,7 +336,7 @@ exports.download = function(req, res){
 
     });
 
-    ep.on('getUserInfoSuccess', 'verifyDownloadSucc', function(loginUser, data){
+    ep.all('getUserInfoSuccess', 'verifyDownloadSucc', function(loginUser, data){
         var file = data.file, resource = data.resource, folder = data.folder;
         var filePath = path.join('/data/71xiaoxue/', resource.path);
 

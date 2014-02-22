@@ -76,8 +76,11 @@ exports.search = function(params, callback){
         query['toUser.$id'] = ObjectID(userId);
     }else if(type === 2){
         query['fromUser.$id'] = ObjectID(userId);
+    }else if(type === 3){
+        query['toUser.$id'] = ObjectID(userId);
+        query['toUserLooked'] = false;
     }else{
-        callback('params error: type should be 1 or 2', ERR.PARAM_ERROR);
+        callback('params error: type should be 1 , 2 or 3', ERR.PARAM_ERROR);
         return;
     }
     

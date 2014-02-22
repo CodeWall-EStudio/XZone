@@ -486,6 +486,7 @@ exports.save = function(req, res){
         }
 
         mFile.create(file, ep.done('createFile'));
+        mMessage.modify({ _id: msg._id }, { saved: true }, function(){});
     });
 
     ep.on('createFile', function(file){
