@@ -232,7 +232,7 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 						var desc = actTarget.find('.board-input').val();
 						if(desc != ''){
 							handerObj.triggerHandler('board:new',{
-								groupdId : nowGid,
+								groupId : nowGid,
 								content : desc
 							});
 						}						

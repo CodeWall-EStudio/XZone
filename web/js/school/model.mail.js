@@ -24,7 +24,27 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		return list;
 	}
 
+	function conventType(data){
+		var list = [];
+		for(var i=0,l=data.length;i<l;i++){
+			var item = data[i];
+			list.push({
+				id: item._id,
+				fid : item.resource._id,
+				name : item.name,
+				type : item.type,
+				size : util.getSize(item.size || 0),
+				time : util.time(item.createTime),
+				gname : item.group.name,
+				fname : item.folder,
+				content : item.content
+			});
+		}
+		return list;
+	}
+
 	function search(e,d){
+		var type = d.type;
 		if(d.type == 0){
 			d.type = parseInt(1);
 			var opt = {
@@ -39,12 +59,22 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}	
 		var success = function(d){
 			if(d.err == 0){
-				handerObj.triggerHandler('mail:load',{
-					list : convent(d.result.list),
-					ul : d.result.ul,
-					next : d.result.next,
-					total : d.result.total
-				});
+				if(type == 0){
+					handerObj.triggerHandler('mail:load',{
+						list : conventType(d.result.list),
+						ul : d.result.ul,
+						next : d.result.next,
+						total : d.result.total
+					});
+				}else{
+					handerObj.triggerHandler('mail:load',{
+						list : convent(d.result.list),
+						ul : d.result.ul,
+						next : d.result.next,
+						total : d.result.total
+					});					
+				}
+
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}

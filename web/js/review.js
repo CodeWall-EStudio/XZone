@@ -61,7 +61,7 @@
                 }}
               );            
           }else if(data.type == 3 || data.type == 4){
-            console.log(data);
+   
           }
         },
         data : {
