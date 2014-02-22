@@ -168,25 +168,6 @@ exports.isGroupMember = function(groupId, userId, callback){
 }
 
 
-// exports.createGroupRootFolder = function(groupId, callback){
-//     db.group.findOne({ _id: ObjectID(groupId) }, function(err, doc){
-
-//         if(err){
-//             return callback('group "' + groupId + '" is not exist');
-//         }
-//         mFolder.create({ groupId: doc._id.toString() }, function(err, folder){
-//             if(err){
-//                 callback('create group root folder error');
-//             }else{
-//                 doc.rootFolder = DBRef('folder', folder._id);
-
-//                 db.group.findAndModify({ _id: doc._id }, [],  { $set: {rootFolder: doc.rootFolder} }, 
-//                     { 'new':true}, callback)
-//             }
-//         });
-//     });
-// }
-
 exports.modify = function(params, doc, callback){
 
     var nameQuery = {

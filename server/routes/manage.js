@@ -108,29 +108,49 @@ exports.listPrepares = function(req, res){
         res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.on('fetchGroups', function(list){
-        res.json({ err: ERR.SUCCESS , result: {
-            list: list
-        }});
+    // 系统管理员 + pt=1的小组的管理员和成员 才有权限
+    if(U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER)){
+        ep.emitLater('checkRight', true);
+    }else{
+        db.group.findOne({
+            pt: 1
+        }, ep.done('findPtGroup'));
+        ep.on('findPtGroup', function(group){
+            if(!group){
+                ep.emitLater('checkRight', false);
+            }else{
+                mGroup.isGroupMember(group._id.toString(), loginUser._id, ep.done('checkRight'));
+            }
+        });
+    }
+
+    ep.on('checkRight', function(bool){
+        if(!bool){
+            return;
+        }
+        db.group.find({
+            type: 3, // type=3 是备课小组
+            parent: null
+        }, ep.on('findGroupsResult'));
     });
 
-    db.group.find({
-        type: 3, // type=3 是备课小组
-        parent: null
-    }, function(err, result){
-        if(err){
-            ep.emit('error');
-        }else if(result && result.length){
+    ep.on('findGroupsResult', function(result){
+        if(result && result.length){
             ep.after('fetchGroupDetail', result.length, function(list){
-                ep.emit('fetchGroups', result);
-            });
-            ep.fail(function(){
                 ep.emit('fetchGroups', result);
             });
             result.forEach(function(group){
                 fetchGroupDetail(group, ep.done('fetchGroupDetail'));
             });
+        }else{
+            ep.emit('fetchGroups', []);
         }
+    });
+
+    ep.on('fetchGroups', function(list){
+        res.json({ err: ERR.SUCCESS , result: {
+            list: list
+        }});
     });
 }
 
