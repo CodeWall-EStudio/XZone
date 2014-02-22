@@ -5,6 +5,7 @@ var userHelper = require('../helper/user_helper');
 
 var mUser = require('../models/user');
 var mGroup = require('../models/group');
+var mMessage = require('../models/message');
 
 var http = require('http');
 var querystring = require('querystring');
@@ -30,13 +31,17 @@ exports.get = function(req, res){
     mUser.getUserInfoByName(loginUser.name, function(err, user, groups){
         if(err){
             res.json({ err: user || ERR.SERVER_ERROR, msg: err});
-        }else {
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    user: user,
-                    groups: groups
-                }
+        }else{
+            mMessage.getUnReadNum(loginUser._id, function(err, count){
+
+                user.mailnum = count;
+                res.json({
+                    err: ERR.SUCCESS,
+                    result: {
+                        user: user,
+                        groups: groups
+                    }
+                });
             });
         }// end of else 
     });

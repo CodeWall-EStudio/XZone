@@ -99,10 +99,9 @@ exports.search = function(collectionName, query, options, callback){
     var skipNum = pageNum * page;
     if(order){
         order = U.jsonParse(order);
-        console.log('dbSearch', collectionName, 'order', order);
     }
 
-    console.log('dbSearch', collectionName, 'query', query);
+    console.log('>>>search:', collectionName, query, order, page, pageNum);
     exports.getCollection(collectionName, function(err, collection){
         
         var cursor = collection.find(query);

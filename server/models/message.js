@@ -60,6 +60,21 @@ exports.getMessage = function(query, callback){
     db.message.findOne(query, callback);
 }
 
+exports.getUnReadNum = function(userId, callback){
+
+    var query = {
+        'toUser.$id': ObjectID(userId),
+        toUserLooked: false
+    }
+    db.getCollection('message', function(err, collection){
+        
+        var cursor = collection.find(query);
+
+        cursor.count(callback);
+
+    });
+}
+
 exports.search = function(params, callback){
 
     var userId = params.creator || null;
