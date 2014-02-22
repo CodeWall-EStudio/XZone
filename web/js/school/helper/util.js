@@ -58,6 +58,23 @@ define(['../config'], function($, config) {
 	}
 
 	/**
+	**/
+	var transStr = function(str){
+		sStr = str + '';
+		sStr = sStr.replace(/&/g, "&amp;");
+		sStr = sStr.replace(/ /g, "&nbsp;");
+		sStr = sStr.replace(/>/g, "&gt;");
+		sStr = sStr.replace(/</g, "&lt;");
+		sStr = sStr.replace(/\"/g, "&quot;");
+		sStr = sStr.replace(/\'/g, "&#39;");		
+		var string = sStr;
+		string=string.replace(/\t/g,"&nbsp;&nbsp;&nbsp;&nbsp;");
+		string=string.replace(/\r\n/g,"<BR>");
+		string=string.replace(/\n/g,"<BR>");  
+		return string;
+	}
+
+	/**
 	 * 转义html标签
 	 * @param {String} str 需要转义的字符
 	 */
@@ -102,6 +119,7 @@ define(['../config'], function($, config) {
 				evaluate: /<%([\s\S]+?)%>/g,
     			interpolate: /<%=([\s\S]+?)%>/g,
     			escapeattr: /<%\+([\s\S]+?)%>/g,
+    			transstr : /<%\*([\s\S]+?)%>/g,
     			escape: /<%-([\s\S]+?)%>/g
 			},
 			escapes = {
@@ -126,11 +144,12 @@ define(['../config'], function($, config) {
 			var matcher = new RegExp([
       			(setting.escape || noMatch).source,
       			(setting.escapeattr || noMatch).source,
+      			(setting.transstr || noMatch).source,
       			(setting.interpolate || noMatch).source,
       			(setting.evaluate || noMatch).source
     		].join('|') + '|$', 'g');
 
-    		text.replace(matcher, function(match, escape,escapeattr,interpolate, evaluate, offset) {
+    		text.replace(matcher, function(match, escape,escapeattr,transstr,interpolate, evaluate, offset) {
       			source += text.slice(index, offset)
         			.replace(escaper, function(match) {
         				return '\\' + escapes[match]; 
@@ -140,7 +159,10 @@ define(['../config'], function($, config) {
       			}
       			if (escapeattr) {
         			source += "'+\n((__t=(" + escapeattr + "))==null?'':require('helper/util').encodeAttr(__t))+\n'";
-      			}      			
+      			} 
+      			if (transstr) {
+        			source += "'+\n((__t=(" + transstr + "))==null?'':require('helper/util').transStr(__t))+\n'";
+      			}      			     			
       			if (interpolate) {
         			source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
       			}
@@ -307,7 +329,7 @@ define(['../config'], function($, config) {
 	var formatTime = function(time) {
 		var d = new Date(time);
 
-		return d.getFullYear(d)+'-'+(d.getMonth()+1)+'-'+d.getDay() + ' ' + d.getHours()+':'+d.getMinutes();
+		return d.getFullYear(d)+'-'+(d.getMonth()+1)+'-'+d.getDate() + ' ' + d.getHours()+':'+d.getMinutes();
 	}
 
 
@@ -366,6 +388,7 @@ define(['../config'], function($, config) {
 	util.getCookie = getCookie;
 	util.encodeHTML = encodeHTML;
 	util.encodeAttr = encodeAttr;
+	util.transStr = transStr;
 	util.template = template;
 	util.newClass = newClass;
 	util.time = formatTime;

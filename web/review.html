@@ -101,8 +101,11 @@ i.icon-type0{
   		position:absolute;
   		top:640px;
   		width:1000px;
+      left:50%;
   		text-align : center;
   		margin:0 auto;
+      margin-left:-500px;
+      text-align:center;
   	}
   	.file-reivew-act span{
   		display:inline-block;
@@ -130,7 +133,12 @@ i.icon-type0{
   	.zoom-out{
   
   		background:url(/css/imgs/jj.png) no-repeat;
-  	}  	
+  	}  
+    .text-review{
+      width:500px;
+      text-align:left;
+      margin:0 auto;
+    }	
   </style>
 
 </head>
@@ -166,33 +174,7 @@ i.icon-type0{
   <!-- <script type="text/javascript" src="/js/lib/flex/flexpaper_handlers_debug.js"></script>   -->
   <script type="text/javascript" src="/js/player/video.dev.js" charset="utf-8"></script>
   <script>
-    var num = 0;
-    $('.to-left').bind('click',function(){
-      num++;
-      $('#reviewImg').rotate({                          
-            angle: (num-1)*90,
-                      animateTo: num*90,
-          });
-    });
-    $('.to-right').bind('click',function(){
-      num--;
-      $('#reviewImg').rotate({
-        angle: 0-(num-1)*90,
-              animateTo: 0-num*90,
-      });
-    }); 
-    $('.zoom-in').bind('click',function(){
-      $('#reviewImg').css('width',function(i,v){
-        var nv = parseInt(v,10);
-        return nv*0.8;
-      }); 
-    });
-    $('.zoom-out').bind('click',function(){
-      $('#reviewImg').css('width',function(i,v){
-        var nv = parseInt(v,10);
-        return nv*1.2;
-      }); 
-    }); 
+
   </script>
   <script data-main="js/review.js" src="js/lib/require/require.2.1.8.js"></script>
 </body>

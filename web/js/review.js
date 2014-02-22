@@ -60,8 +60,34 @@
                     localeChain: 'zh_CN'
                 }}
               );            
-          }else if(data.type == 3 || data.type == 4){
-   
+          }else if(data.type == 1){
+               var num = 0;
+            $('.to-left').bind('click',function(){
+              num++;
+              $('#reviewImg').rotate({                          
+                    angle: (num-1)*90,
+                              animateTo: num*90,
+                  });
+            });
+            $('.to-right').bind('click',function(){
+              num--;
+              $('#reviewImg').rotate({
+                angle: 0-(num-1)*90,
+                      animateTo: 0-num*90,
+              });
+            }); 
+            $('.zoom-in').bind('click',function(){
+              $('#reviewImg').css('width',function(i,v){
+                var nv = parseInt(v,10);
+                return nv*0.8;
+              }); 
+            });
+            $('.zoom-out').bind('click',function(){
+              $('#reviewImg').css('width',function(i,v){
+                var nv = parseInt(v,10);
+                return nv*1.2;
+              }); 
+            }); 
           }
         },
         data : {

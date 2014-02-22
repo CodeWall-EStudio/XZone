@@ -130,13 +130,14 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		}
 
-		// if(nowGinfo.rootFolder && !nowFd){
-		// 	nowFd = nowGinfo.rootFolder.id;
-		// }
 		if(nowGid && !nowFd){
 			$('#btnZone').hide();
 		}else{
-			$('#btnZone').show();
+			if(nowPrep == 'group'){
+				$('#btnZone').hide();
+			}else{
+				$('#btnZone').show();
+			}
 		}
 
 		//没有fdid  是个人的.
@@ -189,7 +190,6 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 
 	function foldOne(e,d){
 		nowFdInfo = d;
-		console.log(d);
 		crTit(d);
 	}
 
