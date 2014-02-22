@@ -15,7 +15,7 @@ module.exports = exports = {
     SPACE_FULL: 1013,
     DUPLICATE: 1014,
     NOT_MATCH: 1015,
-
+    UNDELETABLE: 1016,
 
     SUCCESS: 0
 }

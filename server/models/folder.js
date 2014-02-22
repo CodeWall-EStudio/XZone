@@ -111,6 +111,25 @@ exports.modify = function(params, doc, callback){
             { 'new':true }, callback);
 }
 
+function deleteFolderAndFiles(oFolderId, callback){
+    db.folder.remove({ _id: oFolderId }, function(err){
+        if(err){
+            console.log('>>>folder.delete [folder]', err);
+            callback(err);
+            return;
+        }
+        mFile.batchDelete({ 'folder.$id': oFolderId }, function(err, count){
+            if(err){
+                console.log('>>>folder.delete [file]', err);
+                callback(err);
+                return;
+            }
+            callback(null, 1 + (count || 0));
+        }); 
+    });
+
+}
+
 exports.delete = function(params, callback){
     var groupId = params.groupId;
     var folderId = params.folderId;
@@ -131,9 +150,8 @@ exports.delete = function(params, callback){
 
     ep.fail(callback);
 
-    db.folder.findAndRemove(query, [], ep.doneLater('findAndRemove'));
-
-    ep.on('findAndRemove', function(folder){
+    db.folder.findOne(query, ep.doneLater('getFolderSucc'));
+    ep.on('getFolderSucc', function(folder){
         if(!folder){
             return ep.emit('error', 'no such folder', ERR.NOT_FOUND);
         }
@@ -145,35 +163,25 @@ exports.delete = function(params, callback){
 
             db.folder.find(query, ep.done('findAllChild'));
         }else{
-            mFile.batchDelete({ 'folder.$id': folder._id }, function(err, count){
-                if(err){
-                    console.log(err);
-                }
-                callback(null, 1 + count);
-            }); 
-        }
-    }); // findAndRemove
+            deleteFolderAndFiles(folder._id, callback);
 
-    ep.all('findAndRemove', 'findAllChild', function(folder, docs){
+        }
+    });
+
+
+    ep.all('getFolderSucc', 'findAllChild', function(folder, docs){
         if(!docs.length){
-            mFile.batchDelete({ 'folder.$id': folder._id }, function(err, count){
-                if(err){
-                    console.log(err);
-                }
-                callback(null, 1 + count);
-            }); 
+            deleteFolderAndFiles(folder._id, callback);
             return;
         }
 
-        ep.after('delete', docs.length * 2, function(list){
+        ep.after('delete', docs.length, function(list){
             callback(null, U.calculate(list) + 1);
         });
 
         docs.forEach(function(doc){
 
-            mFile.batchDelete({ 'folder.$id': doc._id }, ep.group('delete'));
-
-            db.folder.remove({ _id: doc._id }, ep.group('delete'));
+            deleteFolderAndFiles(doc._id, ep.group('delete'));
         });
     });
 }

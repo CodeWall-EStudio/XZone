@@ -41,7 +41,7 @@ exports.updateRef = function(resId, value, callback){
     db.resource.findAndModify({ _id: ObjectID(resId) }, [], 
             { $inc: { ref: value } }, { 'new': true }, function(err, doc){
         if(doc && doc.ref <= 0){ // 引用为0了, 删除文件
-            console.log('!! ref=0, delete resource: ' + doc._id);
+            console.log('>>>resource ref=0, delete it: ' + doc._id);
             db.resource.findAndRemove({ _id: doc._id }, [], callback);
         }else{
             callback(err, doc);
