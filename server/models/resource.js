@@ -3,10 +3,13 @@ var DBRef = require('mongodb').DBRef;
 var EventProxy = require('eventproxy');
 var EventEmitter = require('events').EventEmitter;
 var us = require('underscore');
+var fs = require('fs');
+var path = require('path');
 
 var db = require('./db');
 var ERR = require('../errorcode');
 var U = require('../util');
+var config = require('../config');
 
 exports.create = function(params, callback){
     
@@ -40,9 +43,12 @@ exports.updateRef = function(resId, value, callback){
 
     db.resource.findAndModify({ _id: ObjectID(resId) }, [], 
             { $inc: { ref: value } }, { 'new': true }, function(err, doc){
+                
         if(doc && doc.ref <= 0){ // 引用为0了, 删除文件
             console.log('>>>resource ref=0, delete it: ' + doc._id);
             db.resource.findAndRemove({ _id: doc._id }, [], callback);
+            // 还要删除具体文件
+            fs.unlink(config.FILE_SAVE_DIR + resource.path);
         }else{
             callback(err, doc);
         }
