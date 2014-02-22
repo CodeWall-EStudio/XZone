@@ -1,4 +1,4 @@
-define(['config','helper/view','model.recy'],function(config,View){
+define(['config','helper/view','cache','model.recy'],function(config,View,Cache){
 
 	var	handerObj = $(Schhandler);
 
@@ -26,6 +26,8 @@ define(['config','helper/view','model.recy'],function(config,View){
 	}
 
 	function init(e,d){
+		var myInfo = Cache.get('myinfo');
+
 		action = 1;
 		tmpTarget.html('');
 		crTit();
@@ -34,6 +36,7 @@ define(['config','helper/view','model.recy'],function(config,View){
 		if(d.order){
 			nowOrder = d.order;
 		}
+		nowType = d.type;
 		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		nowKey = d.key || '';
 
@@ -42,7 +45,8 @@ define(['config','helper/view','model.recy'],function(config,View){
 			tplid : 'coll.table.tit',
 			data : {
 				order : nowOds,
-				name : 'myrecy'
+				name : 'myrecy',
+				type : nowType
 			}			
 		});
 		view.createPanel();
@@ -57,7 +61,7 @@ define(['config','helper/view','model.recy'],function(config,View){
 
 	function load(e,d){
 		//nextPage = d.next;
-		if($(".file").length < nowTotal){
+		if($(".file").length < d.total){
 			nextPage += 1;
 		}else{
 			nextPage = 0;

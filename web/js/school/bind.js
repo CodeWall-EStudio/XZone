@@ -423,8 +423,9 @@ define(['config'],function(config){
 				handerObj.triggerHandler('recy:ref',{id:[id]});
 				break; 
 			case 'delcomp': //从回收站彻底删除
-				var id = target.attr('data-id');
-				handerObj.triggerHandler('recy:del',{id:[id]});
+				var id = target.attr('data-id'),
+					size = target.attr('data-size');
+				handerObj.triggerHandler('recy:del',{id:[id],size:[size]});
 				break;				
 			case 'coll':
 				var id = target.attr('data-id');

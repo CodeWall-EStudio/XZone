@@ -40,7 +40,8 @@ define(['config','helper/view','model.coll'],function(config,View){
 			tplid : 'coll.table.tit',
 			data : {
 				order : nowOrder,
-				name : 'mycoll'
+				name : 'mycoll',
+				type : 1
 			}			
 		});
 		view.createPanel();

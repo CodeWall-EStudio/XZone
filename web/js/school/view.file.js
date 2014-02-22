@@ -124,7 +124,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 
 	function fileLoad(e,d){
 		nowTotal = d.total;
-		console.log(nextPage);
 		//nextPage = d.next;
 		if($(".file").length < nowTotal){
 			nextPage += 1;
@@ -637,7 +636,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 
 	function recyDel(e,d){
 		var obj = {
-			fileId : d.id
+			fileId : d.id,
+			size : d.size
 		}
 		if(nowGid){
 			obj.groupId = nowGid;
@@ -646,10 +646,42 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	}	
 
 	function recySuc(e,d){
-		var ids = d.ids;
+
+		var ids = d.ids,
+			size = d.size;
+		var as = 0;
+		for(var i in size){
+			as += size[i];
+		}
 		for(var i in ids){
 			$('.recy'+ids[i]).remove();
 		}
+		var myInfo = Cache.get('myinfo');
+		myInfo.used = parseInt(myInfo.used);
+		myInfo.size = parseInt(myInfo.size);
+		myInfo.used -= as;
+		myInfo.pre = util.getNums(myInfo.used/myInfo.size)*100;
+		if(!myInfo.pre && !myInfo.used){
+			myInfo.pre = 0;
+		}
+		if(myInfo.pre >= 0 && myInfo.pre < 0.01){
+			myInfo.pre = 0.1;
+		}
+		console.log(myInfo);
+		handerObj.triggerHandler('cache:set',{key: 'myinfo',data: myInfo});
+		var view = new View({
+			target : $('#userInfoAside'),
+			tplid : 'my.info',
+			data : myInfo,
+			handlers : {
+				'a.layout' : {
+					click : function(e){
+						window.location = config.cgi.logout;
+					}
+				}
+			}			
+		});
+		view.createPanel();		
 	}	
 
 	function uploadSuc(e,d){

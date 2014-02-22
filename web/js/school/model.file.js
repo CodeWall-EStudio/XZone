@@ -13,7 +13,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				type : item.resource.type,
 				size : util.getSize(item.resource.size),
 				time : util.time(item.createTime),
-				coll : item.coll
+				coll : item.isFav
 			}
 			list.push(td);
 		}
@@ -267,14 +267,15 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function recyDel(e,d){
-		var ids = d.fileId;
+		var ids = d.fileId,
+			size = d.size;
 		var opt = {
 			cgi : config.cgi.recdel,
 			data : d
 		}	
 		var success = function(d){
 			if(d.err == 0){
-				handerObj.triggerHandler('recy:recysuc',{ids:ids});
+				handerObj.triggerHandler('recy:recysuc',{ids:ids,size:size});
 				handerObj.triggerHandler('msg:error',d.err);
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
