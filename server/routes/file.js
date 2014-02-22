@@ -132,7 +132,14 @@ exports.upload = function(req, res){
 
     var oFolderId = ObjectID(folderId);
     mFolder.getFolder({_id: oFolderId}, ep.doneLater('getFolder'));
-    mFile.getFile({ name: name, 'folder.$id': oFolderId }, ep.doneLater('getFile'));
+    // 在同一个文件夹下，不允许出现文件名相同且作者相同的文件。
+    // 文件名相同且作者相同时，比较文件MD5。若MD5相同，提示重复文件，终止写操作；
+    // 若MD5不同，提示改名后继续操作。
+    mFile.getFile({ 
+        name: name, 
+        'folder.$id': oFolderId, 
+        'creator.$id': ObjectID(loginUser._id) 
+    }, ep.doneLater('getFile'));
 
     ep.all('getFolder', 'getFile', function(folder, file){
         if(!folder){

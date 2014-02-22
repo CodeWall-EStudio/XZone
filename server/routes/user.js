@@ -1,6 +1,7 @@
 var CAS = require('../lib/cas');
 var config = require('../config');
 var ERR = require('../errorcode');
+var userHelper = require('../helper/user_helper');
 
 var mUser = require('../models/user');
 var mGroup = require('../models/group');
@@ -16,37 +17,6 @@ var cas = new CAS({
 });
 
 
-function getUserInfo(skey, callback){
-    var data = querystring.stringify({
-        encodeKey: skey
-    });
-    var req = http.request({
-        host: 'mapp.71xiaoxue.com',
-        path: '/components/getUserInfo.htm',
-        method: 'POST',
-        headers: {  
-            "Content-Type": 'application/x-www-form-urlencoded',  
-            "Content-Length": data.length  
-        }  
-    }, function(res){
-        res.setEncoding('utf8');
-        var response = '';
-        res.on('data', function(chunk){
-            response += chunk;
-        });
-        res.on('end', function(){
-            try{
-                callback(null, JSON.parse(response));
-            }catch(e){
-                console.err('getUserInfo error: ', e, ' response: ', response);
-                callback('sso error: can not get user info');
-            }
-            
-        });
-    });
-    req.write(data + '\n');
-    req.end();
-}
 
 exports.gotoLogin = function(req, res){
     var url = cas.getLoginUrl();
@@ -115,7 +85,7 @@ var validateTicket = function(ticket, callback){
         var data = JSON.parse(response);
         var skey = data.encodeKey;
 
-        getUserInfo(skey, ep.done('userInfo', function(data){
+        userHelper.getUserInfo(skey, ep.done('userInfo', function(data){
             if(data.success && data.userInfo){
                 // userInfoProxy.emit('userInfo', data.userInfo);
                 return data.userInfo;

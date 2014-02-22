@@ -41,6 +41,8 @@ if ('development' == app.get('env')) {
 
 app.all('/', routes.verifyAndLogin);
 
+app.all('/api/file/upload', routes.mediaUpload)
+
 // verify authorization
 app.all('/api/*', routes.verify);
 

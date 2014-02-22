@@ -25,6 +25,7 @@ exports.create = function(params, callback){
             updateTime: Date.now(),
             type: 0,
             parent: null,
+            deletable: ('deletable' in params) ? params.deletable : true,
             top: null, //params.topId ? DBRef('folder', params.topId) : null,
             hasChild: false
         };

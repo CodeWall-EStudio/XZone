@@ -183,7 +183,47 @@ exports.modify = function(req, res){
 
 }
 
+function deleteFolder(params, callback){
+    // 检查改目录下是否有不是自己的文件, 有就不能删
+    // 管理员不受限制
+    var ep = new EventProxy();
+    ep.fail(callback);
 
+    mFolder.getFolder({
+        _id: ObjectID(params.folderId), 
+        'creator.$id': ObjectID(params.creator)
+    }, ep.doneLater('getFolderSucc'));
+
+    ep.on('getFolderSucc', function(folder){
+        if(!folder){
+            ep.emit('error', 'no such folder', ERR.NOT_FOUND);
+            return;
+        }
+        if(('deletable' in folder) && !folder.deletable){
+            ep.emit('error', 'can not delete this folder', ERR.NOT_AUTH);
+            return;
+        }
+        //TODO 检查是否有不属于自己的文件, 有就不能删
+        mFolder.delete(params, callback);
+        // 记录该操作
+        mLog.create({
+            fromUserId: params.creator,
+
+            folderId: params.folderId,
+
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+            //11: delete(移动到回收站) 12: 创建文件夹
+            operateType: 6,
+
+            srcFolderId: folder.parent.oid.toString(),
+            // distFolderId: params.targetId,
+            fromGroupId: folder.group && folder.group.oid.toString()
+            // toGroupId: toGroupId
+        });
+    });
+    
+}
 
 exports.delete = function(req, res){
     var params = req.body;
@@ -208,13 +248,12 @@ exports.delete = function(req, res){
 
     folderIds.forEach(function(folderId){
 
-        //TODO 检查是否有不属于自己的文件, 有就不能删
-        mFolder.delete({
+        deleteFolder({
             folderId: folderId,
             groupId: groupId,
             creator: creator
         }, ep.group('delete'));
-        // TODO 这里的 log 未完成
+
 
     });
 

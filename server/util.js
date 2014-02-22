@@ -213,3 +213,4 @@ exports.jsonParse = function(jsonStr){
 exports.hasRight = function(auth, needAuth){
     return auth & needAuth;
 }
+
