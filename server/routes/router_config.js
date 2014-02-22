@@ -334,7 +334,8 @@ module.exports = {
         method: GET,
         require: {
             page: ['number', 0],
-            pageNum: ['number', 0]
+            pageNum: ['number', 0],
+            groupId: ObjectID
         },
         optional: {
             keyword: ['string'],

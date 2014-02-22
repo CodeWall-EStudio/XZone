@@ -60,7 +60,8 @@ exports.search = function(params, callback){
 
     var userId = params.uid || null;
     var keyword = params.keyword || '';
-
+    var groupId = params.groupId;
+    
     var query = {};
 
     if(keyword){
@@ -69,6 +70,9 @@ exports.search = function(params, callback){
 
     if(userId){
         query['creator.$id'] = ObjectID(userId);
+    }
+    if(groupId){
+        query['group.$id'] = ObjectID(groupId);
     }
 
     if('validateStatus' in params){

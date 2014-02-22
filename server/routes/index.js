@@ -30,7 +30,7 @@ function getRouter(path, method){
 }
 
 function getVerifyMsg(field, value, condition){
-    console.log('verifyParams:', field, value, condition);
+    // console.log('verifyParams:', field, value, condition);
     var type = condition[0];
     if(type === 'array'){
         if(!value.forEach){
@@ -91,7 +91,7 @@ function verifyParam(req, map, required, all){
                 return msg;
             }
         }else if(required){
-            console.log('verifyParams:', field, value, condition);
+            // console.log('verifyParams:', field, value, condition);
             return field + ' is required';
         }
     }
