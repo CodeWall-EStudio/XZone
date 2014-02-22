@@ -105,8 +105,8 @@ exports.listPrepares = function(req, res){
     var loginUser = req.loginUser;
 
     var ep = new EventProxy();
-    ep.fail(function(err){
-        res.json({ err: ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
     // 系统管理员 + pt=1的小组的管理员和成员 才有权限
@@ -116,6 +116,7 @@ exports.listPrepares = function(req, res){
         db.group.findOne({
             pt: 1
         }, ep.done('findPtGroup'));
+
         ep.on('findPtGroup', function(group){
             if(!group){
                 console.log('>>>listPrepares, no pt=1 group');
@@ -134,7 +135,7 @@ exports.listPrepares = function(req, res){
         db.group.find({
             type: 3, // type=3 是备课小组
             parent: null
-        }, ep.on('findGroupsResult'));
+        }, ep.done('findGroupsResult'));
     });
 
     ep.on('findGroupsResult', function(result){
