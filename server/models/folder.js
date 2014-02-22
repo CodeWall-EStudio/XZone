@@ -145,7 +145,12 @@ exports.delete = function(params, callback){
 
             db.folder.find(query, ep.done('findAllChild'));
         }else{
-            callback(null, 1);
+            mFile.batchDelete({ 'folder.$id': folder._id }, function(err, count){
+                if(err){
+                    console.log(err);
+                }
+                callback(null, 1 + count);
+            }); 
         }
     }); // findAndRemove
 

@@ -85,7 +85,7 @@ exports.delete = function(params, callback){
     if(params.creator){
         query['creator.$id'] = ObjectID(params.creator);
     }
-
+    console.log('delete file:', query);
     db.file.findAndRemove(query, [], function(err, file){
 
         if(!err && file){ // 将 resource 的引用计数减一
@@ -112,7 +112,7 @@ exports.batchDelete = function(query, callback){
             });
             proxy.fail(callback);
             docs.forEach(function(doc){
-                exports.delete(doc._id, proxy.group('delete'));
+                exports.delete({ fileId: doc._id.toString() }, proxy.group('delete'));
             });
         }
     });

@@ -7,7 +7,7 @@ var GET = 'GET';
 
 module.exports = {
     // file 
-    '/api/file/': {
+    '/api/file': {
         method: GET,
         require: {
             fileId: ObjectID
@@ -154,7 +154,7 @@ module.exports = {
             prepare: ObjectID
         }
     },
-    '/api/folder/': {
+    '/api/folder': {
         method: GET,
         require: {
             folderId: ObjectID
