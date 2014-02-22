@@ -7,6 +7,7 @@ var ERR = require('../errorcode');
 var mFolder = require('../models/folder');
 var mGroup = require('../models/group');
 var mLog = require('../models/log');
+var U = require('../util');
 
 exports.create = function(req, res){
     var loginUser = req.loginUser;

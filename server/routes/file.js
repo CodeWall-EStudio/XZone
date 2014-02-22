@@ -120,7 +120,7 @@ exports.upload = function(req, res){
             // srcFolderId: null,
             distFolderId: folderId,
 
-            toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+            toGroupId: saveFolder.group && saveFolder.group.oid.toString()
         });
 
     });
