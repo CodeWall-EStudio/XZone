@@ -176,6 +176,7 @@ exports.formatFileType = function(mimes){
         case 'audio/mpeg':
         case 'audio/midi':
         case 'audio/ogg':
+        case 'audio/mp3':
         case 'audio/mp4':
         case 'audio/wav':
         case 'audio/x-ms-wma':
