@@ -1,4 +1,4 @@
-define(['config','helper/request','helper/util','helper/cache'],function(config,request,util,Cache){
+define(['config','helper/request','helper/util','cache'],function(config,request,util,Cache){
 
 	var	handerObj = $(Schhandler);
 
