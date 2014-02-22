@@ -90,9 +90,9 @@ exports.modify = function(req, res){
 
     var doc = {};
 
-    // if(params.name){ // 要检查重名
-    //     doc.name = params.name;
-    // }
+    if(params.name){ // 要检查重名
+        doc.name = params.name;
+    }
     if(params.content){
         doc.content = params.content;
     }
@@ -102,6 +102,7 @@ exports.modify = function(req, res){
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
+
 
     mGroup.getGroup(params.groupId, ep.doneLater('getGroup'));
 
@@ -127,7 +128,7 @@ exports.modify = function(req, res){
     });
 
     ep.on('ready', function(){
-        mGroup.modify(params.groupId, doc, function(err, doc){
+        mGroup.modify(params, doc, function(err, doc){
             if(err){
                 res.json({ err: ERR.SERVER_ERROR, msg: err});
             }else if(!doc){

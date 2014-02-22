@@ -18,20 +18,19 @@ exports.create = function(params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
-    var type = Number(params.type) || 0;
-    if(type === 3 && params.parentId){
-        // type = 3 不用验证重名
-        db.group.findOne({ _id: ObjectID(params.parentId) }, ep.done('findGroup'));
-    }else{
-        // 小组的名字要唯一
-        db.group.findOne({ name: params.name }, ep.done('findGroup'));
+    var nameQuery = {
+        name: params.name
     }
+    if(params.parentId){
+        nameQuery.parent = ObjectID(params.parentId);
+    }else{
+        nameQuery.parent = null;
+    }
+    // 小组的名字在同一个group下要唯一
+    db.group.findOne(nameQuery, ep.doneLater('findGroup'));
 
     ep.on('findGroup', function(doc){
-        if(type === 3 && !doc){
-            callback('no such parent group', ERR.NOT_FOUND);
-            return;
-        }else if(doc){
+        if(doc){
             callback('already has a group naming [' + params.name + '] ', ERR.DUPLICATE);
             return;
         }
@@ -188,12 +187,30 @@ exports.isGroupMember = function(groupId, userId, callback){
 //     });
 // }
 
-exports.modify = function(groupId, doc, callback){
+exports.modify = function(params, doc, callback){
 
-    doc.updatetime = Date.now();
+    var nameQuery = {
+        name: params.name
+    }
+    if(params.parentId){
+        nameQuery.parent = ObjectID(params.parentId);
+    }else{
+        nameQuery.parent = null;
+    }
+    // 小组的名字在同一个group下要唯一
+    db.group.findOne(nameQuery, function(err, group){
+        if(err){
+            callback(err);
+        }else if(group){
+            callback('name duplicate', ERR.DUPLICATE);
+        }else{
+            doc.updatetime = Date.now();
 
-    db.group.findAndModify({ _id: new ObjectID(groupId) }, [], { $set: doc }, 
-            { 'new':true }, callback);
+            db.group.findAndModify({ _id: new ObjectID(params.groupId) }, [], { $set: doc }, 
+                    { 'new':true }, callback);
+        }
+    });
+
 
 }
 
