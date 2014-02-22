@@ -1047,7 +1047,8 @@ exports.delete = function(req, res){
 
     var params = req.body;
     var fileIds = params.fileId; 
-    var creator = req.loginUser._id;
+    var loginUser = req.loginUser;
+    var creator = loginUser._id;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
