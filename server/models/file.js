@@ -146,7 +146,8 @@ exports.search = function(params, callback){
     var hasType = 'type' in params;
     var type = Number(params.type) || 0;
 
-    var extendQuery = params.extendQuery || {};
+    var extendQuery = params.extendQuery;
+    var extendDefProps = params.extendDefProps;
 
     var query = { 
         del: false
@@ -167,13 +168,19 @@ exports.search = function(params, callback){
     if(hasType){
         query['type'] = type;
     }
-    query = us.extend(query, extendQuery);
+    if(extendQuery){
+        query = us.extend(query, extendQuery);
+    }
 
     db.search('file', query, params, function(err, total, docs){
         if(err){
             callback(err);
         }else if(total && docs){
-            db.dereferences(docs, { resource: ['_id', 'type', 'size'] }, function(err, docs){
+            var defProps = { resource: ['_id', 'type', 'size'] };
+            if(extendDefProps){
+                defProps = us.extend(defProps, extendDefProps);
+            }
+            db.dereferences(docs, defProps, function(err, docs){
                 if(err){
                     callback(err)
                 }else{

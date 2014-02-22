@@ -1163,6 +1163,12 @@ exports.query = function(req, res){
     query.page = params.page;
     query.pageNum = params.pageNum;
 
+    query.extendDefProps = {
+        folder: ['_id', 'name'],
+        group: ['_id', 'name'],
+        creator: ['_id','nick', 'name']
+    };
+
     mFile.search(query, ep.doneLater('search'));
     ep.on('search', function(total, docs){
         res.json({
