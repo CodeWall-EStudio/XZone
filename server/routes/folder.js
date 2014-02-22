@@ -205,9 +205,9 @@ function deleteFolder(params, callback){
         }
         //TODO 检查是否有不属于自己的文件, 有就不能删
         mFolder.delete(params, callback);
-        if(folder.parent && !folder.parent.oid){
-            console.log('ugly folder: ', folder);
-        }
+        // if(folder.parent && !folder.parent.oid){
+        //     console.log('ugly folder: ', folder);
+        // }
         // 记录该操作
         mLog.create({
             fromUserId: params.creator,
@@ -218,8 +218,8 @@ function deleteFolder(params, callback){
             //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
             //11: delete(移动到回收站) 12: 创建文件夹
             operateType: 6,
-
-            srcFolderId: folder.parent && folder.parent.oid && folder.parent.oid.toString(),
+            // 这里要用 parent._id, 因为 getFolder 方法把它解开了
+            srcFolderId: folder.parent && folder.parent._id && folder.parent._id.toString(),
             // distFolderId: params.targetId,
             fromGroupId: folder.group && folder.group.oid.toString()
             // toGroupId: toGroupId

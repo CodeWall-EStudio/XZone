@@ -103,7 +103,7 @@ exports.delete = function(params, callback){
 exports.batchDelete = function(query, callback){
 
     db.file.find(query, function(err, docs){
-        if(err || !doc || !docs.length){
+        if(err || !docs || !docs.length){
             callback(null, 0);
         }else{
             var proxy = new EventProxy();
