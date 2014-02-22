@@ -142,6 +142,7 @@ exports.formatFileType = function(mimes){
         case 'text/plain':
         case 'text/x-php':
         case 'text/html':
+        case 'text/xml':
         case 'text/javascript':
         case 'text/css':
         case 'text/rtf':
@@ -152,6 +153,10 @@ exports.formatFileType = function(mimes){
         case 'text/x-shellscript':
         case 'text/x-perl':
         case 'text/x-sql':
+        case 'text/x-component':
+        case 'text/vnd.wap.wml':
+        case 'text/vnd.sun.j2me.app-descriptor':
+        case 'text/mathml':
             return 8;
             // images
         case 'image/x-ms-bmp':
@@ -161,6 +166,11 @@ exports.formatFileType = function(mimes){
         case 'image/tiff':
         case 'image/x-targa':
         case 'image/vnd.adobe.photoshop':
+        case 'image/vnd.wap.wbmp':
+        case 'image/x-icon':
+        case 'image/x-jng':
+        case 'image/svg+xml':
+        case 'image/webp':
             return 1;
             //audio
         case 'audio/mpeg':
@@ -169,15 +179,22 @@ exports.formatFileType = function(mimes){
         case 'audio/mp4':
         case 'audio/wav':
         case 'audio/x-ms-wma':
+        case 'audio/x-m4a':
+        case 'audio/x-realaudio':
             return 3;
             // video
-        case 'video/x-msvideo':
-        case 'video/x-dv':
+        case 'video/3gpp':
         case 'video/mp4':
         case 'video/mpeg':
         case 'video/quicktime':
-        case 'video/x-ms-wmv':
+        case 'video/webm':
         case 'video/x-flv':
+        case 'video/x-m4v':
+        case 'video/x-mng':
+        case 'video/x-dv':
+        case 'video/x-ms-asf':
+        case 'video/x-ms-wmv':
+        case 'video/x-msvideo':
         case 'video/x-matroska':
             return 4;
         case 'application/octet-stream':

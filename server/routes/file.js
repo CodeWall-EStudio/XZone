@@ -26,6 +26,20 @@ exports.upload = function(req, res){
     //TODO 如果这个文件夹关闭了上传, 就不能传了
     var body = req.body;
     var loginUser = req.loginUser;
+    var uploadFilePath = body.file_path;
+    var ep = new EventProxy();
+
+    ep.fail(function(err, code){
+        res.json({ err: code || ERR.SERVER_ERROR, msg: err });
+    });
+
+
+    if(!uploadFilePath){
+        ep.emit('error', 'unsupport file type', ERR.NOT_SUPPORT);
+        return;
+    }
+
+    // TODO MD5 重复的监测
 
     //1. 先把文件保存到 data 目录
     var savePath = U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
@@ -40,11 +54,7 @@ exports.upload = function(req, res){
 
     loginUser.used = Number(loginUser.used);
 
-    var ep = new EventProxy();
-
-    ep.fail(function(err, code){
-        res.json({ err: code || ERR.SERVER_ERROR, msg: err });
-    });
+    
 
     ep.on('moveFile', function(){
         // 添加 resource 记录
@@ -117,7 +127,7 @@ exports.upload = function(req, res){
 
     ep.on('updateSpaceUsed', function(){
         U.mkdirsSync(folderPath);
-        U.moveFile(body.file_path, filePath, ep.done('moveFile'));
+        U.moveFile(uploadFilePath, filePath, ep.done('moveFile'));
     });
 
     var oFolderId = ObjectID(folderId);
@@ -1123,7 +1133,7 @@ exports.search = function(req, res){
 }
 
 exports.query = function(req, res){
-    var params = req.params;
+    var params = req.query;
     var type = Number(params.type);
     var creator = req.loginUser._id;
 

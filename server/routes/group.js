@@ -5,6 +5,7 @@ var us = require('underscore');
 var config = require('../config');
 var U = require('../util');
 var ERR = require('../errorcode');
+var db = require('../models/db');
 var mGroup = require('../models/group');
 
 exports.create = function(req, res){
