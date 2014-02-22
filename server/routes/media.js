@@ -213,7 +213,7 @@ exports.upload = function(req, res){
     var loginUser = req.loginUser;
     var uploadFilePath = body.file_path;
     var skey = req.cookies.skey;
-
+    console.log('media upload:', req.cookies);
     var activityId = body.activityId;
 
     var ep = new EventProxy();

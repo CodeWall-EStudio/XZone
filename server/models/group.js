@@ -16,21 +16,29 @@ exports.create = function(params, callback){
     }
 
     var ep = new EventProxy();
-
     ep.fail(callback);
 
-    // 小组的名字要唯一
-    db.group.findOne({ name: params.name }, ep.done('findGroup'));
+    var type = Number(params.type) || 0;
+    if(type === 3 && params.parentId){
+        // type = 3 不用验证重名
+        db.group.findOne({ _id: ObjectID(params.parentId) }, ep.done('findGroup'));
+    }else{
+        // 小组的名字要唯一
+        db.group.findOne({ name: params.name }, ep.done('findGroup'));
+    }
 
     ep.on('findGroup', function(doc){
-        if(doc){
+        if(type === 3 && !doc){
+            callback('no such parent group', ERR.NOT_FOUND);
+            return;
+        }else if(doc){
             callback('already has a group naming [' + params.name + '] ', ERR.DUPLICATE);
             return;
         }
         var doc = {
             name: params.name,
             content: params.content || '',
-            type: Number(params.type) || 0,
+            type: type,
             parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
             creator: DBRef('user', ObjectID(params.creator)),
             status: status, 

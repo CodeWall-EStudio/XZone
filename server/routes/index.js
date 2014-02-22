@@ -8,7 +8,9 @@ var ROUTER_CONFIG = require('./router_config');
 var WHITE_LIST = [
     '/api/user/login',
     '/api/user/gotoLogin',
-    '/api/user/loginSuccess'
+    '/api/user/loginSuccess',
+    '/api/media/upload',
+    '/api/media/download'
 ];
 
 var ADMIN_CGI = '/api/manage/';
