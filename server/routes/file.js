@@ -579,6 +579,9 @@ function shareToUser(params, callback){
             toUserId: toUserId,
             fromUserId: fromUserId,
             fileName: file.name,
+            type: resource.type,
+            size: resource.size,
+
             resourceId: resource._id.toString()
         }
         

@@ -15,6 +15,9 @@ exports.create = function(params, callback){
         toUser: null,
         content: params.content || '',
         fileName: params.fileName || '',
+        type: params.fileType || 0,
+        size: params.fileSize || 0,
+
         resource: DBRef('resource', ObjectID(params.resourceId)),
         // parent: params.parentId ? DBRef('message', ObjectID(params.parentId)) : null,
 
