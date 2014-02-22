@@ -154,9 +154,15 @@ exports.delete = function(params, callback){
         }
     }); // findAndRemove
 
-    ep.on('findAllChild', function(docs){
+    ep.all('findAndRemove', 'findAllChild', function(folder, docs){
         if(!docs.length){
-            return callback(null, 1);
+            mFile.batchDelete({ 'folder.$id': folder._id }, function(err, count){
+                if(err){
+                    console.log(err);
+                }
+                callback(null, 1 + count);
+            }); 
+            return;
         }
 
         ep.after('delete', docs.length * 2, function(list){

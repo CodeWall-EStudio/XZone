@@ -48,12 +48,12 @@ exports.create = function(params, callback){
             return callback(err);
         }
         var file = result[0];
-        db.folder.findAndModify({ _id: ObjectID(folderId) }, [], 
-                { $set: { hasChild: true } }, { 'new':true }, function(err, newFolder){
+        // db.folder.findAndModify({ _id: ObjectID(folderId) }, [], 
+        //         { $set: { hasChild: true } }, { 'new':true }, function(err, newFolder){
             
-            if(err){
-                return callback(err);
-            }
+        //     if(err){
+        //         return callback(err);
+        //     }
             // 将 resource 的引用计数加一
             mRes.updateRef(file.resource.oid.toString(), 1, function(err, newRes){
                 if(err){
@@ -62,7 +62,7 @@ exports.create = function(params, callback){
                 callback(null, file);
             });
 
-        });
+        // });
     });
 }
 

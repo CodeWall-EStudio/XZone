@@ -232,7 +232,7 @@ exports.upload = function(req, res){
     ep.on('getUserInfoSuccess', function(user){
         loginUser = user;
         getFolder({
-            name: 'new media',
+            name: '新媒体资源',
             creator: loginUser._id.toString(),
             parentId: user.rootFolder.oid.toString()
         }, ep.done('getMediaFolderSucc'));

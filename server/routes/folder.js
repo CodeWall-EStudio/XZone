@@ -200,7 +200,7 @@ function deleteFolder(params, callback){
             return;
         }
         if(('deletable' in folder) && !folder.deletable){
-            ep.emit('error', 'can not delete this folder', ERR.NOT_AUTH);
+            ep.emit('error', 'can not delete this folder', ERR.UNDELETABLE);
             return;
         }
         //TODO 检查是否有不属于自己的文件, 有就不能删
