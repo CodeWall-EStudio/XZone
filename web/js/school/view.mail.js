@@ -68,11 +68,11 @@ define(['config','helper/view','model.mail'],function(config,View){
 
 	function load(e,d){
 
-		nextPage = d.next;
+		//nextPage = d.next;
 		nowTotal = d.total;
 
 		if($(".file").length < nowTotal){
-			nextPage = 1;
+			nextPage += 1;
 		}else{
 			nextPage = 0;
 		}

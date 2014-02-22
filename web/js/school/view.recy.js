@@ -29,7 +29,7 @@ define(['config','helper/view','model.recy'],function(config,View){
 		action = 1;
 		tmpTarget.html('');
 		crTit();
-		//nextPage = 0;
+		nextPage = 0;
 
 		if(d.order){
 			nowOrder = d.order;
@@ -57,8 +57,8 @@ define(['config','helper/view','model.recy'],function(config,View){
 
 	function load(e,d){
 		//nextPage = d.next;
-		if($(".file").length < d.total){
-			nextPage = 1;
+		if($(".file").length < nowTotal){
+			nextPage += 1;
 		}else{
 			nextPage = 0;
 		}

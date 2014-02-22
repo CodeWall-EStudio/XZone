@@ -124,9 +124,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 
 	function fileLoad(e,d){
 		nowTotal = d.total;
+		console.log(nextPage);
 		//nextPage = d.next;
 		if($(".file").length < nowTotal){
-			nextPage = 1;
+			nextPage += 1;
 		}else{
 			nextPage = 0;
 		}
