@@ -87,7 +87,7 @@ exports.search = function(params, callback){
     var query = {};
 
     if(keyword){
-        query.content = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
+        query.fileName = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
 
     if(type === 1){
