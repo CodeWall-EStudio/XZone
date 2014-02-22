@@ -69,7 +69,7 @@ exports.search = function(params, callback){
     var query = {};
 
     if(keyword){
-        query.content = new RegExp('.*' + keyword + '.*');
+        query.content = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
 
     if(type === 1){

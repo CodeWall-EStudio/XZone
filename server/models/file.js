@@ -154,7 +154,7 @@ exports.search = function(params, callback){
     };
 
     if(keyword){
-        query['name'] = new RegExp('.*' + keyword + '.*');
+        query['name'] = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
     if(folderId){
         query['folder.$id'] = ObjectID(folderId);

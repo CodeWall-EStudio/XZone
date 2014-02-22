@@ -103,7 +103,7 @@ exports.search = function(params, callback){
     var query = { 
     };
     if(keyword){
-        query['name'] = new RegExp('.*' + keyword + '.*');
+        query['name'] = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
     if(userId){
         query['user.$id'] = ObjectID(userId);

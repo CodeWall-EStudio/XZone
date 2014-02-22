@@ -227,7 +227,7 @@ exports.search = function(params, callback){
         ]
     };
     if(keyword){
-        query['name'] = new RegExp('.*' + keyword + '.*');
+        query['name'] = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
     if(creator){
         query['creator.$id'] = ObjectID(creator);

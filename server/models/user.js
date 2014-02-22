@@ -6,6 +6,7 @@ var db = require('./db');
 var ERR = require('../errorcode');
 var mGroup = require('../models/group');
 var mFolder = require('../models/folder');
+var U = require('../util');
 
 exports.create = function(params, callback){
     var user = {
@@ -85,7 +86,7 @@ exports.search = function(params, callback){
     };
 
     if(keyword){
-        query['nick'] = new RegExp('.*' + keyword + '.*');
+        query['nick'] = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
 
     query = us.extend(query, extendQuery);

@@ -214,3 +214,9 @@ exports.hasRight = function(auth, needAuth){
     return auth & needAuth;
 }
 
+exports.encodeRegexp = function(str){
+
+    return str.replace(/([\.\\\/\+\*\(\)\[\]\?\^\$])/g, function(u, $1){
+        return '\\' + $1;
+    });
+}
