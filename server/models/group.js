@@ -41,7 +41,7 @@ exports.create = function(params, callback){
             parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
             creator: DBRef('user', ObjectID(params.creator)),
             status: status, 
-            pt: params.pt || null,
+            pt: Number(params.pt) || 0,
             tag: params.tag || null,
             grade: params.grade || null,
 

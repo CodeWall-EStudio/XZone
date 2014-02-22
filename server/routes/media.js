@@ -321,22 +321,22 @@ exports.download = function(req, res){
         res.json({ err: code || ERR.SERVER_ERROR, msg: err });
     });
 
-    // 新媒体这里下载先不鉴权
-    // if(!skey){
-    //     ep.emit('error', 'need login', ERR.NOT_LOGIN);
-    //     return;
-    // }
-    // getUserInfo(skey, ep.doneLater('getUserInfoSuccess'));
+    if(!skey){
+        ep.emit('error', 'need login', ERR.NOT_LOGIN);
+        return;
+    }
+    getUserInfo(skey, ep.doneLater('getUserInfoSuccess'));
 
-    // ep.on('getUserInfoSuccess', function(user){
+    ep.on('getUserInfoSuccess', function(user){
 
-    verifyDownload({
-        fileId: fileId
-    }, ep.done('verifyDownloadSucc'));
+        verifyDownload({
+            fileId: fileId,
+            creator: user._id.toString()
+        }, ep.done('verifyDownloadSucc'));
 
-    // });
+    });
 
-    ep.all('verifyDownloadSucc', function(data){
+    ep.all('getUserInfoSuccess', 'verifyDownloadSucc', function(loginUser, data){
         var file = data.file, resource = data.resource, folder = data.folder;
         var filePath = path.join('/data/71xiaoxue/', resource.path);
 
@@ -349,21 +349,21 @@ exports.download = function(req, res){
 
         res.send();
 
-        // mLog.create({
-        //     fromUserId: loginUser._id.toString(),
-        //     fromUserName: loginUser.nick,
+        mLog.create({
+            fromUserId: loginUser._id.toString(),
+            fromUserName: loginUser.nick,
 
-        //     fileId: file._id.toString(),
-        //     fileName: file.name,
+            fileId: file._id.toString(),
+            fileName: file.name,
 
-        //     //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-        //     //6: delete 7: 预览 8: 保存
-        //     operateType: 2, 
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存
+            operateType: 2, 
 
-        //     srcFolderId: file.folder.oid.toString(),
-        //     // distFolderId: folderId,
-        //     fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-        //     // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
-        // });
+            srcFolderId: file.folder.oid.toString(),
+            // distFolderId: folderId,
+            fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+        });
     });
 }
