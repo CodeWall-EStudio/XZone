@@ -101,7 +101,7 @@ exports.delete = function(params, callback){
 }
 
 exports.batchDelete = function(query, callback){
-    console.log('>>>batchDelete query: ', query);
+    
     db.file.find(query, function(err, docs){
         if(err || !docs || !docs.length){
             callback(null, 0);

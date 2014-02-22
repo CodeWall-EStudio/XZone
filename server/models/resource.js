@@ -48,7 +48,7 @@ exports.updateRef = function(resId, value, callback){
             console.log('>>>resource ref=0, delete it: ' + doc._id);
             db.resource.findAndRemove({ _id: doc._id }, [], callback);
             // 还要删除具体文件
-            fs.unlink(config.FILE_SAVE_DIR + resource.path);
+            fs.unlink(config.FILE_SAVE_DIR + doc.path);
         }else{
             callback(err, doc);
         }

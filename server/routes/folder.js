@@ -145,7 +145,7 @@ exports.modify = function(req, res){
 
     });
 
-    ep.on('getFolder', 'checkName', function(folder, result){
+    ep.all('getFolder', 'checkName', function(folder, result){
         if(!result){
             ep.emit('error', 'has the same name in this folder', ERR.DUPLICATE);
             return;

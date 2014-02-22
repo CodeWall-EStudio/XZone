@@ -176,7 +176,7 @@ exports.delete = function(params, callback){
         }
 
         ep.after('delete', docs.length, function(list){
-            callback(null, U.calculate(list) + 1);
+            callback(null, U.calculate(list));
         });
 
         docs.forEach(function(doc){
