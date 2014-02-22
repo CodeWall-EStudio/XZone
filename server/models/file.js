@@ -88,7 +88,7 @@ exports.delete = function(params, callback){
 
     db.file.findAndRemove(query, [], function(err, file){
 
-        if(!err){ // 将 resource 的引用计数减一
+        if(!err && file){ // 将 resource 的引用计数减一
             
             mRes.updateRef(file.resource.oid.toString(), -1, function(err, newRes){
                 callback(null, file);
