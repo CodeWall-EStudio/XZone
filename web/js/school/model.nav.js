@@ -25,6 +25,8 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		}else{
 			o.used = 0;
 		}
+		o.oused = data.user.used;
+		o.osize = data.user.size;
 		o.auth = data.user.auth;
 		o.mailnum = data.user.mailnum;
 		o.group = [];

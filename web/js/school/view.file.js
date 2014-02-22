@@ -657,17 +657,17 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			$('.recy'+ids[i]).remove();
 		}
 		var myInfo = Cache.get('myinfo');
-		myInfo.used = parseInt(myInfo.used);
-		myInfo.size = parseInt(myInfo.size);
-		myInfo.used -= as;
-		myInfo.pre = util.getNums(myInfo.used/myInfo.size)*100;
-		if(!myInfo.pre && !myInfo.used){
+		myInfo.oused = parseInt(myInfo.oused);
+		myInfo.osize = parseInt(myInfo.osize);
+		myInfo.oused -= as;
+		myInfo.pre = util.getNums(myInfo.oused/myInfo.osize)*100;
+		myInfo.used = util.getSize(myInfo.oused);
+		if(!myInfo.pre && !myInfo.oused){
 			myInfo.pre = 0;
 		}
 		if(myInfo.pre >= 0 && myInfo.pre < 0.01){
 			myInfo.pre = 0.1;
 		}
-		console.log(myInfo);
 		handerObj.triggerHandler('cache:set',{key: 'myinfo',data: myInfo});
 		var view = new View({
 			target : $('#userInfoAside'),
