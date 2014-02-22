@@ -326,17 +326,16 @@ define(['../config'], function($, config) {
 		var f_x = parseFloat(x);  
 		if (isNaN(f_x))  
 		{  
-		alert('function:changeTwoDecimal->parameter error');  
-		return false;  
+		//alert('function:changeTwoDecimal->parameter error');  
+			return 0;  
 		}  
 		var f_x = Math.round(x*100)/100;  
 		var s_x = f_x.toString();  
 		var pos_decimal = s_x.indexOf('.');  
+		
 		if (pos_decimal < 0)  
 		{
-			return f_x;  
-			// pos_decimal = s_x.length;  
-			// s_x += '.';  
+			return f_x;
 		}  
 		while (s_x.length <= pos_decimal + 2)  
 		{  
@@ -373,6 +372,7 @@ define(['../config'], function($, config) {
 	util.cookie = cookie;
 	util.getParam = getParam;
 	util.getSize = getSize;
+	util.getNums = getNums;
 
 	return util;
 

@@ -356,25 +356,19 @@ define(['config'],function(config){
 			checkAct();    		
     	}else if(cmd == 'select'){
 			var tag = target.attr('data-tag');
-			if(tag == 'folds'){
-				$('#fileList .fdclick:checked').each(function(){
-					$(this).attr('checked',true);
-				});
-				$('#fileList .fclick:checked').each(function(){
-					$(this).attr('checked',false);
-				});		
+			if(tag == 'folds'){	
 				$('#fileList .fdclick').each(function(){
-					$(this).attr('checked',true);
+					$(this)[0].checked = true;
 				});
 				$('#fileList .fclick').each(function(){
-					$(this).attr('checked',false);
+					$(this)[0].checked = false;
 				});				
 			}else if(tag == 'files'){
 				$('#fileList .fdclick').each(function(){
-					$(this).attr('checked',false);
+					$(this)[0].checked = false;
 				});
 				$('#fileList .fclick').each(function(){
-					$(this).attr('checked',true);
+					$(this)[0].checked = true;
 				});		
 			}
 			checkAct();    	

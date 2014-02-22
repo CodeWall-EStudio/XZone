@@ -188,8 +188,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	function foldOne(e,d){
-		//console.log(d,nowFd);
 		nowFdInfo = d;
+		console.log(d);
 		crTit(d);
 	}
 

@@ -127,7 +127,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var opt = {
 			cgi : config.cgi.boarddel,
 			data : {
-				id : d.id
+				boardId : d.boardId
 			}
 		}
 		var success = function(d){

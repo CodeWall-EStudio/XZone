@@ -37,7 +37,7 @@
 								<%}else{%>
 								<a href="#gid=<%+item.id%>" title="<%+item.name %>"><%-item.name%></a>
 								<%}%>
-								<%if(item.auth){%>
+								<%if(item.auth && !item.pt){%>
 									<span><a data-id="<%+item.id%>" class="manage-one-group">管理</a></span>
 								<%}%>
 							</li>						

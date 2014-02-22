@@ -6,7 +6,7 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 
 		var o = {};
 		o.nick = data.user.nick;
-		o.pre = Math.round(data.user.used/data.user.size*100)/100;
+		o.pre = util.getNums(data.user.used/data.user.size)*100;
 		if(!o.pre){
 			o.pre = 0;
 		}

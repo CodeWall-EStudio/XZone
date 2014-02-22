@@ -220,7 +220,7 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 					if(cmd == 'del'){
 						var id = target.attr('data-id');
 						handerObj.triggerHandler('board:del',{
-							id : id,
+							boardId : id,
 							target : target
 						});
 					}
@@ -316,15 +316,13 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 		if(!d.list.length){
 			return;
 		}
+		console.log(d);
 		var view = new View({
 			target : $("#boardList"),
 			tplid : 'board.list',
 			after : function(){
-				if(d.next){
-					actTarget.find('.page-zone').text('下一页').attr('data-next',d.next);
-				}
-				if(d.keyword){
-					actTarget.find('.page-zone').text('下一页').attr('data-key',d.keyword);
+				if(d.keyword && d.next){
+					actTarget.find('.page-zone').text('更多文件').attr('data-key',d.keyword);
 				}
 			},
 			data : {

@@ -612,6 +612,7 @@ a{
 }
 .group-desc p{
 	padding:10px 0;
+	word-break:break-word;
 }
 .group-board{
 	padding:20px 8px;
