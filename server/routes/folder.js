@@ -131,7 +131,7 @@ exports.modify = function(req, res){
         if(params.name){
             mFolder.getFolder({
                 name: params.name,
-                'parent.$id': folder.parent.oid
+                'parent.$id': folder.parent._id
             }, function(err, doc){
                 if(doc){
                     ep.emit('checkName', false);
@@ -172,7 +172,7 @@ exports.modify = function(req, res){
                     //11: delete(移动到回收站) 12: 创建文件夹
                     operateType: 5,
 
-                    srcFolderId: folder.parent.oid.toString(),
+                    srcFolderId: folder.parent._id,
                     // distFolderId: params.targetId,
                     fromGroupId: folder.group && folder.group.oid.toString()
                     // toGroupId: toGroupId
