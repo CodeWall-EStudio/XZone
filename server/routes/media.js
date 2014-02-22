@@ -211,11 +211,12 @@ exports.upload = function(req, res){
     var loginUser;
     var uploadFilePath = body.file_path;
     var skey = req.cookies.skey;
-    console.log('media upload:', req.cookies);
+    console.log('>>>media upload:', req.cookies);
     var activityId = body.activityId;
 
     var ep = new EventProxy();
     ep.fail(function(err, code){
+        console.log('>>>media upload error:',{ err: code || ERR.SERVER_ERROR, msg: err });
         res.json({ err: code || ERR.SERVER_ERROR, msg: err });
     });
 
@@ -259,6 +260,7 @@ exports.upload = function(req, res){
     });
 
     ep.on('saveFileSuccess', function(file){
+        console.log('>>>media upload success:',file);
         res.json({
             err: ERR.SUCCESS,
             result: {

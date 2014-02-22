@@ -1,7 +1,7 @@
 var ERR = require('../errorcode');
 var routeUser = require('./user');
 var U = require('../util');
-var CFG = require('../config');
+// var CFG = require('../config');
 
 var ROUTER_CONFIG = require('./router_config');
 
@@ -14,6 +14,7 @@ var WHITE_LIST = [
 ];
 
 var ADMIN_CGI = '/api/manage/';
+var MEDIA_UPLOAD_CGI = '/api/media/upload';
 
 function getRouter(path, method){
 
@@ -137,11 +138,11 @@ exports.verify = function(req, res, next){
             res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
             return;
         }
-        if(path.indexOf(ADMIN_CGI) > -1 && !U.hasRight(loginUser.auth, CFG.AUTH_MANAGER)){
-            // 是后台管理的 cgi
-            res.json({err: ERR.NOT_AUTH, msg: 'not auth'});
-            return;
-        }
+        // if(path.indexOf(ADMIN_CGI) > -1 && !U.hasRight(loginUser.auth, CFG.AUTH_MANAGER)){
+        //     // 是后台管理的 cgi
+        //     res.json({err: ERR.NOT_AUTH, msg: 'not auth'});
+        //     return;
+        // }
         req.loginUser = loginUser;
         next();
     }
@@ -176,7 +177,7 @@ exports.mediaUpload = function(req, res, next){
     var type = Number(params.media) || 0;
     if(type === 1){
         // 新媒体的上传, 路由到 media/upload
-        getRouter('/api/media/upload', req.method)(req, res, next);
+        getRouter(MEDIA_UPLOAD_CGI, req.method)(req, res, next);
         // res.redirect('/api/media/upload');
     }else{
         next();

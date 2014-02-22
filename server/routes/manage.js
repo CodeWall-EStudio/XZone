@@ -10,6 +10,13 @@ var mGroup = require('../models/group');
 
 exports.listGroups = function(req, res){
     var params = req.query;
+    var loginUser = req.loginUser;
+
+    if(!U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER)){
+        // 系统管理员才有权限审核小组
+        res.json({err: ERR.NOT_AUTH, msg: 'not auth'});
+        return;
+    }
 
     if(params.status  === 1){
         params.extendQuery = {
@@ -33,6 +40,13 @@ exports.listGroups = function(req, res){
 exports.approveGroup = function(req, res){
     var params = req.query;
     var loginUser = req.loginUser;
+
+    if(!U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER)){
+        // 系统管理员才有权限审核小组
+        res.json({err: ERR.NOT_AUTH, msg: 'not auth'});
+        return;
+    }
+
     var doc = {
         status: 0,
         validateText: params.validateText || '',//审核评语
@@ -87,17 +101,17 @@ function fetchGroupDetail(group, callback){
 }
 
 exports.listPrepares = function(req, res){
+    var loginUser = req.loginUser;
 
     var ep = new EventProxy();
+    ep.fail(function(err){
+        res.json({ err: ERR.SERVER_ERROR, msg: err});
+    });
 
     ep.on('fetchGroups', function(list){
         res.json({ err: ERR.SUCCESS , result: {
             list: list
         }});
-    });
-
-    ep.fail(function(err){
-        res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
 
     db.group.find({
@@ -120,21 +134,4 @@ exports.listPrepares = function(req, res){
     });
 }
 
-// exports.searchFiles = function(req, res){
-//     var params = req.query;
-
-//     mFile.search(params, function(err, total, docs){
-//         if(err){
-//             res.json({ err: ERR.SERVER_ERROR, msg: err});
-//         }else{
-//             res.json({
-//                 err: ERR.SUCCESS,
-//                 result: {
-//                     total: total,
-//                     list: docs
-//                 }
-//             });
-//         }
-//     });
-// }
 

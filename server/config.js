@@ -42,8 +42,8 @@ exports.JOD_CONVERTER = '/var/run/jodconverter/lib/jodconverter-core-3.0-beta-4.
 exports.AUTH_USER = 0x0;
 exports.AUTH_GROUP_MANAGER = 0X1;
 exports.AUTH_DEPART_MANAGER = 0X2;
-exports.AUTH_MANAGER = 0X4 | 0x2 | 0x1;
-exports.AUTH_SYS_MANAGER = 0X8 | 0x4 | 0x2 | 0x1;
+exports.AUTH_MANAGER = 0X4;
+exports.AUTH_SYS_MANAGER = 0X8;
 
 
 
