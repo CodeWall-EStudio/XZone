@@ -287,7 +287,7 @@ exports.search = function(req, res){
     var folderId = params.folderId;
     var groupId = params.groupId || null;
 
-    params.creator = req.loginUser._id;
+    var loginUser = req.loginUser;
     
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
@@ -299,6 +299,7 @@ exports.search = function(req, res){
         mGroup.isGroupMember(groupId, params.creator, ep.doneLater('checkRight'));
 
     }else{ // 检查该用户是否是该文件夹所有者
+        params.creator = loginUser._id;
         mFolder.isFolderCreator(folderId, params.creator, ep.doneLater('checkRight'));
     }
 

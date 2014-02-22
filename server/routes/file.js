@@ -1106,9 +1106,8 @@ exports.search = function(req, res){
     var params = req.query;
     var folderId = params.folderId;
     var groupId = params.groupId || null;
+    var loginUser = req.loginUser;
 
-    params.creator = req.loginUser._id;
-    
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
@@ -1116,9 +1115,10 @@ exports.search = function(req, res){
 
     // 检查文件夹是否是该用户的, 以及 该用户是否是小组成员
     if(groupId){ // 检查该用户是否是小组成员
-        mGroup.isGroupMember(groupId, params.creator, ep.doneLater('checkRight'));
+        mGroup.isGroupMember(groupId, loginUser._id, ep.doneLater('checkRight'));
 
     }else{ // 检查该用户是否是该文件夹所有者
+        params.creator = loginUser._id;
         mFolder.isFolderCreator(folderId, params.creator, ep.doneLater('checkRight'));
     }
 
