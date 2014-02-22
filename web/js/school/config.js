@@ -39,6 +39,7 @@ define(function() {
 			filesave : CGI_PATH+'file/save'+EXT,
 			filereview : CGI_PATH+'file/preview'+EXT,	
 			filequery : CGI_PATH+'file/query'+EXT,//order page pageNum type 1 查询我分享给小组的  groupid
+			//batchDownload
 
 
 			//文件夹
