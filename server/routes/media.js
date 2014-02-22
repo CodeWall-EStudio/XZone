@@ -111,6 +111,9 @@ function saveUploadFile(params, callback){
 
     loginUser.used = Number(loginUser.used);
 
+    var ep = new EventProxy();
+    ep.fail(callback);
+
     var oFolderId = ObjectID(folderId);
     mFolder.getFolder({_id: oFolderId}, ep.doneLater('getFolder'));
     // 在同一个文件夹下，不允许出现文件名相同且作者相同的文件。
@@ -180,12 +183,7 @@ function saveUploadFile(params, callback){
         if(savedRes){
             file.resource = U.filterProp(savedRes, ['_id', 'type', 'size']);
         }
-        res.json({
-            err: ERR.SUCCESS,
-            result: {
-                data: file
-            }
-        });
+        callback(null, file);
         mLog.create({
             fromUserId: loginUser._id.toString(),
             fromUserName: loginUser.nick,
@@ -210,7 +208,7 @@ function saveUploadFile(params, callback){
 exports.upload = function(req, res){
 
     var body = req.body;
-    var loginUser = req.loginUser;
+    var loginUser;
     var uploadFilePath = body.file_path;
     var skey = req.cookies.skey;
     console.log('media upload:', req.cookies);
@@ -232,10 +230,10 @@ exports.upload = function(req, res){
     getUserInfo(skey, ep.doneLater('getUserInfoSuccess'));
 
     ep.on('getUserInfoSuccess', function(user){
-
+        loginUser = user;
         getFolder({
             name: 'new media',
-            creator: loginUser._id,
+            creator: loginUser._id.toString(),
             parentId: user.rootFolder.oid.toString()
         }, ep.done('getMediaFolderSucc'));
 
@@ -244,17 +242,17 @@ exports.upload = function(req, res){
     ep.on('getMediaFolderSucc', function(mediaFolder){
         getFolder({
             name: activityId,
-            creator: loginUser._id,
+            creator: loginUser._id.toString(),
             parentId: mediaFolder._id.toString()
         }, ep.done('getActFolderSucc'));
     });
     
-    ep.all('getUserInfoSuccess', 'getActFolderSucc', function(user, activityFolder){
+    ep.on('getActFolderSucc', function(activityFolder){
         var folderId = activityFolder._id.toString();
 
         saveUploadFile({
             folderId: folderId,
-            loginUser: user,
+            loginUser: loginUser,
             body: body
         }, ep.done('saveFileSuccess'));
 

@@ -176,7 +176,8 @@ exports.mediaUpload = function(req, res, next){
     var type = Number(params.media) || 0;
     if(type === 1){
         // 新媒体的上传, 路由到 media/upload
-        res.redirect('/api/media/upload');
+        getRouter('/api/media/upload', req.method)(req, res, next);
+        // res.redirect('/api/media/upload');
     }else{
         next();
     }
