@@ -38,6 +38,9 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		o.rootFolder.id = data.user.rootFolder['$id'];
 		for(var i =0,l=data.groups.length;i<l;i++){
 			var item = data.groups[i];
+			if(!item){
+				continue;
+			}
 			item.id = item._id;
 			if(item.rootFolder){
 				item.rootFolder.id = item.rootFolder._id;
@@ -73,11 +76,12 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		}
 
 		var success = function(d){
-			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				var obj = convent(d.result);
 				handerObj.triggerHandler('cache:set',{key: 'myinfo',data: obj});
 				handerObj.triggerHandler('nav:load',obj);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
 			}
 		}
 		request.get(opt,success);

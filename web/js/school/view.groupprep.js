@@ -115,7 +115,7 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 				grade : nowGrade,
 				uid : nowUid				
 			}
-		});
+		});　
 		view.createPanel();
 		
 	}

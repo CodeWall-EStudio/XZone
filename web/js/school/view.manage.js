@@ -63,7 +63,12 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 	}
 
 	function groupLoad(e,d){
-
+		if(d.school){
+			$('.group-type').eq(0).attr('disabled',true);
+		}
+		if(d.haspt){
+			$('.prep-type').attr('disabled',true);
+		}
 		var view = new View({
 			target : $('#prepYearList'),
 			tplid : 'manage.prep.year',
@@ -130,7 +135,7 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 	});
 
 	$('#newGroupBtn').bind('click',function(e){
-		var gn = $('#groupNmae').val(),
+		var gn = $('#groupName').val(),
 			type = parseInt($('.group-type:checked').val()),
 			desc = $("#desc").val();
 
@@ -242,8 +247,10 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 		var v = $(this).val();
 		if(v == 1){
 			$('#prepTag').removeClass('hide');
+			$('#groupName').attr('disabled',true);
 		}else{
 			$('#prepTag').addClass('hide');
+			$('#groupName').attr('disabled',false);
 		}
 	});
 

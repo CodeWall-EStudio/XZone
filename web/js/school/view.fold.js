@@ -1,4 +1,4 @@
-define(['config','helper/view','model.fold'],function(config,View,model){
+define(['config','helper/view','cache','model.fold'],function(config,View,Cache){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
@@ -196,14 +196,29 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 	function foldLoad(e,d){
 		//个人的首页
 		if(!nowGid){ // && !nowFd){
+
 			if(!nowFd || nowFd == rootFd){
-				makeTree(d.list,foldTarget);
-				handerObj.triggerHandler('cache:set',{key: 'myfold',data:d.list});
+                if(d.pid == rootFd){
+                	var fl = Cache.get('myfold');
+                	fl.push(d.list[0]);
+                	makeTree(fl,foldTarget);
+					handerObj.triggerHandler('cache:set',{key: 'myfold',data:fl});                	
+                }else{
+					makeTree(d.list,foldTarget);
+					handerObj.triggerHandler('cache:set',{key: 'myfold',data:d.list});
+				}
 			}
 		}else if(nowGinfo.rootFolder){
 			if(nowGinfo.rootFolder.id == nowFd){
-				makeTree(d.list,foldTarget);
-				handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:d.list});
+				if(d.pid == rootFd){
+                	var fl = Cache.get('rootFolder'+nowGid);
+                	fl.push(d.list[0]);
+                	makeTree(fl,foldTarget);
+					handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:fl});
+				}else{
+					makeTree(d.list,foldTarget);
+					handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:d.list});
+				}
 			}else{
 				var obj = {
 					groupId : nowGid,
@@ -212,12 +227,10 @@ define(['config','helper/view','model.fold'],function(config,View,model){
 				if(nowGinfo.rootFolder){
 					obj.folderId = nowGinfo.rootFolder.id;
 				}
-				console.log(obj);
 				handerObj.triggerHandler('fold:get',obj);
 			
 			}
 		}else{
-			//console.log(1234);
 		}
 
 		var view = new View({

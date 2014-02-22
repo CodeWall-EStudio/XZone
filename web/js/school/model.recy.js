@@ -10,7 +10,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				fid : item.fid,
 				name : item.name,
 				mark : item.mark,
-				size : item.size,
+				size : util.getSize(item.size),
 				type : item.type,
 				time : util.time(item.createTime),
 				coll : item.coll

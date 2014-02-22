@@ -53,7 +53,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				var list = convent([d.result.data]);
-				handerObj.triggerHandler('fold:load',{list:list,old:td});	
+				handerObj.triggerHandler('fold:load',{list:list,pid:d.result.data.parent['$id']});	
 			}else{
 				
 			}

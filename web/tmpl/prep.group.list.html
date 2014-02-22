@@ -7,13 +7,12 @@
 					if((grade != 0 && item.grade != grade) || (tag != 0 && item.tag != tag) ){
 						continue;
 					}
-
 					var members = item.members;
 					for(var j=0,l=members.length;j<l;j++){
-						if(uid != 0 && members[j] != uid){
+						if(uid != 0 && members[j]._id != uid){
 							continue;
 						}
-						var nick = ul[members[j]].nick,
+						var nick = ul[members[j]._id].nick || '',
 							nuid = members[j];
 		%>
 		<tr class="fold fold<%+item.id%>">

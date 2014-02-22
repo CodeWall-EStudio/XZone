@@ -88,8 +88,17 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			if(d.err == 0){
 				var list = d.result.list;
 				var prep = [];
+				var school = 0;
+				var pt = 0;
 				for(var i in list){
 					list[i] = conventGroup(list[i]);
+					if(list[i].type == 0){
+						school = 1;
+					}
+
+					if(list[i].pt){
+						pt = 1;
+					}
 					if(list[i].type == 3 && !list[i].parent){
 						prep.push(list[i]);
 					}
@@ -97,7 +106,9 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				//handerObj.triggerHandler('cache:set',{key: 'myinfo',data: obj});
 				handerObj.triggerHandler('manage:groupload',{
 					list : list,
-					prep : prep
+					prep : prep,
+					school: school,
+					haspt : pt
 				});
 			}
 		}
@@ -112,6 +123,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var id = d.groupId;
 		var type = d.validateStatus;
 		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				handerObj.triggerHandler('manage:appsuc',{
 					id : id,
