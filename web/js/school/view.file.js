@@ -438,13 +438,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			},
 			after : function(){
 				$("#actWin").modal('show');
-			},
-			handlers : {
-				'.list-link' : {
-					'click' : aLinkClick
-				},
-				'.plus' : {
-					'click' : function(e){
+				actTarget.find('.plus').unbind().bind('click',function(e){
 						var target = $(e.target),
 							id = target.attr('data-id');
 
@@ -468,7 +462,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 								tplid : 1
 							});
 						}
-					}
+				});
+			},
+			handlers : {
+				'.list-link' : {
+					'click' : aLinkClick
 				},
 				'.btn-sub' : {
 					'click' : function(e){
@@ -515,13 +513,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			},
 			after : function(){
 				$("#actWin").modal('show');
-			},
-			handlers : {
-				'.list-link' : {
-					'click' : aLinkClick
-				},
-				'.plus' : {
-					'click' : function(e){
+				actTarget.find('.plus').unbind().bind('click',function(e){
 						var target = $(e.target),
 							id = target.attr('data-id');
 						gid = target.attr('data-gid');
@@ -543,8 +535,12 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 								target : p,
 								tplid : 1
 							});
-						}
-					}
+						}					
+				});
+			},
+			handlers : {
+				'.list-link' : {
+					'click' : aLinkClick
 				},
 				'.btn-sub' : {
 					'click' : function(e){
@@ -582,15 +578,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				list : d.list,
 				gid : target.find('i').attr('data-gid')
 			},
-			handlers : {
-				'.list-link' : {
-					'click' : aLinkClick
-				},				
-				'.plus' : {
-					'click' : function(e){
+			after : function(){
+				target.find('.plus').unbind().bind('click',function(e){
 						var target = $(e.target),
 							id = target.attr('data-id');
-
 						var p = target.parent('li');
 						if(p.find('ul').length > 0){
 							if(target.hasClass("minus")){
@@ -609,7 +600,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 								tplid : 1
 							});
 						}
-					}
+					});
+			},
+			handlers : {
+				'.list-link' : {
+					'click' : aLinkClick
 				}
 			}
 		});
@@ -718,7 +713,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowGid){
 			d.groupId = nowGid;
 		}
-		console.log(d);
 		handerObj.triggerHandler('file:edit',d);
 	}	
 

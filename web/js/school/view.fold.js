@@ -59,17 +59,10 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		var view = new View({
 			target : target,
 			tplid : 'fold.tree',
-			data : {
-				list : list,
-				gid : nowGid,
-				order : nowOds
-			},
-			handlers : {
-				'.plus' : {
-					'click' : function(e){
+			after : function(){
+				target.find('.plus').unbind().bind('click',function(e){
 						var target = $(e.target),
 							id = target.attr('data-id');
-
 						var p = target.parent('li');
 						if(p.find('ul').length > 0){
 							if(target.hasClass("minus")){
@@ -89,9 +82,21 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 							obj.folderId = nowGid;
 						}
 						handerObj.triggerHandler('fold:get',obj);
-					}
-				}
+				});
+			},
+			data : {
+				list : list,
+				gid : nowGid,
+				order : nowOds
 			}
+			// },
+			// handlers : {
+			// 	'.plus' : {
+			// 		'click' : function(e){
+
+			// 		}
+			// 	}
+			// }
 		});
 		view.appendPanel();			
 	}
@@ -99,6 +104,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	function foldTree(e,d){
 		makeTree(d.list,d.target);
 		d.target.addClass('minus');
+		d.target.find('i:first').addClass('minus');
 	}
 
 	function marksuc(e,d){
