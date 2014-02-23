@@ -76,7 +76,7 @@ exports.delete = function(params, callback){
             { $set: { isFav: false } }, { 'new':true}, function(err, file){
 
         console.log('>>>delete fav file: ', file);
-        db.fav.remove({ 'fromFile.$id': ObjectID(fileId), 'user.$id': ObjectID(creator)},
+        db.fav.findAndRemove({ 'fromFile.$id': ObjectID(fileId), 'user.$id': ObjectID(creator)}, [],
                 function(err, fav){
 
             console.log('>>>delete fav: ', fav);
