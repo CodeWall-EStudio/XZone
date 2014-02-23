@@ -101,7 +101,7 @@ exports.modify = function(req, res){
     var members = params.members || [];
     var managers = params.managers || [];
 
-    managers.push(params.creator);//防止创建者被删掉
+
     // 修改成员
     members = members.concat(managers);
     members = us.uniq(members); // 唯一化
@@ -145,12 +145,14 @@ exports.modify = function(req, res){
 
     });// ready
 
-    ep.on('getMemberIds', function(docs){
+    ep.all('getGroup', 'getMemberIds', function(group, docs){
+        var creator = group.creator.oid.toString();
         if(!docs.length){// 没有的话所有 memebers都是新增的
             if(!members.length){
                 ep.emit('modifyMemberSuccess');
                 return;
             }
+            
             ep.after('applyMember', members.length, function(list){
                 ep.emit('modifyMemberSuccess');
             });
@@ -198,12 +200,19 @@ exports.modify = function(req, res){
                 var userId = doc.user.oid.toString();
                 var mIndex = members.indexOf(userId);
                 if(mIndex === -1){
-                    // 这个用户被删了
-                    mGroup.removeUserFromGroup({
-                        userId: userId,
-                        groupId: groupId
-                    }, ep.group('modifyMember'));
-                    console.log('>>>modify group remove member', userId);
+                    //防止创建者被删掉
+                    if(creator === userId){
+                        ep.emit('modifyMember');
+                        console.log('>>>modify group can not remove creator', userId);
+                    }else{
+                        // 这个用户被删了
+                        mGroup.removeUserFromGroup({
+                            userId: userId,
+                            groupId: groupId
+                        }, ep.group('modifyMember'));
+                        console.log('>>>modify group remove member', userId);
+                    }
+                    
                 }else{
                     // 这次可能被修改了权限的用户
                     var auth = config.AUTH_USER;
