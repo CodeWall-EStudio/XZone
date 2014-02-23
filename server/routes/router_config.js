@@ -257,7 +257,9 @@ module.exports = {
         },
         optional: {
             name: ['string'],
-            content: ['string']
+            content: ['string'],
+            members: ArrayObjectID,
+            managers: ArrayObjectID
         }
     },
     '/api/group/': {
