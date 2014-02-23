@@ -13,7 +13,9 @@
 		<%}%>					
 		<%if(fold.pid){%>
 			<a href="#<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>" class="frist" style="z-index:19"  href="#"><%-fold.pname%></a>
+		<%}%>	
 			<a class="end" style="z-index:18"><%-fold.name%></a>
+		<%if(fold.pid){%>	
 		<a class="second" style="z-index:17" class="end" href="#<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>">返回上级</a>
 		<%}%>
 	<%}%>
