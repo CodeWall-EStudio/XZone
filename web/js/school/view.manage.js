@@ -240,6 +240,7 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 			$('#prepYear').removeClass('hide');
 		}else{
 			$('#prepYear').addClass('hide');
+			$('#groupName').attr('disabled',false);
 		}
 	});
 
@@ -252,6 +253,26 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 			$('#prepTag').addClass('hide');
 			$('#groupName').attr('disabled',false);
 		}
+	});
+
+	$('.check-grade').bind('click',function(e){
+		var v = $(this).val();
+		var tag = $('.check-tag:checked').val();
+		var n = config.grade[v];
+		if(tag){
+			n += config.tag[v];
+		}
+		$('#groupName').val(n);
+	});
+
+	$('.check-tag').bind('click',function(e){
+		var v = $(this).val();
+		var grade = $('.check-grade:checked').val();
+		var n = config.tag[v];
+		if(grade){
+			n = config.grade[grade] + n;
+		}	
+		$('#groupName').val(n);	
 	});
 
 	return {

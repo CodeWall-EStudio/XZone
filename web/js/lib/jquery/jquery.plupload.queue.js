@@ -400,12 +400,24 @@ used as it is.
 				uploader.bind('QueueChanged', updateList);
 
 				uploader.bind('FileUploaded', function(up, file,msg) {
-
+					var msgs = {
+						0 : '操作成功!',
+						77 : '参数不能为空',
+						100 : '后台出错拉!',
+						101 : '出错拉',
+						1001 : '您还没有登录!',
+						1004 : '没有找到资源!',
+						1010 : '您没有查看该资源的权限!',
+						1011 : '参数出错拉!',
+						1013 : '出错拉',
+						1014 : '同名拉!',
+						1015 : '出错拉'
+					}
 					var t = msg.response;
 					t = $.parseJSON(t);
 					if(t.err !=0){
 						file.status = 4;
-						file.hint = t.msg;
+						file.hint = msgs[t.err];
 					}else{
 						t.result.data.id = t.result.data._id;
 						t.result.data.fid = t.result.data.resource;
