@@ -136,7 +136,7 @@ exports.removeUserFromGroup = function(params, callback){
     });
 
 }
-exports.modifyUserAuth = function(params, auth, callback){
+exports.modifyUserAuth = function(params, callback){
     var query = {
         user: DBRef('user', ObjectID(params.userId)),
         group: DBRef('group', ObjectID(params.groupId))
