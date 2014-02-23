@@ -243,14 +243,17 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 						var target = actTarget.find('.search-input'),
 							key = $.trim(target.val()),
 							def = target.attr('data-def');
-						if(key != def){
+						//if(key != def){
+							if(key == def){
+								key = '';
+							}
 							handerObj.triggerHandler('group:board',{
 								groupId : nowGid,
 								keyword : key,
 								pageNum : 10,
 								page : 0
 							});
-						}
+						//}
 
 					}
 				},
@@ -313,10 +316,10 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 	}
 
 	function boardlistSuc(e,d){
-		if(!d.list.length){
-			return;
-		}
-		console.log(d);
+		// if(!d.list.length){
+		// 	//return;
+		// }
+		
 		var view = new View({
 			target : $("#boardList"),
 			tplid : 'board.list',
