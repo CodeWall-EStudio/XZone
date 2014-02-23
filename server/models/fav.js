@@ -71,24 +71,24 @@ exports.delete = function(params, callback){
     var fileId = params.fileId;
     var creator = params.creator;
 
-    db.fav.findAndRemove({ 'fromFile.$id': ObjectID(fileId), 'user.$id': ObjectID(creator)}, [], function(err, fav){
+    // 先去掉 file 的收藏状态, 防止 fav 不存在导致的收藏无法取消问题
+    db.file.findAndModify({ _id: ObjectID(fileId), 'creator.$id': ObjectID(creator) }, [],  
+            { $set: { isFav: false } }, { 'new':true}, function(err, file){
 
-        if(!err && fav){ // 将 resource 的引用计数减一
-            if(fav.fromFile){
-                db.file.findAndModify({ _id: fav.fromFile.oid, 'creator.$id': ObjectID(creator) }, [],  
-                        { $set: { isFav: false } }, function(err){});
+        db.fav.findAndRemove({ 'fromFile.$id': ObjectID(fileId), 'user.$id': ObjectID(creator)}, [], 
+                function(err, fav){
+            if(fav){
+                // 将 resource 的引用计数减一
+                mRes.updateRef(fav.resource.oid.toString(), -1, function(err, newRes){
+                    callback(null);
+                });
+            }else{
+                callback(err);
             }
+        });
 
-            mRes.updateRef(fav.resource.oid.toString(), -1, function(err, newRes){
-                // if(err){
-                //     return callback(err);
-                // }
-                callback(null, fav);
-            });
-        }else{
-            callback(err);
-        }
     });
+
 }
 
 exports.search = function(params, callback){

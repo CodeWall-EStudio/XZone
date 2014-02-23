@@ -47,10 +47,7 @@ exports.delete = function(req, res){
 
     ep.after('delete', fileIds.length, function(list){
         res.json({
-            err: ERR.SUCCESS,
-            result: {
-                list: list
-            }
+            err: ERR.SUCCESS
         });
     });
 
