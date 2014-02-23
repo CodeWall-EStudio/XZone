@@ -36,7 +36,7 @@ exports.create = function(req, res){
 
 exports.delete = function(req, res){
 
-    var favIds = req.body.favId;
+    var fileIds = req.body.fileId;
     var creator = req.loginUser._id;
 
     var ep = new EventProxy();
@@ -45,7 +45,7 @@ exports.delete = function(req, res){
         res.json({ err: ERR.SERVER_ERROR, msg: 'delete failure' });
     });
 
-    ep.after('delete', favIds.length, function(list){
+    ep.after('delete', fileIds.length, function(list){
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -54,8 +54,8 @@ exports.delete = function(req, res){
         });
     });
 
-    favIds.forEach(function(favId){
-        mFav.delete({ favId: favId, creator: creator }, ep.group('delete'));
+    fileIds.forEach(function(fileId){
+        mFav.delete({ fileId: fileId, creator: creator }, ep.group('delete'));
     });
 
 }

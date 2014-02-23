@@ -68,10 +68,10 @@ exports.create = function(params, callback){
 }
 
 exports.delete = function(params, callback){
-    var favId = params.favId;
+    var fileId = params.fileId;
     var creator = params.creator;
 
-    db.fav.findAndRemove({ _id: new ObjectID(favId), 'user.$id': ObjectID(creator)}, [], function(err, fav){
+    db.fav.findAndRemove({ 'fromFile.$id': ObjectID(fileId), 'user.$id': ObjectID(creator)}, [], function(err, fav){
 
         if(!err && fav){ // 将 resource 的引用计数减一
             if(fav.fromFile){

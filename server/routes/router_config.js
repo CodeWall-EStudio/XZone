@@ -219,7 +219,7 @@ module.exports = {
     '/api/fav/delete': {
         method: POST,
         require: {
-            favId: ArrayObjectID
+            fileId: ArrayObjectID
         }  
     },
     '/api/fav/search': {

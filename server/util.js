@@ -163,6 +163,7 @@ exports.formatFileType = function(mimes){
         case 'image/jpeg':
         case 'image/gif':
         case 'image/png':
+        case 'image/bmp':
         case 'image/tiff':
         case 'image/x-targa':
         case 'image/vnd.adobe.photoshop':
