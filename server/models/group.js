@@ -192,6 +192,22 @@ exports.isGroupMember = function(groupId, userId, callback){
     });
 }
 
+exports.isPrepareMember = function(userId, callback){
+    console.log('>>>isPrepareMember', userId);
+
+    // 获取备课小组
+    db.group.findOne({
+        pt: 1
+    }, function(group){
+        if(!group){
+            console.log('>>>isPrepareMember, no pt=1 group');
+            callback('can not find prepare group');
+        }else{
+            exports.isGroupMember(group._id.toString(), userId, callback);
+        }
+    });
+}
+
 
 exports.modify = function(params, doc, callback){
 

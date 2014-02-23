@@ -1022,7 +1022,19 @@ exports.search = function(req, res){
 
     // 检查文件夹是否是该用户的, 以及 该用户是否是小组成员
     if(groupId){ // 检查该用户是否是小组成员
-        mGroup.isGroupMember(groupId, loginUser._id, ep.doneLater('checkRight'));
+        mGroup.getGroup(groupId, ep.doneLater('getGroup'));
+
+        ep.on('getGroup', function(group){
+            if(!group){
+                ep.emit('error', 'no such group', ERR.NOT_FOUND);
+                return;
+            }
+            if(group.type === 3){ // 这是备课小组, 如果是备课的成员都能看
+                mGroup.isPrepareMember(loginUser._id, ep.done('checkRight'));
+            }else{
+                mGroup.isGroupMember(groupId, loginUser._id, ep.doneLater('checkRight'));
+            }
+        });
 
     }else{ // 检查该用户是否是该文件夹所有者
         params.creator = loginUser._id;

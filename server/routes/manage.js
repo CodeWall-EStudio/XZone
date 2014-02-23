@@ -113,18 +113,8 @@ exports.listPrepares = function(req, res){
     if(U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER)){
         ep.emitLater('checkRight', true);
     }else{
-        db.group.findOne({
-            pt: 1
-        }, ep.done('findPtGroup'));
 
-        ep.on('findPtGroup', function(group){
-            if(!group){
-                console.log('>>>listPrepares, no pt=1 group');
-                ep.emitLater('checkRight', false);
-            }else{
-                mGroup.isGroupMember(group._id.toString(), loginUser._id, ep.done('checkRight'));
-            }
-        });
+        mGroup.isPrepareMember(loginUser._id, ep.done('checkRight'));
     }
 
     ep.on('checkRight', function(bool){
