@@ -139,11 +139,13 @@ define(['config'],function(config){
      	}		
 	}
 
+	//修改备注
 	function editMark(id,mark,type,target){
 		handerObj.triggerHandler(type+':editmark',{folderId:id,target:target,mark:mark});
 	}
 	/***********************************/
 
+	//搜索
 	function gosearch(key){
 		var hash = location.hash;
 		if(hash.indexOf('key=')>=0){
@@ -203,14 +205,18 @@ define(['config'],function(config){
     //显示或者隐藏重命名和评论
     var checkAct = function(){
     	var l = $('.table-files .fclick:checked').length;
+    	var n = $('.table-files .fdclick:checked').length;
 
     	// $('#fileList .fdclick:checked').each(function(){
     	// 	$(this).attr('checked',false);
     	// });
+		if(n == 0){
 	    	$('#fileActZone .sharefile').show();
 	    	$('#fileActZone .downfile').show();
 	    	$('#fileActZone .collfile').show();    		
-	    	$('#fileActZone .copyfile').show();     	
+	    	$('#fileActZone .copyfile').show();  
+	    	$('#fileActZone .movefile').show();    	
+	    }
     	if(l==0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
@@ -229,7 +235,8 @@ define(['config'],function(config){
 
     //显示或者隐藏重命名和评论
     var checkFoldAct = function(){
-    	var l = $('.table-files .fdclick:checked').length;
+    	var l = $('.table-files .fclick:checked').length;
+    	var n = $('.table-files .fdclick:checked').length;
     	// $('#fileList .fclick:checked').each(function(){
     	// 	$(this).attr('checked',false);
     	// });   	
@@ -237,13 +244,22 @@ define(['config'],function(config){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
     	}else{
-	    	$('#fileActZone .sharefile').hide();
-	    	$('#fileActZone .downfile').hide();
-	    	$('#fileActZone .collfile').hide();    		
-	    	$('#fileActZone .copyfile').hide(); 
+    		if(n>0){
+		    	$('#fileActZone .sharefile').hide();
+		    	$('#fileActZone .downfile').hide();
+		    	$('#fileActZone .collfile').hide();    		
+		    	$('#fileActZone .copyfile').hide(); 
+		    	$('#fileActZone .movefile').hide();  
+	    	}else{
+		    	$('#fileActZone .sharefile').show();
+		    	$('#fileActZone .downfile').show();
+		    	$('#fileActZone .collfile').show();    		
+		    	$('#fileActZone .copyfile').show(); 
+		    	$('#fileActZone .movefile').show(); 	    		
+	    	} 
 			$('.tool-zone').addClass('hide');
 			$('.file-act-zone').removeClass('hide');
-    		if(l>1){
+    		if(n>1){
 	    		$('#renameAct').addClass('hide');
 	    		$('#remarkAct').addClass('hide');
     		}else{
