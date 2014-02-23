@@ -14,6 +14,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				coll : item.coll,
 				remark : item.remark,
 				time : util.time(item.createTime),
+				size : util.getSize(item.size),
 				type : item.type
 			})
 		}
