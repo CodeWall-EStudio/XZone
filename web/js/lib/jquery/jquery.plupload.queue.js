@@ -144,6 +144,8 @@ used as it is.
 			this.each(function() {
 				var uploader, target, id, contents_bak;
 
+				console.log(uploader);
+
 				target = $(this);
 				id = target.attr('id');
 

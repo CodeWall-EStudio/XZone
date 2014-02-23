@@ -3,6 +3,7 @@ define(['config'],function(config){
 
 	$('.btn-upload').bind('click',function(){
 		$('#uploadFile').slideDown(400);
+		$('body').append('<div class="modal-backdrop fade in"></div>');
 	});
 
 	$('#uploadFile').bind('click',function(e){
@@ -10,24 +11,31 @@ define(['config'],function(config){
 			cmd = t.attr("cmd");
 		switch(cmd){
 			case 'close':
-				
 				if($('#uploader_filelist .plupload_delete').length > 0){
 					$('#uploadFile .modal-body').slideUp(400,function(){
-						window.location.reload();
+						//window.location.reload();
 					});
+				}else if($('#uploader_filelist .plupload_uploading').length > 0){
+					alert('还有文件正在上传,请等待文件上传完成再关闭上传窗口');
+					return;
 				}else{
 					$('#uploadFile').slideUp(400);
 					$('#uploader_filelist').html('');
 				};
+				$('.modal-backdrop').remove();
 				break;
 			case 'min':
 				$('#uploadFile .modal-body').slideToggle(400,function(e){
 					if(t.text() == '-'){
 						t.text('o');
+						$('.modal-backdrop').remove();
 					}else{
 						t.text('-');	
+						$('body').append('<div class="modal-backdrop fade in"></div>');
+						//plupload_uploading
 					}
 				});
+
 				break;
 		}
 	});
@@ -65,9 +73,12 @@ define(['config'],function(config){
     	upload_settings.url = url;
     	
 
-	    $("#uploader").pluploadQueue(upload_settings).bind('allcomplete',function(){
+	    $("#uploader").pluploadQueue(upload_settings).unbind('allcompleta').bind('allcomplete',function(){
+	    	console.log($('.plupload_failed').length);
 	    	if($('.plupload_failed').length == 0){
 	    		//window.location.reload();	
+	    		//$('#uploadFile').modal('hide');
+	    		$('#uploadFile .close-upload').click();
 	    	}
 			//
 		});
