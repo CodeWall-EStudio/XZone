@@ -128,7 +128,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 					if(tplid){
 						handerObj.triggerHandler('file:treeload',{list:list,target:target,tplid:tplid});
 					}else{
-						handerObj.triggerHandler('fold:treeload',{list:list,target:target});
+						handerObj.triggerHandler('fold:treeload',{list:list,target:target,root:root});
 					}
 				}else{
 					handerObj.triggerHandler('fold:load',{list:list,root:root});

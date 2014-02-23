@@ -428,11 +428,14 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			rootfd = 0;
 		if(nowGid){
 			fold = Cache.get('rootFolder'+nowGid);
+			info = Cache.get('myinfo');
+			rootfd = info.group2key[nowGid].rootFolder._id;
 		}else{
 			fold = Cache.get('myfold');
 			info = Cache.get('myinfo');
 			rootfd = info.rootFolder.$id;
 		}
+
 
 		if(!fold){
 			fold = [];

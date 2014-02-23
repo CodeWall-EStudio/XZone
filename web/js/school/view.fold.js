@@ -121,6 +121,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	function foldTree(e,d){
+		if(d.root){
+			handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:d.list});
+		}
 		makeTree(d.list,d.target);
 		d.target.addClass('minus');
 		d.target.find('i:first').addClass('minus');
@@ -194,12 +197,12 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(nowFd != rootFd){
 			var o1 = {
 				folderId : rootFd
-			};
-			if(nowGid){
-				o1.groupId = nowGid;
+				//o1.groupId = nowGid;
 			}			
 			o1.root = 1;
-			handerObj.triggerHandler('fold:get',o1);
+			if(!nowGid){
+				handerObj.triggerHandler('fold:get',o1);
+			};
 		}
 
 		if(nowKey == ''){
@@ -216,7 +219,6 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	function foldLoad(e,d){
-
 		//个人的首页
 		if(!nowGid){ // && !nowFd){
 
@@ -245,13 +247,13 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			}else{
 				var obj = {
 					groupId : nowGid,
-					target : foldTarget
+					target : foldTarget,
+					root: 1
 				}
 				if(nowGinfo.rootFolder){
 					obj.folderId = nowGinfo.rootFolder.id;
 				}
 				handerObj.triggerHandler('fold:get',obj);
-			
 			}
 		}else{
 		}
