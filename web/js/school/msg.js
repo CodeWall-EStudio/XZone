@@ -6,7 +6,6 @@ define(['config','cache','helper/view'],function(config,Cache,View){
 	var at = 0;
 
 	function showErr(e,d){
-		console.log(d);
 		if(d == 1001){
 			      window.location = config.cgi.gotologin;
 			      return;

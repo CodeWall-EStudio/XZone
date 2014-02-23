@@ -79,7 +79,7 @@ define(['config'],function(config){
 		    	if($('.plupload_failed').length == 0){
 		    		//window.location.reload();	
 		    		//$('#uploadFile').modal('hide');
-		    		//$('#uploadFile .close-upload').click();
+		    		$('#uploadFile .close-upload').click();
 		    	}
 			});
 		}else{

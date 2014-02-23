@@ -673,8 +673,15 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		myInfo.oused = parseInt(myInfo.oused);
 		myInfo.osize = parseInt(myInfo.osize);
 		myInfo.oused -= as;
-		myInfo.pre = util.getNums(myInfo.oused/myInfo.osize)*100;
-		myInfo.used = util.getSize(myInfo.oused);
+		if(myInfo.oused <= 0){
+			myInfo.oused = 0;
+			myInfo.pre = 0;
+			myInfo.used = 0;
+		}else{
+			myInfo.pre = util.getNums(myInfo.oused/myInfo.osize)*100;
+			myInfo.used = util.getSize(myInfo.oused);
+		}
+
 		if(!myInfo.pre && !myInfo.oused){
 			myInfo.pre = 0;
 		}
