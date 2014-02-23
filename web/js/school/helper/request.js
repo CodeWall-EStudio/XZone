@@ -9,6 +9,7 @@ define([], function() {
     // 传递cgi
     this._url = url;
   };
+  try{
   ReqTime.prototype = {
     get url() {
       return this._url;
@@ -23,6 +24,9 @@ define([], function() {
       this._start = time;
     }
   };
+  }catch(e){
+    
+  }
 
   /*
   * @author: jarvisjiang
