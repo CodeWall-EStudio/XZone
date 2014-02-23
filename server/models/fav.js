@@ -75,8 +75,11 @@ exports.delete = function(params, callback){
     db.file.findAndModify({ _id: ObjectID(fileId), 'creator.$id': ObjectID(creator) }, [],  
             { $set: { isFav: false } }, { 'new':true}, function(err, file){
 
-        db.fav.findAndRemove({ 'fromFile.$id': ObjectID(fileId), 'user.$id': ObjectID(creator)}, [], 
+        console.log('>>>delete fav file: ', file);
+        db.fav.remove({ 'fromFile.$id': ObjectID(fileId), 'user.$id': ObjectID(creator)},
                 function(err, fav){
+
+            console.log('>>>delete fav: ', fav);
             if(fav){
                 // 将 resource 的引用计数减一
                 mRes.updateRef(fav.resource.oid.toString(), -1, function(err, newRes){
