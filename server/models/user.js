@@ -24,7 +24,7 @@ exports.create = function(params, callback){
         }
         mFolder.create({
             creator: user._id.toString(),
-            name: 'root folder'
+            name: '根目录'
         }, function(err, folder){
             if(err){
                 return callback(err);

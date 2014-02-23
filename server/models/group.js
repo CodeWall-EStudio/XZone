@@ -62,7 +62,7 @@ exports.create = function(params, callback){
 
         mFolder.create({
             creator: params.creator,
-            name: 'group root folder',
+            name: '根目录',
             groupId: group._id.toString()
         }, ep.done('createFolder'));
 
