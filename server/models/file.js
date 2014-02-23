@@ -97,7 +97,7 @@ exports.delete = function(params, callback){
             mRes.updateRef(file.resource.oid.toString(), -1, ep.done('updateRef'));
 
             // 修改用户表的 used 
-            mUser.update(file.creator.oid.toString(), { $inc:{ used: -1 * (file.size || 0) }}, ep.done('incUsed'))
+            mUser.updateUsed(file.creator.oid.toString(),  -1 * (file.size || 0), ep.done('incUsed'))
 
         }else{
             callback(null);

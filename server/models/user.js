@@ -52,13 +52,16 @@ exports.save = function(user, callback){
     });
 }
 
-exports.update = function(docId, doc, callback){
+exports.update = function(userId, doc, callback){
 
-    db.user.findAndModify({ _id: ObjectID(docId) }, [], 
-            { $set: doc }, { 'new': true }, function(err, result){
-        
-        callback(err, result);
-    });
+    db.user.findAndModify({ _id: ObjectID(userId) }, [], 
+            { $set: doc }, { 'new': true }, callback);
+}
+
+exports.updateUsed = function(userId, count, callback){
+
+    db.user.findAndModify({ _id: ObjectID(userId) }, [], 
+            { $inc: { used: count } }, { 'new': true }, callback);
 }
 
 exports.getUserInfoByName = function(name, callback){

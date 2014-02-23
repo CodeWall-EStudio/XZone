@@ -18,6 +18,7 @@ var mMessage = require('../models/message');
 var mLog = require('../models/log');
 var U = require('../util');
 var userHelper = require('../helper/user_helper');
+var fileHelper = require('../helper/file_helper');
 
 
 // 新媒体资源(not delete)
@@ -92,118 +93,6 @@ function getFolder(params, callback){
     });
 }
 
-function saveUploadFile(params, callback){
-    var folderId = params.folderId;
-    var loginUser = params.loginUser;
-    var body = params.body;
-
-    //1. 先把文件保存到 data 目录
-    var uploadFilePath = body.file_path;
-    var savePath = U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
-
-    var filename = body.file_md5 + path.extname(body.file_name);
-    var folderPath = path.resolve(path.join(config.FILE_SAVE_DIR, savePath));
-    var filePath = path.join(folderPath, filename);
-
-    var name = body.name;
-    var fileSize = parseInt(body.file_size);
-    var fileType = U.formatFileType(body.file_content_type);
-
-    loginUser.used = Number(loginUser.used);
-
-    var ep = new EventProxy();
-    ep.fail(callback);
-
-    var oFolderId = ObjectID(folderId);
-    mFolder.getFolder({_id: oFolderId}, ep.doneLater('getFolder'));
-    // 在同一个文件夹下，不允许出现文件名相同且作者相同的文件。
-    // 文件名相同且作者相同时，比较文件MD5。若MD5相同，提示重复文件，终止写操作；
-    // 若MD5不同，提示改名后继续操作。
-    mFile.getFile({ 
-        name: name, 
-        'folder.$id': oFolderId, 
-        'creator.$id': loginUser._id
-    }, ep.doneLater('getFile'));
-
-    ep.all('getFolder', 'getFile', function(folder, file){
-        if(!folder){
-            ep.emit('error', 'no such folder', ERR.NOT_FOUND);
-            return;
-        }
-        if(file){
-            ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
-            return;
-        }
-        if(loginUser.size < loginUser.used + fileSize){
-
-            ep.emit('error', 'Ran out of space', ERR.SPACE_FULL);
-        }else{
-            // 更新用户size
-            loginUser.used = loginUser.used + fileSize;
-
-            mUser.update(loginUser._id.toString(), { used: loginUser.used }, ep.done('updateSpaceUsed'));
-        }
-    });
-
-    ep.on('updateSpaceUsed', function(){
-        U.mkdirsSync(folderPath);
-        U.moveFile(uploadFilePath, filePath, ep.done('moveFile'));
-    });
-
-    ep.on('moveFile', function(){
-        // 添加 resource 记录
-        var resource = {
-            path: savePath + filename,
-            md5: body.file_md5,
-            size: fileSize,
-            mimes: body.file_content_type,
-            type: fileType
-        }
-
-        mRes.create(resource, ep.done('saveRes'));
-
-    });
-
-    ep.on('saveRes', function(resource){
-        // 添加文件记录
-        var file = {
-            creator: loginUser._id.toString(),
-            folderId: folderId,
-            name: name,
-            type: fileType,
-            size: fileSize,
-            resourceId: resource._id.toString()
-        }
-        resource.ref = 1;
-
-        mFile.create(file, ep.done('createFile'));
-    });
-
-    ep.all('getFolder', 'saveRes', 'createFile', function(saveFolder, savedRes, file){
-        if(savedRes){
-            file.resource = U.filterProp(savedRes, ['_id', 'type', 'size']);
-        }
-        callback(null, file);
-        mLog.create({
-            fromUserId: loginUser._id.toString(),
-            fromUserName: loginUser.nick,
-
-            fileId: file._id.toString(),
-            fileName: file.name,
-
-            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-            //6: delete 7: 预览 8: 保存
-            operateType: 1, 
-
-            // srcFolderId: null,
-            distFolderId: folderId,
-
-            toGroupId: saveFolder.group && saveFolder.group.oid.toString()
-        });
-
-    });
-
-}
 
 exports.upload = function(req, res){
 
@@ -211,7 +100,7 @@ exports.upload = function(req, res){
     var loginUser;
     var uploadFilePath = body.file_path;
     var skey = req.cookies.skey;
-    console.log('>>>media upload:', req.cookies);
+    console.log('>>>media upload:');
     var activityId = body.activityId;
 
     var ep = new EventProxy();
@@ -251,7 +140,7 @@ exports.upload = function(req, res){
     ep.on('getActFolderSucc', function(activityFolder){
         var folderId = activityFolder._id.toString();
 
-        saveUploadFile({
+        fileHelper.saveUploadFile({
             folderId: folderId,
             loginUser: loginUser,
             body: body

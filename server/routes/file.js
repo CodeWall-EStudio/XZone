@@ -17,150 +17,52 @@ var mGroup = require('../models/group');
 var mMessage = require('../models/message');
 var mLog = require('../models/log');
 var U = require('../util');
+var fileHelper = require('../helper/file_helper');
 
 
 
 exports.upload = function(req, res){
     var params = req.query;
     var folderId = params.folderId;
+
     //TODO 如果这个文件夹关闭了上传, 就不能传了
     var body = req.body;
     var loginUser = req.loginUser;
     var uploadFilePath = body.file_path;
-    var ep = new EventProxy();
 
+    var ep = new EventProxy();
     ep.fail(function(err, code){
+        console.log('>>>file upload error:',{ err: code || ERR.SERVER_ERROR, msg: err });
         res.json({ err: code || ERR.SERVER_ERROR, msg: err });
     });
-
 
     if(!uploadFilePath){
         ep.emit('error', 'unsupport file type', ERR.NOT_SUPPORT);
         return;
     }
 
-    // TODO MD5 重复的监测
+    mUser.getUserById(loginUser._id, ep.done('getUser'));
 
-    //1. 先把文件保存到 data 目录
-    var savePath = U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
-
-    var filename = body.file_md5 + path.extname(body.file_name);
-    var folderPath = path.resolve(path.join(config.FILE_SAVE_DIR, savePath));
-    var filePath = path.join(folderPath, filename);
-
-    var name = body.name;
-    var fileSize = parseInt(body.file_size);
-    var fileType = U.formatFileType(body.file_content_type);
-
-    loginUser.used = Number(loginUser.used);
-
-    
-
-    ep.on('moveFile', function(){
-        // 添加 resource 记录
-        var resource = {
-            path: savePath + filename,
-            md5: body.file_md5,
-            size: fileSize,
-            mimes: body.file_content_type,
-            type: fileType
-        }
-
-        mRes.create(resource, ep.done('saveRes'));
-
-        //生成 pdf 格式文件
-        if(config.DOC_TYPES.indexOf(resource.mimes) > -1){
-            process.exec('java -jar ' + config.JOD_CONVERTER + ' ' + filePath + ' ' + filePath + '.pdf', function(err){
-                if(!err){
-                    process.exec('pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf');
-                }
-            });
-        }
-        if(config.PDF_TYPES.indexOf(resource.mimes) > -1){
-            process.exec('pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf');
-        }
-    });
-
-    ep.on('saveRes', function(resource){
-        // 添加文件记录
-        var file = {
-            creator: loginUser._id,
+    ep.on('getUser', function(user){
+        loginUser = user;
+        fileHelper.saveUploadFile({
             folderId: folderId,
-            name: name,
-            type: fileType,
-            size: fileSize,
-            resourceId: resource._id.toString()
-        }
-        resource.ref = 1;
-
-        mFile.create(file, ep.done('createFile'));
+            loginUser: loginUser,
+            body: body,
+            createSWFForDoc: true
+        }, ep.done('saveFileSuccess'));
     });
 
-    ep.all('getFolder', 'saveRes', 'createFile', function(saveFolder, savedRes, file){
-        if(savedRes){
-            file.resource = U.filterProp(savedRes, ['_id', 'type', 'size']);
-        }
+    ep.on('saveFileSuccess', function(file){
+        console.log('>>>file upload success:',file._id);
         res.json({
             err: ERR.SUCCESS,
             result: {
                 data: file
             }
-        });
-        mLog.create({
-            fromUserId: loginUser._id,
-            fromUserName: loginUser.nick,
-
-            fileId: file._id.toString(),
-            fileName: file.name,
-
-            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-            //6: delete 7: 预览 8: 保存
-            operateType: 1, 
-
-            // srcFolderId: null,
-            distFolderId: folderId,
-
-            toGroupId: saveFolder.group && saveFolder.group.oid.toString()
-        });
-
+        })
     });
-
-    ep.on('updateSpaceUsed', function(){
-        U.mkdirsSync(folderPath);
-        U.moveFile(uploadFilePath, filePath, ep.done('moveFile'));
-    });
-
-    var oFolderId = ObjectID(folderId);
-    mFolder.getFolder({_id: oFolderId}, ep.doneLater('getFolder'));
-    // 在同一个文件夹下，不允许出现文件名相同且作者相同的文件。
-    // 文件名相同且作者相同时，比较文件MD5。若MD5相同，提示重复文件，终止写操作；
-    // 若MD5不同，提示改名后继续操作。
-    mFile.getFile({ 
-        name: name, 
-        'folder.$id': oFolderId, 
-        'creator.$id': ObjectID(loginUser._id) 
-    }, ep.doneLater('getFile'));
-
-    ep.all('getFolder', 'getFile', function(folder, file){
-        if(!folder){
-            ep.emit('error', 'no such folder', ERR.NOT_FOUND);
-            return;
-        }
-        if(file){
-            ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
-            return;
-        }
-        if(loginUser.size < loginUser.used + fileSize){
-            //TODO 如果上传到小组, 还要检查小组的配额
-            ep.emit('error', 'Ran out of space', ERR.SPACE_FULL);
-        }else{
-            // 更新用户size
-            loginUser.used = loginUser.used + fileSize;
-            var skey = req.cookies.skey;
-            req.session[skey] = loginUser; // 更新 session
-            mUser.update(loginUser._id, { used: loginUser.used }, ep.done('updateSpaceUsed'));
-        }
-    });
+    
 
 }
 
