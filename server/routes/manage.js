@@ -56,7 +56,7 @@ exports.approveGroup = function(req, res){
         validator: DBRef('user', ObjectID(loginUser._id))
     };
 
-    mGroup.modify(params.groupId, doc, function(err, doc){
+    mGroup.modify(params, doc, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else if(!doc){
