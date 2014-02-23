@@ -176,11 +176,11 @@ exports.getGroupMemberIds = function(groupId, callback){
 }
 
 exports.isGroupMember = function(groupId, userId, callback){
+    console.log('>>>isGroupMember', groupId, userId);
     var query = { 
         'group.$id': ObjectID(groupId), 
         'user.$id': ObjectID(userId) 
     };
-
     db.groupuser.findOne(query, function(err, doc){
         if(doc){
             callback(null, true, doc);

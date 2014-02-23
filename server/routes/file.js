@@ -1011,7 +1011,7 @@ exports.delete = function(req, res){
 exports.search = function(req, res){
     var params = req.query;
     var folderId = params.folderId;
-    var groupId = params.groupId || null;
+    var groupId = params.groupId;
     var loginUser = req.loginUser;
 
     var ep = new EventProxy();
