@@ -144,7 +144,7 @@ used as it is.
 			this.each(function() {
 				var uploader, target, id, contents_bak;
 
-				console.log(uploader);
+				
 
 				target = $(this);
 				id = target.attr('id');
@@ -162,8 +162,7 @@ used as it is.
 					browse_button : id + '_browse',
 					container : id
 				}, settings));
-
-
+				console.log(id,uploader);
 				uploaders[id] = uploader;
 
 				// console.log(uploader);
@@ -427,6 +426,12 @@ used as it is.
 
 				uploader.bind('UploadComplete',function(){
 					target.triggerHandler('allcomplete');
+				});
+
+				handerObj.bind('plup:changeSet',function(e,d){
+					//console.log(id,uploader);
+					//uploader.setOption('url',d);
+					uploader.settings.url = d;
 				});
 
 				// Call setup function

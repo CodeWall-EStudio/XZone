@@ -1,5 +1,6 @@
 define(['config'],function(config){
-	var	handerObj = $(Schhandler);
+	var	handerObj = $(Schhandler)
+		setting = 0;
 
 	$('.btn-upload').bind('click',function(){
 		$('#uploadFile').slideDown(400);
@@ -72,16 +73,18 @@ define(['config'],function(config){
 
     	upload_settings.url = url;
     	
-
-	    $("#uploader").pluploadQueue(upload_settings).unbind('allcompleta').bind('allcomplete',function(){
-	    	console.log($('.plupload_failed').length);
-	    	if($('.plupload_failed').length == 0){
-	    		//window.location.reload();	
-	    		//$('#uploadFile').modal('hide');
-	    		$('#uploadFile .close-upload').click();
-	    	}
-			//
-		});
+    	if(!setting){
+		    $("#uploader").pluploadQueue(upload_settings).unbind('allcompleta').bind('allcomplete',function(){
+		    	if($('.plupload_failed').length == 0){
+		    		//window.location.reload();	
+		    		//$('#uploadFile').modal('hide');
+		    		$('#uploadFile .close-upload').click();
+		    	}
+			});
+		}else{
+			handerObj.triggerHandler('plup:changeSet',url);
+		}
+		setting = 1;
     }
 
 	handerObj.bind('upload:param',paramChange);
