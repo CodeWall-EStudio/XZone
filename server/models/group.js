@@ -37,7 +37,7 @@ exports.create = function(params, callback){
         var doc = {
             name: params.name,
             content: params.content || '',
-            type: type,
+            type: Number(params.type) || 0,
             parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
             creator: DBRef('user', ObjectID(params.creator)),
             status: status, 
