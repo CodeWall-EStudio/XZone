@@ -132,6 +132,7 @@ exports.modify = function(req, res){
             if(params.name === folder.name){
                 // 名字没变过, 就不要改了
                 delete doc.name;
+                delete params.name;
                 ep.emit('checkName', true);
                 return;
             }
