@@ -68,7 +68,7 @@ exports.saveUploadFile = function(params, callback){
             loginUser.used = loginUser.used + fileSize;
 
             // 修改用户表的 used 
-            mUser.updateUsed(file.creator.oid.toString(),  (fileSize || 0), ep.done('updateSpaceUsed'))
+            mUser.updateUsed(loginUser._id.toString(),  (fileSize || 0), ep.done('updateSpaceUsed'))
 
         }
     });
@@ -94,19 +94,19 @@ exports.saveUploadFile = function(params, callback){
             //doc 文档要生成 swf 格式文件
             if(config.DOC_TYPES.indexOf(resource.mimes) > -1){
                 var cmd = 'java -jar ' + config.JOD_CONVERTER + ' ' + filePath + ' ' + filePath + '.pdf';
-                console.log('>>>file helper exec: ', cmd);
+                // console.log('>>>file helper exec: ', cmd);
                 process.exec(cmd, function(err){
                     if(!err){
                         cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
                         process.exec(cmd);
-                        console.log('>>>file helper exec: ', cmd);
+                        // console.log('>>>file helper exec: ', cmd);
                     }
                 });
             }
             if(config.PDF_TYPES.indexOf(resource.mimes) > -1){
                 var cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
                 process.exec(cmd);
-                console.log('>>>file helper exec: ', cmd);
+                // console.log('>>>file helper exec: ', cmd);
             }
         }
 

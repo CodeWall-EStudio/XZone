@@ -980,25 +980,26 @@ exports.delete = function(req, res){
             fileId: fileId,
             creator: creator
         }, ep.group('delete', function(file){
+            if(file){
+                // 记录该操作
+                mLog.create({
+                    fromUserId: loginUser._id,
+                    fromUserName: loginUser.nick,
 
-            // 记录该操作
-            mLog.create({
-                fromUserId: loginUser._id,
-                fromUserName: loginUser.nick,
+                    fileId: file._id.toString(),
+                    fileName: file.name,
 
-                fileId: file._id.toString(),
-                fileName: file.name,
+                    //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                    //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 11: delete(移动到回收站)
+                    operateType: 11,
 
-                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-                //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 11: delete(移动到回收站)
-                operateType: 11,
-
-                srcFolderId: file.folder.oid.toString()
-                // distFolderId: params.targetId,
-                // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-                // toGroupId: toGroupId
-            });
-
+                    srcFolderId: file.folder.oid.toString()
+                    // distFolderId: params.targetId,
+                    // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+                    // toGroupId: toGroupId
+                });
+            }
+            
             return file;
         }));
         

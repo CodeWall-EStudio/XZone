@@ -59,7 +59,7 @@ exports.update = function(userId, doc, callback){
 }
 
 exports.updateUsed = function(userId, count, callback){
-
+    console.log('>>>updateUsed:', userId, count);
     db.user.findAndModify({ _id: ObjectID(userId) }, [], 
             { $inc: { used: count } }, { 'new': true }, callback);
 }

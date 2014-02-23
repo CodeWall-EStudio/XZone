@@ -8,6 +8,7 @@ var db = require('./db');
 var ERR = require('../errorcode');
 var U = require('../util');
 var mRes = require('./resource');
+var mUser = require('./user');
 
 
 exports.create = function(params, callback){
