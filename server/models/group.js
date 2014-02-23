@@ -13,6 +13,7 @@ exports.create = function(params, callback){
     var status = ('status' in params) ? Number(params.status) : 1;
     if(isNaN(status)){
         status = 1;
+
     }
 
     var ep = new EventProxy();
@@ -40,7 +41,7 @@ exports.create = function(params, callback){
             type: Number(params.type) || 0,
             parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
             creator: DBRef('user', ObjectID(params.creator)),
-            status: status, 
+            status: status, // 标示小组审核状态 1 审核中 0 已审核
             pt: Number(params.pt) || 0,
             tag: params.tag || null,
             grade: params.grade || null,
@@ -48,7 +49,7 @@ exports.create = function(params, callback){
             //TODO 小组配额没有加
 
             validateText: null,//审核评语
-            validateStatus: null, //0 不通过 1 通过
+            validateStatus: status === 0 ? 1 : null, //0 不通过 1 通过
             validateTime: null,//审核时间
             validator: null
         }
@@ -79,7 +80,8 @@ exports.create = function(params, callback){
 }
 
 function dereferenceGroup(groupId, ext, callback){
-    db.group.findOne({ _id: ObjectID(groupId) }, function(err, doc){
+    // 只返回审核通过的
+    db.group.findOne({ _id: ObjectID(groupId), validateStatus: 1 }, function(err, doc){
         if(err){
             return callback(err);
         }
