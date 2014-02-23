@@ -36,6 +36,10 @@ define(['config','helper/view','model.mail'],function(config,View){
 		if(d.order){
 			nowOrder = d.order;
 		}
+		if(nowType == 1){
+			$('#newMailnum').text(0);
+			$('#allNums').text(0);
+		}
 		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		nowKey = d.key || '';
 		crTit();

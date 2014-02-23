@@ -11,6 +11,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowPrep = 0, //当前是否是备课
 		rootFd = 0,
 		nowTotal = 0,
+		nowUid = 0,
+		nowGrade = 0,
+		nowTag = 0,	
+		nowPid = 0,			
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -86,7 +90,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowPrep){
 			tpl = 'prep.table.tit';
 		}
-
 		// if(!nowFd && rootFd){
 		// 	nowFd = rootFd;
 		// }
@@ -96,7 +99,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			data : {
 				order : nowOrder,
 				gid : nowGid,
-				fdid : nowFd
+				fdid : nowFd,
+				uid : nowUid,
+				prep : nowPrep
 			}			
 		});
 		view.createPanel();
@@ -130,7 +135,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		}else{
 			nextPage = 0;
 		}
-
+		var pr = 0;
+		if(nowPrep == 'group'){
+			pr = 1;
+		}
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'file.user.list',
@@ -138,7 +146,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				list : d.list,
 				filetype : config.filetype,
 				gid : nowGid,
-				down : config.cgi.filedown
+				down : config.cgi.filedown,
+				pr : pr
 			}
 		});
 
@@ -233,7 +242,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			obj.groupId = nowGid;
 		}
 		if(nowUid){
-			data.uid = nowUid;
+			obj.uid = nowUid;
 		}
 		handerObj.triggerHandler('file:search',obj);				
 	}

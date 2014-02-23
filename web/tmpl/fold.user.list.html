@@ -3,20 +3,21 @@
 				var item = list[i];
 		%>
 		<tr class="fold fold<%+item.id%>">
-			<td width="30"><input type="checkbox" name="file" class="fdclick liclick" value="<%+item.id%>" data-type="fold" /></td>
+			<td width="30"><%if(!pr){%><input type="checkbox" name="file" class="fdclick liclick" value="<%+item.id%>" data-type="fold" /><%}%></td>
 			<td>
 				<%if(gid){%>
-				<a href="#gid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold"></i></a>
+				<a href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%>gid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold"></i></a>
 				<%}else{%>
-				<a href="#fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold"></i></a>
+				<a href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%>gid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold"></i></a>
 				<%}%>
 				<dl>
 					<dt>
 						<%if(gid){%>
-							<a class="fdname<%+item.id%>" href="#gid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
+							<a class="fdname<%+item.id%>" href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%>gid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
 						<%}else{%>
-							<a class="fdname<%+item.id%>" href="#fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
-						<%}%>							
+							<a class="fdname<%+item.id%>" href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%>gid=<%+gid%>&fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
+						<%}%>
+						<%if(!pr){%>
 						<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
 							<%if(item.mark==''){%>
 								编辑备注
@@ -29,6 +30,7 @@
 							<i class="edit-comp" cmd="editComp" data-type="fold" data-id="<%+item.id%>"></i>
 							<i class="edit-close" data-value="<%+item.mark%>" cmd="editClose"></i>
 						</span>
+						<%}%>
 					</dt>
 					<dd>
 					</dd>

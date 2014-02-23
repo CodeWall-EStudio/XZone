@@ -12,6 +12,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		nowOrder  = ['createTime',-1],
 		nowOds = '';
 		nowUid = 0,
+		nowGrade = 0,
+		nowTag = 0,	
+		nowPid = 0,	
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -33,18 +36,34 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			key : nowKey,
 			fold : obj || 0
 		};		
+
 		if(nowPrep == 'my'){
 			tpl = 'prep.tit';
 		}else if(nowPrep == 'group'){
-			return;
+			tpl = 'prep.group.tit';
+			var userList = Cache.get('alluser2key');
+			var plist = Cache.get('preplist');
+			// list : plist,
+			// ul : userList,
+			// pid : nowPid,
+			// tag : nowTag,
+			// grade : nowGrade,
+			// uid : nowUid		
+			data.tlist = config.tag;
+			data.glist = config.grade;
+			data.list =  plist;
+			data.ulist = userList;
+			data.pid = nowPid;
+			data.tag = nowTag;
+			data.grade = nowGrade;
+			data.uid = nowUid;
 		}
 
 		var view = new View({
 			target : titTarget,
 			tplid : tpl,
-			data : data
+			data : data				
 		});
-
 		view.createPanel();
 	}
 
@@ -118,7 +137,6 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		action = 1;
 		foldTarget.hide().removeAttr('show');
 		foldTarget.css('float','none').css('width','100%');
-
 		// foldTarget.html('')
 		tmpTarget.html('');
 		nowFdInfo = {};
@@ -134,6 +152,13 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				nowOrder = d.order;
 			}
 			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
+
+
+			//备课
+			nowGrade = d.grade || 0;
+			nowTag = d.tag || 0;
+			nowUid = d.uid || 0;
+			nowPid = d.pid || 0;						
 		}
 
 		if(nowGid && !nowFd){
@@ -167,7 +192,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		// }else if(nowPrep){
 		//  	crTit();
 		// }
-		crTit();
+
+		//crTit();
 		var data = {
 			folderId : nowFd,
 		};
@@ -238,13 +264,21 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			}
 		}else{
 		}
-
+		var pr = 0;
+		if(nowPrep == 'group'){
+			pr = 1;
+		}
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'fold.user.list',
 			data : {
 				list : d.list,
-				gid : nowGid
+				gid : nowGid,
+				pr : pr,
+				prep : nowPrep,
+				grade : nowGrade,
+				tag : nowTag,
+				uid : nowUid
 			}
 		});
 

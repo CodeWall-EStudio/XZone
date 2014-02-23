@@ -43,8 +43,11 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 				list : nowPrep.list,
 				tlist : config.tag,
 				glist : config.grade,
+				key : nowKey,
+				fold : 0,
 				ulist : userList,
 				pid : nowPid,
+				gid : nowPid,
 				tag : nowTag,
 				grade : nowGrade,
 				uid : nowUid
@@ -79,7 +82,9 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 		if(!userList){
 			handerObj.triggerHandler('nav:getuser',{type:'prep'});
 		}else{
-			crTit();
+			if(!nowUid){
+				crTit();
+			}
 			handerObj.triggerHandler('groupprep:get',{pid:nowPid,grade:nowGrade,tag:nowTag});
 		}
 		// handerObj.triggerHandler('file:init',d);

@@ -162,7 +162,6 @@ used as it is.
 					browse_button : id + '_browse',
 					container : id
 				}, settings));
-				console.log(id,uploader);
 				uploaders[id] = uploader;
 
 				// console.log(uploader);

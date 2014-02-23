@@ -17,7 +17,7 @@
 								<%-item.content%>
 							</dt>
 						<dd>
-							<%if(!item.save){%>
+							<%if(!item.save && type==1){%>){%>
 							<a  class="mailsave<%+item.id%>" cmd="save"  data-fid="<%+item.fid%>" data-id="<%+item.id%>">保存</a>
 							<%}%>
 						</dd>							

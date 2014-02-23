@@ -1,5 +1,24 @@
 <div class="fold-list-link">
-        <a href="#groupprep=1" style="float:left">备课检查</a>&nbsp;
+  <a href="#groupprep=1" style="float:left">备课检查</a>&nbsp;
+<%if(!key){%>
+
+  <%if(fold){%>       
+    <%if(fold.idpath.length>1){%>
+      <a style="z-index:19">......</a>
+    <%}%>         
+    <%if(fold.pid){%>
+      <a href="#groupprep=1&<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>&uid=<%+uid%>" class="frist" style="z-index:19"  href="#"><%-fold.pname%></a>
+      <a class="end" style="z-index:18"><%-fold.name%></a>
+    <a class="second" style="z-index:17" class="end" href="#groupprep=1&<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>&uid=<%+uid%>">返回上级</a>
+    <%}else if(uid){%>
+      <%-ulist[uid].nick%>
+    <%}%>
+  <%}%>
+<%}else{%>  
+  <a >搜索结果</a>
+  <!-- <a class="end" href="/home?fid=<?=$fid?>&od=<?=$od?>&on=<?=$on?>">返回上级</a> -->
+  <a class="return" href="#groupprep=1&<%if(gid){%>gid=<%+gid%><%}%>&fdid=<%+fold.pid%>&uid=<%+uid%>">退出搜索结果</a>
+<%}%>  
 </div> 
 <div class="prep-list">
         <ul class="act-zone">

@@ -3,7 +3,7 @@
 				var item = list[i];
 		%>
 			<tr class="file file<%+item.id%>" data-id="<?=$item['id']?>">
-					<td width="30"><input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" /></td>
+					<td width="30"><%if(!pr){%>	<input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" /><%}%></td>
 					<td>
 						<a  href="/review.html#id=<%+item.id%>" target="_blank" class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
 						<%if(item.type<7){%>
@@ -14,6 +14,7 @@
 						</a>
 						<dl>
 							<dt><a href="/review.html#id=<%+item.id%>" target="_blank" class="file-name fdname<%+item.id%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
+								<%if(!pr){%>		
 								<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
 									<%if(item.mark==''){%>
 										编辑备注
@@ -26,8 +27,10 @@
 									<i class="edit-comp" cmd="editComp" data-type="file" data-id="<%+item.id%>"></i>
 									<i class="edit-close" data-value="<%+item.mark%>" cmd="editClose"></i>
 								</span>
+								<%}%>
 							</dt>
 							<dd>
+								<%if(!pr){%>	
 								<span><a class="share-file" data-toggle="dropdown" href="#" data-id="1">共享</a>
 								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 									<li class="no-act"><a class="no-act" cmd="other" data-id="<%+item.id%>" data-name="<%+item.name%>">发送给别人</a></li>
@@ -35,6 +38,7 @@
 									<li class="no-act"><a class="no-act" cmd="dep" data-id="<%+item.id%>" data-name="<%+item.name%>">到部门空间</a></li>
 									<!-- <li><a cmd="toschool" data-id="<?=$item['id']?>" data-name="<?=$item['name']?>">到学校空间</a></li>		 -->			
 								</ul>
+								<%}%>
 								</span>										
 								<span><a href="<%+down%>?fileId=<%+item.id%>" data-id="<%+item.id%>" data-fid="<%+item.fid%>" target="_blank">下载</a></span>
 							</dd>
@@ -50,7 +54,9 @@
 					</td>
 					<td width="90"><%-item.size%></td>	
 					<td width="150">
-						<span><%-item.time%></span> <i <%if(item.coll){%>class="fav<%+item.id%> colls s" cmd="uncoll" title="取消收藏"<%}else{%>cmd="coll" class="fav<%+item.id%> colls" title="收藏"<%}%> data-type="file" data-id="<%+item.id%>" data-fid="<%+item.fid%>"></i>
+
+						<span><%-item.time%></span> <%if(!pr){%><i <%if(item.coll){%>class="fav<%+item.id%> colls s" cmd="uncoll" title="取消收藏"<%}else{%>cmd="coll" class="fav<%+item.id%> colls" title="收藏"<%}%> data-type="file" data-id="<%+item.id%>" data-fid="<%+item.fid%>"></i>
+						<%}%>
 					</td>
 			</tr>
 		<%}%>		

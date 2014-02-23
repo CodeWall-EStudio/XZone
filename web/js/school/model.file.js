@@ -76,7 +76,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			target = d.target,
 			gid = d.groupId;
 		var obj = {
-			favId : favid
+			fileId : id
 		}
 		if(gid){
 			obj.groupId = gid;

@@ -72,6 +72,7 @@ define(['config'],function(config){
     	}
 
     	upload_settings.url = url;
+
     	
     	if(!setting){
 		    $("#uploader").pluploadQueue(upload_settings).unbind('allcompleta').bind('allcomplete',function(){
