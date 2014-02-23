@@ -112,7 +112,7 @@ exports.saveUploadFile = function(params, callback){
 
     });
 
-    ep.on('saveRes', function(resource){
+    ep.all('getFolder', 'saveRes', function(folder, resource){
         // 添加文件记录
         var file = {
             creator: loginUser._id.toString(),
@@ -120,6 +120,7 @@ exports.saveUploadFile = function(params, callback){
             name: name,
             type: fileType,
             size: fileSize,
+            groupId: folder.group && folder.group.oid.toString(),
             resourceId: resource._id.toString()
         }
         resource.ref = 1;
@@ -127,7 +128,7 @@ exports.saveUploadFile = function(params, callback){
         mFile.create(file, ep.done('createFile'));
     });
 
-    ep.all('getFolder', 'saveRes', 'createFile', function(saveFolder, savedRes, file){
+    ep.all('getFolder', 'saveRes', 'createFile', function(folder, savedRes, file){
         if(savedRes){
             file.resource = U.filterProp(savedRes, ['_id', 'type', 'size']);
         }
@@ -146,7 +147,7 @@ exports.saveUploadFile = function(params, callback){
             // srcFolderId: null,
             distFolderId: folderId,
 
-            toGroupId: saveFolder.group && saveFolder.group.oid.toString()
+            toGroupId: folder.group && folder.group.oid.toString()
         });
 
     });
