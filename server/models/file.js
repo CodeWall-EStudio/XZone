@@ -86,17 +86,26 @@ exports.delete = function(params, callback){
         query['creator.$id'] = ObjectID(params.creator);
     }
     console.log('>>>delete file:', query);
-    db.file.findAndRemove(query, [], function(err, file){
+    var ep = new EventProxy();
+    ep.fail(callback);
 
-        if(!err && file){ // 将 resource 的引用计数减一
-            
-            mRes.updateRef(file.resource.oid.toString(), -1, function(err, newRes){
-                callback(null, file);
-            });
+    db.file.findAndRemove(query, [], ep.doneLater('remove'));
+
+    ep.on('remove', function(file){
+        if(file){ 
+            // 将 resource 的引用计数减一
+            mRes.updateRef(file.resource.oid.toString(), -1, ep.done('updateRef'));
+
+            // 修改用户表的 used 
+            mUser.update(file.creator.oid.toString(), { $inc:{ used: -1 * (file.size || 0) }}, ep.done('incUsed'))
 
         }else{
-            callback(err);
+            callback(null);
         }
+    });
+
+    ep.all('remove', 'updateRef', 'incUsed', function(file){
+        callback(null, file);
     });
 }
 

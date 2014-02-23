@@ -96,6 +96,14 @@ exports.modify = function(req, res){
     if(params.content){
         doc.content = params.content;
     }
+    
+    var members = params.members || [];
+    var managers = params.managers || [];
+    // managers.push(params.creator);
+    // TODO 修改成员
+    members = members.concat(managers);
+    members = us.uniq(members); // 唯一化
+
 
     var ep = new EventProxy();
 
