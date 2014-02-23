@@ -216,11 +216,11 @@ exports.modify = function(req, res){
                 }else{
                     // 这次可能被修改了权限的用户
                     var auth = config.AUTH_USER;
-                    if(managers.indexOf(member) > -1){
+                    if(managers.indexOf(userId) > -1){
                         auth = config.AUTH_GROUP_MANAGER;
                     }
                     mGroup.modifyUserAuth({
-                        userId: member,
+                        userId: userId,
                         groupId: groupId,
                         auth: auth
                     }, ep.group('modifyMember'));
