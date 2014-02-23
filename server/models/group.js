@@ -198,7 +198,7 @@ exports.isPrepareMember = function(userId, callback){
     // 获取备课小组
     db.group.findOne({
         pt: 1
-    }, function(group){
+    }, function(err, group){
         if(!group){
             console.log('>>>isPrepareMember, no pt=1 group');
             callback('can not find prepare group');
