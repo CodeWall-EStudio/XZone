@@ -9,6 +9,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			list.push({
 				id : item._id,
 				name : item.name,
+				fileid : item.fromFile.$id,
 				fid : item.resource.$id,
 				coll : item.coll,
 				remark : item.remark,
