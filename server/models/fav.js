@@ -75,7 +75,7 @@ exports.delete = function(params, callback){
 
         if(!err && fav){ // 将 resource 的引用计数减一
             if(fav.fromFile){
-                db.file.findAndModify({ _id: fav.fromFile._id, 'creator.$id': ObjectID(creator) }, [],  
+                db.file.findAndModify({ _id: fav.fromFile.oid, 'creator.$id': ObjectID(creator) }, [],  
                         { $set: { isFav: false } }, function(err){});
             }
 
