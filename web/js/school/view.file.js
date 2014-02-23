@@ -124,6 +124,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowUid){
 			data.uid = nowUid;
 		}
+
 		handerObj.triggerHandler('file:search',data);	
 	}
 

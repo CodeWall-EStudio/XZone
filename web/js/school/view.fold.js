@@ -171,27 +171,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			}
 		}
 
-		//没有fdid  是个人的.
-		// if(!nowFd){
-		// 	crTit();
-		// 	var fid = nowFd;
-		// 	if(nowGid){
-		// 		fid = nowGinfo.rootFolder;
-		// 	}
-		// 	var data = {};
-		// 	if(nowGid){
-		// 		data.groupId = nowGid;
-		// 	}
-		// 	if(fid){
-		// 		data.folderId = fid;
-		// 	}else if(rootFd){
-		// 		data.folderId = rootFd;
-		// 	}
-		// 	handerObj.triggerHandler('fold:one',data);		
-		// //如果是备课		
-		// }else if(nowPrep){
-		//  	crTit();
-		// }
+		//console.log(nowFd,rootFd);
 
 		//crTit();
 		var data = {
