@@ -27,14 +27,14 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if($.isEmptyObject(obj)){
 			obj = 0;
 		}
-
 		var tpl = 'file.tit';
 		var data = {
 			gid : nowGid,
 			gname : nowGinfo.name || '',
 			filetype : config.filetype,
 			key : nowKey,
-			fold : obj || 0
+			fold : obj || 0,
+			fdid : nowFd
 		};		
 
 		if(nowPrep == 'my'){

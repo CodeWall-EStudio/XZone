@@ -45,6 +45,7 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 				glist : config.grade,
 				key : nowKey,
 				fold : 0,
+				fdid : nowFd,
 				ulist : userList,
 				pid : nowPid,
 				gid : nowPid,

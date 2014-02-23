@@ -2,7 +2,7 @@
 			
 <%if(!key){%>
 	<%if(gid){%>
-	<a href="#gid=<%+gid%>" style="z-index:20"><%-gname%></a>
+	<a href="#myprep=1&gid=<%+gid%>" style="z-index:20"><%-gname%></a>
 	<%}else{%>
 	<a href="#" style="z-index:20">个人文件</a>
 	<%}%>
@@ -12,15 +12,16 @@
 			<a style="z-index:19">......</a>
 		<%}%>					
 		<%if(fold.pid){%>
-			<a href="#<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>" class="frist" style="z-index:19"  href="#"><%-fold.pname%></a>
+			<a href="#myprep=1&<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>" class="frist" style="z-index:19"  href="#"><%-fold.pname%></a>
+			<a class="end" style="z-index:18"><%-fold.name%></a>
+			<a class="second" style="z-index:17" class="end" href="#myprep=1&<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>">返回上级</a>			
 		<%}%>
-		<a class="end" style="z-index:18"><%-fold.name%></a>
-		<a class="second" style="z-index:17" class="end" href="#<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>">返回上级</a>
+
 	<%}%>
 <%}else{%>	
 	<a >搜索结果</a>
 	<!-- <a class="end" href="/home?fid=<?=$fid?>&od=<?=$od?>&on=<?=$on?>">返回上级</a> -->
-	<a class="return">退出搜索结果</a>
+	<a class="return" href="#myprep=1&<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fdid%>">退出搜索结果</a>
 <%}%>
 </div>
 <ul class="act-zone">
