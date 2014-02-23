@@ -438,6 +438,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			fileid.push(d.fl[i].fid);
 			ids.push(d.fl[i].id);
 		}
+		console.log(d.fl);
+		console.log(fold);
+		console.log(rootFd);
 		var view = new View({
 			target : actTarget,
 			tplid : 'movefile',

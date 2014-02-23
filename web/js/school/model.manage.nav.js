@@ -69,6 +69,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 		var success = function(d){
 			if(d.err == 0){
 				d.result.data.auth = 1;
+				d.result.data.rootFolder.id = d.result.data.rootFolder['$id'];
 				var obj = conventGroup(d.result.data);
 				handerObj.triggerHandler('nav:createsuc',{list:obj});
 			}

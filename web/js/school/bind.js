@@ -362,16 +362,18 @@ define(['config'],function(config){
 				});
 				$('#fileList .fclick').each(function(){
 					$(this)[0].checked = false;
-				});				
+				});	
+				checkFoldAct();
 			}else if(tag == 'files'){
 				$('#fileList .fdclick').each(function(){
 					$(this)[0].checked = false;
 				});
 				$('#fileList .fclick').each(function(){
 					$(this)[0].checked = true;
-				});		
+				});	
+				checkAct();	
 			}
-			checkAct();    	
+			    	
     	}
     })
 
