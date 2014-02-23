@@ -37,7 +37,7 @@ exports.create = function(params, callback){
         var doc = {
             name: params.name,
             content: params.content || '',
-            type: type,
+            type: Number(params.type) || 0,
             parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
             creator: DBRef('user', ObjectID(params.creator)),
             status: status, 
@@ -136,7 +136,7 @@ exports.removeUserFromGroup = function(params, callback){
     });
 
 }
-exports.modifyUserAuth = function(params, auth, callback){
+exports.modifyUserAuth = function(params, callback){
     var query = {
         user: DBRef('user', ObjectID(params.userId)),
         group: DBRef('group', ObjectID(params.groupId))
