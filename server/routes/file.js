@@ -157,7 +157,7 @@ exports.download = function(req, res){
             return;
         }
         var file = data.file, resource = data.resource, folder = data.folder;
-        var filePath = path.join('/data/71xiaoxue/', resource.path);
+        var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
         // console.log('redirect to :' + filePath);
         res.set({
             'Content-Type': resource.mimes,
@@ -203,8 +203,8 @@ exports.batchDownload = function(req, res){
     ep.after('verifyDownload', fileIds.length, function(list){
         var zipName = Math.floor(Math.random() * 1000000) + '.zip';
         var dir = U.formatDate(new Date(), 'yyyy-MM-dd/');
-        var zipDir = config.FILE_ZIP_DIR + dir;
-        var zipPath = '/data/zip/' + dir + zipName;
+        var zipDir = path.join(config.FILE_SAVE_ROOT, config.FILE_ZIP_DIR, dir);
+        var zipPath = path.join(config.FILE_ZIP_DIR, dir, zipName);
 
         U.mkdirsSync(zipDir);
         var output = fs.createWriteStream(zipDir + zipName);
@@ -231,7 +231,7 @@ exports.batchDownload = function(req, res){
         list.forEach(function(data){
 
             var file = data.file, resource = data.resource, folder = data.folder;
-            var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
+            var filePath = path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, resource.path);
             archive.file(filePath, { name: file.name });
 
             mLog.create({
@@ -281,10 +281,11 @@ exports.preview = function(req, res){
             return;
         }
         var file = data.file, resource = data.resource, folder = data.folder;
-        var filePath = path.join('/data/71xiaoxue/', resource.path);
+        var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
 
         if(resource.type === 8){//text
-            fs.readFile(config.FILE_SAVE_DIR + resource.path, function(err, data){
+            var fileName = path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, resource.path);
+            fs.readFile(fileName, function(err, data){
                 if(!data){
                     res.json({ err: ERR.NOT_FOUND, msg: 'can not find this file' });
                     return;

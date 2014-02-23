@@ -28,7 +28,7 @@ exports.saveUploadFile = function(params, callback){
     var savePath = U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
 
     var filename = body.file_md5 + path.extname(body.file_name);
-    var folderPath = path.resolve(path.join(config.FILE_SAVE_DIR, savePath));
+    var folderPath = path.resolve(path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, savePath));
     var filePath = path.join(folderPath, filename);
 
     var name = body.name;

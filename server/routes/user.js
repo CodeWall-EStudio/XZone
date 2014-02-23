@@ -144,7 +144,8 @@ exports.logoff = function(req, res){
     res.clearCookie('skey');
     res.clearCookie('connect.sid');
 
-    res.redirect('/');
+    exports.gotoLogin(req, res);
+    // res.redirect('/');
     // res.json({ err: ERR.SUCCESS });
 }
 
