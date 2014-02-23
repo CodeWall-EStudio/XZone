@@ -106,7 +106,8 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			order = data.order || {},
 			fdid = data.folderId || 0,
 			tplid = data.tplid,
-			target = data.target || 0;
+			target = data.target || 0,
+			root = data.root || 0;
 
 		var obj = {
 			folderId : fdid
@@ -130,7 +131,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 						handerObj.triggerHandler('fold:treeload',{list:list,target:target});
 					}
 				}else{
-					handerObj.triggerHandler('fold:load',{list:list});
+					handerObj.triggerHandler('fold:load',{list:list,root:root});
 				}
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);

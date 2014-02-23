@@ -171,8 +171,6 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			}
 		}
 
-		//console.log(nowFd,rootFd);
-
 		//crTit();
 		var data = {
 			folderId : nowFd,
@@ -192,6 +190,18 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(nowGid){
 			obj.groupId = nowGid;
 		}
+
+		if(nowFd != rootFd){
+			var o1 = {
+				folderId : rootFd
+			};
+			if(nowGid){
+				o1.groupId = nowGid;
+			}			
+			o1.root = 1;
+			handerObj.triggerHandler('fold:get',o1);
+		}
+
 		if(nowKey == ''){
 			handerObj.triggerHandler('fold:get',obj);
 		}else{
@@ -206,10 +216,11 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	function foldLoad(e,d){
+
 		//个人的首页
 		if(!nowGid){ // && !nowFd){
 
-			if(!nowFd || nowFd == rootFd){
+			if(!nowFd || nowFd == rootFd || d.root){
                 if(d.pid == rootFd){
                 	var fl = Cache.get('myfold');
                 	fl.push(d.list[0]);
@@ -244,10 +255,16 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			}
 		}else{
 		}
+
+		if(d.root){
+			return;
+		}
+
 		var pr = 0;
 		if(nowPrep == 'group'){
 			pr = 1;
 		}
+
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'fold.user.list',

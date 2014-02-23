@@ -423,11 +423,15 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 
 	function fileMove(e,d){
 
-		var fold;
+		var fold,
+			info
+			rootfd = 0;
 		if(nowGid){
 			fold = Cache.get('rootFolder'+nowGid);
 		}else{
 			fold = Cache.get('myfold');
+			info = Cache.get('myinfo');
+			rootfd = info.rootFolder.$id;
 		}
 
 		if(!fold){
@@ -439,15 +443,13 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			fileid.push(d.fl[i].fid);
 			ids.push(d.fl[i].id);
 		}
-		console.log(d.fl);
-		console.log(fold);
-		console.log(rootFd);
 		var view = new View({
 			target : actTarget,
 			tplid : 'movefile',
 			data : {
 				fl : d.fl,
-				fold : fold
+				fold : fold,
+				root : rootfd
 			},
 			after : function(){
 				$("#actWin").modal('show');
@@ -703,7 +705,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			target = tmpTarget.find('.file').eq(0);
 			act = 1;
 		}
-
+		var pr = 0;
+		if(nowPrep == 'group'){
+			pr = 1;
+		}
 		var view = new View({
 			target : target,
 			tplid : 'file.user.list',
@@ -711,7 +716,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				list : [d],
 				filetype : config.filetype,
 				gid : nowGid,
-				down : config.cgi.filedown
+				down : config.cgi.filedown,
+				pr : pr
 			}
 		});
 		if(act){
