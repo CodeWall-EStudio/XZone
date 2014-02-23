@@ -129,6 +129,12 @@ exports.modify = function(req, res){
             return;
         }
         if(params.name){
+            if(params.name === folder.name){
+                // 名字没变过, 就不要改了
+                delete doc.name;
+                ep.emit('checkName', true);
+                return;
+            }
             mFolder.getFolder({
                 name: params.name,
                 'parent.$id': folder.parent._id

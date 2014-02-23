@@ -121,6 +121,10 @@ exports.modify = function(req, res){
             ep.emit('error', 'no such group', ERR.NOT_FOUND);
             return;
         }
+        if(doc.name && doc.name === group.name){
+            // 名字没变过, 就不写了
+            delete doc.name;
+        }
         if(U.hasRight(loginUser.auth, config.AUTH_MANAGER)){
             // 当前用户是管理员或者系统管理员
             ep.emit('ready');
