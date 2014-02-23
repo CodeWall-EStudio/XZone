@@ -157,11 +157,11 @@ exports.modify = function(req, res){
             members.forEach(function(userId){
 
                 var auth = config.AUTH_USER;
-                if(managers.indexOf(member) > -1){
+                if(managers.indexOf(userId) > -1){
                     auth = config.AUTH_GROUP_MANAGER;
                 }
                 mGroup.addUserToGroup({
-                    userId: member,
+                    userId: userId,
                     groupId: groupId,
                     auth: auth
                 }, ep.group('applyMember'));
@@ -178,11 +178,11 @@ exports.modify = function(req, res){
                     members.forEach(function(userId){
 
                         var auth = config.AUTH_USER;
-                        if(managers.indexOf(member) > -1){
+                        if(managers.indexOf(userId) > -1){
                             auth = config.AUTH_GROUP_MANAGER;
                         }
                         mGroup.addUserToGroup({
-                            userId: member,
+                            userId: userId,
                             groupId: groupId,
                             auth: auth
                         }, ep.group('applyMember'));
