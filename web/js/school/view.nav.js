@@ -144,10 +144,12 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 							return;
 						}
 						var obj = {
-							'name' : name,
 							'type' : 1,
 							'content' : desc,
 							'members' : members
+						}
+						if(name != data.group.name){
+							obj.name = name;
 						}
 						if(d.data){
 							obj.groupId = d.data.id;
