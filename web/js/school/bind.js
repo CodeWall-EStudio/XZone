@@ -259,7 +259,7 @@ define(['config'],function(config){
 	    	} 
 			$('.tool-zone').addClass('hide');
 			$('.file-act-zone').removeClass('hide');
-    		if(n>1){
+    		if(l>0 || n > 0){
 	    		$('#renameAct').addClass('hide');
 	    		$('#remarkAct').addClass('hide');
     		}else{
@@ -392,7 +392,7 @@ define(['config'],function(config){
 			    	
     	}
     })
-
+    //文件和文件夹选择
 	$('.table-files').click(function(e){
 		var t = $(e.target),
 			type = t.attr("data-type");
