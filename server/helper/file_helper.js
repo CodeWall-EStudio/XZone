@@ -45,6 +45,10 @@ exports.saveUploadFile = function(params, callback){
     // 在同一个文件夹下，不允许出现文件名相同且作者相同的文件。
     // 文件名相同且作者相同时，比较文件MD5。若MD5相同，提示重复文件，终止写操作；
     // 若MD5不同，提示改名后继续操作。
+    if(!name){
+        ep.emit('error', 'file name is required', ERR.PARAM_ERROR);
+        return;
+    }
     var query = { 
         name: name, 
         'folder.$id': oFolderId, 
