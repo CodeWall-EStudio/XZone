@@ -210,6 +210,10 @@ exports.modify = function(req, res){
                     if(creator === userId){
                         ep.emit('modifyMember');
                         console.log('>>>modify group can not remove creator', userId);
+                    }else if(!needModifyManager && oldAuth !== 0){
+                        // 没有修改管理员时, 不能删掉管理员
+                        ep.emit('modifyMember');
+                        console.log('>>>modify group managers empty, not remove manager', userId);
                     }else{
                         // 这个用户被删了
                         mGroup.removeUserFromGroup({
