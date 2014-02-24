@@ -238,7 +238,10 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 		var v = $(this).val();
 		if(v == 3){
 			$('#prepYear').removeClass('hide');
-			$('#prepTag').removeClass('hide');
+			if($('.check-prep:checked').val() == 1){
+				$('#prepTag').removeClass('hide');
+			}
+			//$('#prepTag').removeClass('hide');
 		}else{
 			$('#prepYear').addClass('hide');
 			$('#prepTag').addClass('hide');
