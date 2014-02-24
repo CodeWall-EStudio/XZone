@@ -116,7 +116,8 @@ exports.upload = function(req, res){
     var ep = new EventProxy();
     ep.fail(function(err, code){
         console.log('>>>media upload error:',{ err: code || ERR.SERVER_ERROR, msg: err });
-        res.json({ err: code || ERR.SERVER_ERROR, msg: err });
+        // {"code":"200","msg":"\u4e0a\u4f20\u6210\u529f!","data":{"fid":292
+        res.json({ code: code || ERR.SERVER_ERROR, msg: err });
     });
 
     if(!skey){
@@ -160,12 +161,14 @@ exports.upload = function(req, res){
 
     ep.on('saveFileSuccess', function(file){
         console.log('>>>media upload success:',file._id);
-        res.json({
-            err: ERR.SUCCESS,
-            result: {
-                data: file
+        // {"code":"200","msg":"\u4e0a\u4f20\u6210\u529f!","data":{"fid":292
+        res.json({ // 新媒体的返回结构不一样
+            code: ERR.MEDIA_SUCCESS,
+            msg: 'ok',
+            data: {
+                fid: file._id
             }
-        })
+        });
     });
 
 }
