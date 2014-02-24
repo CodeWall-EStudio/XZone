@@ -23,6 +23,8 @@ exports.getUserInfo = function(skey, callback){
     var req = http.request(options, function(res){
         res.setEncoding('utf8');
         var response = '';
+        res.on('error', callback);
+        
         res.on('data', function(chunk){
             response += chunk;
         });
