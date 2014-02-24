@@ -1,22 +1,26 @@
 
 var http = require('http');
 var querystring = require('querystring');
+var url = require('url');
 var EventProxy = require('eventproxy');
+
+var config = require('../config');
 
 
 exports.getUserInfo = function(skey, callback){
     var data = querystring.stringify({
         encodeKey: skey
     });
-    var req = http.request({
-        host: 'mapp.71xiaoxue.com',
-        path: '/components/getUserInfo.htm',
-        method: 'POST',
-        headers: {  
-            "Content-Type": 'application/x-www-form-urlencoded',  
-            "Content-Length": data.length  
-        }  
-    }, function(res){
+
+    var options = url.parse(config.CAS_USER_INFO_CGI);
+
+    options.method = 'POST';
+    options.headers = {  
+        "Content-Type": 'application/x-www-form-urlencoded',  
+        "Content-Length": data.length  
+    };
+
+    var req = http.request(options, function(res){
         res.setEncoding('utf8');
         var response = '';
         res.on('data', function(chunk){

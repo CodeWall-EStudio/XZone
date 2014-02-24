@@ -93,8 +93,18 @@ function getFolder(params, callback){
     });
 }
 
-
+function setCOSHeader(req, res){
+    res.set({
+        'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
+        'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Headers': 'origin,content-type',
+        'Access-Control-Max-Age': '30'
+    });
+}
 exports.upload = function(req, res){
+
+    setCOSHeader(req, res);
 
     var body = req.body;
     var loginUser;
@@ -161,6 +171,7 @@ exports.upload = function(req, res){
 }
 
 function verifyDownload(params, callback){
+
     var fileId = params.fileId;
     var creator = params.creator;
 
@@ -202,6 +213,9 @@ function verifyDownload(params, callback){
 }
 
 exports.download = function(req, res){
+
+    setCOSHeader(req, res);
+
     var fileId = req.query.fileId;
     var skey = req.cookies.skey;
     
@@ -209,6 +223,8 @@ exports.download = function(req, res){
     ep.fail(function(err, code){
         res.json({ err: code || ERR.SERVER_ERROR, msg: err });
     });
+
+    console.log('>>>media download, skey: ', skey);
 
     if(!skey){
         ep.emit('error', 'need login', ERR.NOT_LOGIN);
@@ -227,7 +243,7 @@ exports.download = function(req, res){
 
     ep.all('getUserInfoSuccess', 'verifyDownloadSucc', function(loginUser, data){
         var file = data.file, resource = data.resource, folder = data.folder;
-        var filePath = path.join('/data/71xiaoxue/', resource.path);
+        var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
 
         res.set({
             'Content-Type': resource.mimes,

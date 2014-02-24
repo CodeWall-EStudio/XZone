@@ -15,6 +15,11 @@ exports.CAS_BASE_URL = 'http://dand.71xiaoxue.com:80/sso.web';
 // exports.CAS_SERVICE = 'http://localhost:' + exports.PORT + '/api/user/loginSuccess'; // FIXME need to change 
 exports.CAS_SERVICE = 'http://xzone.codewalle.com/api/user/loginSuccess';
 
+// 获取用户详细资料的CGI
+exports.CAS_USER_INFO_CGI = 'http://mapp.71xiaoxue.com/components/getUserInfo.htm';
+
+// 允许新媒体跨域上传和下载资源的 host
+exports.MEDIA_CORS_URL = 'http://media.71xiaoxue.com';
 
 // 文件保存的根目录
 exports.FILE_SAVE_ROOT = '/home/swall/xzone/';
