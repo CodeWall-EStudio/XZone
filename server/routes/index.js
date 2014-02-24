@@ -172,9 +172,21 @@ exports.route = function(req, res, next){
     }
 };
 
+
 exports.mediaUpload = function(req, res, next){
     var params = req.body;
     var type = Number(params.media) || 0;
+    if(req.method === 'OPTIONS'){ //用于返回跨域头
+        res.set({
+            'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
+            'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
+            'Access-Control-Allow-Credentials': 'true',
+            'Access-Control-Allow-Headers': 'Origin,Content-Type',
+            'Access-Control-Max-Age': '30'
+        });
+        res.send(200);
+        return;
+    }
     if(type === 1){
         // 新媒体的上传, 路由到 media/upload
         getRouter(MEDIA_UPLOAD_CGI, req.method)(req, res, next);

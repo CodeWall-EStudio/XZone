@@ -37,7 +37,7 @@ exports.upload = function(req, res){
     });
 
     if(!uploadFilePath){
-        ep.emit('error', 'unsupport file type', ERR.NOT_SUPPORT);
+        ep.emit('error', 'upload file fail');
         return;
     }
 
