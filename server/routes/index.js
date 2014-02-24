@@ -132,9 +132,10 @@ exports.verify = function(req, res, next){
         next();
     }else{
         var skey = req.cookies.skey;
-        var loginUser = req.session[skey];
 
-        if(!loginUser){
+        var loginUser;
+
+        if(!req.session || !skey || !(loginUser = req.session[skey])){
             res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
             return;
         }
@@ -176,14 +177,15 @@ exports.route = function(req, res, next){
 exports.mediaUpload = function(req, res, next){
     var params = req.body;
     var type = Number(params.media) || 0;
-    if(req.method === 'OPTIONS'){ //用于返回跨域头
-        res.set({
-            'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
-            'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
-            'Access-Control-Allow-Credentials': 'true',
-            'Access-Control-Allow-Headers': 'Origin,Content-Type',
-            'Access-Control-Max-Age': '30'
-        });
+    //设置跨域请求用的返回头
+    res.set({
+        'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
+        'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Headers': 'Origin,Content-Type',
+        'Access-Control-Max-Age': '30'
+    });
+    if(req.method === 'OPTIONS'){
         res.send(200);
         return;
     }
