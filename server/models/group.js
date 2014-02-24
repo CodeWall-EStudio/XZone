@@ -146,6 +146,16 @@ exports.modifyUserAuth = function(params, callback){
     db.groupuser.update(query, {$set: {auth: Number(params.auth) || 0}}, callback);
 }
 
+function fetchGroupUser(doc, callback){
+    db.user.findOne({ _id: doc.user.oid }, { fields: {_id: 1, nick: 1} }, 
+            function(err, user){
+
+        if(user){
+            user.auth = doc.auth;
+        }
+        callback(err, user);
+    });
+}
 
 exports.getGroupMembers = function(groupId, needDetail, callback){
     db.groupuser.find({ 'group.$id': ObjectID(groupId)}, function(err, docs){
@@ -161,11 +171,11 @@ exports.getGroupMembers = function(groupId, needDetail, callback){
             docs.forEach(function(doc){
                 if(!needDetail){
                     ep.emit('fetchUser', {
-                        _id: doc.user.oid
+                        _id: doc.user.oid,
+                        auth: doc.auth
                     });
                 }else{
-                    db.user.findOne({ _id: doc.user.oid }, 
-                            { fields: {_id: 1, nick: 1} }, ep.group('fetchUser'));
+                    fetchGroupUser(doc, ep.group('fetchUser'));
                 }
             });
         }
