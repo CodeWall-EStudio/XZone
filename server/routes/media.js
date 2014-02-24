@@ -93,7 +93,7 @@ function getFolder(params, callback){
     });
 }
 
-function setCOSHeader(req, res){
+function setCORSHeader(req, res){
     res.set({
         'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
         'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
@@ -104,13 +104,13 @@ function setCOSHeader(req, res){
 }
 exports.upload = function(req, res){
 
-    setCOSHeader(req, res);
+    setCORSHeader(req, res);
 
     var body = req.body;
     var loginUser;
     var uploadFilePath = body.file_path;
-    var skey = req.cookies.skey;
-    console.log('>>>media upload:');
+    var skey = req.cookies.skey || req.body.skey || req.query.skey;
+    console.log('>>>media upload, skey:',skey);
     var activityId = body.activityId;
 
     var ep = new EventProxy();
@@ -217,10 +217,10 @@ function verifyDownload(params, callback){
 
 exports.download = function(req, res){
 
-    setCOSHeader(req, res);
+    setCORSHeader(req, res);
 
     var fileId = req.query.fileId;
-    var skey = req.cookies.skey;
+    var skey = req.cookies.skey || req.body.skey || req.query.skey;
     
     var ep = new EventProxy();
     ep.fail(function(err, code){
