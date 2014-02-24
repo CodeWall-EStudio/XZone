@@ -23,9 +23,9 @@ exports.create = function(params, callback){
         name: params.name
     }
     if(params.parentId){
-        nameQuery.parent = ObjectID(params.parentId);
+        nameQuery['parent.$id'] = ObjectID(params.parentId);
     }else{
-        nameQuery.parent = null;
+        nameQuery['parent.$id'] = null;
     }
     // 小组的名字在同一个group下要唯一
     db.group.findOne(nameQuery, ep.doneLater('findGroup'));
