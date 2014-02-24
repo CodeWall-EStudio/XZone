@@ -93,19 +93,7 @@ function getFolder(params, callback){
     });
 }
 
-function setCORSHeader(req, res){
-    console.log('setCORSHeader, method', req.method);
-    res.set({
-        'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
-        'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Headers': 'Origin,Content-Type',
-        'Access-Control-Max-Age': '30'
-    });
-}
 exports.upload = function(req, res){
-
-    setCORSHeader(req, res);
 
     var body = req.body;
     var loginUser;
@@ -124,8 +112,11 @@ exports.upload = function(req, res){
     if(!skey){
         ep.emit('error', 'need login', ERR.NOT_LOGIN);
         return;
+    }else if(!activityId){
+        ep.emit('error', 'need activityId', ERR.PARAM_ERROR);
+        return;
     }else if(!uploadFilePath){
-        ep.emit('error', 'unsupport file type', ERR.NOT_SUPPORT);
+        ep.emit('error', 'upload file fail');
         return;
     }
 
@@ -143,7 +134,7 @@ exports.upload = function(req, res){
 
     ep.on('getMediaFolderSucc', function(mediaFolder){
         getFolder({
-            name: activityId,
+            name: activityId + '',
             creator: loginUser._id.toString(),
             parentId: mediaFolder._id.toString()
         }, ep.done('getActFolderSucc'));
@@ -217,8 +208,6 @@ function verifyDownload(params, callback){
 }
 
 exports.download = function(req, res){
-
-    setCORSHeader(req, res);
 
     var fileId = req.query.fileId;
     var skey = req.cookies.skey || req.body.skey || req.query.skey;

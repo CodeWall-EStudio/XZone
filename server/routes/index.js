@@ -1,7 +1,7 @@
 var ERR = require('../errorcode');
 var routeUser = require('./user');
 var U = require('../util');
-// var CFG = require('../config');
+var config = require('../config');
 
 var ROUTER_CONFIG = require('./router_config');
 
@@ -132,9 +132,10 @@ exports.verify = function(req, res, next){
         next();
     }else{
         var skey = req.cookies.skey;
-        var loginUser = req.session[skey];
 
-        if(!loginUser){
+        var loginUser;
+
+        if(!req.session || !skey || !(loginUser = req.session[skey])){
             res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
             return;
         }
@@ -172,9 +173,22 @@ exports.route = function(req, res, next){
     }
 };
 
+
 exports.mediaUpload = function(req, res, next){
     var params = req.body;
     var type = Number(params.media) || 0;
+    //设置跨域请求用的返回头
+    res.set({
+        'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
+        'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Headers': 'Origin,Content-Type',
+        'Access-Control-Max-Age': '30'
+    });
+    if(req.method === 'OPTIONS'){
+        res.send(200);
+        return;
+    }
     if(type === 1){
         // 新媒体的上传, 路由到 media/upload
         getRouter(MEDIA_UPLOAD_CGI, req.method)(req, res, next);
