@@ -226,7 +226,10 @@ exports.modify = function(req, res){
                 }else{
                     // 这次可能被修改了权限的用户
                     var auth = config.AUTH_USER;
-                    if(needModifyManager){
+                    if(creator === userId){
+                        // 创建者必须是管理员
+                        auth = config.AUTH_GROUP_MANAGER;
+                    }else if(needModifyManager){
                         if(managers.indexOf(userId) > -1){
                             auth = config.AUTH_GROUP_MANAGER;
                         }
