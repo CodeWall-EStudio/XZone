@@ -112,6 +112,9 @@ exports.upload = function(req, res){
     if(!skey){
         ep.emit('error', 'need login', ERR.NOT_LOGIN);
         return;
+    }else if(!activityId){
+        ep.emit('error', 'need activityId', ERR.PARAM_ERROR);
+        return;
     }else if(!uploadFilePath){
         ep.emit('error', 'upload file fail');
         return;
@@ -131,7 +134,7 @@ exports.upload = function(req, res){
 
     ep.on('getMediaFolderSucc', function(mediaFolder){
         getFolder({
-            name: activityId,
+            name: activityId + '',
             creator: loginUser._id.toString(),
             parentId: mediaFolder._id.toString()
         }, ep.done('getActFolderSucc'));

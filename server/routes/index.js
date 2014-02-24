@@ -1,7 +1,7 @@
 var ERR = require('../errorcode');
 var routeUser = require('./user');
 var U = require('../util');
-// var CFG = require('../config');
+var config = require('../config');
 
 var ROUTER_CONFIG = require('./router_config');
 
