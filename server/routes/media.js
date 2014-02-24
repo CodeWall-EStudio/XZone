@@ -94,11 +94,12 @@ function getFolder(params, callback){
 }
 
 function setCORSHeader(req, res){
+    console.log('setCORSHeader, method', req.method);
     res.set({
         'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
         'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
         'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Headers': 'origin,content-type',
+        'Access-Control-Allow-Headers': 'Origin,Content-Type',
         'Access-Control-Max-Age': '30'
     });
 }
