@@ -1,4 +1,4 @@
-define(['config','cache','helper/view','model.group','view.groupprep'],function(config,Cache,View){
+define(['config','cache','helper/view','helper/util','model.group','view.groupprep'],function(config,Cache,View,util){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
@@ -179,7 +179,7 @@ define(['config','cache','helper/view','model.group','view.groupprep'],function(
 		if(info.content == ''){
 			desc = '暂无公告'
 		}
-		$("#groupDesc p").text(desc);
+		$("#groupDesc p").html(util.transStr(desc));
 	}
 
 	function boardasideaddSuc(e,d){

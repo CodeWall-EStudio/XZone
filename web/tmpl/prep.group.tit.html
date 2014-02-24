@@ -31,12 +31,12 @@
               <%}%>
             <b class="caret"></b></a>
             <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
-              <li><a href="#groupprep=1&pid=0&grade=<%+grade%>&tag=<%+tag%>">所有学年</a></li>
+              <li><a href="#groupprep=1&pid=0&grade=<%+grade%>&tag=<%+tag%>&uid=<%+uid%>">所有学年</a></li>
               <%
                 for(var i in list){
                   var item = list[i];
               %>
-                <li><a href="#groupprep=1&pid=<%+item.id%>&grade=<%+grade%>&tag=<%+tag%>"><%-item.name%></a></li>
+                <li><a href="#groupprep=1&pid=<%+item.id%>&grade=<%+grade%>&tag=<%+tag%>&uid=<%+uid%>"><%-item.name%></a></li>
               <%}%>
             </ul>
           </li>
@@ -52,12 +52,12 @@
               <%}%>
             <b class="caret"></b></a>
             <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
-              <li><a href="#groupprep=1&pid=<%+pid%>&grade=0&tag=<%+tag%>">所有年级</a></li>
+              <li><a href="#groupprep=1&pid=<%+pid%>&grade=0&tag=<%+tag%>&uid=<%+uid%>">所有年级</a></li>
               <%
                 for(var i in glist){
                   var item = glist[i];
               %>
-                <li><a href="#groupprep=1&pid=<%+pid%>&grade=<%=i%>&tag=<%+tag%>"><%-item%></a></li>
+                <li><a href="#groupprep=1&pid=<%+pid%>&grade=<%=i%>&tag=<%+tag%>&uid=<%+uid%>"><%-item%></a></li>
               <%}%>
             </ul>
           </li>
@@ -73,12 +73,12 @@
               <%}%>
             <b class="caret"></b></a>
             <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
-              <li><a href="#groupprep=1&pid=<%+pid%>&tag=0&grade=<%+grade%>">所有学科</a></li>
+              <li><a href="#groupprep=1&pid=<%+pid%>&tag=0&grade=<%+grade%>&uid=<%+uid%>">所有学科</a></li>
               <%
                 for(var i in tlist){
                   var item = tlist[i];
               %>
-                <li><a href="#groupprep=1&pid=<%+pid%>&tag=<%=i%>&grade=<%+grade%>"><%-item%></a></li>
+                <li><a href="#groupprep=1&pid=<%+pid%>&tag=<%=i%>&grade=<%+grade%>&uid=<%+uid%>"><%-item%></a></li>
               <%}%>
             </ul>
           </li>
@@ -95,7 +95,7 @@
               
             <b class="caret"></b></a>
             <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
-              <li><a href="#groupprep=1&pid=<%+pid%>&tag=<%+tag%>&grade=<%+grade%>">所有学科</a></li>
+              <li><a href="#groupprep=1&pid=<%+pid%>&tag=<%+tag%>&grade=<%+grade%>">所有用户</a></li>
               <%
                 for(var i in ulist){
                   var item = ulist[i];

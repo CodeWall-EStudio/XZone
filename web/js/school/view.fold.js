@@ -41,6 +41,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			tpl = 'prep.tit';
 		}else if(nowPrep == 'group'){
 			tpl = 'prep.group.tit';
+			console.log(1234);
 			var userList = Cache.get('alluser2key');
 			var plist = Cache.get('preplist');
 			// list : plist,

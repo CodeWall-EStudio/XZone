@@ -74,6 +74,11 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 			//nowPrep = d.prep || 0;
 		}
 
+		if(!nowGid){
+			tabletitTarget.html('');
+		}
+
+
 		$('.aside-divs').hide();
 		if(!groupPrepAsideTarget.attr('have')){
 			prepAside();
