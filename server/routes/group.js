@@ -100,7 +100,7 @@ exports.modify = function(req, res){
     
     var members = params.members || [];
     var managers = params.managers || [];
-
+    var needModifyManager = !!managers.length ;
 
     // 修改成员
     members = members.concat(managers);
@@ -203,6 +203,7 @@ exports.modify = function(req, res){
 
             docs.forEach(function(doc){
                 var userId = doc.user.oid.toString();
+                var oldAuth = doc.auth;
                 var mIndex = members.indexOf(userId);
                 if(mIndex === -1){
                     //防止创建者被删掉
@@ -221,9 +222,14 @@ exports.modify = function(req, res){
                 }else{
                     // 这次可能被修改了权限的用户
                     var auth = config.AUTH_USER;
-                    if(managers.indexOf(userId) > -1){
-                        auth = config.AUTH_GROUP_MANAGER;
+                    if(needModifyManager){
+                        if(managers.indexOf(userId) > -1){
+                            auth = config.AUTH_GROUP_MANAGER;
+                        }
+                    }else{// 没有修改管理员时, 权限用旧的
+                        auth = oldAuth || 0;
                     }
+
                     mGroup.modifyUserAuth({
                         userId: userId,
                         groupId: groupId,
