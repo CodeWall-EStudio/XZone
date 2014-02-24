@@ -202,6 +202,44 @@ define(['config'],function(config){
 		}
 	});
 
+
+    $('#tableTit').bind('click',function(e){
+    	var target = $(e.target),
+    		cmd = target.attr('cmd');
+    	if(cmd == 'selectall'){
+			if(target[0].checked){
+				$('#fileList .liclick:not(:checked)').each(function(){
+					$(this)[0].checked = true;
+				});
+			}else{
+				$('#fileList .liclick:checked').each(function(){
+					$(this).attr('checked',false);
+				});
+			}
+			checkAct();    		
+    	}else if(cmd == 'select'){
+			var tag = target.attr('data-tag');
+			if(tag == 'folds'){	
+				$('#fileList .fdclick').each(function(){
+					$(this)[0].checked = true;
+				});
+				$('#fileList .fclick').each(function(){
+					$(this)[0].checked = false;
+				});	
+				checkFoldAct();
+			}else if(tag == 'files'){
+				$('#fileList .fdclick').each(function(){
+					$(this)[0].checked = false;
+				});
+				$('#fileList .fclick').each(function(){
+					$(this)[0].checked = true;
+				});	
+				checkAct();	
+			}
+			    	
+    	}
+    })	
+
     //显示或者隐藏重命名和评论
     var checkAct = function(){
     	var l = $('.table-files .fclick:checked').length;
@@ -217,13 +255,13 @@ define(['config'],function(config){
 	    	$('#fileActZone .copyfile').show();  
 	    	$('#fileActZone .movefile').show();    	
 	    }
-    	if(l==0){
+    	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
     	}else{
 			$('.tool-zone').addClass('hide');
 			$('.file-act-zone').removeClass('hide');
-    		if(l>1){
+    		if(l>0 && n> 0){
 	    		$('#renameAct').addClass('hide');
 	    		$('#remarkAct').addClass('hide');
     		}else{
@@ -240,7 +278,7 @@ define(['config'],function(config){
     	// $('#fileList .fclick:checked').each(function(){
     	// 	$(this).attr('checked',false);
     	// });   	
-    	if(l==0){
+    	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
     	}else{
@@ -259,7 +297,7 @@ define(['config'],function(config){
 	    	} 
 			$('.tool-zone').addClass('hide');
 			$('.file-act-zone').removeClass('hide');
-    		if(l>0 || n > 0){
+    		if(l>0 && n > 0){
 	    		$('#renameAct').addClass('hide');
 	    		$('#remarkAct').addClass('hide');
     		}else{
@@ -356,42 +394,7 @@ define(['config'],function(config){
     	}
     });
 
-    $('#tableTit').bind('click',function(e){
-    	var target = $(e.target),
-    		cmd = target.attr('cmd');
-    	if(cmd == 'selectall'){
-			if(target[0].checked){
-				$('#fileList .liclick:not(:checked)').each(function(){
-					$(this)[0].checked = true;
-				});
-			}else{
-				$('#fileList .liclick:checked').each(function(){
-					$(this).attr('checked',false);
-				});
-			}
-			checkAct();    		
-    	}else if(cmd == 'select'){
-			var tag = target.attr('data-tag');
-			if(tag == 'folds'){	
-				$('#fileList .fdclick').each(function(){
-					$(this)[0].checked = true;
-				});
-				$('#fileList .fclick').each(function(){
-					$(this)[0].checked = false;
-				});	
-				checkFoldAct();
-			}else if(tag == 'files'){
-				$('#fileList .fdclick').each(function(){
-					$(this)[0].checked = false;
-				});
-				$('#fileList .fclick').each(function(){
-					$(this)[0].checked = true;
-				});	
-				checkAct();	
-			}
-			    	
-    	}
-    })
+
     //文件和文件夹选择
 	$('.table-files').click(function(e){
 		var t = $(e.target),
