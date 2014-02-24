@@ -45,11 +45,13 @@ exports.saveUploadFile = function(params, callback){
     // 在同一个文件夹下，不允许出现文件名相同且作者相同的文件。
     // 文件名相同且作者相同时，比较文件MD5。若MD5相同，提示重复文件，终止写操作；
     // 若MD5不同，提示改名后继续操作。
-    mFile.getFile({ 
+    var query = { 
         name: name, 
         'folder.$id': oFolderId, 
         'creator.$id': loginUser._id
-    }, ep.doneLater('getFile'));
+    };
+    console.log('>>>check file name', query);
+    mFile.getFile(query, ep.doneLater('getFile'));
 
     ep.all('getFolder', 'getFile', function(folder, file){
         if(!folder){
@@ -57,7 +59,7 @@ exports.saveUploadFile = function(params, callback){
             return;
         }
         if(file){
-            ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
+            ep.emit('error', 'has the same filename', ERR.DUPLICATE);
             return;
         }
         if(loginUser.size < loginUser.used + fileSize){
