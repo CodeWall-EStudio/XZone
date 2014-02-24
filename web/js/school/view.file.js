@@ -418,7 +418,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			}else{
 				t.addClass('selected');
 			}
-		}		
+		}
+		actTarget.find('.btn-sub').attr('disabled',false);
 	}
 
 	function fileMove(e,d){
