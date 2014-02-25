@@ -593,6 +593,10 @@ a{
 }
 .aside .my-prep-list{
 	margin-top:0;
+	border-top: none;
+	height: 420px;
+	overflow: auto;
+	width: 100%;	
 }
 .aside .my-prep-list ul{
 	margin-top:0;

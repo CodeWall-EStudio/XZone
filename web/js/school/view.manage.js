@@ -1,4 +1,4 @@
-define(['config','helper/view','cache','model.manage'],function(config,View,Cache){
+define(['config','helper/view','cache','model.manage','msg'],function(config,View,Cache){
 	var handerObj = $(Schhandler);
 
 	var navTarget = $('#pageNav'),
