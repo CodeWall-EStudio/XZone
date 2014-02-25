@@ -375,7 +375,7 @@ module.exports = {
         method: POST,
         require: {
             groupId: ObjectID,
-            validateText: ['string', 0],
+            validateText: ['string', 1],
             validateStatus: ['number', 0]
         }
     },

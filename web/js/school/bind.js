@@ -265,8 +265,13 @@ define(['config'],function(config){
 	    		$('#renameAct').addClass('hide');
 	    		$('#remarkAct').addClass('hide');
     		}else{
-	    		$('#renameAct').removeClass('hide');
-	    		$('#remarkAct').removeClass('hide');
+				if(l>1 || n> 1){
+					$('#renameAct').addClass('hide');
+					$('#remarkAct').addClass('hide');
+				}else{
+					$('#renameAct').removeClass('hide');
+					$('#remarkAct').removeClass('hide');
+				}
     		}
     	}
     }	
@@ -301,8 +306,13 @@ define(['config'],function(config){
 	    		$('#renameAct').addClass('hide');
 	    		$('#remarkAct').addClass('hide');
     		}else{
-	    		$('#renameAct').removeClass('hide');
-	    		$('#remarkAct').removeClass('hide');
+				if(l>1 || n> 1){
+					$('#renameAct').addClass('hide');
+					$('#remarkAct').addClass('hide');
+				}else{
+					$('#renameAct').removeClass('hide');
+					$('#remarkAct').removeClass('hide');
+				}
     		}
     	}
     }  

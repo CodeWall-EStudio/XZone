@@ -115,8 +115,8 @@ exports.modify = function(req, res){
     }
 
     var ep = new EventProxy();
-    ep.fail(function(err){
-        res.json({ err: ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
     mFolder.getFolder({
