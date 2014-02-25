@@ -39,7 +39,7 @@ exports.listGroups = function(req, res){
 }
 
 exports.approveGroup = function(req, res){
-    var params = req.query;
+    var params = req.body;
     var loginUser = req.loginUser;
 
     if(!U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER)){
