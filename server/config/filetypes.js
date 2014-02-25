@@ -108,7 +108,7 @@ exports.FILE_MIMES = {
         'video/x-matroska'
     ],
 
-    'images' : [
+    'image' : [
         'image/x-ms-bmp',
         'image/jpeg',
         'image/gif',
