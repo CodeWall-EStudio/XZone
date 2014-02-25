@@ -296,7 +296,6 @@ exports.preview = function(req, res){
         }else{
             switch(resource.type){
                 case 2:// 文档
-                case 5:// 其实5也是文档...
                     res.set({
                         'Content-Type': 'application/x-shockwave-flash',
                         'X-Accel-Redirect': filePath + '.swf'
@@ -306,7 +305,7 @@ exports.preview = function(req, res){
                 case 1://image
                 case 3://audio
                 case 4://video
-                // case 5://stream
+                case 5://stream
 
                     res.set({
                         'Content-Type': resource.type,
