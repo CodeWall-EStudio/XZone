@@ -189,6 +189,7 @@ function formatType(mimes, ext){
 }
 
 function convert(filePath, mimes, ext){
+    console.log('>>>convert file: mimes',mimes,ext);
     //doc 文档要生成 swf 格式文件
     if(config.FILE_MIMES['document'].indexOf(mimes) > -1 || config.FILE_SUFFIX['document'].indexOf(ext) > -1){
         var cmd = 'java -jar ' + config.JOD_CONVERTER + ' ' + filePath + ' ' + filePath + '.pdf';
