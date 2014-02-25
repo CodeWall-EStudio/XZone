@@ -152,6 +152,8 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 						if(name != data.group.name){
 							obj.name = name;
 						}
+						}else{
+							obj.name = name;
 						}
 						if(d.data){
 							obj.groupId = d.data.id;
