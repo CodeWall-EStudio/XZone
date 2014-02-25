@@ -15,7 +15,8 @@ exports.DOC_TYPES = [
         'application/vnd.openxmlformats-officedocument.presentationml.presentation',
         'application/vnd.openxmlformats-officedocument.presentationml.template',
         'application/vnd.openxmlformats-officedocument.presentationml.slideshow',
-        'application/kswps'
+        'application/kswps',
+        'application/octet-stream'// 这有可能是 word 文档的格式
 ];
 
 exports.PDF_TYPES = ['application/pdf'];
