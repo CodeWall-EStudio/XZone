@@ -47,7 +47,8 @@ exports.approveGroup = function(req, res){
         res.json({err: ERR.NOT_AUTH, msg: 'not auth'});
         return;
     }
-
+    delete params.name;
+    
     var doc = {
         status: 0,
         validateText: params.validateText || '',//审核评语

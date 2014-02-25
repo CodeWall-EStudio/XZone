@@ -221,26 +221,36 @@ exports.isPrepareMember = function(userId, callback){
 
 exports.modify = function(params, doc, callback){
 
-    var nameQuery = {
-        name: params.name
-    }
-    if(params.parentId){
-        nameQuery.parent = ObjectID(params.parentId);
-    }else{
-        nameQuery.parent = null;
-    }
-    // 小组的名字在同一个group下要唯一
-    db.group.findOne(nameQuery, function(err, group){
-        if(err){
-            callback(err);
-        }else if(group){
-            callback('name duplicate', ERR.DUPLICATE);
-        }else{
-            doc.updatetime = Date.now();
+    var ep = new EventProxy();
+    ep.fail(callback);
 
-            db.group.findAndModify({ _id: new ObjectID(params.groupId) }, [], { $set: doc }, 
-                    { 'new':true }, callback);
+    if(params.name){
+        var nameQuery = {
+            name: params.name
         }
+        if(params.parentId){
+            nameQuery['parent.$id'] = ObjectID(params.parentId);
+        }else{
+            nameQuery['parent.$id'] = null;
+        }
+        // 小组的名字在同一个group下要唯一
+        db.group.findOne(nameQuery, function(err, group){
+            if(err){
+                ep.emit('error', err);
+            }else if(group){
+                ep.emit('error', 'name duplicate', ERR.DUPLICATE);
+            }else{
+                ep.emitLater('checkNameSucc');
+            }
+        });
+    }else{
+        ep.emitLater('checkNameSucc');
+    }
+    ep.on('checkNameSucc', function(){
+        doc.updatetime = Date.now();
+        var query = { _id: new ObjectID(params.groupId) };
+        db.group.findAndModify(query, [], { $set: doc }, 
+                    { 'new':true }, callback);
     });
 
 
