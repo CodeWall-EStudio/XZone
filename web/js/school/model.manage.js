@@ -71,6 +71,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				var obj = conventGroup(d.result.data);
 				handerObj.triggerHandler('manage:createsuc',{list:obj});
 			}
+			handerObj.triggerHandler('msg:error',d.err);
 		}
 		request.post(opt,success);			
 	}
@@ -110,6 +111,8 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 					school: school,
 					haspt : pt
 				});
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
 			}
 		}
 		request.get(opt,success);		
