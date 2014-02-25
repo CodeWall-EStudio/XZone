@@ -11,7 +11,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				tname : item.toUser.nick,
 				fname : item.fromUser.nick,
 				fid : item.fid,
-				name : item.fileName,
+				name : item.name,
 				content : item.content,
 				time : util.time(item.createTime),
 				save : item.save,
