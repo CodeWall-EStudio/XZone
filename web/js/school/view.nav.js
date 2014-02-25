@@ -148,8 +148,10 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 							'content' : desc,
 							'members' : members
 						}
+						if(data.group){
 						if(name != data.group.name){
 							obj.name = name;
+						}
 						}
 						if(d.data){
 							obj.groupId = d.data.id;
