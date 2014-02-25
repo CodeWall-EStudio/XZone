@@ -33,7 +33,7 @@
 							for(var i = 0,l=list.length;i<l;i++){
 								var item = list[i];
 						%>
-							<li class="tag<%+item.id%>"><input type="checkbox" value="<%-item.id%>" <%if(item.auth){%>disabled<%}%> <%if($.inArray(item.id,group.mlist)>=0){%>checked<%}%> /> <%-item.nick%></li>
+							<li class="tag<%+item.id%>"><input type="checkbox" value="<%-item.id%>" <%if($.inArray(item.id,group.mlist)>=0 && item.auth){%>disabled<%}%> <%if($.inArray(item.id,group.mlist)>=0){%>checked<%}%> /> <%-item.nick%></li>
 						<%}%>
 					</ul>
 			</td>
