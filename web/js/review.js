@@ -62,19 +62,24 @@
               );            
           }else if(data.type == 1){
                var num = 0;
+// 　　　　angle:0,  //起始角度
+// 　　　　　animateTo:180,  //结束的角度
+// 　　　　　duration:500， //转动时间               
             $('.to-left').bind('click',function(){
-              num++;
-              $('#reviewImg').rotate({                          
-                    angle: (num-1)*90,
-                              animateTo: num*90,
-                  });
+              $('#reviewImg').rotate({
+                angle: (num)*90,
+                animateTo: (num-1)*90,
+              });
+              num--;              
+
             });
             $('.to-right').bind('click',function(){
-              num--;
-              $('#reviewImg').rotate({
-                angle: 0-(num-1)*90,
-                      animateTo: 0-num*90,
-              });
+            
+              $('#reviewImg').rotate({                          
+                    angle: num*90,
+                    animateTo: (num+1)*90,
+                  });
+              num++;              
             }); 
             $('.zoom-in').bind('click',function(){
               $('#reviewImg').css('width',function(i,v){
