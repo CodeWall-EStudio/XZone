@@ -26,6 +26,15 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		return ml;
 	}
 
+	function convent2Members(list){
+		var ml = {};
+		for(var i in list){
+			list[i].id = list[i]._id;
+			ml[list[i]._id] = list[i];
+		}
+		return ml;
+	}	
+
 	function groupEdit(e,d){
 		var opt = {
 			cgi : config.cgi.groupmodify,
@@ -88,7 +97,8 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var success = function(d){
 			if(d.err == 0){
 				d.result.data.id = d.result.data._id;
-				d.result.data.mlist = conventMembers(d.result.data.members);
+				d.result.data.ml = conventMembers(d.result.data.members);
+				d.result.data.mlist = convent2Members(d.result.data.members);
 				handerObj.triggerHandler(type+':infosuc',d.result.data);
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
