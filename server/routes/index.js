@@ -7,6 +7,7 @@ var ROUTER_CONFIG = require('./router_config');
 
 var WHITE_LIST = [
     '/api/user/login',
+    '/api/user/logoff',
     '/api/user/gotoLogin',
     '/api/user/loginSuccess',
     '/api/media/upload',

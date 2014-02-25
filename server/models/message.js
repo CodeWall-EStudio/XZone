@@ -14,7 +14,7 @@ exports.create = function(params, callback){
         fromUser: DBRef('user', ObjectID(params.fromUserId)),
         toUser: null,
         content: params.content || '',
-        fileName: params.fileName || '',
+        name: params.fileName || '',
         type: params.fileType || 0,
         size: params.fileSize || 0,
 
