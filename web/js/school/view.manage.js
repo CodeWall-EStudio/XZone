@@ -3,9 +3,12 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 
 	var navTarget = $('#pageNav'),
 		addTarget = $('#addGroup'),
-		listTarget = $('#groupList');
+		listTarget = $('#groupList'),
+		editTarget = $('#groupEdit');
 
-	var userList;
+	var userList,
+		myid,
+		g2k;
 
 	function init(){
 		handerObj.triggerHandler('manage:user');
@@ -14,11 +17,11 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 	}
 
 	function userloadSuc(e,d){
+		myid = d.id;
 		var view = new View({
 			target : navTarget,
 			tplid : 'manage.user',
 			data : d,
-
 		});
 		view.createPanel();			
 	}
@@ -63,6 +66,7 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 	}
 
 	function groupLoad(e,d){
+		g2k = d.g2k;
 		if(d.school){
 			$('.group-type').eq(0).attr('disabled',true);
 		}
@@ -73,7 +77,8 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 			target : $('#prepYearList'),
 			tplid : 'manage.prep.year',
 			data : {
-				list : d.prep
+				list : d.prep,
+				ul : userList
 			}
 		});
 		view.appendPanel();
@@ -98,12 +103,44 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 		}
 	}
 
+	function groupOne(e,d){
+		addTarget.addClass('hide');
+		listTarget.addClass('hide');
+		editTarget.removeClass('hide');	
+		d.ul = userList;
+		d.my = myid;
+		console.log(d);
+		//var data = g2k[id];
+		var view = new View({
+			target : editTarget,
+			tplid : 'manage.group.edit',
+			data : d,
+		});
+		view.createPanel();
+	}
+
+	function showEdit(id){
+		handerObj.triggerHandler('manage:groupinfo',id)
+		// addTarget.hide();
+		// listTarget.hide();
+		// editTarget.show();		
+		// var data = g2k[id];
+		// console.log(data);
+		// var view = new View({
+		// 	target : editTarget,
+		// 	tplid : 'manage.group.edit',
+		// 	data : data,
+		// });
+		// view.createPanel();	
+	}
+
 	var handlers = {
 		'manage:appsuc' : appSuc,
 		'manage:createsuc' : createSuc,
 		'manage:userloadsuc' : userloadSuc,
 		'manage:alluserloadsuc' : alluserloadSuc,
-		'manage:groupload' : groupLoad
+		'manage:groupload' : groupLoad,
+		'manage:groupinfosuc' : groupOne
 	}
 
 	for(var i in handlers){
@@ -117,6 +154,9 @@ define(['config','helper/view','cache','model.manage'],function(config,View,Cach
 			var id = target.attr('data-id');
 		
 		switch(cmd){
+			case 'edit':
+				showEdit(id);
+				break;
 			case 'pass':
 				handerObj.triggerHandler('manage:approve',{
 					groupId:id,

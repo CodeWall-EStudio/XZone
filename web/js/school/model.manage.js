@@ -8,7 +8,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		o.size = data.user.size;
 		o.used = data.user.used;
 		o.auth = data.user.auth;
-		o.id = data.user.id;
+		o.id = data.user._id;
 		return o;
 	}
 
@@ -26,6 +26,23 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}
 		handerObj.triggerHandler('cache:set',{key: 'alluser2key',data: list});
 	}		
+
+	function conventMembers(list){
+		var ml = [];
+		for(var i in list){
+			ml.push(list[i]._id);
+		}
+		return ml;
+	}
+
+	function convent2Members(list){
+		var ml = {};
+		for(var i in list){
+			list[i].id = list[i]._id;
+			ml[list[i]._id] = list[i];
+		}
+		return ml;
+	}	
 
 	function allUser(e,d){
 		var opt = {
@@ -90,8 +107,10 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				var prep = [];
 				var school = 0;
 				var pt = 0;
+				var g2key = {};
 				for(var i in list){
 					list[i] = conventGroup(list[i]);
+					g2key[list[i].id] = list[i];
 					if(list[i].type == 0){
 						school = 1;
 					}
@@ -106,6 +125,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				//handerObj.triggerHandler('cache:set',{key: 'myinfo',data: obj});
 				handerObj.triggerHandler('manage:groupload',{
 					list : list,
+					g2k : g2key,
 					prep : prep,
 					school: school,
 					haspt : pt
@@ -136,13 +156,34 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		request.post(opt,success);
 	}
 
+	function groupInfo(e,d){
+		var opt = {
+			cgi : config.cgi.groupinfo,
+			data : {
+				groupId : d
+			}
+		}
+		var success = function(d){
+			if(d.err == 0){
+				d.result.data.id = d.result.data._id;
+				d.result.data.mlist = conventMembers(d.result.data.members);
+				d.result.data.members = convent2Members(d.result.data.members);
+				handerObj.triggerHandler('manage:groupinfosuc',d.result.data);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);	
+	}
+
 
 	var handlers = {
 		'manage:approve' : appRove,
 		'manage:user' : getUser,
 		'manage:alluser' : allUser,
 		'manage:create' : creatGroup,
-		'manage:grouplist' : getGroup
+		'manage:grouplist' : getGroup,
+		'manage:groupinfo' : groupInfo
 	}
 
 	for(var i in handlers){
