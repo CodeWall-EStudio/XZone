@@ -99,7 +99,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 							target : p
 						};
 						if(nowGid){
-							obj.folderId = nowGid;
+							obj.groupId = nowGid;
 						}
 						handerObj.triggerHandler('fold:get',obj);
 				});

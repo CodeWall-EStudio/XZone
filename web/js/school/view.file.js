@@ -547,7 +547,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 								p.find('ul').show();
 							}
 							return;
-						}else{							
+						}else{			
 							handerObj.triggerHandler('fold:get',{
 								groupId : gid,
 								folderId : id,
@@ -611,10 +611,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 								p.find('ul').show();
 							}
 							return;
-						}else{							
+						}else{		
+							console.log(nowGid,id);
 							handerObj.triggerHandler('fold:get',{
 								gid : nowGid,
-								fdid : id,
+								folderId : id,
 								target : p,
 								tplid : 1
 							});
