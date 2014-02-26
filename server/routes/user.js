@@ -133,7 +133,7 @@ exports.login = function(req, res){
 }
 
 exports.loginSuccess = function(req, res, next){
-    req.redirectUrl = '/';
+    req.redirectUrl = '/index.html';
 
     exports.login(req, res, next);
 
