@@ -264,7 +264,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		}
 
 		var pr = 0;
-		if(nowPrep == 'group'){
+		if(nowPrep){
 			pr = 1;
 		}
 

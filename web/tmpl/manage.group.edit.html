@@ -14,7 +14,7 @@
 							<input class="group-type" type="radio" value="3" name="n" <%if(type==3){%>checked<%}%> /> 备课
 						</td>
 					</tr>
-					<tbody class="hide" id="prepYear">
+					<tbody class="hide" id="prepYear" class="prep-body-year">
 					<tr>
 						<th>学年</th>
 						<td>
@@ -22,10 +22,18 @@
 							<input type="radio" class="check-prep" value="1" name="p" />科目
 						</td>
 					</tr>
-					<tbody class="hide" id="prepTag">
+					<tbody class="hide" id="prepTag" class="prep-body-tag">
 					<tr>
 						<th>学年列表</th>
-						<td id="prepYearList"></td>
+						<td id="prepYearList">
+							<%
+								for(var i = 0,l=prep.length;i<l;i++){
+									var item = prep[i];
+							%>
+								<input type="radio" name="prep" class="check-prepyear" value="<%+item.id%>" /> <%-item.name%>
+							<%}%>							
+
+						</td>
 					</tr>
 					<tr>
 						<th>年级</th>
@@ -54,12 +62,12 @@
 					<tr>
 						<th>说明:</th>
 						<td>
-							<textarea id="desc"><%-content%></textarea>
+							<textarea id="desc" class="group-desc"><%-content%></textarea>
 						</td>
 					</tr>
 					<tr>
 						<th>成员:</th>
-						<td id="userList">
+						<td class="group-user-list">
 							<table width="100%"  class="table table-striped table-hover table-list table-files">
 								<tr>
 									<th width="60">成员</th>

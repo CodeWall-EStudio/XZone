@@ -8,7 +8,8 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 
 	var userList,
 		myid,
-		g2k;
+		g2k,
+		preplist;
 
 	function init(){
 		handerObj.triggerHandler('manage:user');
@@ -67,6 +68,7 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 
 	function groupLoad(e,d){
 		g2k = d.g2k;
+		preplist = d.prep;
 		if(d.school){
 			$('.group-type').eq(0).attr('disabled',true);
 		}
@@ -109,6 +111,7 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 		editTarget.removeClass('hide');	
 		d.ul = userList;
 		d.my = myid;
+		d.prep = preplist;
 		console.log(d);
 		//var data = g2k[id];
 		var view = new View({
