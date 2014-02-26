@@ -118,9 +118,9 @@ function verifyParams(req, config){
 
 exports.verifyAndLogin = function(req, res, next){
     var skey = req.cookies.skey;
-    var loginUser = req.session[skey];
-
-    if(!loginUser){
+    var loginUser;
+    console.log('>>>verifyAndLogin', req.session);
+    if(!req.session || !skey || !(loginUser = req.session[skey])){
         routeUser.gotoLogin(req, res);
     }else{
         next();

@@ -112,10 +112,11 @@ exports.login = function(req, res){
         validateTicket(ticket, function(err, valData, user){
             if(err){
                 res.json({err: valData || ERR.NOT_LOGIN, msg: err});
+                console.log('>>>validateTicket error', err);
             }else{
                 req.session[valData.encodeKey] = user;
                 res.cookie('skey', valData.encodeKey, { });
-
+                console.log('>>>validateTicket success', req.session);
                 if(req.redirectUrl){
                     res.redirect(req.redirectUrl);
                 }else{
