@@ -164,6 +164,8 @@ function formatType(mimes, ext){
         return 5;
     } else if ( config.FILE_MIMES['archive'].indexOf(mimes) > -1 ) {
         return 6;
+    } else if ( config.FILE_MIMES['text'].indexOf(mimes) > -1 ) {
+        return 8;
     } else if(ext){
 
         if ( config.FILE_SUFFIX['image'].indexOf(ext) > -1 ) {
@@ -180,6 +182,8 @@ function formatType(mimes, ext){
             return 5;
         } else if ( config.FILE_SUFFIX['archive'].indexOf(ext) > -1 ) {
             return 6;
+        } else if ( config.FILE_SUFFIX['text'].indexOf(ext) > -1 ) {
+            return 8;
         } else {
             return 7;
         }

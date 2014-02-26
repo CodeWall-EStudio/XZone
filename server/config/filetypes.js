@@ -207,6 +207,27 @@ exports.FILE_MIMES = {
         'application/x-tar',
         'application/x-7z-compressed',
         'application/x-rar-compressed'
+    ],
+
+    'text' : [
+        'text/plain',
+        'text/x-php',
+        'text/html',
+        'text/xml',
+        'text/javascript',
+        'text/css',
+        'text/rtf',
+        'text/rtfd',
+        'text/x-python',
+        'text/x-java-source',
+        'text/x-ruby',
+        'text/x-shellscript',
+        'text/x-perl',
+        'text/x-sql',
+        'text/x-component',
+        'text/vnd.wap.wml',
+        'text/vnd.sun.j2me.app-descriptor',
+        'text/mathml'
     ]
 };
 exports.FILE_SUFFIX = {
@@ -394,5 +415,22 @@ exports.FILE_SUFFIX = {
         'xml',
         'odt',
         'swf'
+    ],
+
+    'text' : [
+        'txt',
+        'php',
+        'html',
+        'htm',
+        'js',
+        'css',
+        'rtf',
+        'rtfd',
+        'py',
+        'java',
+        'rb',
+        'sh',
+        'pl',
+        'sql'
     ]
 }
