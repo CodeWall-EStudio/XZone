@@ -25,15 +25,19 @@ exports.saveUploadFile = function(params, callback){
 
     //1. 先把文件保存到 data 目录
     var uploadFilePath = body.file_path;
+    var name = body.file_name;
+    var md5 = body.file_md5;
+    var contentType = body.file_content_type;
+    var extname = path.extname(name);
+    var suffix = extname && extname.slice(1);
+    var filename = md5 + extname;
+    var fileSize = parseInt(body.file_size);
+    var fileType = formatType(contentType, suffix);
+
     var savePath = U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
 
-    var filename = body.file_md5 + path.extname(body.file_name);
     var folderPath = path.resolve(path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, savePath));
     var filePath = path.join(folderPath, filename);
-
-    var name = body.name;
-    var fileSize = parseInt(body.file_size);
-    var fileType = U.formatFileType(body.file_content_type);
 
     loginUser.used = Number(loginUser.used);
 
@@ -88,32 +92,17 @@ exports.saveUploadFile = function(params, callback){
         // 添加 resource 记录
         var resource = {
             path: savePath + filename,
-            md5: body.file_md5,
+            md5: md5,
             size: fileSize,
-            mimes: body.file_content_type,
+            mimes: contentType,
             type: fileType
         }
 
         mRes.create(resource, ep.done('saveRes'));
 
         if(params.createSWFForDoc){
-            //doc 文档要生成 swf 格式文件
-            if(config.DOC_TYPES.indexOf(resource.mimes) > -1){
-                var cmd = 'java -jar ' + config.JOD_CONVERTER + ' ' + filePath + ' ' + filePath + '.pdf';
-                // console.log('>>>file helper exec: ', cmd);
-                process.exec(cmd, function(err){
-                    if(!err){
-                        cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
-                        process.exec(cmd);
-                        // console.log('>>>file helper exec: ', cmd);
-                    }
-                });
-            }
-            if(config.PDF_TYPES.indexOf(resource.mimes) > -1){
-                var cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
-                process.exec(cmd);
-                // console.log('>>>file helper exec: ', cmd);
-            }
+            // 转换文档为 swf
+            convert(filePath, contentType, suffix);
         }
 
     });
@@ -158,4 +147,69 @@ exports.saveUploadFile = function(params, callback){
 
     });
 
+}
+
+function formatType(mimes, ext){
+    if (  config.FILE_MIMES['image'].indexOf(mimes) > -1 ) {
+        return 1;
+    } else if (  config.FILE_MIMES['document'].indexOf(mimes) > -1 ) {
+        return 2;
+    } else if (  config.FILE_MIMES['pdf'].indexOf(mimes) > -1 ) {
+        return 2;
+    } else if ( config.FILE_MIMES['audio'].indexOf(mimes) > -1 ) {
+        return 3;
+    } else if ( config.FILE_MIMES['video'].indexOf(mimes) > -1 ) {
+        return 4;
+    } else if ( config.FILE_MIMES['application'].indexOf(mimes) > -1 ) {
+        return 5;
+    } else if ( config.FILE_MIMES['archive'].indexOf(mimes) > -1 ) {
+        return 6;
+    } else if ( config.FILE_MIMES['text'].indexOf(mimes) > -1 ) {
+        return 8;
+    } else if(ext){
+
+        if ( config.FILE_SUFFIX['image'].indexOf(ext) > -1 ) {
+            return 1;
+        } else if ( config.FILE_SUFFIX['document'].indexOf(ext) > -1 ) {
+            return 2;
+        } else if ( config.FILE_SUFFIX['pdf'].indexOf(ext) > -1 ) {
+            return 2;
+        } else if ( config.FILE_SUFFIX['audio'].indexOf(ext) > -1 ) {
+            return 3;
+        } else if ( config.FILE_SUFFIX['video'].indexOf(ext) > -1 ) {
+            return 4;
+        } else if ( config.FILE_SUFFIX['application'].indexOf(ext) > -1 ) {
+            return 5;
+        } else if ( config.FILE_SUFFIX['archive'].indexOf(ext) > -1 ) {
+            return 6;
+        } else if ( config.FILE_SUFFIX['text'].indexOf(ext) > -1 ) {
+            return 8;
+        } else {
+            return 7;
+        }
+    }else{
+        return 7;
+    }
+}
+
+function convert(filePath, mimes, ext){
+    console.log('>>>convert file: mimes',mimes,ext);
+    //doc 文档要生成 swf 格式文件
+    if(config.FILE_MIMES['document'].indexOf(mimes) > -1 || config.FILE_SUFFIX['document'].indexOf(ext) > -1){
+        var cmd = 'java -jar ' + config.JOD_CONVERTER + ' ' + filePath + ' ' + filePath + '.pdf';
+
+        process.exec(cmd, function(err){
+            if(!err){
+                cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
+                process.exec(cmd);
+            }else{
+                console.log('>>>file convert error: ', err, mimes, ext);
+            }
+        });
+    }
+    if(config.FILE_MIMES['pdf'].indexOf(mimes) > -1 || config.FILE_SUFFIX['pdf'].indexOf(ext) > -1){
+        var cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
+        process.exec(cmd);
+
+    }
 }

@@ -7,6 +7,7 @@ var ROUTER_CONFIG = require('./router_config');
 
 var WHITE_LIST = [
     '/api/user/login',
+    '/api/user/logoff',
     '/api/user/gotoLogin',
     '/api/user/loginSuccess',
     '/api/media/upload',
@@ -117,9 +118,10 @@ function verifyParams(req, config){
 
 exports.verifyAndLogin = function(req, res, next){
     var skey = req.cookies.skey;
-    var loginUser = req.session[skey];
+    var loginUser;
+    console.log('>>>verifyAndLogin', req.url, req.method);
 
-    if(!loginUser){
+    if(!req.session || !skey || !(loginUser = req.session[skey])){
         routeUser.gotoLogin(req, res);
     }else{
         next();
