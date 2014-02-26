@@ -116,7 +116,7 @@ exports.login = function(req, res){
             }else{
                 req.session[valData.encodeKey] = user;
                 res.cookie('skey', valData.encodeKey, { });
-                console.log('>>>validateTicket success', req.session);
+                // console.log('>>>validateTicket success', req.session);
                 if(req.redirectUrl){
                     res.redirect(req.redirectUrl);
                 }else{

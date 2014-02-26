@@ -119,10 +119,11 @@ function verifyParams(req, config){
 exports.verifyAndLogin = function(req, res, next){
     var skey = req.cookies.skey;
     var loginUser;
-    console.log('>>>verifyAndLogin', req.session);
+    console.log('>>>verifyAndLogin', req.url, req.method);
     if(!req.session || !skey || !(loginUser = req.session[skey])){
         routeUser.gotoLogin(req, res);
     }else{
+        res.header('Cache-Control', 'max-age=0');//首页不要缓存
         next();
     }
 }
