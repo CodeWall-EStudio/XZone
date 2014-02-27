@@ -38,9 +38,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			t.tname = '';
 		}
 
-		if(t.pid == t.tid){
-			t.pid = 0;
-		}
+		// if(t.pid == t.tid){
+		// 	t.pid = 0;
+		// }
 		t.id = data._id;
 		t.name = data.name;
 		return t;

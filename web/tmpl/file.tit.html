@@ -7,11 +7,11 @@
 	<a href="#" style="z-index:20">个人文件</a>
 	<%}%>
 
-	<%if(fold){%>				
-		<%if(fold.idpath.length>1){%>
+	<%if(fold){%>	
+		<%if(fold.idpath.length>2){%>
 			<a style="z-index:19">......</a>
 		<%}%>					
-		<%if(fold.pid){%>
+		<%if(fold.pid && fold.idpath.length>2){%>
 			<a href="#<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>" class="frist" style="z-index:19"  href="#"><%-fold.pname%></a>
 		<%}%>	
 			<a class="end" style="z-index:18"><%-fold.name%></a>
