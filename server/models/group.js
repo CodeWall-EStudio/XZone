@@ -13,7 +13,6 @@ exports.create = function(params, callback){
     var status = ('status' in params) ? Number(params.status) : 1;
     if(isNaN(status)){
         status = 1;
-
     }
 
     var ep = new EventProxy();

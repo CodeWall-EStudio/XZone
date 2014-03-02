@@ -15,6 +15,11 @@ exports.create = function(params, callback){
     var groupId = params.groupId;
     var folderId = params.folderId;
 
+    var status = ('status' in params) ? Number(params.status)  : 1;
+    if(isNaN(status)){
+        status = 1;
+    }
+
     var doc = {
         resource: DBRef('resource', ObjectID(params.resourceId)),
         folder: DBRef('folder', ObjectID(folderId)),
@@ -28,8 +33,9 @@ exports.create = function(params, callback){
         mark: params.mark || '', // 文件评论
         del: false,//是否删除
         isFav: false, // 是否被自己收藏了
-        
-        status: Number(params.status) || 0, // 0 上传 1 分享
+        src: Number(params.src) || 0, // 0 上传 1 分享
+
+        status: status, // 审核状态 1 审核中 0 已审核
 
         validateText: null,//审核评语
         validateStatus: null, //0 不通过 1 通过
