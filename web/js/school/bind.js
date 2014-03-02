@@ -24,10 +24,21 @@ define(['config'],function(config){
             },
             submitHandler : function(form) { 
 			 	var value = $('#foldname').val();
+			 	var isopen = 0;
+			 	var isread = 0;
+			 	if($('#newFold .check-open:checked').length > 0){
+			 		isopen = 1;
+			 	}
+			 	if($('#newFold .check-read:checked').length > 0){
+			 		isread = $('#newFold .check-read:checked').val();
+			 	}
 
-			 	handerObj.triggerHandler('fold:create',{
-			 		name : value
-			 	});  
+			 	var obj = {
+			 		name : value,
+			 		isOpen : isopen,
+			 		isRead : isread
+			 	}
+			 	handerObj.triggerHandler('fold:create',obj);  
 			 	$("#newFold .close").click();      	
                 return false;
             }
@@ -35,6 +46,14 @@ define(['config'],function(config){
 
 
 	/***********************************/
+	$('#newFold .check-open').bind('click',function(){
+		if($(this)[0].checked){
+			$('#newFold .read-fold').removeClass('hide');
+		}else{
+			$('#newFold .read-fold').addClass('hide');
+		}
+	})
+
 	//收藏文件
 	function coll(id,target){
 		if(typeof id != 'object'){
@@ -159,6 +178,10 @@ define(['config'],function(config){
 			}
 		}
 	}
+
+	$('.btn-newfold').bind('click',function(e){
+		handerObj.triggerHandler('fold:createfold');
+	});
 
 	//搜索框的绑定
 	$('.search-key').bind('keyup',function(e){
@@ -363,6 +386,7 @@ define(['config'],function(config){
 			case 'group':
 			case 'other':
 			case 'dep':
+			case 'school':
 				shareFile(cmd);
 				break;	
 			case 'downfile':
@@ -441,6 +465,7 @@ define(['config'],function(config){
 			case 'other':
 			case 'group':
 			case 'dep':
+			case 'school':
 				var id = target.attr('data-id'),
 					name = target.attr('data-name'),
 					obj = {

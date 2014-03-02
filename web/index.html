@@ -8,6 +8,8 @@
   <link rel="stylesheet" type="text/css" href="css/main.css" />
   <link rel="stylesheet" href="css/jquery.plupload.queue.css" type="text/css" media="screen" />
 
+  <meta property="qc:admins" content="124110632765637457144563757" />
+
 </head>
 <body>
 	<div id="header" class="header">
@@ -24,7 +26,7 @@
 			<div class="tool-zone fade-in">
 				<div class="btn-zone" id="btnZone">
 					<button class="upload btn btn-primary btn-upload">上传</button>
-					<button class="btn btn-default" data-toggle="modal" data-target="#newFold">新建文件夹</button>
+					<button class="btn btn-default btn-newfold">新建文件夹</button>
 				</div>
 
 				<div class="search-zone" id="searchZone">
@@ -43,6 +45,7 @@
 							<li><a cmd="other">发送给别人</a></li>
 							<li><a cmd="group">发送到小组</a></li>
 							<li><a cmd="dep">提交到部门</a></li>
+							<li><a cmd="school">提交到学校</a></li>
 						</ul>						
 					</li>
 					<li class="downfile"><a cmd="downfile" id="donwFiles">下载</a></li>
@@ -132,6 +135,13 @@
 					<div class="modal-body">
 						<label>文件夹名称：</label><input id="foldname" maxlength="20" name="foldname" type="text" style="width:80%" />
 						<input type="hidden" class="parentid" name="parentid" value="<?=$fid?>" />
+						<div class="open-fold hide">
+							<input type="checkbox" name="open" class="check-open" value="1" />公开文件夹
+						</div>
+						<div class="read-fold hide">
+							<input type="radio" name="read" class="check-read" value="0" />只读
+							<input type="radio" name="read" class="check-read" value="1" />读写
+						</div>
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>

@@ -83,7 +83,8 @@ define(function() {
 			mlistgroup : CGI_PATH+'manage/listGroups'+EXT,
 			mappgroup :　CGI_PATH+'manage/approveGroup'+EXT,
 			mpreplist : CGI_PATH+'manage/listPrepares'+EXT,
-			mnewgroup : CGI_PATH+'manage/createGroup'+EXT
+			mnewgroup : CGI_PATH+'manage/createGroup'+EXT,
+			mappfile : CGI_PATH+'manage/approveFile'+EXT
 
 		},
 		grade : {

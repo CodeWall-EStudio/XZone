@@ -32,6 +32,10 @@ define(['config','cache','helper/view','model.file'],function(config,Cache,View)
 		if(!myInfo){
 			myInfo = Cache.get('myinfo');
 		}
+		
+		$("#btnZone").show();
+		$('.btn-newfold').show();
+		$('.btn-upload').show();
 
 		if(d.fdid == 0 || !d.fdid){
 			d.fdid = myInfo.rootFolder.id;

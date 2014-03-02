@@ -323,6 +323,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	function fileShare(e,d){
 		if(d.target == 'other'){
 			handerObj.triggerHandler('file:getuser',{ type : d.target,files: d.fl});
+		}else if(d.target == 'school'){
+			var myinfo = Cache.get('myinfo');
+			handerObj.triggerHandler('file:shareload',{ type : d.target,files: d.fl, list : myinfo[d.target].id});
 		}else{
 			var myinfo = Cache.get('myinfo');
 			handerObj.triggerHandler('file:shareload',{ type : d.target,files: d.fl, list : myinfo[d.target]});
@@ -331,7 +334,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	}
 
 	function shareLoad(e,d){
-
 		var selected = [];
 		var view = new View({
 			target : actTarget,
@@ -388,7 +390,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 						for(var i in d.files){
 							fls.push(d.files[i].id);
 						}
-						console.log(d.files,fls);
 						actTarget.find('input:checked').each(function(){
 							li.push($(this).val());
 						});

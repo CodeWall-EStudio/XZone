@@ -2,6 +2,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
+		uid = 0,
 		action = 0, //当前页卡是否在活动状态
 		nowGinfo = {},
 		nowFdInfo = {},
@@ -15,6 +16,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		nowGrade = 0,
 		nowTag = 0,	
 		nowPid = 0,	
+		isOpen = 0,
+		isRead = 0,
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -140,6 +143,11 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		action = 1;
 		foldTarget.hide().removeAttr('show');
 		foldTarget.css('float','none').css('width','100%');
+
+		if(!uid){
+			uid = Cache.get('myinfo').id;
+		}
+
 		// foldTarget.html('')
 		tmpTarget.html('');
 		nowFdInfo = {};
@@ -173,6 +181,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				$('#btnZone').show();
 			}
 		}
+
 
 		//crTit();
 		var data = {
@@ -214,6 +223,18 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	function foldOne(e,d){
+		if(nowGid && !nowGinfo.isMember && nowFd == nowGinfo.rootFolder.id && !nowPrep){
+			$('#btnZone').hide();
+		}else{
+			if(!nowGinfo.isMember){
+				if(d.isOpen && !d.isReady){
+					$(".btn-upload").hide();
+				}else{
+					$('#btnZone').hide();
+				}
+			}
+		}
+
 		nowFdInfo = d;
 		crTit(d);
 	}
@@ -324,7 +345,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	//新建文件夹
 	function createFold(e,d){
 		var data = {
-			name : d.name
+			name : d.name,
+			isOpen : d.isOpen,
+			isRead : d.isRead
 		}
 
 		if(nowGid){
@@ -387,12 +410,27 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		$('.fdname'+d.folderId).text(d.name);
 	}
 
+	function showCreateFold(){
+		$('#newFold .check-open:checked').attr('checked',false);
+		$('#newFold .check-read:checked').attr('checked',false);
+		$('#newFold .open-fold').addClass('hide');
+		$('#newFold .read-fold').addClass('hide');			
+		if(nowGid){
+			if(nowGinfo.isMember){
+				$('#newFold .open-fold').removeClass('hide');
+				//$('#newFold .read-fold').removeClass('hide');
+			}
+		}
+		$('#newFold').modal('show');
+	}
+
 	var handlers = {
 		'fold:treeload' : foldTree,
 		'fold:modifysuc' : modifySuc,
 		'fold:viewedit' : foldEdit,
 		'fold:delsuc' : delSuc,
 		'fold:create' : createFold,
+		'fold:createfold' : showCreateFold,
 		//'order:change' : orderChange,
 		'foldsearch:start' : search,
 		'fold:marksuc' : marksuc,

@@ -99,6 +99,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				d.result.data.id = d.result.data._id;
 				d.result.data.ml = conventMembers(d.result.data.members);
 				d.result.data.mlist = convent2Members(d.result.data.members);
+				d.result.data.rootFolder.id = d.result.data.rootFolder.$id; 
 				handerObj.triggerHandler(type+':infosuc',d.result.data);
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
