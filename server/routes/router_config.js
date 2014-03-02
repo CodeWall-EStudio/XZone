@@ -270,6 +270,13 @@ module.exports = {
     },
 
     // user
+    '/user/loginSuccessWithQQ': {
+        method: GET,
+        require: {
+            code: ['string', 1],
+            state: ['string', 1]
+        }
+    },
 
     // recycle
     '/api/recycle/delete': {

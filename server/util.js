@@ -1,7 +1,10 @@
-var fs = require('fs'),
-    path = require('path'),
-    util = require('util');
-
+var fs = require('fs');
+var path = require('path');
+var util = require('util');
+var http = require('http');
+var https = require('https');
+var querystring = require('querystring');
+var url = require('url');
 
 exports.calculate = function(arr){
     var result = 0;
@@ -121,4 +124,49 @@ exports.encodeRegexp = function(str){
     return str.replace(/([\.\\\/\+\*\(\)\[\]\?\^\$\|\-])/g, function(u, $1){
         return '\\' + $1;
     });
+}
+
+exports.request = function(params, callback){
+
+    var obj = url.parse(params.url);
+
+    var options = {
+        hostname: obj.hostname,
+        path: obj.path
+    };
+
+    options.method = params.method;
+    if(params.headers){
+        options.headers = {};
+    }
+
+    var req = (obj.protocol === 'https:' ? https : http).request(options, function(res){
+        res.setEncoding('utf8');
+        var response = '';
+        res.on('error', callback);
+        
+        res.on('data', function(chunk){
+            response += chunk;
+        });
+        res.on('end', function(){
+            callback(null, response);
+        });
+    });
+    if(options.method === 'POST' && params.data){
+        req.write(params.data + '\n');
+    }
+    req.end();
+}
+
+exports.parseCallbackData = function(str){
+    var reg = /callback\((.+?)\)/;
+    var match = str.match(reg);
+    if(match && match[1]){
+        try{
+            return JSON.parse(match[1]);
+        }catch(e){
+            return null;
+        }
+    }
+    return null;
 }
