@@ -1029,10 +1029,13 @@ exports.search = function(req, res){
                 ep.emit('error', 'no such group', ERR.NOT_FOUND);
                 return;
             }
-            if(group.type === 3){ // 这是备课小组, 如果是备课的成员都能看
+            if(group.type === 0){ // type=0 是学校空间
+                params.validateStatus = 1; // 学校空间只能看审核通过的文件
+                ep.emit('checkRight', true);
+            }else if(group.type === 3){ // 这是备课小组, 如果是备课的成员都能看
                 mGroup.isPrepareMember(loginUser._id, ep.done('checkRight'));
             }else{
-                mGroup.isGroupMember(groupId, loginUser._id, ep.doneLater('checkRight'));
+                mGroup.isGroupMember(groupId, loginUser._id, ep.done('checkRight'));
             }
         });
 
