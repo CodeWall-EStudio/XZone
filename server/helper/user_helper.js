@@ -31,6 +31,7 @@ exports.getUserInfo = function(skey, callback){
             try{
                 callback(null, JSON.parse(data));
             }catch(e){
+                console.error('getUserInfo Error', data);
                 callback('getUserInfo JSON parse error: ' + e.message);
             }
         }
@@ -65,7 +66,7 @@ exports.getUserInfoFromQQ = function(accessToken, callback){
                 oauth_consumer_key: config.QQ_CONNECT_APPID,
                 openid: openid
             });
-            console.log(url);
+
             U.request({
                 url: url,
                 method: 'GET'

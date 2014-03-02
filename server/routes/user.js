@@ -108,7 +108,7 @@ exports.loginSuccess = function(req, res, next){
     validateTicket(ticket, function(err, valData, user){
         if(err){
             res.json({err: valData || ERR.NOT_LOGIN, msg: err});
-            console.log('>>>validateTicket error', err);
+            console.log('>>>validateTicket error:', err);
         }else{
             req.session[valData.encodeKey] = user;
             res.cookie('skey', valData.encodeKey, { });
