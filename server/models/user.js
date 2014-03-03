@@ -16,6 +16,7 @@ exports.create = function(params, callback){
         size: params.size || 0,
         used: 0,
         mailnum: 0,
+        from: params.from,
         lastGroup: null
     }
     db.user.save(user, function(err, result){

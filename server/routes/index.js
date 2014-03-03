@@ -10,6 +10,8 @@ var WHITE_LIST = [
     '/api/user/logoff',
     '/api/user/gotoLogin',
     '/api/user/loginSuccess',
+    '/api/user/loginWithQQ',
+    '/api/user/loginSuccessWithQQ',
     '/api/media/upload',
     '/api/media/download'
 ];
@@ -117,7 +119,7 @@ function verifyParams(req, config){
 }
 
 exports.verifyAndLogin = function(req, res, next){
-    var skey = req.cookies.skey;
+    var skey = req.cookies.skey || req.cookies.accessToken;
     var loginUser;
     console.log('>>>verifyAndLogin', req.url, req.method);
 
@@ -133,7 +135,10 @@ exports.verify = function(req, res, next){
     if(WHITE_LIST.indexOf(path) >= 0){
         next();
     }else{
-        var skey = req.cookies.skey;
+        var skey = req.cookies.skey || req.body.skey || req.query.skey;
+        if(!skey){
+            skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
+        }
 
         var loginUser;
 
@@ -141,11 +146,7 @@ exports.verify = function(req, res, next){
             res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
             return;
         }
-        // if(path.indexOf(ADMIN_CGI) > -1 && !U.hasRight(loginUser.auth, CFG.AUTH_MANAGER)){
-        //     // 是后台管理的 cgi
-        //     res.json({err: ERR.NOT_AUTH, msg: 'not auth'});
-        //     return;
-        // }
+        req.skey = skey;
         req.loginUser = loginUser;
         next();
     }
@@ -192,6 +193,10 @@ exports.mediaUpload = function(req, res, next){
         return;
     }
     if(type === 1){
+        var skey = req.cookies.skey || req.body.skey || req.query.skey;
+        if(!skey){
+            skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
+        }
         // 新媒体的上传, 路由到 media/upload
         getRouter(MEDIA_UPLOAD_CGI, req.method)(req, res, next);
         // res.redirect('/api/media/upload');

@@ -109,7 +109,7 @@ CAS.prototype.validate = function(ticket, callback) {
     });
   }
 
-  var req = (this.protocol === 'https' ? https : http).request(options, reqCb);
+  var req = (this.protocol === 'https:' ? https : http).request(options, reqCb);
   req.end();
 
   req.on('error', function(e) {

@@ -26,49 +26,6 @@ var fileHelper = require('../helper/file_helper');
 //     
 //     
 
-function getUserInfo(skey, callback){
-
-    var ep = new EventProxy();
-    ep.fail(callback);
-
-    // 去 sso 那用户名字和昵称
-    userHelper.getUserInfo(skey, ep.doneLater('getUserInfo'));
-    ep.on('getUserInfo', function(data){
-        if(data.success && data.userInfo){
-            ep.emit('getUserInfoSuccess', data.userInfo);
-        }else{
-            ep.emit('error', 'get userInfo error.');
-        }
-    });
-    
-    // 查询 user 数据库, 更新资料
-    ep.on('getUserInfoSuccess', function(userInfo){
-
-        var name = userInfo.loginName;
-        var nick = userInfo.name;
-
-        // name 是唯一的
-        mUser.getUserByName(name, function(err, user){
-            if(user){ // db已经有该用户, 更新资料
-                user.nick = nick;
-
-                mUser.save(user, ep.done('updateUserSuccess'));
-            }else{
-                mUser.create({
-                    nick: nick,
-                    name: name,
-                    auth: 0, // 15 是管理员
-                    size: config.DEFAULT_USER_SPACE,
-                }, ep.done('updateUserSuccess'));
-            }
-        });
-    });
-
-    // 把拿到的用户信息回调
-    ep.on('updateUserSuccess', function(user){
-        callback(null, user);
-    });
-}
 
 function getFolder(params, callback){
     var ep = new EventProxy();
@@ -98,7 +55,7 @@ exports.upload = function(req, res){
     var body = req.body;
     var loginUser;
     var uploadFilePath = body.file_path;
-    var skey = req.cookies.skey || req.body.skey || req.query.skey;
+    var skey = req.skey;
     console.log('>>>media upload, skey:',skey);
     var activityId = body.activityId;
 
@@ -120,7 +77,7 @@ exports.upload = function(req, res){
         return;
     }
 
-    getUserInfo(skey, ep.doneLater('getUserInfoSuccess'));
+    userHelper.findAndUpdateUserInfo(skey, 'sso', ep.doneLater('getUserInfoSuccess'));
 
     ep.on('getUserInfoSuccess', function(user){
         loginUser = user;
@@ -210,7 +167,7 @@ function verifyDownload(params, callback){
 exports.download = function(req, res){
 
     var fileId = req.query.fileId;
-    var skey = req.cookies.skey || req.body.skey || req.query.skey;
+    var skey = req.skey; 
     
     var ep = new EventProxy();
     ep.fail(function(err, code){
@@ -223,7 +180,7 @@ exports.download = function(req, res){
         ep.emit('error', 'need login', ERR.NOT_LOGIN);
         return;
     }
-    getUserInfo(skey, ep.doneLater('getUserInfoSuccess'));
+    userHelper.findAndUpdateUserInfo(skey, 'sso', ep.doneLater('getUserInfoSuccess'));
 
     ep.on('getUserInfoSuccess', function(user){
 
