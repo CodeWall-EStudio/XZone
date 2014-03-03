@@ -90,7 +90,7 @@ function dereferenceGroup(groupId, ext, callback){
             return callback(err);
         }
         if(doc){
-            db.dereference(doc, { 'creator': null, 'parent': null, 'rootFolder': null }, function(err, result){
+            db.dereference(doc, { 'creator': ['nick', '_id'], 'parent': null, 'rootFolder': null }, function(err, result){
                 doc.auth = ext.auth;
                 callback(err, doc);
             });
