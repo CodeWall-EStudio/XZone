@@ -78,7 +78,7 @@ exports.getUserAllInfo = function(userId, callback){
     mGroup.getGroupByUser(userId , ep.doneLater('getGroupsCb', function(results){
         var groups = [],
             departments = {},
-            prepare;
+            prepares;
 
         // 把部门和小组分开
         results.forEach(function(doc){
@@ -88,14 +88,14 @@ exports.getUserAllInfo = function(userId, callback){
                 departments[doc._id.toString()] = true;
                 // departments.push(doc);
             }else if(doc.type === 3){
-                prepare = doc;
+                prepares.push(doc);
             }
         });
 
         return {
             groups: groups,
             departments: departments,
-            prepare: prepare
+            prepares: prepares
         };
     }));
 
@@ -130,7 +130,7 @@ exports.getUserAllInfo = function(userId, callback){
         if(result){
             data.groups = result.groups;
             data.departments = result.departments;
-            data.prepare = result.prepare;
+            data.prepares = result.prepares;
         }
         callback(null, data);
     });
