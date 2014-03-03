@@ -20,6 +20,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 	}
 
 	function conventOne(data){
+
 		var t = {};
 		if(!data){
 			return t;
@@ -40,7 +41,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			t.tname = '';
 		}
 		t.isOpen = data.isOpen || 1;
-		t.isReady = data.isReady || 1;
+		t.isReady = data.isReadyonly || 1;
 
 		// if(t.pid == t.tid){
 		// 	t.pid = 0;

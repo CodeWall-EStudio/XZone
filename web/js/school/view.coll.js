@@ -4,6 +4,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 	var nextPage = 0,
 		action = 0,
 		nowOrder  = ['createTime',-1], 
+		nowType = 0;
 		nowOds = '',
 		nowKey = '';
 
@@ -26,6 +27,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 	function init(e,d){
 		nextPage = 0;
 		action = 1;
+		nowType = d.type;
 		tmpTarget.html('');
 		crTit();
 
@@ -49,6 +51,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 		handerObj.triggerHandler('coll:serach',{
 			keyword : nowKey,
 			page:nextPage,
+			type:nowType,
 			pageNum : config.pagenum,
 			order : nowOds
 		});			
@@ -93,6 +96,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 		handerObj.triggerHandler('coll:serach',{
 			keyword : nowKey,
 			page:nextPage,
+			type:nowType,
 			pageNum : config.pagenum,
 			order : nowOds
 		});		

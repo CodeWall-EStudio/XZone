@@ -42,6 +42,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 
 		if(nowPrep == 'my'){
 			tpl = 'prep.tit';
+			data.pr = nowPrep;
 		}else if(nowPrep == 'group'){
 			tpl = 'prep.group.tit';
 			var userList = Cache.get('alluser2key');
@@ -52,6 +53,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			// tag : nowTag,
 			// grade : nowGrade,
 			// uid : nowUid		
+			data.pr = nowPrep;
 			data.tlist = config.tag;
 			data.glist = config.grade;
 			data.list =  plist;
@@ -223,11 +225,13 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	function foldOne(e,d){
+		//console.log(nowGinfo);
 		if(nowGid && !nowGinfo.isMember && nowFd == nowGinfo.rootFolder.id && !nowPrep){
 			$('#btnZone').hide();
 		}else{
-			if(!nowGinfo.isMember){
-				if(d.isOpen && !d.isReady){
+			//console.log(d);
+			if(!$.isEmptyObject(nowGinfo) && !nowGinfo.isMember){
+				if(d.isOpen && d.isReady){
 					$(".btn-upload").hide();
 				}else{
 					$('#btnZone').hide();
@@ -285,7 +289,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 
 		var pr = 0;
 		if(nowPrep){
-			pr = 1;
+			pr = nowPrep;
 		}
 
 		var view = new View({
@@ -347,7 +351,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		var data = {
 			name : d.name,
 			isOpen : d.isOpen,
-			isRead : d.isRead
+			isReadonly : d.isReadonly
 		}
 
 		if(nowGid){
@@ -362,6 +366,25 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 
 	function delSuc(e,d){
 		var list = d.id;
+		var fl = [];
+		var nl = [];
+		if(!nowGid){
+			fl = Cache.get('myfold');
+		}else{
+			fl = Cache.get('rootFolder'+nowGid);
+		}
+
+		for(var i = 0;i<fl.length;i++){
+			if($.inArray(fl[i].id,list)<0){
+				nl.push(fl[i]);
+			}
+		}
+		if(!nowGid){
+			handerObj.triggerHandler('cache:set',{key: 'myfold',data:nl});			
+		}else{
+			handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:nl});			
+		}
+
 		for(var i = 0,l=list.length;i<l;i++){
 			$('.fold'+list[i]).remove();
 		}

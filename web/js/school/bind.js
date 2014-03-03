@@ -36,7 +36,7 @@ define(['config'],function(config){
 			 	var obj = {
 			 		name : value,
 			 		isOpen : isopen,
-			 		isRead : isread
+			 		isReadonly : isread
 			 	}
 			 	handerObj.triggerHandler('fold:create',obj);  
 			 	$("#newFold .close").click();      	

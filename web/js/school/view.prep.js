@@ -35,10 +35,10 @@ define(['config','helper/view','cache'],function(config,View,Cache){
 			gid : nowGid,
 			fdid : nowFd,
 			info : prepKey[nowGid],
+			order : d.order,
 			key : d.key,
 			prep : 'my'
 		}
-
 
         handerObj.triggerHandler('file:init',data);
         handerObj.triggerHandler('fold:init',data); 

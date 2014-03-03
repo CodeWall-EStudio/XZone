@@ -31,6 +31,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 		action = 1;
 		tmpTarget.html('');
 		crTit();
+
 		nextPage = 0;
 
 		if(d.order){
@@ -54,6 +55,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 		handerObj.triggerHandler('recy:serach',{
 			keyword : nowKey,
 			page:nextPage,
+			type : nowType,
 			pageNum : config.pagenum,
 			order : nowOds
 		});			
@@ -104,6 +106,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 		handerObj.triggerHandler('recy:serach',{
 			keyword : nowKey,
 			page:nextPage,
+			type:nowType,
 			pageNum : config.pagenum,
 			order : nowOds
 		});			

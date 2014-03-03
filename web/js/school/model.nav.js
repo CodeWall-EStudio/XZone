@@ -37,36 +37,73 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		o.group2key = {};
 		o.dep2key = {};
 		o.prep2key = {};
+
 		o.rootFolder = data.user.rootFolder;
 		o.rootFolder.id = data.user.rootFolder['$id'];
+
+		//学校
+		o.school = data.school;
+		o.school.id = o.school._id;
+		o.school.rootFolder.id = o.school.rootFolder.$id;
+		o.group2key[o.school.id] = o.school;
+
+		for(var i =0,l=data.departments.length;i<l;i++){
+			var item = data.departments[i];
+				item.id = item._id;
+				item.pt = item.pt || 0;
+				item.auth = item.auth || 0;
+			if(item.rootFolder){
+				item.rootFolder.id = item.rootFolder._id || item.rootFolder.$id;
+			}				
+			o.dep.push(item);
+			o.dep2key[item.id] = item;
+			o.group2key[item.id] = item;				
+		}
+
+		for(var i=0,l=data.prepares.length;i<l;i++){
+			var item = data.prepares[i];
+				item.id = item._id;
+				item.pt = item.pt || 0;
+			if(item.rootFolder){
+				item.rootFolder.id = item.rootFolder._id || item.rootFolder.$id;
+			}				
+			item.isMember = true;	
+			o.prep.push(item);
+			o.prep2key[item.id] = item;
+			o.group2key[item.id] = item;
+		}
+
 		for(var i =0,l=data.groups.length;i<l;i++){
 			var item = data.groups[i];
 			if(!item){
 				continue;
 			}
 			item.id = item._id;
+			item.pt = item.pt || 0;
 			if(item.rootFolder){
-				item.rootFolder.id = item.rootFolder._id;
+				item.rootFolder.id = item.rootFolder._id || item.rootFolder.$id;
 			}
+			item.isMember = true;
 			o.group2key[item.id] = item;
 			item.pt = item.pt || 0;
-			switch(item.type){
-				case 0: //学校
-					o.school = item;
-					break;
-				case 1: //小组
-					o.group.push(item);
-					break;
-				case 2: //部门
-					item.isMember = item.isMember || 1;
-					o.dep.push(item);
-					o.dep2key[item.id] = item;
-					break;
-				case 3: //备课
-					o.prep.push(item);
-					o.prep2key[item.id] = item;
-					break;
-			}
+			o.group.push(item);
+			// switch(item.type){
+			// 	case 0: //学校
+			// 		o.school = item;
+			// 		break;
+			// 	case 1: //小组
+					
+			// 		break;
+			// 	case 2: //部门
+			// 		item.isMember = item.isMember || 1;
+			// 		o.dep.push(item);
+			// 		o.dep2key[item.id] = item;
+			// 		break;
+			// 	case 3: //备课
+			// 		o.prep.push(item);
+			// 		o.prep2key[item.id] = item;
+			// 		break;
+			// }
 
 		}
 		return o;

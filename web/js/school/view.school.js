@@ -20,15 +20,13 @@ define(['config','helper/view','cache','helper/util'],function(config,View,Cache
 			nowKey = d.key || '';
 		}		
 
-		var data = {
-			gid : nowGid,
-			fdid : nowFd,
-			info : school
-		}
+		d.gid = nowGid;
+		d.fdid = nowFd;
+		d.info = school;
 
-        handerObj.triggerHandler('file:init',data);
-        handerObj.triggerHandler('fold:init',data); 
-        handerObj.triggerHandler('upload:param',data);		
+        handerObj.triggerHandler('file:init',d);
+        handerObj.triggerHandler('fold:init',d); 
+        handerObj.triggerHandler('upload:param',d);		
 	}
 
 	var handlers = {

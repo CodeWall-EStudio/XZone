@@ -116,8 +116,11 @@
 
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
+            type = data.type || 0,
             key = data.key || 0;     
-        var d = {}
+        var d = {
+          type : type
+        }
         if(Math.abs(od)){
           d.order = [on,od];
         } 
@@ -139,8 +142,11 @@
 
         var od = parseInt(data.od) || 0,
             on = data.ordername || 0,
+            type = data.type || 0,
             key = data.key || 0;   
-        var d = {}
+        var d = {
+          type : type
+        }
         if(Math.abs(od)){
           d.order = [on,od];
         } 
@@ -167,7 +173,8 @@
             type = data.type || 0;
         var d = {
           gid : gid,
-          fdid : fdid
+          fdid : fdid,
+          type : type
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -196,7 +203,8 @@
             key = data.key || 0,
             type = data.type || 0;
         var d = {
-          fdid : fdid
+          fdid : fdid,
+          type : type
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -224,6 +232,7 @@
             grade = data.grade || 0,
             tag = data.tag || 0,
             od = parseInt(data.od) || 0,
+            type = data.type || 0,
             on = data.on || 0,
             key = data.key || 0;
         var d = {
@@ -232,6 +241,7 @@
           pid : pid,
           tag : tag,
           uid : uid,
+          type : type,
           grade : grade
         }
         if(Math.abs(od)){
@@ -257,10 +267,12 @@
             gid = data.gid || 0,
             od = parseInt(data.od) || 0,
             on = data.on || 0,
+            type = data.type || 0,
             key = data.key || 0;
         var d = {
           fdid : fdid,
-          gid : gid
+          gid : gid,
+          type : type
         }
         if(Math.abs(od)){
           d.order = [on,od];

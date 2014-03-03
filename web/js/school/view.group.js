@@ -6,6 +6,7 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 		myInfo = null,
 		nowGroup,
 		nowPage = 0,
+		nowData = null,
 		nowFd = 0;
 
 	var actTarget = $('#actWinZone'),
@@ -23,11 +24,13 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 
 		nowGid = d.gid;
 		nowFd = d.fdid || 0;
+		nowData = d;
 		if(!myGroups){
 			myInfo = Cache.get('myinfo'),
 			myGroups = myInfo.group2key;
 		}
 		nowGroup = myGroups[nowGid];
+
 		if(nowGroup.isMember){
 			$("#btnZone").show();
 			//$('.btn-upload').show();
@@ -84,10 +87,11 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 			fdid : nowFd,
 			info : d
 		}
+		nowData.info = d;
 		if((nowFd == 0 || !nowFd) && d.rootFolder){
-			data.fdid = d.rootFolder.id || d.rootFolder.$id;
+			nowData.fdid = d.rootFolder.id || d.rootFolder.$id;
 		}
-		data.rootfdid = d.rootFolder.id || d.rootFolder.$id;
+		nowData.rootfdid = d.rootFolder.id || d.rootFolder.$id;
 
 		$('#aside .aside-divs').hide();
 		switch(d.type){
@@ -111,12 +115,13 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 				break;
 		}
 		if(d.pt){
-			data.prep = 'group';
-			handerObj.triggerHandler('groupprep:init',data);
+			nowData.prep = 'group';
+			handerObj.triggerHandler('groupprep:init',nowData);
 		}else{
-	        handerObj.triggerHandler('file:init',data);
-	        handerObj.triggerHandler('fold:init',data); 
-	        handerObj.triggerHandler('upload:param',data);
+			console.log(nowData);
+	        handerObj.triggerHandler('file:init',nowData);
+	        handerObj.triggerHandler('fold:init',nowData); 
+	        handerObj.triggerHandler('upload:param',nowData);
     	}
 	}
 

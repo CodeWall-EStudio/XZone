@@ -14,7 +14,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowUid = 0,
 		nowGrade = 0,
 		nowTag = 0,	
-		nowPid = 0,			
+		nowPid = 0,	
+		nowType = 0,		
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -70,10 +71,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowTotal = 0;
 		nextPage = 0;
 		action = 1;
-
+		
 		if(d){
 			nowGid = d.gid || 0;
 			nowFd = d.fdid || 0;
+			nowType = d.type || 0;
 			if(d.order){
 				nowOrder = d.order;
 			}
@@ -121,6 +123,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		// }else if(rootFd){
 		// 	data.folderId = rootFd;
 		}
+		data.type = nowType;
 		if(nowUid){
 			data.uid = nowUid;
 		}
@@ -137,8 +140,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			nextPage = 0;
 		}
 		var pr = 0;
-		if(nowPrep == 'group'){
-			pr = 1;
+		if(nowPrep){
+			pr = nowPrep;
 		}
 		var view = new View({
 			target : tmpTarget,
@@ -148,7 +151,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				filetype : config.filetype,
 				gid : nowGid,
 				down : config.cgi.filedown,
-				pr : pr
+				pr : nowPrep
 			}
 		});
 
@@ -205,6 +208,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			folderId : nowFd,
 			page:nextPage,
 			pageNum : config.pagenum,
+			type : nowType,
 			order : nowOds
 		}
 		if(nowGid){
@@ -237,6 +241,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			folderId : nowFd,
 			page:nextPage,
 			pageNum : config.pagenum,
+			type : nowType,
 			order : nowOds
 		}
 		if(nowGid){
@@ -437,7 +442,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			info = Cache.get('myinfo');
 			rootfd = info.rootFolder.$id;
 		}
-
 
 		if(!fold){
 			fold = [];
