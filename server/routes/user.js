@@ -52,20 +52,14 @@ exports.gotoLogin = function(req, res){
 exports.get = function(req, res){
 
     var loginUser = req.loginUser;
-    mUser.getUserInfoByName(loginUser.name, function(err, user, groups){
+    
+    mUser.getUserAllInfo(loginUser._id, function(err, data){
         if(err){
-            res.json({ err: user || ERR.SERVER_ERROR, msg: err});
+            res.json({ err: data || ERR.SERVER_ERROR, msg: err});
         }else{
-            mMessage.getUnReadNum(loginUser._id, function(err, count){
-
-                user.mailnum = count;
-                res.json({
-                    err: ERR.SUCCESS,
-                    result: {
-                        user: user,
-                        groups: groups
-                    }
-                });
+            res.json({
+                err: ERR.SUCCESS,
+                result: data
             });
         }// end of else 
     });
