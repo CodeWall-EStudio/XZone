@@ -128,6 +128,10 @@ exports.modify = function(req, res){
             ep.emit('error', 'no such folder', ERR.NOT_FOUND);
             return;
         }
+        if(folder.creator._id.toString() !== params.creator){
+            ep.emit('error', 'no allow', ERR.NOT_AUTH);
+            return;
+        }
         if(params.name){
             if(params.name === folder.name){
                 // 名字没变过, 就不要改了
