@@ -77,14 +77,15 @@ exports.getUserAllInfo = function(userId, callback){
     // 获取用户参与的小组信息
     mGroup.getGroupByUser(userId , ep.doneLater('getGroupsCb', function(results){
         var groups = [],
-            departments = [];
+            departments = {};
 
         // 把部门和小组分开
-        results.forEach(function(item){
-            if(item.type === 1){
-                groups.push(item);
-            }else if(item.type === 2){
-                departments.push(item);
+        results.forEach(function(doc){
+            if(doc.type === 1){
+                groups.push(doc);
+            }else if(doc.type === 2){
+                departments[doc._id.toString()] = true;
+                // departments.push(doc);
             }
         });
 
@@ -93,12 +94,25 @@ exports.getUserAllInfo = function(userId, callback){
             departments: departments
         };
     }));
+
+    ep.on('getGroupsCb', function(result){
+        var memberDep = result.departments;
+        // 读取所有部门
+        db.search('group', { type: 2 }, {}, ep.done('getGroupsCb2', function(total, docs){
+            result.departments = docs;
+            docs.forEach(function(doc){
+                doc.isMember = memberDep[doc._id.toString()] || false;
+            });
+            return result;
+        }));
+    });
+
     // 获取未读消息数
     mMessage.getUnReadNum(userId, ep.doneLater('getUnReadNumCb'));
     // 获取学校信息
     db.group.findOne({ type: 0 }, ep.doneLater('getSchoolCb'));
 
-    ep.all('getUserCb', 'getGroupsCb', 'getUnReadNumCb', 'getSchoolCb', 
+    ep.all('getUserCb', 'getGroupsCb2', 'getUnReadNumCb', 'getSchoolCb', 
            function(user, result, count, school){
         if(!user){
             callback('no such user', ERR.NOT_FOUND);
