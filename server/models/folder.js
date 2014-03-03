@@ -26,7 +26,9 @@ exports.create = function(params, callback){
             type: 0,
             parent: null,
             deletable: ('deletable' in params) ? params.deletable : true,
-            top: null, //params.topId ? DBRef('folder', params.topId) : null,
+            isOpen: params.isOpen === 1, // 0 非公开, 1 公开
+            isReadonly: params.isReadonly === 1, // 0 读写, 1 只读
+            top: null, 
             hasChild: false
         };
         if(groupId){
