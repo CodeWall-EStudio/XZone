@@ -128,7 +128,7 @@ exports.modify = function(req, res){
             ep.emit('error', 'no such folder', ERR.NOT_FOUND);
             return;
         }
-        if(folder.creator._id.toString() !== params.creator){
+        if(folder.creator.oid.toString() !== params.creator){
             ep.emit('error', 'no allow', ERR.NOT_AUTH);
             return;
         }

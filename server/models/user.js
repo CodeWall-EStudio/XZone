@@ -77,7 +77,8 @@ exports.getUserAllInfo = function(userId, callback){
     // 获取用户参与的小组信息
     mGroup.getGroupByUser(userId , ep.doneLater('getGroupsCb', function(results){
         var groups = [],
-            departments = {};
+            departments = {},
+            prepares = [];
 
         // 把部门和小组分开
         results.forEach(function(doc){
@@ -86,12 +87,15 @@ exports.getUserAllInfo = function(userId, callback){
             }else if(doc.type === 2){
                 departments[doc._id.toString()] = true;
                 // departments.push(doc);
+            }else if(doc.type === 3){
+                prepares.push(doc);
             }
         });
 
         return {
             groups: groups,
-            departments: departments
+            departments: departments,
+            prepares: prepares
         };
     }));
 
@@ -126,6 +130,7 @@ exports.getUserAllInfo = function(userId, callback){
         if(result){
             data.groups = result.groups;
             data.departments = result.departments;
+            data.prepares = result.prepares;
         }
         callback(null, data);
     });
