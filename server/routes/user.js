@@ -1,7 +1,7 @@
 var http = require('http');
 var querystring = require('querystring');
 var EventProxy = require('eventproxy');
-var OAuth2 = require('OAuth').OAuth2;
+var OAuth2 = require('oauth').OAuth2;
 
 var CAS = require('../lib/cas');
 var config = require('../config');
