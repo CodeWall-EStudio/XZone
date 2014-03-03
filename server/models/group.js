@@ -14,6 +14,11 @@ exports.create = function(params, callback){
     if(isNaN(status)){
         status = 1;
     }
+    // type: 0是学校 1是小组 2是部门 3是备课
+    var type = ('type' in params) ? Number(params.type) : 1;
+    if(isNaN(type)){
+        type = 1;
+    }
 
     var ep = new EventProxy();
     ep.fail(callback);
@@ -37,7 +42,7 @@ exports.create = function(params, callback){
         var doc = {
             name: params.name,
             content: params.content || '',
-            type: Number(params.type) || 0,
+            type: type,
             parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
             creator: DBRef('user', ObjectID(params.creator)),
             status: status, // 标示小组审核状态 1 审核中 0 已审核
