@@ -78,7 +78,7 @@ exports.getUserAllInfo = function(userId, callback){
     mGroup.getGroupByUser(userId , ep.doneLater('getGroupsCb', function(results){
         var groups = [],
             departments = {},
-            prepares;
+            prepares = [];
 
         // 把部门和小组分开
         results.forEach(function(doc){
