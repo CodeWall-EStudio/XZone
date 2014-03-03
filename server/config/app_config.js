@@ -10,7 +10,7 @@ exports.AUTH_DEPART_MANAGER = 0x2;
 exports.AUTH_MANAGER = 0x4;
 exports.AUTH_SYS_MANAGER = 0x8;
 
-exports.AUTH_TYPE = 'qq';// auto, sso, qq
+exports.AUTH_TYPE = 'auto';// auto, sso, qq
 
 // CAS 的配置以及登录成功后的跳转 URL
 exports.CAS_BASE_URL = 'http://dand.71xiaoxue.com:80/sso.web';

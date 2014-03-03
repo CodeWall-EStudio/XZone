@@ -137,7 +137,7 @@ exports.request = function(params, callback){
 
     options.method = params.method;
     if(params.headers){
-        options.headers = {};
+        options.headers = params.headers;
     }
 
     var req = (obj.protocol === 'https:' ? https : http).request(options, function(res){
