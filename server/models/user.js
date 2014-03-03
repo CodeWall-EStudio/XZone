@@ -75,24 +75,44 @@ exports.getUserAllInfo = function(userId, callback){
     // 获取用户资料
     db.user.findOne({ _id: oid}, ep.doneLater('getUserCb'));
     // 获取用户参与的小组信息
-    mGroup.getGroupByUser(userId , ep.doneLater('getGroupsCb'));
+    mGroup.getGroupByUser(userId , ep.doneLater('getGroupsCb', function(results){
+        var groups = [],
+            departments = [];
+
+        // 把部门和小组分开
+        results.forEach(function(item){
+            if(item.type === 1){
+                groups.push(item);
+            }else if(item.type === 2){
+                departments.push(item);
+            }
+        });
+
+        return {
+            groups: groups,
+            departments: departments
+        };
+    }));
     // 获取未读消息数
     mMessage.getUnReadNum(userId, ep.doneLater('getUnReadNumCb'));
     // 获取学校信息
     db.group.findOne({ type: 0 }, ep.doneLater('getSchoolCb'));
 
     ep.all('getUserCb', 'getGroupsCb', 'getUnReadNumCb', 'getSchoolCb', 
-           function(user, groups, count, school){
+           function(user, result, count, school){
         if(!user){
             callback('no such user', ERR.NOT_FOUND);
             return;
         }
-        user.mailnum = count;
+        user.mailnum = count || 0;
         var data = {
             user: user,
-            groups: groups,
             school: school
         };
+        if(result){
+            data.groups = result.groups;
+            data.departments = result.departments;
+        }
         callback(null, data);
     });
      
