@@ -26,7 +26,12 @@
 
 					<div>
 						<div class="share-tit">
-							发送文件(<%=fl.length%>)个：
+							<%if(type=='school'){%>
+								<input type="checkbox" class="hide" checked value="<%+list%>" />
+								共享(<%=fl.length%>)个文件到学校:
+							<%}else{%>
+								发送文件(<%=fl.length%>)个：
+							<%}%>
 							<i>
 								<%
 									for(var i =0,l=fl.length;i<l;i++){
@@ -44,25 +49,26 @@
 						<div class="share-act-zone">
 							<p><input class="act-search-input" type="text" value="<%+key%>" data-def="<%+key%>" /><i class="act-search-btn"></i></p>
 						</div>
-						<div>
-							选择要发送的
-						<%if(type=='other'){%>
-							用户
-						<%}else if(type=='group'){%>
-							小组
-						<%}else if(type=='dep'){%>
-							部门
-						<%}%>							
-							<ul id="searchResult">
-								<%
-									for(var i=0,l=list.length;i<l;i++){
-										var item = list[i];
-								%>
-									<li class="tag<%+item.id%>"><input type="checkbox" value="<%+item.id%>" /> <%-item.name%></li>
-								<%}%>
-							</ul>						
-						</div>
-
+						<%if(type!='school'){%>
+							<div>
+								选择要发送的
+							<%if(type=='other'){%>
+								用户
+							<%}else if(type=='group'){%>
+								小组
+							<%}else if(type=='dep'){%>
+								部门						
+							<%}%>
+								<ul id="searchResult">
+									<%
+										for(var i=0,l=list.length;i<l;i++){
+											var item = list[i];
+									%>
+										<li class="tag<%+item.id%>"><input type="checkbox" value="<%+item.id%>" /> <%-item.name%></li>
+									<%}%>
+								</ul>
+							</div>
+						<%}%>
 					</div>
 				</div>
 				<div class="modal-footer">

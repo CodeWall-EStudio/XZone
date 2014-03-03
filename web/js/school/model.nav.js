@@ -5,6 +5,7 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 	function convent(data){
 
 		var o = {};
+		o.id = data.user._id;
 		o.nick = data.user.nick;
 		o.pre = util.getNums(data.user.used/data.user.size)*100;
 		if(!o.pre && !data.user.used){
@@ -51,12 +52,13 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 			item.pt = item.pt || 0;
 			switch(item.type){
 				case 0: //学校
-					o.school = 1;
+					o.school = item;
 					break;
 				case 1: //小组
 					o.group.push(item);
 					break;
 				case 2: //部门
+					item.isMember = item.isMember || 1;
 					o.dep.push(item);
 					o.dep2key[item.id] = item;
 					break;

@@ -7,7 +7,7 @@
     }    
   });
 
-  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','bind','upload','msg'], function(config,router,util,nav) {
+  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','bind','upload','msg'], function(config,router,util,nav) {
 
     var handerObj = $(Schhandler);
 
@@ -39,10 +39,35 @@
         'groupprep=:id' : 'groupprep',
         "gid=:id&fdid=:fdid" : 'group',
         "myprep=:1" : 'myPrep', //备课
+        "school=:1" : 'school',
         "my" : 'myFile',     //个人文件
         "key=:id" : 'myFile',     //个人文件
         "" : 'myFile', // 无hash的情况，首页
         "fdid=:id" : 'myFile'
+      },
+      school : function(data){
+        btarget.show();
+        ftarget.show();
+        starget.hide();
+        mtarget.hide();
+
+        var gid = data.gid,
+            fdid = data.fdid || 0;
+        var od = parseInt(data.od) || 0,
+            on = data.on || 0,
+            key = data.key || 0,
+            type = data.type || 0;
+        var d = {
+          fdid : fdid
+        }
+        if(Math.abs(od)){
+          d.order = [on,od];
+        } 
+        if(key){
+          d.key = key;
+        }  
+        handerObj.triggerHandler('page:change');   
+        handerObj.triggerHandler('school:init',d);              
       },
       mailbox : function(data){
         btarget.hide();

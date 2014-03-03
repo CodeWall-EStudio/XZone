@@ -28,8 +28,15 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 			myGroups = myInfo.group2key;
 		}
 		nowGroup = myGroups[nowGid];
+		if(nowGroup.isMember){
+			$("#btnZone").show();
+			//$('.btn-upload').show();
+		}else{
+			$("#btnZone").hide();
+		}
 		// handerObj.triggerHandler('group:init',myGroups[nowGid]);
 		if(myGroups[nowGid]){
+			//handerObj.triggerHandler('group:info',{gid:nowGid,type:'group'});
 			handerObj.triggerHandler('group:infosuc',myGroups[nowGid]);
 		}else{
 			handerObj.triggerHandler('msg:error',1010);
@@ -78,9 +85,9 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 			info : d
 		}
 		if((nowFd == 0 || !nowFd) && d.rootFolder){
-			data.fdid = d.rootFolder.id;
+			data.fdid = d.rootFolder.id || d.rootFolder.$id;
 		}
-		data.rootfdid = d.rootFolder.id;
+		data.rootfdid = d.rootFolder.id || d.rootFolder.$id;
 
 		$('#aside .aside-divs').hide();
 		switch(d.type){
