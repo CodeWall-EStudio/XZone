@@ -85,7 +85,7 @@ exports.getUserAllInfo = function(userId, callback){
             if(doc.type === 1){
                 groups.push(doc);
             }else if(doc.type === 2){
-                departments[doc._id.toString()] = true;
+                departments[doc._id.toString()] = doc;
                 // departments.push(doc);
             }else if(doc.type === 3){
                 prepares.push(doc);
@@ -105,7 +105,13 @@ exports.getUserAllInfo = function(userId, callback){
         db.search('group', { type: 2 }, {}, ep.done('getGroupsCb2', function(total, docs){
             result.departments = docs;
             docs.forEach(function(doc){
-                doc.isMember = memberDep[doc._id.toString()] || false;
+                var dep = memberDep[doc._id.toString()];
+                if(dep){
+                    doc.isMember = true;
+                    doc.auth = dep.auth || 0;
+                }else{
+                    doc.isMember = false;
+                }
             });
             return result;
         }));
