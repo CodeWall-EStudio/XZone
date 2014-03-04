@@ -77,12 +77,14 @@
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');       
 
-        var type = data.mailbox;
+        var cate = data.mailbox;
         var od = parseInt(data.od) || 0,
+            type = data.type || 0,
             on = data.on || 0,
             key = data.key || 0; 
         var d = {
-          type : type
+          type : type,
+          cate : cate
         }
         if(key){
           d.key = key;

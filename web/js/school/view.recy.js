@@ -63,11 +63,13 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 
 	function load(e,d){
 		//nextPage = d.next;
+		console.log(d);
 		if($(".file").length < d.total){
 			nextPage += 1;
 		}else{
 			nextPage = 0;
 		}
+		console.log(nextPage);
 
 		var view = new View({
 			target : tmpTarget,
@@ -84,7 +86,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 			target : $('#boxpageZone'),
 			tplid : 'page',
 			data : {
-				next : d.next
+				next : nextPage
 			}
 		});
 

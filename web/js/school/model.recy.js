@@ -29,7 +29,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			if(d.err == 0){
 				handerObj.triggerHandler('recy:load',{
 					list : convent(d.result.list),
-					next : d.result.next
+					total : d.result.total
 				});
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);

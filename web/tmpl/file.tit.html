@@ -22,7 +22,7 @@
 <%}else{%>	
 	<a >搜索结果</a>
 	<!-- <a class="end" href="/home?fid=<?=$fid?>&od=<?=$od?>&on=<?=$on?>">返回上级</a> -->
-	<a class="return" href="#<%if(gid){%>gid=<%+gid%><%}%>">退出搜索结果</a>
+	<a class="return" href="#<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%=fdid%>">退出搜索结果</a>
 <%}%>
 </div>
 <ul class="act-zone">

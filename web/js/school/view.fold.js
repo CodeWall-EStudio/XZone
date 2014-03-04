@@ -186,16 +186,21 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 
 
 		//crTit();
-		var data = {
-			folderId : nowFd,
-		};
+		var data = {};
+		if(nowFd){
+			data.folderId = nowFd;
+		}
+		//folderId : nowFd
+		//};
 		if(nowGid){
 			data.groupId = nowGid;
 		}
 		handerObj.triggerHandler('fold:one',data);			
 
 		var obj = {};
-		obj.folderId = nowFd;
+		if(nowFd){
+			obj.folderId = nowFd;
+		}
 		// if(nowFd){
 		// 	obj.folderId = nowFd;
 		// }else if(rootFd){
@@ -365,6 +370,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	function delSuc(e,d){
+		$("#fileActZone").addClass('hide');
+		$(".tool-zone").removeClass('hide');		
 		var list = d.id;
 		var fl = [];
 		var nl = [];

@@ -513,10 +513,29 @@ define(['config'],function(config){
 				break;
 			case 'save':
 				var id = target.attr('data-id');
-				console.log(2222222);
 				handerObj.triggerHandler('mail:save',id);
 			case 'down':
 				down(e);
+				break;
+			case 'pass':
+				var id = target.attr('data-id'),
+					name = target.attr('data-name');
+				var obj = {
+					id : id,
+					name : name,
+					status : 1
+				}					
+				handerObj.triggerHandler('school:showapv',obj);
+				break;
+			case 'notpass':
+				var id = target.attr('data-id'),
+					name = target.attr('data-name');
+				var obj = {
+					id : id,
+					name : name,
+					status : 0
+				}
+				handerObj.triggerHandler('school:showapv',obj);
 				break;
 			default :
 				if(!target.hasClass('name-edit')){

@@ -15,7 +15,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowGrade = 0,
 		nowTag = 0,	
 		nowPid = 0,	
-		nowType = 0,		
+		nowType = 0,
+		nowSchool = 0,
+		nowAuth = 0,		
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -83,6 +85,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			nowUid = d.uid || 0;
 			nowKey = d.key || '';
 			nowPrep = d.prep || 0;
+
+			nowSchool = d.school || 0;
+			nowAuth = d.auth || 0;
 			//rootFd = d.rootfdid || 0;
 		}
 
@@ -103,7 +108,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				gid : nowGid,
 				fdid : nowFd,
 				uid : nowUid,
-				prep : nowPrep
+				prep : nowPrep,
+				auth : nowAuth
 			}			
 		});
 		view.createPanel();
@@ -151,9 +157,12 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				filetype : config.filetype,
 				gid : nowGid,
 				down : config.cgi.filedown,
-				pr : nowPrep
+				pr : nowPrep,
+				school : nowSchool,
+				auth : nowAuth
 			}
 		});
+		//console.log(nowSchool,nowAuth);
 
 		view.appendPanel();	
 
@@ -286,6 +295,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			pageNext();
 		}
 		$('#tableTit input:checked').attr('checked',false);
+		resetToolbar();
 	}
 
 	function fileEdit(e,d){
@@ -617,7 +627,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 							}
 							return;
 						}else{		
-							console.log(nowGid,id);
 							handerObj.triggerHandler('fold:get',{
 								gid : nowGid,
 								folderId : id,
@@ -635,13 +644,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		});
 
 		view.appendPanel();			
-	}
-
-	function moveSuc(e,d){
-		var ids = d.ids;
-		for(var i in ids){
-			$('.file'+ids[i]).remove();
-		}
 	}
 
 	function recyRef(e,d){
@@ -745,6 +747,24 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		
 	}
 
+	function sharesuc(e,d){
+		resetToolbar();
+	}
+
+	function moveSuc(e,d){
+		var ids = d.ids;
+		for(var i in ids){
+			$('.file'+ids[i]).remove();
+		}
+		resetToolbar();
+	}
+
+	function resetToolbar(){
+		$("#fileActZone").addClass('hide');
+		$(".tool-zone").removeClass('hide');
+	}
+
+
 	function editMark(e,d){
 		if(nowGid){
 			d.groupId = nowGid;
@@ -777,6 +797,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		'fav:uncollsuc' : uncollSUc,
 		'file:marksuc' : marksuc,
 		'page:next' : pageNext,
+		'file:sharesuc' : sharesuc,
 		'file:editmark' : editMark,
 		'file:uploadsuc' : uploadSuc
 	}

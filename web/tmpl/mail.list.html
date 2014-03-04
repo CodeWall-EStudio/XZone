@@ -17,18 +17,18 @@
 								<%-item.content%>
 							</dt>
 						<dd>
-							<%if(!item.save && type==1){%>
+							<%if(!item.save && cate==1){%>
 							<a  class="mailsave<%+item.id%>" cmd="save"  data-fid="<%+item.fid%>" data-id="<%+item.id%>">保存</a>
 							<%}%>
 						</dd>							
 						</dl>
 					</td>
 					<td width="90">
-						<%if(type==1){%>
+						<%if(cate==1){%>
 						<%-item.fname%>
-						<%}else if(type ==2 ){%>
+						<%}else if(cate ==2 ){%>
 						<%-item.tname%>
-						<%}else if(type == 0){%>
+						<%}else if(cate == 0){%>
 						<%-item.gname%>
 						<%}%>
 					</td>

@@ -1,10 +1,11 @@
 define(['config','helper/view','model.mail'],function(config,View){
 	var	handerObj = $(Schhandler);
 
-	var nowType = 0,//我的贡献 ,1 收件 2 发件
+	var nowType = 0,
 		action = 0,//活动状态
 		nextPage = 0,
 		nowTotal = 0,
+		nowCate = 0,//我的贡献 ,1 收件 2 发件
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
 		nowKey = '';
@@ -19,6 +20,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 			tplid : 'mail.tit',
 			data : {
 				filetype : config.filetype,
+				cate : nowCate,
 				type : nowType,
 				key : nowKey
 			}
@@ -31,7 +33,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 
 		nextPage = 0;
 		nowTotal = 0;
-
+		nowCate = d.cate;
 		nowType = d.type;
 		if(d.order){
 			nowOrder = d.order;
@@ -50,6 +52,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 			data : {
 				order : nowOrder,
 				name : 'mailbox',
+				cate : nowCate,
 				type : nowType
 			}			
 		});
@@ -61,6 +64,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 			page:nextPage,
 			pageNum : config.pagenum,
 			type : nowType,
+			cate : nowCate,
 			order : nowOds
 		});			
 
@@ -88,6 +92,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 				list : d.list,
 				ul : d.ul,
 				type : nowType,
+				cate : nowCate,
 				filetype : config.filetype
 			}
 		});
@@ -121,6 +126,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 			keyword : nowKey,
 			page:nextPage,
 			pageNum : config.pagenum,
+			cate : nowCate,
 			type : nowType,
 			order : nowOds
 		});			
