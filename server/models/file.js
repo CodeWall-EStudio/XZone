@@ -159,8 +159,9 @@ exports.search = function(params, callback){
     var userId = params.creator || null;
 
     var keyword = params.keyword || '';
-    var hasType = 'type' in params;
+
     var type = Number(params.type) || 0;
+    var hasType = type !== 0;
 
     var extendQuery = params.extendQuery;
     var extendDefProps = params.extendDefProps;

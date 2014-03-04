@@ -261,7 +261,7 @@ exports.modify = function(params, doc, callback){
 }
 
 exports.getGroup = function(groupId, callback){
-
+    console.log('>>>getGroup, groupId', groupId, typeof groupId);
     db.group.findOne({ _id: new ObjectID(groupId) }, callback);
 
 }
