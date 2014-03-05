@@ -41,7 +41,14 @@ exports.upload = function(req, res){
         return;
     }
 
-    mUser.getUserById(loginUser._id, ep.done('getUser'));
+    fileHelper.hasFolderAccessRight(creator, folderId, null, ep.doneLater('checkRight'));
+
+    ep.done('checkRight', function(role){
+        if(!role){
+            return ep.emit('error', 'upload to this folder is not auth', ERR.NOT_AUTH);
+        }
+        mUser.getUserById(loginUser._id, ep.done('getUser'));
+    });
 
     ep.on('getUser', function(user){
         loginUser = user;
@@ -1021,7 +1028,7 @@ exports.search = function(req, res){
     });
 
     // 检查权限
-    fileHelper.hasRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
+    fileHelper.hasFolderAccessRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
 
     ep.on('checkRight', function(role){
         if(!role){

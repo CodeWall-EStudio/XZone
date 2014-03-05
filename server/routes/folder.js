@@ -288,7 +288,7 @@ exports.list = function(req, res){
     });
     
     // 检查权限
-    fileHelper.hasRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
+    fileHelper.hasFolderAccessRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
 
     ep.on('checkRight', function(role){
         if(!role){
@@ -326,7 +326,7 @@ exports.search = function(req, res){
     });
 
     // 检查权限
-    fileHelper.hasRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
+    fileHelper.hasFolderAccessRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
 
     ep.on('checkRight', function(role){
         if(!role){

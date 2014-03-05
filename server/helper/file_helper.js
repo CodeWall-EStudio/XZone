@@ -214,19 +214,25 @@ function convert(filePath, mimes, ext){
     }
 }
 
-exports.hasRight = function(userId, folderId, groupId, callback){
+exports.hasFolderAccessRight = function(userId, folderId, groupId, callback){
 
     var ep = new EventProxy();
     ep.fail(callback);
 
     mFolder.getFolder({_id: ObjectID(folderId)}, ep.doneLater('getFolder'));
 
-    if(groupId){
-        mGroup.getGroup(groupId, ep.doneLater('getGroup'));
-    }else{
-        ep.emitLater('getGroup', false);
-    }
+    ep.on('getFolder', function(folder){
+        if(!groupId && folder.group){ // 如果没传入 group, 且文件夹有group, 自动使用改group
+            groupId = folder.group.oid.toString();
+        }
+        if(groupId){
+            mGroup.getGroup(groupId, ep.doneLater('getGroup'));
+        }else{
+            ep.emitLater('getGroup', false);
+        }
+    });
 
+    
     ep.all('getFolder', 'getGroup', function(folder, group){
         if(!folder){
             return ep.emit('error', 'no such folder', ERR.NOT_FOUND);
@@ -262,8 +268,8 @@ exports.hasRight = function(userId, folderId, groupId, callback){
         }
 
     });
-
-    ep.on('checkRight', function(hasRight){
-        callback(null, hasRight);
+    
+    ep.all('checkRight', 'getFolder', 'getGroup', function(role, folder, group){
+        callback(null, role, folder, group);
     });
 }
