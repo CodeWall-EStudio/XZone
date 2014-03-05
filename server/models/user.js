@@ -133,7 +133,7 @@ exports.getUserAllInfo = function(userId, callback){
             return;
         }
         user.mailnum = count || 0;
-        school && school.auth = 0;
+        school && (school.auth = 0);
         var data = {
             user: user,
             school: school
