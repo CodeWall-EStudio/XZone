@@ -44,9 +44,9 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function search(e,d){
-		var type = d.type;
-		if(d.type == 0){
-			d.type = parseInt(1);
+		var cate = d.cate;
+		if(d.cate == 0){
+			d.cate = parseInt(1);
 			var opt = {
 				cgi : config.cgi.filequery,
 				data : d
@@ -59,7 +59,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}	
 		var success = function(d){
 			if(d.err == 0){
-				if(type == 0){
+				if(cate == 0){
 					handerObj.triggerHandler('mail:load',{
 						list : conventType(d.result.list),
 						ul : d.result.ul,

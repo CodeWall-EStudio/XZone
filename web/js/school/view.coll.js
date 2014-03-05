@@ -43,7 +43,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 			data : {
 				order : nowOrder,
 				name : 'mycoll',
-				type : 1
+				cate : 1
 			}			
 		});
 		view.createPanel();

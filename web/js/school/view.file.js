@@ -73,7 +73,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowTotal = 0;
 		nextPage = 0;
 		action = 1;
-		
+
 		if(d){
 			nowGid = d.gid || 0;
 			nowFd = d.fdid || 0;
@@ -134,7 +134,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			data.uid = nowUid;
 		}
 
-		handerObj.triggerHandler('file:search',data);	
+		if(!d.info){
+			handerObj.triggerHandler('file:search',data);	
+		}else if(d.info.isMember || d.open){
+			handerObj.triggerHandler('file:search',data);	
+		}
 	}
 
 	function fileLoad(e,d){

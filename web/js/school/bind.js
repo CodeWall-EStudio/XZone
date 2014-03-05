@@ -543,7 +543,7 @@ define(['config'],function(config){
 					$('.f-mark').show();
 				}
 				if(file){
-					if(!target.hasClass('liclick') && !target.hasClass('name-edit') && !target.hasClass('share-file') && !target.hasClass('no-act')){
+					if(!target.hasClass('liclick') && !target.hasClass('name-edit') && !target.hasClass('share-file') && !target.hasClass('no-act') && !target.hasClass('file-name')){
 						var p = target.parents("tr");
 						p.find('.liclick').click();										
 					}

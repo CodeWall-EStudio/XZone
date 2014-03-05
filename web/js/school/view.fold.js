@@ -5,6 +5,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		uid = 0,
 		action = 0, //当前页卡是否在活动状态
 		nowGinfo = {},
+		nowData = {},
 		nowFdInfo = {},
 		nowKey = '',
 		nowFd = 0,
@@ -145,7 +146,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		action = 1;
 		foldTarget.hide().removeAttr('show');
 		foldTarget.css('float','none').css('width','100%');
-
+		nowData = d;
 		if(!uid){
 			uid = Cache.get('myinfo').id;
 		}
@@ -231,6 +232,10 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 
 	function foldOne(e,d){
 		//console.log(nowGinfo);
+		if(d.isOpen){
+			nowData.open = 1;
+		}
+		handerObj.triggerHandler('file:init',nowData);
 		if(nowGid && !nowGinfo.isMember && nowFd == nowGinfo.rootFolder.id && !nowPrep){
 			$('#btnZone').hide();
 		}else{

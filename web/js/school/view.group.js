@@ -118,7 +118,7 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 			nowData.prep = 'group';
 			handerObj.triggerHandler('groupprep:init',nowData);
 		}else{
-	        handerObj.triggerHandler('file:init',nowData);
+	        //handerObj.triggerHandler('file:init',nowData);
 	        handerObj.triggerHandler('fold:init',nowData); 
 	        handerObj.triggerHandler('upload:param',nowData);
     	}
