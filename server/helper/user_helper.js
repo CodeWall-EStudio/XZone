@@ -77,6 +77,7 @@ exports.getUserInfoFromQQ = function(accessToken, callback){
     ep.all('getOpenID', 'getUserInfoCb', function(openid, data){
         try{
             data = JSON.parse(data);
+            // console.log('>>>getQQUserInfo: ', openid, data);
         }catch(e){
             callback('getQQUserInfo JSON parse error: ' + e.message);
             return;

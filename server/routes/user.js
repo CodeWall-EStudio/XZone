@@ -147,7 +147,7 @@ exports.loginSuccessWithQQ = function(req, res, next){
             res.json({ err: ERR.SERVER_ERROR, msg: err });
             return;
         }else if(!access_token){
-            res.json({ err: ERR.TICKET_ERROR, msg: 'get accessToken error: ' + err });
+            res.json({ err: ERR.TICKET_ERROR, msg: 'get accessToken error'});
             return;
         }
         ep.emitLater('getAccessTokenSucc', access_token);
