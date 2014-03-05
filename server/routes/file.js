@@ -41,7 +41,7 @@ exports.upload = function(req, res){
         return;
     }
 
-    fileHelper.hasFolderAccessRight(creator, folderId, null, ep.doneLater('checkRight'));
+    fileHelper.hasFolderAccessRight(loginUser._id, folderId, null, ep.doneLater('checkRight'));
 
     ep.done('checkRight', function(role){
         if(!role){
