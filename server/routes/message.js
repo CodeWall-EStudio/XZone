@@ -22,7 +22,7 @@ function setLookStatus(type, docs){
 
 exports.search = function(req, res){
     var params = req.query;
-
+    var cate = Number(params.cate) || 0;
     params.creator = req.loginUser._id;
 
     mMessage.search(params, function(err, total, docs){
@@ -38,7 +38,7 @@ exports.search = function(req, res){
             });
 
             if(docs){
-                setLookStatus(type, docs);
+                setLookStatus(cate, docs);
             }
         }
     });
