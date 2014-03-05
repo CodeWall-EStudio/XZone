@@ -147,7 +147,7 @@ exports.loginSuccessWithQQ = function(req, res, next){
             res.json({ err: ERR.SERVER_ERROR, msg: err });
             return;
         }else if(!access_token){
-            res.json({ err: ERR.TICKET_ERROR, msg: 'not a valid accessToken' });
+            res.json({ err: ERR.TICKET_ERROR, msg: 'get accessToken error: ' + err });
             return;
         }
         ep.emitLater('getAccessTokenSucc', access_token);
@@ -155,7 +155,7 @@ exports.loginSuccessWithQQ = function(req, res, next){
     });
 
     ep.on('getAccessTokenSucc', function(accessToken){
-
+        console.log('>>>getAccessTokenSucc: ' + accessToken);
         userHelper.findAndUpdateUserInfo(accessToken, 'qq', function(err, user){
             if(err){
                 res.json({err: user || ERR.NOT_LOGIN, msg: err});
