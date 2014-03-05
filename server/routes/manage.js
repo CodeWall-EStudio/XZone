@@ -7,6 +7,7 @@ var config = require('../config');
 var ERR = require('../errorcode');
 var db = require('../models/db');
 var mGroup = require('../models/group');
+var mFile = require('../models/file');
 var U = require('../util');
 
 exports.listGroups = function(req, res){
@@ -58,6 +59,37 @@ exports.approveGroup = function(req, res){
     };
 
     mGroup.modify(params, doc, function(err, doc){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else if(!doc){
+            res.json({ err: ERR.NOT_FOUND, msg: 'no such group'});
+        }else{
+            res.json({ err: ERR.SUCCESS });
+        }
+    });
+}
+
+exports.approveFile = function(req, res){
+    var params = req.body;
+    var loginUser = req.loginUser;
+
+    if(!U.hasRight(loginUser.auth, config.AUTH_MANAGER)){
+        // 系统管理员才有权限审核小组
+        res.json({err: ERR.NOT_AUTH, msg: 'not auth'});
+        return;
+    }
+    delete params.name;
+    delete params.creator;
+    
+    var doc = {
+        status: 0,
+        validateText: params.validateText || '',//审核评语
+        validateStatus: Number(params.validateStatus) || 0, //0 不通过 1 通过
+        validateTime: Date.now(),//审核时间
+        validator: DBRef('user', ObjectID(loginUser._id))
+    };
+
+    mFile.modify(params, doc, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else if(!doc){

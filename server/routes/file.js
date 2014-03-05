@@ -1065,7 +1065,7 @@ exports.search = function(req, res){
 
 exports.query = function(req, res){
     var params = req.query;
-    var type = Number(params.type);
+    var cate = Number(params.cate);
     var creator = req.loginUser._id;
 
     var ep = new EventProxy();
@@ -1075,7 +1075,7 @@ exports.query = function(req, res){
 
     var query = {};
 
-    if(type === 1){
+    if(cate === 1){
         if(params.groupId){
             query.groupId = params.groupId;
         }else{
@@ -1086,7 +1086,7 @@ exports.query = function(req, res){
         query.creator = creator;
         
     }else{
-        ep.emit('error', 'not support query type', ERR.PARAM_ERROR);
+        ep.emit('error', 'not support query cate', ERR.PARAM_ERROR);
         return;
     }
     query.order = params.order;

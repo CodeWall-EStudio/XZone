@@ -387,6 +387,14 @@ module.exports = {
             validateStatus: ['number', 0]
         }
     },
+    '/api/manage/approveFile': {
+        method: POST,
+        require: {
+            fileId: ObjectID,
+            validateText: ['string', 1],
+            validateStatus: ['number', 0]
+        }
+    },
     '/api/manage/listPrepares': {
         method: GET
     }

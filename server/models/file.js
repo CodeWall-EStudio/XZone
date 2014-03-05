@@ -38,7 +38,7 @@ exports.create = function(params, callback){
         status: status, // 审核状态 1 审核中 0 已审核
 
         validateText: null,//审核评语
-        validateStatus: null, //0 不通过 1 通过
+        validateStatus: status === 0 ? 1 : null, //0 不通过 1 通过
         validateTime: null,//审核时间
         validator: null
     };
