@@ -43,7 +43,7 @@ exports.upload = function(req, res){
 
     fileHelper.hasFolderAccessRight(loginUser._id, folderId, null, ep.doneLater('checkRight'));
 
-    ep.done('checkRight', function(role){
+    ep.on('checkRight', function(role){
         if(!role){
             return ep.emit('error', 'upload to this folder is not auth', ERR.NOT_AUTH);
         }

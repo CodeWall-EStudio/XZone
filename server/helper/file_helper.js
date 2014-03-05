@@ -222,21 +222,21 @@ exports.hasFolderAccessRight = function(userId, folderId, groupId, callback){
     mFolder.getFolder({_id: ObjectID(folderId)}, ep.doneLater('getFolder'));
 
     ep.on('getFolder', function(folder){
+        if(!folder){
+            return ep.emit('error', 'no such folder', ERR.NOT_FOUND);
+        }
         if(!groupId && folder.group){ // 如果没传入 group, 且文件夹有group, 自动使用改group
             groupId = folder.group.oid.toString();
         }
         if(groupId){
-            mGroup.getGroup(groupId, ep.doneLater('getGroup'));
+            mGroup.getGroup(groupId, ep.done('getGroup'));
         }else{
-            ep.emitLater('getGroup', false);
+            ep.emit('getGroup', false);
         }
     });
 
     
     ep.all('getFolder', 'getGroup', function(folder, group){
-        if(!folder){
-            return ep.emit('error', 'no such folder', ERR.NOT_FOUND);
-        }
         if(groupId && !group){
             return ep.emit('error', 'a wrong groupId');
         }
