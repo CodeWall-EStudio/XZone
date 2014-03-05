@@ -1020,34 +1020,18 @@ exports.search = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    // 检查文件夹是否是该用户的, 以及 该用户是否是小组成员
-    if(groupId){ // 检查该用户是否是小组成员
-        mGroup.getGroup(groupId, ep.doneLater('getGroup'));
+    // 检查权限
+    fileHelper.hasRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
 
-        ep.on('getGroup', function(group){
-            if(!group){
-                ep.emit('error', 'no such group', ERR.NOT_FOUND);
-                return;
-            }
-            if(group.type === 0){ // type=0 是学校空间
-                params.validateStatus = 1; // 学校空间只能看审核通过的文件
-                ep.emit('checkRight', true);
-            }else if(group.type === 3){ // 这是备课小组, 如果是备课的成员都能看
-                mGroup.isPrepareMember(loginUser._id, ep.done('checkRight'));
-            }else{
-                mGroup.isGroupMember(groupId, loginUser._id, ep.done('checkRight'));
-            }
-        });
-
-    }else{ // 检查该用户是否是该文件夹所有者
-        params.creator = loginUser._id;
-        mFolder.isFolderCreator(folderId, params.creator, ep.doneLater('checkRight'));
-    }
-
-    ep.on('checkRight', function(hasRight){
-        if(!hasRight){
+    ep.on('checkRight', function(role){
+        if(!role){
             ep.emit('error', 'not auth to search this folder', ERR.NOT_AUTH);
             return;
+        }
+        if(role === 'creator'){
+            params.creator = loginUser._id;
+        }else if(role === 'school'){
+            params.validateStatus = 1; // 学校空间只能看审核通过的文件
         }
         mFile.search(params, ep.done('search'));
     });

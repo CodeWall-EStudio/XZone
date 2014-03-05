@@ -8,6 +8,7 @@ var mFolder = require('../models/folder');
 var mGroup = require('../models/group');
 var mLog = require('../models/log');
 var U = require('../util');
+var fileHelper = require('../helper/file_helper');
 
 exports.create = function(req, res){
     var loginUser = req.loginUser;
@@ -275,20 +276,39 @@ exports.delete = function(req, res){
 
 exports.list = function(req, res){
     var params = req.query;
-    // params.creator = req.loginUser._id;
+
+    var folderId = params.folderId;
+    var groupId = params.groupId || null;
+
+    var loginUser = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
     
-    mFolder.list(params, function(err, docs){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    total: docs ? docs.length : 0,
-                    list: docs
-                }
-            });
+    // 检查权限
+    fileHelper.hasRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
+
+    ep.on('checkRight', function(role){
+        if(!role){
+            ep.emit('error', 'not auth to search this folder', ERR.NOT_AUTH);
+            return;
         }
+        if(role === 'creator'){
+            params.creator = loginUser._id;
+        }
+
+        mFolder.list(params, ep.done('search'));
+    });
+    ep.on('search', function(total, docs){
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                total: total,
+                list: docs
+            }
+        });
     });
 }
 
@@ -305,35 +325,18 @@ exports.search = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    // 检查文件夹是否是该用户的, 以及 该用户是否是小组成员
-    if(groupId){ // 检查该用户是否是小组成员
+    // 检查权限
+    fileHelper.hasRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
 
-        mGroup.getGroup(groupId, ep.doneLater('getGroup'));
-
-        ep.on('getGroup', function(group){
-            if(!group){
-                ep.emit('error', 'no such group', ERR.NOT_FOUND);
-                return;
-            }
-            if(group.type === 3){ // 这是备课小组, 如果是备课的成员都能看
-                mGroup.isPrepareMember(loginUser._id, ep.done('checkRight'));
-            }else{
-                mGroup.isGroupMember(groupId, loginUser._id, ep.doneLater('checkRight'));
-            }
-        });
-    }else{ // 检查该用户是否是该文件夹所有者
-        params.creator = loginUser._id;
-        mFolder.isFolderCreator(folderId, params.creator, ep.doneLater('checkRight'));
-    }
-
-    ep.on('checkRight', function(hasRight){
-        if(!hasRight){
+    ep.on('checkRight', function(role){
+        if(!role){
             ep.emit('error', 'not auth to search this folder', ERR.NOT_AUTH);
             return;
         }
-        if(groupId){
-            delete params.creator;
+        if(role === 'creator'){
+            params.creator = loginUser._id;
         }
+
         mFolder.search(params, ep.done('search'));
     });
 

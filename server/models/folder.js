@@ -215,15 +215,20 @@ exports.list = function(params, callback){
     if(params.creator){
         query['creator.$id'] = ObjectID(params.creator);
     }
-    if(params.order){
-        order = U.jsonParse(order);
-    }
 
-    db.folder.find(query, { sort: order}, function(err, docs){
+    db.search('folder', query, { order: params.order }, function(err, total, docs){
         if(err){
-            callback(err)
+            callback(err);
+        }else if(total && docs){
+            db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
+                if(err){
+                    callback(err)
+                }else{
+                    callback(null, total || 0, docs);
+                }
+            });
         }else{
-            db.dereferences(docs, {'creator': ['_id', 'nick']}, callback);
+            callback(null, total || 0, docs);
         }
     });
 

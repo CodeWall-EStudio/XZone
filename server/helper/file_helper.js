@@ -213,3 +213,57 @@ function convert(filePath, mimes, ext){
 
     }
 }
+
+exports.hasRight = function(userId, folderId, groupId, callback){
+
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    mFolder.getFolder({_id: ObjectID(folderId)}, ep.doneLater('getFolder'));
+
+    if(groupId){
+        mGroup.getGroup(groupId, ep.doneLater('getGroup'));
+    }else{
+        ep.emitLater('getGroup', false);
+    }
+
+    ep.all('getFolder', 'getGroup', function(folder, group){
+        if(!folder){
+            return ep.emit('error', 'no such folder', ERR.NOT_FOUND);
+        }
+        if(groupId && !group){
+            return ep.emit('error', 'a wrong groupId');
+        }
+
+        // 下面检查文件夹是否是该用户的, 以及 该用户是否是小组成员
+        if(!groupId){
+            // 检查该用户是否是该文件夹所有者
+            return ep.emit('checkRight', userId === folder.creator.oid.toString() ? 'creator' : false);
+        }
+        // 检查该用户是否是小组成员
+        if(group.type === 0){ // type=0 是学校空间
+            ep.emit('checkRight', 'school');
+        }else if(group.type === 3){ // 这是备课小组, 如果是备课的成员都能看
+            mGroup.isPrepareMember(userId, ep.done('checkRight', function(hasRight){
+                if(hasRight){
+                    return 'prepare';
+                }
+                return hasRight;
+            }));
+        }else if(group.type === 2 && folder.isOpen){ // 部门的公开文件夹, 允许查看
+            ep.emit('checkRight', 'pubFolder');
+        }else{// 是否是部门成员
+            mGroup.isGroupMember(groupId, userId, ep.done('checkRight', function(hasRight){
+                if(hasRight){
+                    return 'member';
+                }
+                return hasRight;
+            }));
+        }
+
+    });
+
+    ep.on('checkRight', function(hasRight){
+        callback(null, hasRight);
+    });
+}
