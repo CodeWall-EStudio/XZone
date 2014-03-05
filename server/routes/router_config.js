@@ -356,11 +356,12 @@ module.exports = {
     '/api/message/search': {
         method: GET,
         require: {
-            type: ['number', 0],
+            cate: ['number', 0],
             page: ['number', 0],
             pageNum: ['number', 0]
         },
         optional: {
+            type: ['number', 0],
             keyword: ['string'],
             order: ['object']
         }

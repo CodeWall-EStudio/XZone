@@ -22,7 +22,7 @@ function setLookStatus(type, docs){
 
 exports.search = function(req, res){
     var params = req.query;
-    var type = Number(params.type) || 0; // 1: 我的收件箱, 2: 我的发件箱, 3: 通知
+
     params.creator = req.loginUser._id;
 
     mMessage.search(params, function(err, total, docs){

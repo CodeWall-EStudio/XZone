@@ -82,7 +82,8 @@ exports.search = function(params, callback){
 
     var userId = params.creator || null;
     var keyword = params.keyword || '';
-    var type = Number(params.type) || 0; // 1: 我的收件箱, 2: 我的发件箱
+    var type = Number(params.type) || 0; 
+    var cate = Number(params.cate) || 0;// 1: 我的收件箱, 2: 我的发件箱, 3: 未读邮件
 
     var query = {};
 
@@ -90,18 +91,20 @@ exports.search = function(params, callback){
         query.fileName = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
 
-    if(type === 1){
+    if(cate === 1){
         query['toUser.$id'] = ObjectID(userId);
-    }else if(type === 2){
+    }else if(cate === 2){
         query['fromUser.$id'] = ObjectID(userId);
-    }else if(type === 3){
+    }else if(cate === 3){
         query['toUser.$id'] = ObjectID(userId);
         query['toUserLooked'] = false;
     }else{
-        callback('params error: type should be 1 , 2 or 3', ERR.PARAM_ERROR);
+        callback('params error: cate should be 1 , 2 or 3', ERR.PARAM_ERROR);
         return;
     }
-    
+    if(type !== 0){
+        query['type'] = type;
+    }
     db.search('message', query, params, function(err, total, docs){
         if(err){
             callback(err);

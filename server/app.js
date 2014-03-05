@@ -27,6 +27,8 @@ app.use(express.session({
     cookie: { maxAge: 2 * 60 * 60 * 1000 }, // 2 hour
     store: new MongoStore({
         url: config.DB_URI
+    }, function () {
+        console.log("db connection open");
     })
 }));
 app.use(express.bodyParser());
