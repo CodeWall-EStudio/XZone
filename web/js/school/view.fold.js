@@ -235,7 +235,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(d.isOpen){
 			nowData.open = 1;
 		}
-		handerObj.triggerHandler('file:init',nowData);
+		if(nowData.info){
+			handerObj.triggerHandler('file:init',nowData);
+		}
 		if(nowGid && !nowGinfo.isMember && nowFd == nowGinfo.rootFolder.id && !nowPrep){
 			$('#btnZone').hide();
 		}else{
