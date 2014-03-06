@@ -13,6 +13,9 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		$('#userAside').hide();
 		$("#groupAside").show();
 
+		$("#fileActZone").addClass('hide');
+		$('.tool-zone').removeClass('hide');
+
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
 		

@@ -47,6 +47,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 			data : {
 				order : nowOds,
 				name : 'myrecy',
+				cate : 2,
 				type : nowType
 			}			
 		});

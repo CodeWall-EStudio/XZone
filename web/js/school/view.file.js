@@ -722,6 +722,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		d.fid = d.resource._id;
 		d.size = util.getSize(d.resource.size);
 		d.time = util.time(d.createTime);
+
 		var target = tmpTarget,
 			act = 0;
 		if(tmpTarget.find('.file').length > 0){
@@ -740,9 +741,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				filetype : config.filetype,
 				gid : nowGid,
 				down : config.cgi.filedown,
+				school : nowSchool,
 				pr : pr
 			}
 		});
+
 		if(act){
 			view.beforePanel();		
 		}else{
