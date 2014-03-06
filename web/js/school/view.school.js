@@ -45,7 +45,6 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 							
 					        handerObj.triggerHandler('file:init',d);
 					        handerObj.triggerHandler('fold:init',d);
-					        console.log(d);
 						}
 
 					}

@@ -133,6 +133,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowUid){
 			data.uid = nowUid;
 		}
+		if(nowAuth){
+			data.status = 1;
+		}
 
 		if(!d.info){
 			handerObj.triggerHandler('file:search',data);	
@@ -214,6 +217,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		tmpTarget.find('.file').remove();
 		nowKey = d.key;
 		
+		//status 0 没审核 1 审核过
 		var ods = {};
 		ods[nowOrder[0]] = ods[nowOrder[1]];
 		var obj = {
@@ -228,7 +232,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			obj.groupId = nowGid;
 		}
 		if(nowUid){
-			data.uid = nowUid;
+			obj.uid = nowUid;
+		}
+
+		if(nowAuth){
+			obj.status = 1;
 		}
 		handerObj.triggerHandler('file:search',obj);			
 	}
@@ -263,6 +271,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowUid){
 			obj.uid = nowUid;
 		}
+		if(nowAuth){
+			obj.status = 1;
+		}		
 		handerObj.triggerHandler('file:search',obj);				
 	}
 
