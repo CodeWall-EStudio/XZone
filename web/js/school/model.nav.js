@@ -42,11 +42,16 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		o.rootFolder.id = data.user.rootFolder['$id'];
 
 		//学校
-		o.school = data.school;
-		o.school.id = o.school._id;
-		o.school.auth = data.school.auth || 0;
-		o.school.rootFolder.id = o.school.rootFolder.$id;
-		o.group2key[o.school.id] = o.school;
+		if(o.school){
+			o.school = data.school;
+			o.school.id = o.school._id;
+			o.school.auth = data.school.auth || 0;
+			o.school.rootFolder.id = o.school.rootFolder.$id;
+			o.group2key[o.school.id] = o.school;
+		}else{
+			o.school = false;
+		}
+		
 
 		for(var i =0,l=data.departments.length;i<l;i++){
 			var item = data.departments[i];
