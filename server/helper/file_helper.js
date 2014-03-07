@@ -270,6 +270,7 @@ exports.hasFolderAccessRight = function(userId, folderId, groupId, callback){
     });
     
     ep.all('checkRight', 'getFolder', 'getGroup', function(role, folder, group){
+        console.log('checkRight, role: ', role);
         callback(null, role, folder, group);
     });
 }
