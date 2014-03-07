@@ -116,7 +116,7 @@ exports.jsonParse = function(jsonStr){
 }
 
 exports.hasRight = function(auth, needAuth){
-    return auth & needAuth;
+    return Number(auth) & needAuth;
 }
 
 exports.encodeRegexp = function(str){
