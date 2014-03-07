@@ -1038,12 +1038,12 @@ exports.search = function(req, res){
         if(role === 'creator'){
             params.creator = loginUser._id;
         }else if(role === 'school'){
-            params.extendQuery = {
-                validateStatus: 1// 学校空间只能看审核通过的文件
-            };
+            params.extendQuery = {};
             if(('status' in params) && U.hasRight(loginUser.auth, config.AUTH_MANAGER)){
                 // status 参数只对管理员生效
                 params.extendQuery.status = Number(params.status) || 0;
+            }else{
+                params.extendQuery.validateStatus = 1// 学校空间只能看审核通过的文件
             }
         }
         mFile.search(params, ep.done('search'));
