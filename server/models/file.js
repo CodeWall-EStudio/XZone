@@ -187,8 +187,10 @@ exports.search = function(params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
     
-    if(folderId){
+    if(folderId && keyword){
         mFolder.search({ folderId: folderId }, ep.doneLater('paramReady'));
+    }else if(folderId){
+        ep.emitLater('paramReady', 1, [{ _id: ObjectID(folderId) }]);
     }else{
         ep.emitLater('paramReady');
     }
