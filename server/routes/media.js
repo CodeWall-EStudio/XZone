@@ -194,7 +194,7 @@ exports.download = function(req, res){
     ep.all('getUserInfoSuccess', 'verifyDownloadSucc', function(loginUser, data){
         var file = data.file, resource = data.resource, folder = data.folder;
         var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
-
+        console.log('>>>media download: ' + filePath, ':', resource.mimes);
         res.set({
             'Content-Type': resource.mimes,
             'Content-Disposition': 'attachment; filename=' + file.name,

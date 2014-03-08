@@ -9,6 +9,7 @@ var ERR = require('../errorcode');
 var U = require('../util');
 var mRes = require('./resource');
 var mUser = require('./user');
+var mFolder = require('./folder');
 
 
 exports.create = function(params, callback){
@@ -173,9 +174,7 @@ exports.search = function(params, callback){
     if(keyword){
         query['name'] = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
-    if(folderId){
-        query['folder.$id'] = ObjectID(folderId);
-    }
+    
     if(userId){
         query['creator.$id'] = ObjectID(userId);
     }
@@ -185,28 +184,51 @@ exports.search = function(params, callback){
     if(hasType){
         query['type'] = type;
     }
-    if(extendQuery){
-        query = us.extend(query, extendQuery);
+    var ep = new EventProxy();
+    ep.fail(callback);
+    
+    if(folderId){
+        mFolder.search({ folderId: folderId }, ep.doneLater('paramReady'));
+    }else{
+        ep.emitLater('paramReady');
     }
 
-    db.search('file', query, params, function(err, total, docs){
-        if(err){
-            callback(err);
-        }else if(total && docs){
-            var defProps = { resource: ['_id', 'type', 'size'] };
-            if(extendDefProps){
-                defProps = us.extend(defProps, extendDefProps);
-            }
-            db.dereferences(docs, defProps, function(err, docs){
-                if(err){
-                    callback(err)
-                }else{
-                    callback(null, total || 0, docs);
-                }
+    ep.on('paramReady', function(total, docs){
+        
+        if(docs && docs.length){
+            var ids = [];
+            docs.forEach(function(doc){
+                ids.push(doc._id);
             });
-        }else{
-            callback(null, total || 0, docs);
+            query['folder.$id'] = { $in: ids };
         }
+
+        if(extendQuery){
+            query = us.extend(query, extendQuery);
+        }
+
+        db.search('file', query, params, function(err, total, docs){
+            if(err){
+                callback(err);
+            }else if(total && docs){
+                var defProps = { resource: ['_id', 'type', 'size'] };
+                if(extendDefProps){
+                    defProps = us.extend(defProps, extendDefProps);
+                }
+                db.dereferences(docs, defProps, function(err, docs){
+                    if(err){
+                        callback(err)
+                    }else{
+                        callback(null, total || 0, docs);
+                    }
+                });
+            }else{
+                callback(null, total || 0, docs);
+            }
+        });
     });
+
+    
+    
 }
 

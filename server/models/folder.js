@@ -208,7 +208,7 @@ exports.list = function(params, callback){
     var folderId = params.folderId;
     var groupId = params.groupId || null;
     var order = null;
-    
+    var isDeref = params.isDeref || false;
     var query = { 
         'parent.$id': ObjectID(folderId)
     };
@@ -219,7 +219,7 @@ exports.list = function(params, callback){
     db.search('folder', query, { order: params.order }, function(err, total, docs){
         if(err){
             callback(err);
-        }else if(total && docs){
+        }else if(total && docs && isDeref){
             db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
                 if(err){
                     callback(err)
@@ -240,7 +240,7 @@ exports.search = function(params, callback){
     var groupId = params.groupId || null;
     var creator = params.creator || null;
     var keyword = params.keyword || '';
-
+    var isDeref = params.isDeref || false;
     var query = { 
         $or: [
             { 'parent.$id': new ObjectID(folderId) },
@@ -259,7 +259,7 @@ exports.search = function(params, callback){
     db.search('folder', query, params, function(err, total, docs){
         if(err){
             callback(err);
-        }else if(total && docs){
+        }else if(total && docs && isDeref){
             db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
                 if(err){
                     callback(err)

@@ -165,7 +165,7 @@ exports.download = function(req, res){
         }
         var file = data.file, resource = data.resource, folder = data.folder;
         var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
-        // console.log('redirect to :' + filePath);
+        console.log('redirect to :' + filePath, 'mimes: ' + resource.mimes);
         res.set({
             'Content-Type': resource.mimes,
             'Content-Disposition': 'attachment; filename=' + file.name,

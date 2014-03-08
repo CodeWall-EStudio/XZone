@@ -298,7 +298,7 @@ exports.list = function(req, res){
         if(role === 'creator'){
             params.creator = loginUser._id;
         }
-
+        params.isDeref = true;
         mFolder.list(params, ep.done('search'));
     });
     ep.on('search', function(total, docs){
@@ -336,7 +336,7 @@ exports.search = function(req, res){
         if(role === 'creator'){
             params.creator = loginUser._id;
         }
-
+        params.isDeref = true;
         mFolder.search(params, ep.done('search'));
     });
 

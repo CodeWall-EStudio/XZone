@@ -132,21 +132,20 @@ exports.verifyAndLogin = function(req, res, next){
 
 exports.verify = function(req, res, next){
     var path = req.path;
+    var skey = req.cookies.skey || req.body.skey || req.query.skey;
+    if(!skey){
+        skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
+    }
+    req.skey = skey;
+
     if(WHITE_LIST.indexOf(path) >= 0){
         next();
     }else{
-        var skey = req.cookies.skey || req.body.skey || req.query.skey;
-        if(!skey){
-            skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
-        }
-
         var loginUser;
-
         if(!req.session || !skey || !(loginUser = req.session[skey])){
             res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
             return;
         }
-        req.skey = skey;
         req.loginUser = loginUser;
         next();
     }
@@ -197,6 +196,7 @@ exports.mediaUpload = function(req, res, next){
         if(!skey){
             skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
         }
+        req.skey = skey;
         // 新媒体的上传, 路由到 media/upload
         getRouter(MEDIA_UPLOAD_CGI, req.method)(req, res, next);
         // res.redirect('/api/media/upload');
