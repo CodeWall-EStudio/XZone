@@ -557,7 +557,7 @@ function shareToGroup(params, callback){
         // 2. 获取小组信息
         mGroup.getGroup(toGroupId, ep.doneLater('getGroup'));
     }else{
-        mFolder.getFolder(toFolderId, ep.doneLater('getFolder'));
+        mFolder.getFolder({ _id: ObjectID(toFolderId)}, ep.doneLater('getFolder'));
     }
 
     ep.on('getGroup', function(group){
