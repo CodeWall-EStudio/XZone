@@ -125,20 +125,19 @@ function verifyDownload(params, callback){
             console.log('download: from in out box',fileId);
             ep.emit('checkRight', { file: file, resource: resource, folder: folder });
 
-        }else if(folder.group){// 检查是否是自己所在小组的
-            mGroup.isGroupMember(folder.group.oid.toString(), creator, 
-                    ep.done('checkRight', function(hasRight){
+        }else{
+            // 檢查是否該目錄的訪問權限
+            fileHelper.hasFolderAccessRight(creator, folder._id.toString(), 
+                    null, ep.done('checkRight', function(role, folder){
 
-                if(hasRight){
-                    console.log('download: from group',fileId);
+                if(!role || (role === 'pubFolder' && !folder.isOpen)){// 么有权限或者是部门的非公开文件夹
+                    return ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
+                }else{
                     return { file: file, resource: resource, folder: folder };
                 }
-                return null;
             }));
-        }else{ // 没有权限
-            ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
         }
-    })
+    });
 
     ep.on('checkRight', function(data){
         if(data){ // 是自己所在小组的
