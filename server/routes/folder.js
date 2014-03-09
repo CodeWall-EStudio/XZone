@@ -34,7 +34,10 @@ exports.create = function(req, res){
             ep.emit('error', 'not auth to create folder on this folder', ERR.NOT_AUTH);
             return;
         }
-         
+
+        // 继承父文件夹的公开和读写状态
+        params.isOpen = folder.isOpen ? 1 : 0;
+        params.isReadonly = folder.isReadonly ? 1 : 0;
         // 检查重名
         mFolder.getFolder({ 
             name: name,
