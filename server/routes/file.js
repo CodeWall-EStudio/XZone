@@ -795,11 +795,11 @@ function copyFile(params, callback){
                 ep.emit('error', 'the groupId not match file.group', ERR.NOT_MATCH);
                 return;
             }
-            if(groupId !== folder.group.oid.toString()){
-                // 目标 folder 不在同一个 group的
-                ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
-                return;
-            }
+            // if(groupId !== folder.group.oid.toString()){
+            //     // 目标 folder 不在同一个 group的
+            //     ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
+            //     return;
+            // }
         }else{
             // 这次操作是个人文件夹操作
             if(file.creator.oid.toString() !== params.creator){
