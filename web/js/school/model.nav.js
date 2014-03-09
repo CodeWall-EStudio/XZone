@@ -42,7 +42,7 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		o.rootFolder.id = data.user.rootFolder['$id'];
 
 		//学校
-		if(o.school){
+		if(data.school){
 			o.school = data.school;
 			o.school.id = o.school._id;
 			o.school.auth = data.school.auth || 0;
@@ -52,7 +52,6 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 			o.school = false;
 		}
 		
-
 		for(var i =0,l=data.departments.length;i<l;i++){
 			var item = data.departments[i];
 				item.id = item._id;
