@@ -255,7 +255,7 @@ exports.hasFolderAccessRight = function(userId, folderId, groupId, callback){
 
             ep.on('checkMemberRight', function(hasRight){
                 if(hasRight){
-                    ep.done('checkRight', 'member');
+                    ep.emit('checkRight', 'member');
                 }else{ // 检查是否是备课小组的成员
                     mGroup.isPrepareMember(userId, ep.done('checkRight', function(hasRight){
                         if(hasRight){
