@@ -547,7 +547,7 @@ function shareToGroup(params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
-    if(!toGroupId && toFolderId ){
+    if(!toGroupId && !toFolderId){
         return callback('folderId and groupId must have one', ERR.PARAM_ERROR);
     }
 
