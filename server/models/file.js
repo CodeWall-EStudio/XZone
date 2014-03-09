@@ -148,7 +148,7 @@ exports.revertDelete = function(params, callback){
 }
 
 exports.getFile = function(query, callback){
-
+    console.log('>>>getFile: ', query);
     db.file.findOne(query, callback);
 
 }

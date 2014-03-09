@@ -810,7 +810,7 @@ function copyFile(params, callback){
     });
 
     ep.all('getFile', 'checkName', function(file, bool){
-        if(bool){
+        if(!bool){
             return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
         }
         // 权限检查没问题
@@ -924,7 +924,7 @@ function moveFile(params, callback){
     });
 
     ep.all('getFile', 'getFolder', 'checkName', function(file, folder, bool){
-        if(bool){
+        if(!bool){
             return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
         }
 
