@@ -25,28 +25,27 @@ exports.create = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    mFolder.getFolder({ 
-        name: name,
-        'parent.$id': ObjectID(folderId)
-    }, function(err, folder){
-        if(folder){
-            ep.emit('error', 'has the same folder name', ERR.DUPLICATE);
+
+    // 检查权限
+    fileHelper.hasFolderAccessRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
+
+    ep.on('checkRight', function(role, folder){
+        if(!role || (role === 'pubFolder' && !folder.isOpen)){
+            ep.emit('error', 'not auth to create folder on this folder', ERR.NOT_AUTH);
             return;
         }
-
-        // 检查文件夹是否是该用户的, 以及 该用户是否是小组成员
-        if(groupId){ // 检查该用户是否是小组成员
-            mGroup.isGroupMember(groupId, params.creator, ep.doneLater('checkRight'));
-
-        }else{ // 检查该用户是否是该文件夹所有者
-            mFolder.isFolderCreator(folderId, params.creator, ep.doneLater('checkRight'));
-        }
+         
+        // 检查重名
+        mFolder.getFolder({ 
+            name: name,
+            'parent.$id': ObjectID(folderId)
+        }, ep.done('checkName'));
 
     });
 
-    ep.on('checkRight', function(hasRight){
-        if(!hasRight){
-            ep.emit('error', 'not auth to create folder on this folder', ERR.NOT_AUTH);
+    ep.on('checkName', function(folder){
+        if(folder){
+            ep.emit('error', 'has the same folder name', ERR.DUPLICATE);
             return;
         }
 
