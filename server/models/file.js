@@ -219,9 +219,9 @@ exports.search = function(params, callback){
                 }
                 db.dereferences(docs, defProps, function(err, docs){
                     if(err){
-                        callback(err)
+                        callback(err);
                     }else{
-                        callback(null, total || 0, docs);
+                        callback(err, total || 0, docs);
                     }
                 });
             }else{
