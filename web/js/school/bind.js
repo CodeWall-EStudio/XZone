@@ -514,9 +514,11 @@ define(['config'],function(config){
 			case 'save':
 				var id = target.attr('data-id');
 				handerObj.triggerHandler('mail:save',id);
+				break;
 			case 'savetomy':
 				var id = target.attr('data-id');
 				handerObj.triggerHandler('file:save',id);				
+				break;
 			case 'down':
 				down(e);
 				break;
