@@ -56,6 +56,10 @@ define(['config'],function(config){
         silverlight_xap_url : '../../js/lib/moxie.xap'
     };
 
+    if (!$.support.leadingWhitespace) {
+    	upload_settings.runtimes = 'flash';
+    }
+
     // if (upload_chunk == 1) {
     //     upload_settings.chunk_size = '1mb';
     // }
