@@ -41,7 +41,7 @@ define(['config','helper/view','cache'],function(config,View,Cache){
 		}
         //handerObj.triggerHandler('file:init',data);
         handerObj.triggerHandler('fold:init',data); 
-        handerObj.triggerHandler('upload:param',d);		
+        handerObj.triggerHandler('upload:param',data);		
 
 		$('#aside .aside-divs').hide();
 		var view = new View({
