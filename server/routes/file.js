@@ -955,7 +955,7 @@ function moveFile(params, callback){
 
         mFile.getFile({ // 重名检查
             name: file.name,
-            'folder.$id': ObjectID(targetId)
+            'folder.$id': ObjectID(params.targetId)
         }, function(err, file){
             if(file){
                 ep.emit('checkName', false);
