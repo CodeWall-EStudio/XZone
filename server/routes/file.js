@@ -1099,7 +1099,7 @@ exports.search = function(req, res){
     // 检查权限
     fileHelper.hasFolderAccessRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
 
-    ep.on('checkRight', function(role){
+    ep.on('checkRight', function(role, folder, group){
         if(!role){
             ep.emit('error', 'not auth to search this folder', ERR.NOT_AUTH);
             return;
@@ -1113,6 +1113,17 @@ exports.search = function(req, res){
                 params.extendQuery.status = Number(params.status) || 0;
             }else{
                 params.extendQuery.validateStatus = 1// 学校空间只能看审核通过的文件
+            }
+        }else if(role === 'pubFolder'){
+            if(!folder.isOpen){// 公開文件夾可以搜索文件, 非公開就不返回內容
+                res.json({
+                    err: ERR.SUCCESS,
+                    result: {
+                        total: 0,
+                        list: []
+                    }
+                });
+                return;
             }
         }
         mFile.search(params, ep.done('search'));

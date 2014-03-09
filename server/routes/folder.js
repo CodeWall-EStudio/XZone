@@ -297,6 +297,10 @@ exports.list = function(req, res){
         }
         if(role === 'creator'){
             params.creator = loginUser._id;
+        }else if(role === 'pubFolder'){
+            params.extendQuery = {// 公開文件夾可以搜索文件夾, 非公開就不返回內容
+                isOpen: true
+            };
         }
         params.isDeref = true;
         mFolder.list(params, ep.done('search'));
@@ -335,6 +339,10 @@ exports.search = function(req, res){
         }
         if(role === 'creator'){
             params.creator = loginUser._id;
+        }else if(role === 'pubFolder'){
+            params.extendQuery = {// 公開文件夾可以搜索文件夾, 非公開就不返回內容
+                isOpen: true
+            };
         }
         params.isDeref = true;
         mFolder.search(params, ep.done('search'));

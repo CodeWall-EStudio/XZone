@@ -265,8 +265,18 @@ exports.hasFolderAccessRight = function(userId, folderId, groupId, callback){
                     }));
                 }
             });
-        }else if(group.type === 2 && folder.isOpen){ // 部门的公开文件夹, 允许查看
-            ep.emit('checkRight', 'pubFolder');
+        }else if(group.type === 2){ // 部门, 非成員可以查看公开文件夹
+            // 先检查是不是属于该部門的成员
+            mGroup.isGroupMember(groupId, userId, ep.doneLater('checkMemberRight'));
+
+            ep.on('checkMemberRight', function(hasRight){
+                if(hasRight){
+                    ep.emit('checkRight', 'member');
+                }else{ // 检查是否是备课小组的成员
+                    ep.emit('checkRight', 'pubFolder');
+                }
+            });
+
         }else{// 是否是部门成员
             mGroup.isGroupMember(groupId, userId, ep.done('checkRight', function(hasRight){
                 if(hasRight){

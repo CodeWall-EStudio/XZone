@@ -207,13 +207,17 @@ exports.list = function(params, callback){
 
     var folderId = params.folderId;
     var groupId = params.groupId || null;
-    var order = null;
+
     var isDeref = params.isDeref || false;
+    var extendQuery = params.extendQuery;
     var query = { 
         'parent.$id': ObjectID(folderId)
     };
     if(params.creator){
         query['creator.$id'] = ObjectID(params.creator);
+    }
+    if(extendQuery){
+        query = us.extend(query, extendQuery);
     }
 
     db.search('folder', query, { order: params.order }, function(err, total, docs){
@@ -241,6 +245,7 @@ exports.search = function(params, callback){
     var creator = params.creator || null;
     var keyword = params.keyword || '';
     var isDeref = params.isDeref || false;
+    var extendQuery = params.extendQuery;
     var query = { 
         $or: [
             { 'parent.$id': new ObjectID(folderId) },
@@ -255,6 +260,9 @@ exports.search = function(params, callback){
     }
     if(groupId){
         query['group.$id'] = ObjectID(groupId);
+    }
+    if(extendQuery){
+        query = us.extend(query, extendQuery);
     }
     db.search('folder', query, params, function(err, total, docs){
         if(err){
