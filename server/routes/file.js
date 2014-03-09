@@ -398,6 +398,9 @@ exports.save = function(req, res){
         }
 
         mFile.create(file, ep.done('createFile'));
+        if(targetRole === 'creator'){
+            mUser.updateUsed(loginUser._id, (resource.size || 0), function(){});
+        }
         mMessage.modify({ _id: msg._id }, { saved: true }, function(){});
     });
 
@@ -813,7 +816,7 @@ function copyFile(params, callback){
     var fileId = params.fileId;
     var groupId = params.groupId;
     var targetId = params.targetId;
-
+    var targetRole;
     var ep = new EventProxy();
 
     ep.fail(callback);
@@ -832,13 +835,13 @@ function copyFile(params, callback){
     });
 
     ep.all('getFile', 'checkSourceFolderRight', 'checkTargetFolderRight', function(file, srcRole, dstRole){
-        if(!srcRole){
+        if(!srcRole || srcRole === 'department'){
             return ep.emit('error', 'no auth to access the srouce file', ERR.NOT_AUTH);
         }
-        if(!dstRole){
+        if(!dstRole || dstRole === 'department'){
             return ep.emit('error', 'no auth to access the target folder', ERR.NOT_AUTH);
         }
-        
+        targetRole = dstRole;
         mFile.getFile({ // 重名检查
             name: file.name,
             'folder.$id': ObjectID(targetId)
@@ -863,6 +866,10 @@ function copyFile(params, callback){
         file.creator = params.creator;
         
         mFile.create(file, callback);
+        if(targetRole === 'creator'){
+            mUser.updateUsed(params.creator, (file.size || 0), function(){});
+        }
+
         // 记录该操作
         mLog.create({
             fromUserId: params.creator,

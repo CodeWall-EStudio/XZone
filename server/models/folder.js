@@ -114,14 +114,14 @@ exports.modify = function(params, doc, callback){
             { 'new':true }, callback);
 }
 
-function deleteFolderAndFiles(oFolderId, callback){
+function deleteFolderAndFiles(oFolderId, creator, callback){
     db.folder.remove({ _id: oFolderId }, function(err){
         if(err){
             console.log('>>>folder.delete [folder]', err);
             callback(err);
             return;
         }
-        mFile.batchDelete({ 'folder.$id': oFolderId }, function(err, count){
+        mFile.batchDelete({ 'folder.$id': oFolderId }, { creator: creator }, function(err, count){
             if(err){
                 console.log('>>>folder.delete [file]', err);
                 callback(err);
@@ -166,7 +166,7 @@ exports.delete = function(params, callback){
 
             db.folder.find(query, ep.done('findAllChild'));
         }else{
-            deleteFolderAndFiles(folder._id, callback);
+            deleteFolderAndFiles(folder._id, creator, callback);
 
         }
     });
@@ -174,7 +174,7 @@ exports.delete = function(params, callback){
 
     ep.all('getFolderSucc', 'findAllChild', function(folder, docs){
         if(!docs.length){
-            deleteFolderAndFiles(folder._id, callback);
+            deleteFolderAndFiles(folder._id, creator, callback);
             return;
         }
 
@@ -184,7 +184,7 @@ exports.delete = function(params, callback){
 
         docs.forEach(function(doc){
 
-            deleteFolderAndFiles(doc._id, ep.group('delete'));
+            deleteFolderAndFiles(doc._id, creator, ep.group('delete'));
         });
     });
 }

@@ -103,10 +103,12 @@ exports.delete = function(params, callback){
         if(file){ 
             // 将 resource 的引用计数减一
             mRes.updateRef(file.resource.oid.toString(), -1, ep.done('updateRef'));
-
-            // 修改用户表的 used 
-            mUser.updateUsed(file.creator.oid.toString(),  -1 * (file.size || 0), ep.done('incUsed'))
-
+            if(params.creator){ // 指定了刪除用戶的才需要更新 used
+                // 修改用户表的 used 
+                mUser.updateUsed(params.creator,  -1 * (file.size || 0), ep.done('incUsed'))
+            }else{
+                ep.emitLater('incUsed');
+            }
         }else{
             callback(null);
         }
@@ -117,7 +119,7 @@ exports.delete = function(params, callback){
     });
 }
 
-exports.batchDelete = function(query, callback){
+exports.batchDelete = function(query, params, callback){
     
     db.file.find(query, function(err, docs){
         if(err || !docs || !docs.length){
@@ -129,7 +131,7 @@ exports.batchDelete = function(query, callback){
             });
             proxy.fail(callback);
             docs.forEach(function(doc){
-                exports.delete({ fileId: doc._id.toString() }, proxy.group('delete'));
+                exports.delete({ fileId: doc._id.toString() , creator: params.creator }, proxy.group('delete'));
             });
         }
     });
