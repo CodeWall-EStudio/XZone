@@ -28,7 +28,8 @@ exports.delete = function(req, res){
     fileIds.forEach(function(fileId){
         mFile.delete({ 
             fileId: fileId, 
-            groupId: groupId
+            groupId: groupId,
+            creator: creator
         }, ep.group('delete'));
     });
 
