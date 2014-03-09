@@ -646,7 +646,7 @@ function shareToGroups(params, callback){
 
     var ep = new EventProxy();
     ep.fail(callback);
-    var ids = groupIds || folderIds || [];
+    var ids = groupIds.length ? groupIds : folderIds ;
     ep.after('shareToGroup', ids.length, function(list){
         callback(null, list);
     });
