@@ -99,8 +99,9 @@ exports.search = function(params, callback){
     var groupId = params.groupId || null;
     var userId = params.creator || null;
     var keyword = params.keyword || '';
-    var hasType = 'type' in params;
+
     var type = Number(params.type) || 0;
+    var hasType = type !== 0;
 
     var extendQuery = params.extendQuery || {};
     var query = { 
