@@ -171,6 +171,10 @@ exports.download = function(req, res){
     
     var ep = new EventProxy();
     ep.fail(function(err, code){
+        if(code === ERR.NOT_FOUND){
+            return res.send(404);
+        }
+
         res.json({ err: code || ERR.SERVER_ERROR, msg: err });
     });
 

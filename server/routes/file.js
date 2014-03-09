@@ -160,8 +160,10 @@ exports.download = function(req, res){
         creator: creator
     }, function(err, data){
         if(err){
-            res.json({ err: data || ERR.SERVER_ERROR, msg: err });
-            return;
+            if(data === ERR.NOT_FOUND){
+                return res.send(404);
+            }
+            return res.json({ err: data || ERR.SERVER_ERROR, msg: err });
         }
         var file = data.file, resource = data.resource, folder = data.folder;
         var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
