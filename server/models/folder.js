@@ -12,7 +12,8 @@ var mFile = require('./file');
 exports.create = function(params, callback){
     var groupId = params.groupId;
     var folderId = params.folderId;
-
+    var isOpen = Number(params.isOpen) || 0;
+    var isReadonly = Number(params.isReadonly) || 0;
 
     var that = this;
 
@@ -26,8 +27,8 @@ exports.create = function(params, callback){
             type: 0,
             parent: null,
             deletable: ('deletable' in params) ? params.deletable : true,
-            isOpen: params.isOpen === 1, // 0 非公开, 1 公开
-            isReadonly: params.isReadonly === 1, // 0 读写, 1 只读
+            isOpen: isOpen === 1, // 0 非公开, 1 公开
+            isReadonly: isReadonly === 1, // 0 读写, 1 只读
             top: null, 
             hasChild: false
         };
