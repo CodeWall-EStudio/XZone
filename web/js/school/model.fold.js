@@ -40,7 +40,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			t.tid = 0;
 			t.tname = '';
 		}
-		console.log(data.isOpen,data.isReadonly);
+
 		t.isOpen = data.isOpen || false;
 		t.isReady = data.isReadonly || false;
 

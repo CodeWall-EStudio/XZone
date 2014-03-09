@@ -235,6 +235,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(d.isOpen){
 			nowData.open = 1;
 		}
+
 		if(nowData.info){
 			handerObj.triggerHandler('file:init',nowData);
 		}
