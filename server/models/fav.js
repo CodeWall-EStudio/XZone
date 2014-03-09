@@ -49,15 +49,18 @@ exports.create = function(params, callback){
             db.fav.save(doc, function(err, result){
 
                 db.file.findAndModify({ _id: new ObjectID(fileId), 'creator.$id': ObjectID(creator) }, [],  
-                        { $set: { isFav: true } }, function(err){});
+                        { $set: { isFav: true } }, function(err2){
 
-                // 将 resource 的引用计数加一
-                mRes.updateRef(resourceId, 1, function(err, newRes){
-                    if(err){
-                        return callback(err);
-                    }
-                    callback(null, doc);
+                    callback(err, doc);
                 });
+
+                // // 将 resource 的引用计数加一
+                // mRes.updateRef(resourceId, 1, function(err, newRes){
+                //     if(err){
+                //         return callback(err);
+                //     }
+                //     callback(null, doc);
+                // });
 
             });
         });
@@ -76,19 +79,21 @@ exports.delete = function(params, callback){
             { $set: { isFav: false } }, { 'new':true}, function(err, file){
 
         console.log('>>>delete fav file: ', file);
-        db.fav.findAndRemove({ 'fromFile.$id': ObjectID(fileId), 'user.$id': ObjectID(creator)}, [],
-                function(err, fav){
+        db.fav.findAndRemove({ 'fromFile.$id': ObjectID(fileId), 'user.$id': ObjectID(creator)}, 
+                [], callback);
+        //         function(err, fav){
 
-            console.log('>>>delete fav: ', fav);
-            if(fav){
-                // 将 resource 的引用计数减一
-                mRes.updateRef(fav.resource.oid.toString(), -1, function(err, newRes){
-                    callback(null);
-                });
-            }else{
-                callback(err);
-            }
-        });
+        //     if(fav){
+        //         console.log('>>>delete fav: ', fav._id);
+        //         callback(null);
+        //         // 将 resource 的引用计数减一
+        //         // mRes.updateRef(fav.resource.oid.toString(), -1, function(err, newRes){
+        //         //     callback(null);
+        //         // });
+        //     }else{
+        //         callback(err);
+        //     }
+        // });
 
     });
 
