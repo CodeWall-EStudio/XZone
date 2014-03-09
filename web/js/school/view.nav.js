@@ -43,7 +43,6 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		navView.expand(opt);
 		navView.createPanel();		
 
-
 		var opt = {
 			target : userasideTarget,
 			tplid : 'my.aside',
