@@ -832,8 +832,8 @@ function copyFile(params, callback){
             //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
             operateType: 3,
 
-            srcFolderId: file.folder.oid.toString()
-            distFolderId: targetId,
+            srcFolderId: file.folder.oid.toString(),
+            distFolderId: targetId
             // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
             // toGroupId: toGroupId
         });
