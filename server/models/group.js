@@ -192,7 +192,7 @@ exports.getGroupMemberIds = function(groupId, callback){
 }
 
 exports.isGroupMember = function(groupId, userId, callback){
-    console.log('>>>isGroupMember', groupId, userId);
+    // console.log('>>>isGroupMember', groupId, userId);
     var query = { 
         'group.$id': ObjectID(groupId), 
         'user.$id': ObjectID(userId) 
@@ -207,7 +207,7 @@ exports.isGroupMember = function(groupId, userId, callback){
 }
 
 exports.isPrepareMember = function(userId, callback){
-    console.log('>>>isPrepareMember', userId);
+    // console.log('>>>isPrepareMember', userId);
 
     // 获取备课小组
     db.group.findOne({
@@ -261,7 +261,7 @@ exports.modify = function(params, doc, callback){
 }
 
 exports.getGroup = function(groupId, callback){
-    console.log('>>>getGroup, groupId', groupId, typeof groupId);
+    // console.log('>>>getGroup, groupId', groupId, typeof groupId);
     db.group.findOne({ _id: new ObjectID(groupId) }, callback);
 
 }

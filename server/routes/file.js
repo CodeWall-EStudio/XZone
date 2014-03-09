@@ -547,16 +547,20 @@ function shareToGroup(params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
+    if(!toGroupId && toFolderId ){
+        return callback('folderId and groupId must have one', ERR.PARAM_ERROR);
+    }
+
     // 1. 先获取文件信息
     mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
-    // 2. 获取小组信息
-    mGroup.getGroup(toGroupId, ep.doneLater('getGroup'));
+    if(toGroupId){
+        // 2. 获取小组信息
+        mGroup.getGroup(toGroupId, ep.doneLater('getGroup'));
+    }else{
+        mFolder.getFolder(toFolderId, ep.doneLater('getFolder'));
+    }
 
-    ep.all('getFile', 'getGroup', function(file, group){
-        if(!file){
-            ep.emit('error', 'no such file', ERR.NOT_FOUND);
-            return;
-        }
+    ep.on('getGroup', function(group){
         if(!group){
             ep.emit('error', 'no such group', ERR.NOT_FOUND);
             return;
@@ -564,8 +568,46 @@ function shareToGroup(params, callback){
         if(!toFolderId){
             toFolderId = group.rootFolder.oid.toString();
         }
-        // 拷贝 到目标文件夹
+        ep.emit('groupReady', group);
+    });
 
+    ep.on('getFolder', function(folder){
+        if(!folder){
+            ep.emit('error', 'no such folder', ERR.NOT_FOUND);
+            return;
+        }
+        if(!folder.group){
+            ep.emit('error', 'the folder is not a group folder', ERR.PARAM_ERROR);
+            return;
+        }
+        toGroupId = folder.group.oid.toString();
+        mGroup.getGroup(toGroupId, ep.done('groupReady'));
+    });
+
+    ep.all('getFile', 'groupReady', function(file, group){
+        if(!file){
+            ep.emit('error', 'no such file', ERR.NOT_FOUND);
+            return;
+        }
+        
+        mFile.getFile({ // 重名检查
+            name: file.name,
+            'folder.$id': ObjectID(toFolderId)
+        }, function(err, file){
+            if(file){
+                ep.emit('checkName', false);
+            }else{
+                ep.emit('checkName', true);
+            }
+        });
+    });
+
+    ep.all('getFile', 'checkName', function(file, bool){
+        if(!bool){
+            return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
+        }
+
+        // 拷贝 到目标文件夹
         file.resourceId = file.resource.oid.toString();
 
         file.groupId = toGroupId;
@@ -604,11 +646,11 @@ function shareToGroups(params, callback){
 
     var ep = new EventProxy();
     ep.fail(callback);
-    
-    ep.after('shareToGroup', groupIds.length, function(list){
-        callback(null);
+    var ids = groupIds || folderIds || [];
+    ep.after('shareToGroup', ids.length, function(list){
+        callback(null, list);
     });
-    for(var i = 0; i < groupIds.length; i++){
+    for(var i = 0; i < ids.length; i++){
         shareToGroup({
             fileId: fileId,
             toGroupId: groupIds[i],

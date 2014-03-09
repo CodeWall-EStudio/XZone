@@ -58,7 +58,7 @@ exports.saveUploadFile = function(params, callback){
         'folder.$id': oFolderId, 
         'creator.$id': loginUser._id
     };
-    console.log('>>>check file name', query);
+    // console.log('>>>check file name', query);
     mFile.getFile(query, ep.doneLater('getFile'));
 
     ep.all('getFolder', 'getFile', function(folder, file){
