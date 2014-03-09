@@ -409,12 +409,15 @@ exports.FILE_SUFFIX = {
     ],
 
     'archive' : [
-        'ai',
-        'eps',
-        'exe',
-        'xml',
-        'odt',
-        'swf'
+        'gz',
+        'tgz',
+        'bz',
+        'bz2',
+        'tbz',
+        'zip',
+        'rar',
+        'tar',
+        '7z'
     ],
 
     'text' : [
