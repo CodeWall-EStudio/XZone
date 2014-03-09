@@ -799,7 +799,7 @@ function copyFile(params, callback){
         
         mFile.getFile({ // 重名检查
             name: file.name,
-            'folder.$id': ObjectID(targetId);
+            'folder.$id': ObjectID(targetId)
         }, function(err, file){
             if(file){
                 ep.emit('checkName', false);
@@ -913,7 +913,7 @@ function moveFile(params, callback){
 
         mFile.getFile({ // 重名检查
             name: file.name,
-            'folder.$id': ObjectID(targetId);
+            'folder.$id': ObjectID(targetId)
         }, function(err, file){
             if(file){
                 ep.emit('checkName', false);
