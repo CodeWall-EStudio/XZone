@@ -160,7 +160,7 @@ exports.download = function(req, res){
     }, function(err, data){
         if(err){
             if(data === ERR.NOT_FOUND){
-                return res.send(404);
+                return res.redirect(config.NOT_FOUND_PAGE);
             }
             return res.json({ err: data || ERR.SERVER_ERROR, msg: err });
         }

@@ -80,24 +80,36 @@ exports.approveFile = function(req, res){
     }
     delete params.name;
     delete params.creator;
-    
-    var doc = {
-        status: 0,
-        validateText: params.validateText || '',//审核评语
-        validateStatus: Number(params.validateStatus) || 0, //0 不通过 1 通过
-        validateTime: Date.now(),//审核时间
-        validator: DBRef('user', ObjectID(loginUser._id))
-    };
+    var validateStatus = Number(params.validateStatus) || 0;
+    if(validateStatus === 0){
+        // 審核不通過的刪除掉
+        mFile.delete(params, function(err, doc){
+            if(err){
+                res.json({ err: ERR.SERVER_ERROR, msg: err});
+            }else{
+                res.json({ err: ERR.SUCCESS });
+            }
+        });
 
-    mFile.modify(params, doc, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else if(!doc){
-            res.json({ err: ERR.NOT_FOUND, msg: 'no such group'});
-        }else{
-            res.json({ err: ERR.SUCCESS });
-        }
-    });
+    }else{
+        var doc = {
+            status: 0,
+            validateText: params.validateText || '',//审核评语
+            validateStatus: validateStatus, //0 不通过 1 通过
+            validateTime: Date.now(),//审核时间
+            validator: DBRef('user', ObjectID(loginUser._id))
+        };
+
+        mFile.modify(params, doc, function(err, doc){
+            if(err){
+                res.json({ err: ERR.SERVER_ERROR, msg: err});
+            }else if(!doc){
+                res.json({ err: ERR.NOT_FOUND, msg: 'no such group'});
+            }else{
+                res.json({ err: ERR.SUCCESS });
+            }
+        });
+    }
 }
 
 function fetchGroupMembers(group, callback){

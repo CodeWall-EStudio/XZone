@@ -42,5 +42,5 @@ exports.QQ_CONNECT_OPENID_PATH = '/oauth2.0/me';
 
 exports.QQ_CONNECT_USERINFO_PATH = '/user/get_user_info';
 
-
+exports.NOT_FOUND_PAGE = '/404.html';
 
