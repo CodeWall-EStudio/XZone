@@ -779,7 +779,7 @@ function copyFile(params, callback){
 
     mFolder.getFolder({ _id: ObjectID(targetId) }, ep.doneLater('getFolder'));
 
-    ep.on('getFile', 'getFolder', function(file, folder){
+    ep.all('getFile', 'getFolder', function(file, folder){
         if(!file){
             ep.emit('error', 'no such file', ERR.NOT_FOUND);
             return;
