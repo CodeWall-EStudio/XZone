@@ -435,8 +435,7 @@ exports.get = function(req, res){
     var loginUser = req.loginUser;
 
     var query = { 
-        _id: ObjectID(fileId), 
-        'creator.$id': ObjectID(loginUser._id) 
+        _id: ObjectID(fileId) 
     };
     
     mFile.getFile(query, function(err, doc){

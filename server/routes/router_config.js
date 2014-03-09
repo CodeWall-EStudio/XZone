@@ -383,7 +383,7 @@ module.exports = {
         method: POST,
         require: {
             groupId: ObjectID,
-            validateText: ['string', 1],
+            validateText: ['string', 0],
             validateStatus: ['number', 0]
         }
     },
@@ -391,7 +391,7 @@ module.exports = {
         method: POST,
         require: {
             fileId: ObjectID,
-            validateText: ['string', 1],
+            validateText: ['string', 0],
             validateStatus: ['number', 0]
         }
     },
