@@ -272,8 +272,10 @@ exports.hasFolderAccessRight = function(userId, folderId, groupId, callback){
             ep.on('checkMemberRight', function(hasRight){
                 if(hasRight){
                     ep.emit('checkRight', 'member');
-                }else{ // 检查是否是备课小组的成员
+                }else if(folder.isOpen){ // 公开文件夹
                     ep.emit('checkRight', 'pubFolder');
+                }else{ // 部门的文件夹, 不知道有没有权限, 要进一步判断
+                    ep.emit('checkRight', 'department');
                 }
             });
 

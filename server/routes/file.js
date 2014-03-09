@@ -44,7 +44,7 @@ exports.upload = function(req, res){
     fileHelper.hasFolderAccessRight(loginUser._id, folderId, null, ep.doneLater('checkRight'));
 
     ep.on('checkRight', function(role){
-        if(!role){
+        if(!role || role === 'department'){
             return ep.emit('error', 'upload to this folder is not auth', ERR.NOT_AUTH);
         }
         mUser.getUserById(loginUser._id, ep.done('getUser'));
@@ -130,7 +130,7 @@ function verifyDownload(params, callback){
             fileHelper.hasFolderAccessRight(creator, folder._id.toString(), 
                     null, ep.done('checkRight', function(role, folder){
 
-                if(!role || (role === 'pubFolder' && !folder.isOpen)){// 么有权限或者是部门的非公开文件夹
+                if(!role || role === 'department'){// 么有权限或者是部门的非公开文件夹
                     return ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
                 }else{
                     return { file: file, resource: resource, folder: folder };
@@ -1113,17 +1113,16 @@ exports.search = function(req, res){
             }else{
                 params.extendQuery.validateStatus = 1// 学校空间只能看审核通过的文件
             }
-        }else if(role === 'pubFolder'){
-            if(!folder.isOpen){// 公開文件夾可以搜索文件, 非公開就不返回內容
-                res.json({
-                    err: ERR.SUCCESS,
-                    result: {
-                        total: 0,
-                        list: []
-                    }
-                });
-                return;
-            }
+        }else if(role === 'department'){
+            // 非部门公開就不返回內容
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    total: 0,
+                    list: []
+                }
+            });
+            return;
         }
         mFile.search(params, ep.done('search'));
     });

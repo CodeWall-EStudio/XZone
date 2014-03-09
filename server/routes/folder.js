@@ -30,7 +30,7 @@ exports.create = function(req, res){
     fileHelper.hasFolderAccessRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
 
     ep.on('checkRight', function(role, folder){
-        if(!role || (role === 'pubFolder' && !folder.isOpen)){
+        if(!role || role === 'department'){
             ep.emit('error', 'not auth to create folder on this folder', ERR.NOT_AUTH);
             return;
         }
@@ -296,7 +296,7 @@ exports.list = function(req, res){
         }
         if(role === 'creator'){
             params.creator = loginUser._id;
-        }else if(role === 'pubFolder'){
+        }else if(role === 'pubFolder' || role === 'department'){
             params.extendQuery = {// 公開文件夾可以搜索文件夾, 非公開就不返回內容
                 isOpen: true
             };
@@ -338,7 +338,7 @@ exports.search = function(req, res){
         }
         if(role === 'creator'){
             params.creator = loginUser._id;
-        }else if(role === 'pubFolder'){
+        }else if(role === 'pubFolder' || role === 'department'){
             params.extendQuery = {// 公開文件夾可以搜索文件夾, 非公開就不返回內容
                 isOpen: true
             };
