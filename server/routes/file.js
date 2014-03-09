@@ -788,7 +788,7 @@ function copyFile(params, callback){
             ep.emit('error', 'no such target folder', ERR.NOT_FOUND);
             return;
         }
-        //  这里需要检查 target 是否是同一个用户或小组的
+        // TODO 这里的权限比较蛋疼 这里需要检查 target 是否是同一个用户或小组的
         if(groupId){
             if(groupId !== file.group.oid.toString()){
                 // 传入的 groupId 跟 file 的不一致
@@ -802,11 +802,11 @@ function copyFile(params, callback){
             // }
         }else{
             // 这次操作是个人文件夹操作
-            if(file.creator.oid.toString() !== params.creator){
-                // , 但是不是同一个用户的目录
-                ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
-                return;
-            }
+            // if(file.creator.oid.toString() !== params.creator){
+            //     // , 但是不是同一个用户的目录
+            //     ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
+            //     return;
+            // }
         }
         // 权限检查没问题
         file.resourceId = file.resource.oid.toString();
