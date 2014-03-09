@@ -179,9 +179,26 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		request.get(opt,success);	
 	}
 
+	function modifyGroup(e,d){
+		var opt = {
+			cgi : config.cgi.groupmodify,
+			data : d
+		}
+
+		var success = function(d){
+			handerObj.triggerHandler('msg:error',d.err);
+			if(d.err == 0){
+				var obj = conventGroup(d.result.data);
+				handerObj.triggerHandler('manage:modifysuc');
+			}
+		}
+		request.post(opt,success);		
+	}	
+
 
 	var handlers = {
 		'manage:approve' : appRove,
+		'manage:modify' : modifyGroup,
 		'manage:user' : getUser,
 		'manage:alluser' : allUser,
 		'manage:create' : creatGroup,

@@ -112,12 +112,17 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 		d.ul = userList;
 		d.my = myid;
 		d.prep = preplist;
-		console.log(d);
+
 		//var data = g2k[id];
 		var view = new View({
 			target : editTarget,
 			tplid : 'manage.group.edit',
 			data : d,
+			after : function(){
+				$('#editGroupBtn').bind('click',function(){
+					editgroup(d.id);
+				});
+			}
 		});
 		view.createPanel();
 	}
@@ -137,13 +142,20 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 		// view.createPanel();	
 	}
 
+	function modifySuc(){
+		addTarget.addClass('hide');
+		listTarget.removeClass('hide');
+		editTarget.addClass('hide');
+	}
+
 	var handlers = {
 		'manage:appsuc' : appSuc,
 		'manage:createsuc' : createSuc,
 		'manage:userloadsuc' : userloadSuc,
 		'manage:alluserloadsuc' : alluserloadSuc,
 		'manage:groupload' : groupLoad,
-		'manage:groupinfosuc' : groupOne
+		'manage:groupinfosuc' : groupOne,
+		'modifysuc' : modifySuc
 	}
 
 	for(var i in handlers){
@@ -176,6 +188,31 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 			break;
 		}
 	});
+
+	var editgroup = function(id){
+		var name = editTarget.find('.group-name').val();
+		var desc = editTarget.find('.group-desc').val();
+		var members = [],
+			manages = [];
+		editTarget.find('.check-member:checked').each(function(){
+			members.push($(this).val());
+		});
+		editTarget.find('.check-manage:checked').each(function(){
+			manages.push($(this).val());
+		});
+		if(name == ''){
+			handerObj.triggerHandler('msg:err',77);
+			return;
+		}
+		var obj = {
+			groupId : id,
+			content : desc,
+			members : members,
+			managers : manages,
+		}
+		//console.log(obj);
+		handerObj.triggerHandler('manage:modify',obj);				
+	};
 
 	$('#newGroupBtn').bind('click',function(e){
 		var gn = $('#groupName').val(),
@@ -269,10 +306,11 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 		if(type == 'add'){
 		addTarget.removeClass('hide');
 		listTarget.addClass('hide');
-
+		editTarget.addClass('hide');
 		}else{
 		addTarget.addClass('hide');
 		listTarget.removeClass('hide');
+		editTarget.addClass('hide');
 
 		}
 	})

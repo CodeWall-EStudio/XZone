@@ -2,30 +2,30 @@
 					<tr>
 						<th width="100">组名:</th>
 						<td>
-							<input type="text" name="name" value="<%+name%>" id="groupName" />
+							<input type="text" name="name" value="<%+name%>" class="group-name" disabled />
 						</td>
 					</tr>
 					<tr>
 						<th>类型:</th>
 						<td style="cursor:pointer">
-							<input class="group-type" type="radio" value="0" name="n" <%if(type==0){%>checked<%}%> /> 学校空间
-							<input class="group-type" type="radio" value="1" name="n" <%if(type==1){%>checked<%}%> /> 小组
-							<input class="group-type" type="radio" value="2" name="n" <%if(type==2){%>checked<%}%> /> 部门
-							<input class="group-type" type="radio" value="3" name="n" <%if(type==3){%>checked<%}%> /> 备课
+							<input class="group-type" type="radio" value="0" name="n" disabled <%if(type==0){%>checked<%}%> /> 学校空间
+							<input class="group-type" type="radio" value="1" name="n" disabled <%if(type==1){%>checked<%}%> /> 小组
+							<input class="group-type" type="radio" value="2" name="n" disabled <%if(type==2){%>checked<%}%> /> 部门
+							<input class="group-type" type="radio" value="3" name="n" disabled <%if(type==3){%>checked<%}%> /> 备课
 						</td>
 					</tr>
-					<tbody class="hide" id="prepYear" class="prep-body-year">
+					<tbody <%if(type!=3){%>class="hide"<%}%> class="prep-body-year">
 					<tr>
 						<th>学年</th>
 						<td>
-							<input type="radio" class="check-prep" value="0" name="p" checked  />学年
-							<input type="radio" class="check-prep" value="1" name="p" />科目
+							<input type="radio" class="check-prep" value="0" name="p" checked  disabled />学年
+							<input type="radio" class="check-prep" value="1" name="p"  disabled />科目
 						</td>
 					</tr>
-					<tbody class="hide" id="prepTag" class="prep-body-tag">
+					<tbody <%if(type!=3){%>class="hide"<%}%> class="prep-body-tag">
 					<tr>
 						<th>学年列表</th>
-						<td id="prepYearList">
+						<td >
 							<%
 								for(var i = 0,l=prep.length;i<l;i++){
 									var item = prep[i];
@@ -38,23 +38,23 @@
 					<tr>
 						<th>年级</th>
 						<td>
-							<input type="radio" class="check-grade" value="1" name="g" <%if(grade==1){%>checked<%}%> />一年级
-							<input type="radio" class="check-grade" value="2" name="g" <%if(grade==2){%>checked<%}%> />二年级
-							<input type="radio" class="check-grade" value="3" name="g" <%if(grade==3){%>checked<%}%> />三年级
-							<input type="radio" class="check-grade" value="4" name="g" <%if(grade==4){%>checked<%}%> />四年级
-							<input type="radio" class="check-grade" value="5" name="g" <%if(grade==5){%>checked<%}%> />五年级
-							<input type="radio" class="check-grade" value="6" name="g" <%if(grade==6){%>checked<%}%> />六年级
+							<input type="radio" class="check-grade" value="1" name="g" <%if(grade==1){%>checked<%}%>  disabled />一年级
+							<input type="radio" class="check-grade" value="2" name="g" <%if(grade==2){%>checked<%}%>  disabled />二年级
+							<input type="radio" class="check-grade" value="3" name="g" <%if(grade==3){%>checked<%}%>  disabled />三年级
+							<input type="radio" class="check-grade" value="4" name="g" <%if(grade==4){%>checked<%}%>  disabled />四年级
+							<input type="radio" class="check-grade" value="5" name="g" <%if(grade==5){%>checked<%}%>  disabled />五年级
+							<input type="radio" class="check-grade" value="6" name="g" <%if(grade==6){%>checked<%}%>  disabled />六年级
 						</td>
 					</tr>
 					<tr>
 						<th>科目</th>
 						<td>
-							<input type="radio" class="check-tag" value="1" name="t" <%if(tag==1){%>checked<%}%> />语文
-							<input type="radio" class="check-tag" value="2" name="t" <%if(tag==2){%>checked<%}%> />数学
-							<input type="radio" class="check-tag" value="3" name="t" <%if(tag==3){%>checked<%}%> />英语
-							<input type="radio" class="check-tag" value="4" name="t" <%if(tag==4){%>checked<%}%> />体育
-							<input type="radio" class="check-tag" value="5" name="t" <%if(tag==5){%>checked<%}%> />音乐
-							<input type="radio" class="check-tag" value="6" name="t" <%if(tag==6){%>checked<%}%> />自然
+							<input type="radio" class="check-tag" value="1" name="t" <%if(tag==1){%>checked<%}%>  disabled />语文
+							<input type="radio" class="check-tag" value="2" name="t" <%if(tag==2){%>checked<%}%>  disabled />数学
+							<input type="radio" class="check-tag" value="3" name="t" <%if(tag==3){%>checked<%}%>  disabled />英语
+							<input type="radio" class="check-tag" value="4" name="t" <%if(tag==4){%>checked<%}%>  disabled />体育
+							<input type="radio" class="check-tag" value="5" name="t" <%if(tag==5){%>checked<%}%> disabled />音乐
+							<input type="radio" class="check-tag" value="6" name="t" <%if(tag==6){%>checked<%}%> disabled />自然
 						</td>
 					</tr>	
 					</tbody>				
@@ -62,7 +62,7 @@
 					<tr>
 						<th>说明:</th>
 						<td>
-							<textarea id="desc" class="group-desc"><%-content%></textarea>
+							<textarea class="group-desc"><%-content%></textarea>
 						</td>
 					</tr>
 					<tr>
@@ -95,7 +95,7 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<input type="button" id="newGroupBtn" value="添加" />
+							<input type="button" id="editGroupBtn" value="修改" />
 						</td>
 					</tr>									
 				</table>
