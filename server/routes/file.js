@@ -370,11 +370,12 @@ exports.save = function(req, res){
             ep.emit('error', 'no allow to save', ERR.NOT_AUTH);
             return;
         }
-
-        mFile.getFile({
-            name: msg.fileName,
+        var param = {
+            name: msg.name,
             'folder.$id': ObjectID(rootFolderId)
-        }, function(err, file){
+        };
+        console.log('>>>file.save getfile ', param);
+        mFile.getFile(param, function(err, file){
             if(file){
                 ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
                 return;
@@ -388,7 +389,7 @@ exports.save = function(req, res){
         var file = {
             creator: loginUser._id,
             folderId: rootFolderId,
-            name: msg.fileName,
+            name: msg.name,
             type: resource.type,
             size: resource.size,
             src: 1, //分享过来的文件
