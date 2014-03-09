@@ -192,7 +192,6 @@ define(['config'],function(config){
 			var v= $.trim(target.val());
 			if(v != def){
 				gosearch(v);
-				//console.log(location.hash);
 				//location.hash = location.hash+'&key='+v;
 				// handerObj.triggerHandler('search:start',{
 				// 	key : v
@@ -599,7 +598,6 @@ define(['config'],function(config){
 
     function pageChange(e,d){
     	// nowPage = d;
-    	// console.log(nowPage);
 		$("#foldList").hide().removeAttr('show');
 		$('#fileList').css('float','none').css('width','100%');    	
     }

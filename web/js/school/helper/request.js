@@ -102,7 +102,6 @@ define([], function() {
     ajaxOpt.success = function(res) {
       // var code = res.code,
       //   type = 1;
-      //   console.log(code);
 
       // if('undefined' === typeof code) code = res.ret; // 拉腾讯软件的cgi
       // if(code) type = 3;

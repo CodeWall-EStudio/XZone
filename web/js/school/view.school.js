@@ -43,7 +43,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 							}
 							d.school = 1;
 							
-					        handerObj.triggerHandler('file:init',d);
+					        //handerObj.triggerHandler('file:init',d);
 					        handerObj.triggerHandler('fold:init',d);
 						}
 

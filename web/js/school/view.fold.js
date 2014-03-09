@@ -231,7 +231,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	function foldOne(e,d){
-		//console.log(nowGinfo);
+
 		if(d.isOpen){
 			nowData.open = 1;
 		}
@@ -243,8 +243,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		}else{
 			//console.log(d);
 			if(!$.isEmptyObject(nowGinfo) && !nowGinfo.isMember){
-				if(d.isOpen && d.isReady){
-					$(".btn-upload").hide();
+				console.log(d);
+				if(d.isOpen && !d.isReady){
+					$(".btn-upload").show();
 				}else{
 					$('#btnZone').hide();
 				}
@@ -453,7 +454,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		$('#newFold .open-fold').addClass('hide');
 		$('#newFold .read-fold').addClass('hide');			
 		if(nowGid){
-			if(nowGinfo.isMember){
+			if(nowGinfo.isMember && nowGinfo.type==2){
 				$('#newFold .open-fold').removeClass('hide');
 				//$('#newFold .read-fold').removeClass('hide');
 			}

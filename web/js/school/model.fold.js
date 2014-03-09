@@ -40,8 +40,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			t.tid = 0;
 			t.tname = '';
 		}
-		t.isOpen = data.isOpen || 1;
-		t.isReady = data.isReadyonly || 1;
+		console.log(data.isOpen,data.isReadonly);
+		t.isOpen = data.isOpen || false;
+		t.isReady = data.isReadonly || false;
 
 		// if(t.pid == t.tid){
 		// 	t.pid = 0;

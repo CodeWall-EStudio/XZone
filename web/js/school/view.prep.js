@@ -39,8 +39,7 @@ define(['config','helper/view','cache'],function(config,View,Cache){
 			key : d.key,
 			prep : 'my'
 		}
-
-        handerObj.triggerHandler('file:init',data);
+        //handerObj.triggerHandler('file:init',data);
         handerObj.triggerHandler('fold:init',data); 
         handerObj.triggerHandler('upload:param',d);		
 

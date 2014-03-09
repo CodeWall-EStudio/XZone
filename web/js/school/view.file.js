@@ -136,7 +136,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowAuth){
 			data.status = 1;
 		}
-
 		if(!d.info){
 			handerObj.triggerHandler('file:search',data);	
 		}else if((d.info && d.info.isMember) || d.open){
