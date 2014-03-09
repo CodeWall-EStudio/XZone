@@ -236,6 +236,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	}
 
 	function fileCopy(e,d){
+		var td = d;
 		var fids = d.fileId;
 		var opt = {
 			cgi : config.cgi.filemove,
@@ -243,7 +244,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}	
 		var success = function(d){
 			if(d.err == 0){
-				//handerObj.triggerHandler('file:copysuc',fids);
+				handerObj.triggerHandler('file:copysuc',td);
 				handerObj.triggerHandler('msg:error',d.err);
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
@@ -251,6 +252,24 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}	
 		request.post(opt,success);				
 	}
+
+	function fileSave(e,d){
+		var td = d;
+		var fids = d.fileId;
+		var opt = {
+			cgi : config.cgi.filecopy,
+			data : d
+		}	
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('file:savesuc',td);
+				handerObj.triggerHandler('msg:error',d.err);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}	
+		request.post(opt,success);				
+	}	
 
 	function recyRef(e,d){
 		var ids = d.fileId;
@@ -290,6 +309,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	var handlers = {
 		'file:recyref' : recyRef,
 		'file:recydel' : recyDel,
+		'file:savetomy' : fileSave,
 		//'file:get' : getFile,
 		'file:copyto' : fileCopy,
 		'file:moveto' : fileMove,

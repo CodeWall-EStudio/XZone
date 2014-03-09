@@ -9,24 +9,24 @@ define([], function() {
     // 传递cgi
     this._url = url;
   };
-  try{
-  ReqTime.prototype = {
-    get url() {
-      return this._url;
-    },
-    get time() {
-      return +new Date() - this._start;
-    },
-    set url(url) {
-      this._url = url;
-    },
-    set start(time) {
-      this._start = time;
-    }
-  };
-  }catch(e){
+  // try{
+  // ReqTime.prototype = {
+  //   get url() {
+  //     return this._url;
+  //   },
+  //   get time() {
+  //     return +new Date() - this._start;
+  //   },
+  //   set url(url) {
+  //     this._url = url;
+  //   },
+  //   set start(time) {
+  //     this._start = time;
+  //   }
+  // };
+  // }catch(e){
     
-  }
+  // }
 
   /*
   * @author: jarvisjiang

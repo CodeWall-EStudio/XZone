@@ -613,6 +613,22 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		view.createPanel();		
 	}	
 
+	function fileSave(e,d){
+		var myInfo = Cache.get('myinfo');
+		var obj = {
+			fileId : [d],
+			targetId : myInfo.rootFolder.id,
+			savetomy : 1
+		}
+		handerObj.triggerHandler('file:savetomy',obj);
+	}
+
+	function fileSaveSuc(e,d){
+		for(var i in d){
+		$('.filesave'+d[i]).remove();
+		}
+	}
+
 	function foldTree(e,d){
 		target = d.target;
 		if(!d.list.length){
@@ -794,7 +810,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		//'order:change' : orderChange,
 		'recy:recysuc' : recySuc,	
 		'recy:ref' : recyRef,
-		'recy:del' : recyDel,		
+		'recy:del' : recyDel,
+		'file:save' : fileSave,	
+		'file:savesuc' : fileSaveSuc,	
 		'file:movesuc' : moveSuc,
 		'file:treeload' : foldTree,
 		'file:move' : fileMove,

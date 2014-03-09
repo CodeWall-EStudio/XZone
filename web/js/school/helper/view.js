@@ -212,33 +212,33 @@ define(['helper/util','helper/templateManager'],function($u,$tm){
 	}
 
 	// added by jarvisjiang
-	try{
-		$.extend(View.prototype, {
-			set target(target) {
-				this.target = target;
-			},
-			set tplid(tplid) {
-				this.tplid = tplid;
-			},
-			set data(data) {
-				this.data = data;
-			},
-			set handlers(handlers) {
-				this.handlers = handlers;
-			},
-			set append(append) {
-				this.append = append;
-			},
-			set before(before) {
-				this.before = before;
-			},
-			set after(after) {
-				this.after = after || loop;
-			}
-		});
-	}catch(e){
-		
-	}
+	// try{
+	// 	$.extend(View.prototype, {
+	// 		set target(target) {
+	// 			this.target = target;
+	// 		},
+	// 		set tplid(tplid) {
+	// 			this.tplid = tplid;
+	// 		},
+	// 		set data(data) {
+	// 			this.data = data;
+	// 		},
+	// 		set handlers(handlers) {
+	// 			this.handlers = handlers;
+	// 		},
+	// 		set append(append) {
+	// 			this.append = append;
+	// 		},
+	// 		set before(before) {
+	// 			this.before = before;
+	// 		},
+	// 		set after(after) {
+	// 			this.after = after || loop;
+	// 		}
+	// 	});
+	// }catch(e){
+	// 	alert(e);
+	// }
 
 	return View;
 });
