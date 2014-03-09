@@ -250,12 +250,21 @@ exports.hasFolderAccessRight = function(userId, folderId, groupId, callback){
         if(group.type === 0){ // type=0 是学校空间
             ep.emit('checkRight', 'school');
         }else if(group.type === 3){ // 这是备课小组, 如果是备课的成员都能看
-            mGroup.isPrepareMember(userId, ep.done('checkRight', function(hasRight){
+            // 先检查是不是属于该组的成员
+            mGroup.isGroupMember(groupId, userId, ep.doneLater('checkMemberRight'));
+
+            ep.on('checkMemberRight', function(hasRight){
                 if(hasRight){
-                    return 'prepare';
+                    ep.done('checkRight', 'member');
+                }else{ // 检查是否是备课小组的成员
+                    mGroup.isPrepareMember(userId, ep.done('checkRight', function(hasRight){
+                        if(hasRight){
+                            return 'prepare';
+                        }
+                        return hasRight;
+                    }));
                 }
-                return hasRight;
-            }));
+            });
         }else if(group.type === 2 && folder.isOpen){ // 部门的公开文件夹, 允许查看
             ep.emit('checkRight', 'pubFolder');
         }else{// 是否是部门成员
