@@ -797,6 +797,22 @@ function copyFile(params, callback){
             return ep.emit('error', 'no auth to access the target folder', ERR.NOT_AUTH);
         }
         
+        mFile.getFile({ // 重名检查
+            name: file.name,
+            'folder.$id': ObjectID(targetId);
+        }, function(err, file){
+            if(file){
+                ep.emit('checkName', false);
+            }else{
+                ep.emit('checkName', true);
+            }
+        });
+    });
+
+    ep.all('getFile', 'checkName', function(file, bool){
+        if(bool){
+            return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
+        }
         // 权限检查没问题
         file.resourceId = file.resource.oid.toString();
 
@@ -817,7 +833,7 @@ function copyFile(params, callback){
             operateType: 3,
 
             srcFolderId: file.folder.oid.toString()
-            // distFolderId: toFolderId,
+            distFolderId: targetId,
             // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
             // toGroupId: toGroupId
         });
@@ -893,6 +909,23 @@ function moveFile(params, callback){
                 ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
                 return;
             }
+        }
+
+        mFile.getFile({ // 重名检查
+            name: file.name,
+            'folder.$id': ObjectID(targetId);
+        }, function(err, file){
+            if(file){
+                ep.emit('checkName', false);
+            }else{
+                ep.emit('checkName', true);
+            }
+        });
+    });
+
+    ep.all('getFile', 'getFolder', 'checkName', function(file, folder, bool){
+        if(bool){
+            return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
         }
 
         var doc = {
