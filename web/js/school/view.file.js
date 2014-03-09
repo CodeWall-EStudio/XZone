@@ -412,9 +412,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			handlers : {		
 				'.btn-share' : {
 					'click' : function(){
-// toUserId
-// toGroupId,
-// toFolderId
 						var fls = [];						
 						var li = [];
 						for(var i in d.files){

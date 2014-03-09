@@ -7,7 +7,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		nowKey = '',
 		rootFd = 0;
 
-	var actTarget = $('#actWin');
+	var actTarget = $('#actWinZone');
 
 	function init(e,d){
 		$('#userAside').hide();
@@ -81,7 +81,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 				name : d.name
 			},
 			after : function(){
-				actTarget.modal('show');
+				$("#actWin").modal('show');
 			},
 			handlers : {
 				'.btn-post' : {
