@@ -1150,33 +1150,26 @@ exports.query = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    var query = {};
 
     if(cate === 1){
-        if(params.groupId){
-            query.groupId = params.groupId;
-        }else{
-            query.extendQuery = {
+        if(!params.groupId){
+            params.extendQuery = {
                 group: {$exists: true}
             };
         }
-        query.creator = creator;
-        
+        params.creator = creator;
     }else{
         ep.emit('error', 'not support query cate', ERR.PARAM_ERROR);
         return;
     }
-    query.order = params.order;
-    query.page = params.page;
-    query.pageNum = params.pageNum;
 
-    query.extendDefProps = {
+    params.extendDefProps = {
         folder: ['_id', 'name'],
         group: ['_id', 'name'],
         creator: ['_id','nick', 'name']
     };
 
-    mFile.search(query, ep.doneLater('search'));
+    mFile.search(params, ep.doneLater('search'));
     ep.on('search', function(total, docs){
         res.json({
             err: ERR.SUCCESS,
