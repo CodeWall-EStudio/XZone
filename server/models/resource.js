@@ -50,10 +50,11 @@ exports.updateRef = function(resId, value, callback){
             fs.unlink(path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, doc.path), function(err){
                 if(err){
                     console.error('>>>delete file: ', err);
-                    callback(err, null);
-                }else{
-                    db.resource.findAndRemove({ _id: doc._id }, [], callback);
+                    // callback(err, null);
                 }
+                
+                db.resource.findAndRemove({ _id: doc._id }, [], callback);
+                
             });
         }else{
             callback(err, doc);
