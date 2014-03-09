@@ -778,37 +778,25 @@ function copyFile(params, callback){
 
     mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
 
-    mFolder.getFolder({ _id: ObjectID(targetId) }, ep.doneLater('getFolder'));
-
-    ep.all('getFile', 'getFolder', function(file, folder){
+    ep.on('getFile', function(file){
         if(!file){
-            ep.emit('error', 'no such file', ERR.NOT_FOUND);
-            return;
+            return ep.emit('error', 'no such file', ERR.NOT_FOUND);
         }
-        if(!folder){
-            ep.emit('error', 'no such target folder', ERR.NOT_FOUND);
-            return;
+        // 检查是否有源目录的访问权限
+        fileHelper.hasFolderAccessRight(params.creator, file.folder.oid.toString(), groupId, ep.done('checkSourceFolderRight'));
+        // 检查是否有目标目录的访问权限
+        fileHelper.hasFolderAccessRight(params.creator, targetId, null, ep.done('checkTargetFolderRight'));
+
+    });
+
+    ep.all('getFile', 'checkSourceFolderRight', 'checkTargetFolderRight', function(file, srcRole, dstRole){
+        if(!srcRole){
+            return ep.emit('error', 'no auth to access the srouce file', ERR.NOT_AUTH);
         }
-        // TODO 这里的权限比较蛋疼 这里需要检查 target 是否是同一个用户或小组的
-        if(groupId){
-            if(groupId !== file.group.oid.toString()){
-                // 传入的 groupId 跟 file 的不一致
-                ep.emit('error', 'the groupId not match file.group', ERR.NOT_MATCH);
-                return;
-            }
-            // if(groupId !== folder.group.oid.toString()){
-            //     // 目标 folder 不在同一个 group的
-            //     ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
-            //     return;
-            // }
-        }else{
-            // 这次操作是个人文件夹操作
-            // if(file.creator.oid.toString() !== params.creator){
-            //     // , 但是不是同一个用户的目录
-            //     ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
-            //     return;
-            // }
+        if(!dstRole){
+            return ep.emit('error', 'no auth to access the target folder', ERR.NOT_AUTH);
         }
+        
         // 权限检查没问题
         file.resourceId = file.resource.oid.toString();
 
@@ -833,7 +821,10 @@ function copyFile(params, callback){
             // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
             // toGroupId: toGroupId
         });
+
     });
+
+
 }
 
 exports.copy = function(req, res){

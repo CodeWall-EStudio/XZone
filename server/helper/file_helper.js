@@ -218,7 +218,7 @@ exports.hasFolderAccessRight = function(userId, folderId, groupId, callback){
 
     var ep = new EventProxy();
     ep.fail(callback);
-
+    
     mFolder.getFolder({_id: ObjectID(folderId)}, ep.doneLater('getFolder'));
 
     ep.on('getFolder', function(folder){
