@@ -1129,6 +1129,21 @@ exports.search = function(req, res){
                 }
             });
             return;
+        }else if(role === 'pubFolder'){
+            // 公開文件夾下只能看到部门成员和本人上传的文件
+            var ids = [ObjectID(loginUser._id)];
+            params.extendQuery = {
+                'creator.$id': { $in: ids }
+            };
+            mGroup.getGroupMemberIds(group._id.toString(), function(err, docs){
+                if(docs && docs.length){
+                    docs.forEach(function(doc){
+                        ids.push(doc.user.oid);
+                    });
+                }
+                mFile.search(params, ep.done('search'));
+            });
+            return;
         }
         mFile.search(params, ep.done('search'));
     });
