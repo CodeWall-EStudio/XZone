@@ -83,6 +83,9 @@ exports.getUserAllInfo = function(userId, callback){
 
         // 把部门和小组分开
         results.forEach(function(doc){
+            if(doc.validateStatus === 0){// 沒通過審核的不返回
+                return;
+            }
             if(doc.type === 1){
                 groups.push(doc);
             }else if(doc.type === 2){
@@ -106,7 +109,7 @@ exports.getUserAllInfo = function(userId, callback){
     ep.on('getGroupsCb', function(result){
         var memberDep = result.departments;
         // 读取所有部门
-        db.search('group', { type: 2 }, {}, ep.done('getGroupsCb2', function(total, docs){
+        db.search('group', { type: 2 , validateStatus: { $in: [1, null] } }, {}, ep.done('getGroupsCb2', function(total, docs){
             result.departments = docs;
             docs.forEach(function(doc){
                 var dep = memberDep[doc._id.toString()];
