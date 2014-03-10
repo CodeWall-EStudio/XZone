@@ -215,7 +215,7 @@ exports.search = function(params, callback){
             if(err){
                 callback(err);
             }else if(total && docs){
-                var defProps = { resource: ['_id', 'type', 'size'] };
+                var defProps = { resource: ['_id', 'type', 'size'] , creator: ['_id', 'nick']};
                 if(extendDefProps){
                     defProps = us.extend(defProps, extendDefProps);
                 }
