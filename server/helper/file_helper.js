@@ -203,18 +203,18 @@ function convert(filePath, mimes, ext, callback){
         process.exec(cmd, function(err){
             if(!err){
                 cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
-                process.exec(cmd, function(){
-                    callback();
+                process.exec(cmd, function(err){
+                    callback(err);
                 });
             }else{
-                callback();
+                callback(err);
                 console.log('>>>file convert error: ', err, mimes, ext);
             }
         });
     }else if(config.FILE_MIMES['pdf'].indexOf(mimes) > -1 || config.FILE_SUFFIX['pdf'].indexOf(ext) > -1){
         var cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
-        process.exec(cmd, function(){
-            callback();
+        process.exec(cmd, function(err){
+            callback(err);
         });
 
     }else{

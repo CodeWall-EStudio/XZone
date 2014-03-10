@@ -107,6 +107,7 @@ exports.search = function(collectionName, query, options, callback){
         var cursor = collection.find(query);
         var ep = EventProxy.create('total', 'result', function(total, list){
             callback(null, total || 0, list);
+            console.log('>>>search:', collectionName, query, order, page, pageNum, 'total: ', total);
         });
         ep.fail(callback);
 

@@ -1055,6 +1055,11 @@ exports.delete = function(req, res){
             err: ERR.SUCCESS
         });
     });
+    
+    if(U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER)){
+        // 超级管理员可以删任何文件
+        creator = null;
+    }
 
     fileIds.forEach(function(fileId){
         // 设置删除标志位
