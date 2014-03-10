@@ -125,7 +125,7 @@ exports.upload = function(req, res){
 function verifyDownload(params, callback){
 
     var fileId = params.fileId;
-    var creator = params.creator;
+    // var creator = params.creator;
 
     var ep = new EventProxy();
 
@@ -180,22 +180,22 @@ exports.download = function(req, res){
 
     console.log('>>>media download, skey: ', skey);
 
-    if(!skey){
-        ep.emit('error', 'need login', ERR.NOT_LOGIN);
-        return;
-    }
-    userHelper.findAndUpdateUserInfo(skey, 'sso', ep.doneLater('getUserInfoSuccess'));
+    // if(!skey){
+    //     ep.emit('error', 'need login', ERR.NOT_LOGIN);
+    //     return;
+    // }
+    // userHelper.findAndUpdateUserInfo(skey, 'sso', ep.doneLater('getUserInfoSuccess'));
 
-    ep.on('getUserInfoSuccess', function(user){
+    // ep.on('getUserInfoSuccess', function(user){
 
         verifyDownload({
-            fileId: fileId,
-            creator: user._id.toString()
+            fileId: fileId
+            // creator: user._id.toString()
         }, ep.done('verifyDownloadSucc'));
 
-    });
+    // });
 
-    ep.all('getUserInfoSuccess', 'verifyDownloadSucc', function(loginUser, data){
+    ep.all(/*'getUserInfoSuccess', */'verifyDownloadSucc', function(/*loginUser, */data){
         var file = data.file, resource = data.resource, folder = data.folder;
         var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
         console.log('>>>media download: ' + filePath, ':', resource.mimes);
@@ -209,8 +209,8 @@ exports.download = function(req, res){
         res.send();
 
         mLog.create({
-            fromUserId: loginUser._id.toString(),
-            fromUserName: loginUser.nick,
+            // fromUserId: loginUser._id.toString(),
+            // fromUserName: loginUser.nick,
 
             fileId: file._id.toString(),
             fileName: file.name,
