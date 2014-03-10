@@ -98,11 +98,13 @@ exports.saveUploadFile = function(params, callback){
             type: fileType
         }
 
-        mRes.create(resource, ep.done('saveRes'));
-
         if(params.createSWFForDoc){
             // 转换文档为 swf
-            convert(filePath, contentType, suffix);
+            convert(filePath, contentType, suffix, function(){
+                mRes.create(resource, ep.done('saveRes'));
+            });
+        }else{
+            mRes.create(resource, ep.done('saveRes'));
         }
 
     });
@@ -192,7 +194,7 @@ function formatType(mimes, ext){
     }
 }
 
-function convert(filePath, mimes, ext){
+function convert(filePath, mimes, ext, callback){
     console.log('>>>convert file: mimes',mimes,ext);
     //doc 文档要生成 swf 格式文件
     if(config.FILE_MIMES['document'].indexOf(mimes) > -1 || config.FILE_SUFFIX['document'].indexOf(ext) > -1){
@@ -201,16 +203,22 @@ function convert(filePath, mimes, ext){
         process.exec(cmd, function(err){
             if(!err){
                 cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
-                process.exec(cmd);
+                process.exec(cmd, function(){
+                    callback();
+                });
             }else{
+                callback();
                 console.log('>>>file convert error: ', err, mimes, ext);
             }
         });
-    }
-    if(config.FILE_MIMES['pdf'].indexOf(mimes) > -1 || config.FILE_SUFFIX['pdf'].indexOf(ext) > -1){
+    }else if(config.FILE_MIMES['pdf'].indexOf(mimes) > -1 || config.FILE_SUFFIX['pdf'].indexOf(ext) > -1){
         var cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
-        process.exec(cmd);
+        process.exec(cmd, function(){
+            callback();
+        });
 
+    }else{
+        callback();
     }
 }
 
