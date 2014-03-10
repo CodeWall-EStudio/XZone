@@ -13,7 +13,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				hasChild : item.hasChild,
 				time : util.time(item.createTime),
 				open : item.isOpen || 0,
-				read : item.isRead || 0
+				read : item.isReadonly || 0
 			})
 		}
 		return list;

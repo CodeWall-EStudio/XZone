@@ -2,7 +2,7 @@
 	<a cmd="tree" class="section-tit-a-first section-tit-a-border">树</a>				
 <%if(!key){%>
 	<%if(gid){%>
-	<a href="#gid=<%+gid%>" style="z-index:20"><%-gname%></a>
+	<a href="#<%if(school){%>school=1&<%}%>gid=<%+gid%>" style="z-index:20"><%-gname%></a>
 	<%}else{%>
 	<a href="#" style="z-index:20">个人文件</a>
 	<%}%>

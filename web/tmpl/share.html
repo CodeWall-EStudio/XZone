@@ -60,8 +60,14 @@
 									<%
 										for(var i=0,l=list.length;i<l;i++){
 											var item = list[i];
+										if(type == 'dep'){
 									%>
+										<%if(item.isMember && !item.pt){%>
 										<li class="tag<%+item.id%>"><input type="checkbox" value="<%+item.id%>" /> <%-item.name%></li>
+										<%}%>
+									<%}else{%>
+										<li class="tag<%+item.id%>"><input type="checkbox" value="<%+item.id%>" /> <%-item.name%></li>
+									<%}%>
 									<%}%>
 								</ul>
 							</div>

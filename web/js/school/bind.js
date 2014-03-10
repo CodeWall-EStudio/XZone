@@ -5,6 +5,7 @@ define(['config'],function(config){
 	var loading = 0,
 		nowFd = 0,   //当前文件夹id
 		nowGid = 0,  //当前小组id
+		nowSchool = 0,
 		nowPage = 'user';
 
     $("#newFolds").validate({
@@ -271,11 +272,14 @@ define(['config'],function(config){
     	// 	$(this).attr('checked',false);
     	// });
 		if(n == 0){
-	    	$('#fileActZone .sharefile').show();
+			if(!nowSchool){
+		    	$('#fileActZone .sharefile').show();
+		    	$('#fileActZone .copyfile').show(); 
+		    	$('#fileActZone .movefile').show();  
+	    	}
 	    	$('#fileActZone .downfile').show();
 	    	$('#fileActZone .collfile').show();    		
-	    	$('#fileActZone .copyfile').show();  
-	    	$('#fileActZone .movefile').show();    	
+	    	   	
 	    }
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
@@ -309,18 +313,21 @@ define(['config'],function(config){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
     	}else{
-    		if(n>0){
+    		if(n>0){   			
 		    	$('#fileActZone .sharefile').hide();
 		    	$('#fileActZone .downfile').hide();
 		    	$('#fileActZone .collfile').hide();    		
 		    	$('#fileActZone .copyfile').hide(); 
 		    	$('#fileActZone .movefile').hide();  
 	    	}else{
-		    	$('#fileActZone .sharefile').show();
+				if(!nowSchool){
+			    	$('#fileActZone .sharefile').show();
+			    	$('#fileActZone .copyfile').show();
+			    	$('#fileActZone .movefile').show();   
+		    	}
 		    	$('#fileActZone .downfile').show();
 		    	$('#fileActZone .collfile').show();    		
-		    	$('#fileActZone .copyfile').show(); 
-		    	$('#fileActZone .movefile').show(); 	    		
+		    		    		
 	    	} 
 			$('.tool-zone').addClass('hide');
 			$('.file-act-zone').removeClass('hide');
@@ -602,8 +609,13 @@ define(['config'],function(config){
 		$('#fileList').css('float','none').css('width','100%');    	
     }
 
+    function schoolChange(e,d){
+    	nowSchool = d;
+    }
+
     var handlers = {
     	'page:change' : pageChange,
+    	'bind:school' : schoolChange
     }
 
     for(var i in handlers){

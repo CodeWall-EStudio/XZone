@@ -66,7 +66,23 @@ i.fold{
 	height:32px;
 	float:left;
 	/*margin:19px 0 0 15px;*/
-	background:url(imgs/file1.png) 0 2px no-repeat;
+	background:url(imgs/folder.png) 0 2px no-repeat;
+}
+i.fold-read{
+	display:inline-block;
+	width:32px;
+	height:32px;
+	float:left;
+	/*margin:19px 0 0 15px;*/
+	background:url(imgs/folder_noedit.png) 0 2px no-repeat;
+}
+i.fold-open{
+	display:inline-block;
+	width:32px;
+	height:32px;
+	float:left;
+	/*margin:19px 0 0 15px;*/
+	background:url(imgs/folder_edit.png) 0 2px no-repeat;
 }
 
 i.colls{

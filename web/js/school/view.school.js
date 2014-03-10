@@ -13,12 +13,20 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		$('#userAside').hide();
 		$("#groupAside").show();
 
-		$("#fileActZone").addClass('hide');
-		$('.tool-zone').removeClass('hide');
-
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
-		
+
+		$("#fileActZone .sharefile").hide();
+		$("#fileActZone .copyfile").hide();
+		if(myinfo.auth < 15){
+			$('#btnZone').hide();
+			$("#fileActZone").addClass('hide');
+			$('.tool-zone').removeClass('hide');
+			$("#fileActZone .renamefile").hide();
+			$("#fileActZone .delfile").hide();
+			$("#fileActZone .movefile").hide();
+		}
+
 		nowGid = school.id;
 		nowFd = school.rootFolder.id;
 
@@ -62,13 +70,15 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		}		
 
 		d.gid = nowGid;
-		d.fdid = nowFd;
+		if(!d.fdid){
+			d.fdid = nowFd;
+		}
 		d.info = school;
 
 		d.school = 1;
 		d.auth = 0;
 
-        handerObj.triggerHandler('file:init',d);
+        //handerObj.triggerHandler('file:init',d);
         handerObj.triggerHandler('fold:init',d); 
         handerObj.triggerHandler('upload:param',d);		
 	}

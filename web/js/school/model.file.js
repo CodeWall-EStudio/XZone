@@ -1,4 +1,4 @@
-define(['config','helper/request','helper/util'],function(config,request,util){
+define(['config','helper/request','helper/util','cache'],function(config,request,util,Cache){
 	var	handerObj = $(Schhandler);
 
 	function convent(data){
@@ -201,13 +201,16 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		var success = function(data){
 			if(data.err == 0){
 				var list = [];
+				var myinfo = Cache.get('myinfo');
 				for(var i = 0,l=data.result.list.length;i<l;i++){
 
 					var item = data.result.list[i];
+					if(item._id != myinfo.id){
 					list.push({
 						id : item._id,
 						name : item.nick
 					});
+					}
 				}
 				handerObj.triggerHandler('file:shareload',{ type : d.type,files: d.files, list :list});
 			}else{

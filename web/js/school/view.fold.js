@@ -9,6 +9,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		nowFdInfo = {},
 		nowKey = '',
 		nowFd = 0,
+		nowSchool = 0,
 		rootFd = 0,
 		nowPrep = 0, //当前是否是备课
 		nowOrder  = ['createTime',-1],
@@ -35,6 +36,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		var data = {
 			gid : nowGid,
 			gname : nowGinfo.name || '',
+			school : nowSchool,
 			filetype : config.filetype,
 			key : nowKey,
 			fold : obj || 0,
@@ -167,7 +169,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			}
 			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 
-
+			nowSchool = d.school || 0;
 			//备课
 			nowGrade = d.grade || 0;
 			nowTag = d.tag || 0;
@@ -180,7 +182,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		}else{
 			if(nowPrep == 'group'){
 				$('#btnZone').hide();
-			}else{
+			}else if(!nowSchool){
 				$('#btnZone').show();
 			}
 		}
@@ -239,12 +241,10 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(nowData.info){
 			handerObj.triggerHandler('file:init',nowData);
 		}
-		if(nowGid && !nowGinfo.isMember && nowFd == nowGinfo.rootFolder.id && !nowPrep){
+		if(nowGid && (nowGinfo.type != 0 && !nowGinfo.isMember) && nowFd == nowGinfo.rootFolder.id && !nowPrep){
 			$('#btnZone').hide();
 		}else{
-			//console.log(d);
-			if(!$.isEmptyObject(nowGinfo) && !nowGinfo.isMember){
-				console.log(d);
+			if(!$.isEmptyObject(nowGinfo) && (!nowGinfo.isMember && nowGinfo.type !=0)){
 				if(d.isOpen && !d.isReady){
 					$(".btn-upload").show();
 				}else{
@@ -315,6 +315,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				pr : pr,
 				prep : nowPrep,
 				grade : nowGrade,
+				school : nowSchool,
 				tag : nowTag,
 				uid : nowUid
 			}
