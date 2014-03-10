@@ -36,8 +36,13 @@ exports.create = function(req, res){
         }
 
         // 继承父文件夹的公开和读写状态
-        params.isOpen = folder.isOpen ? 1 : 0;
-        params.isReadonly = folder.isReadonly ? 1 : 0;
+        if(folder.isOpen){
+            params.isOpen = 1;
+        }
+        if(folder.isReadonly){
+            params.isReadonly = 1;
+        }
+
         // 检查重名
         mFolder.getFolder({ 
             name: name,
