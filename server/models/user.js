@@ -74,6 +74,9 @@ exports.getUserAllInfo = function(userId, callback){
     var oid = new ObjectID(userId);
     // 获取用户资料
     db.user.findOne({ _id: oid}, ep.doneLater('getUserCb'));
+
+    mGroup.isPrepareMember(userId, ep.doneLater('checkPrepare'));
+
     // 获取用户参与的小组信息
     mGroup.getGroupByUser(userId , ep.doneLater('getGroupsCb', function(results){
         var groups = [],
@@ -106,11 +109,12 @@ exports.getUserAllInfo = function(userId, callback){
         };
     }));
 
-    ep.on('getGroupsCb', function(result){
+
+    ep.all('checkPrepare', 'getGroupsCb', function(hasRight, result){
         var memberDep = result.departments;
         // 读取所有部门
         db.search('group', { type: 2 , validateStatus: { $in: [1, null] } }, {}, ep.done('getGroupsCb2', function(total, docs){
-            result.departments = docs;
+            result.departments = [];
             docs.forEach(function(doc){
                 var dep = memberDep[doc._id.toString()];
                 if(dep){
@@ -118,6 +122,11 @@ exports.getUserAllInfo = function(userId, callback){
                     doc.auth = dep.auth || 0;
                 }else{
                     doc.isMember = false;
+                }
+                if(doc.pt === 1 && !hasRight){
+                    // 不是备课组的成员, 就不返回这个部门
+                }else{
+                    result.departments.push(doc);
                 }
             });
             return result;
