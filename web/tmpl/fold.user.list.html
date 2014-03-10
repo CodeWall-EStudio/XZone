@@ -39,8 +39,14 @@
 			</td>
 			<%if(gid){%>
 				<td width="60"></td>
-				<td width="60"></td>
-				<td width="60"></td>
+				<td width="60"><%-item.nick%></td>
+				<td width="60">
+					<%if(item.src){%>
+						分享
+					<%}else{%>
+						上传
+					<%}%>
+				</td>
 			<%}%>			
 			<td width="90"></td>
 			<td width="90"></td>

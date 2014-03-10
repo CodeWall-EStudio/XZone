@@ -11,6 +11,8 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				name : item.name,
 				mark : item.mark,
 				hasChild : item.hasChild,
+				src : item.src || 0,
+				nick : item.creator.nick,				
 				time : util.time(item.createTime),
 				open : item.isOpen || 0,
 				read : item.isReadonly || 0

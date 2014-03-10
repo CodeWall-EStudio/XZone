@@ -11,6 +11,8 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				name : item.name,
 				mark : item.mark,
 				type : item.resource.type,
+				src : item.src || 0,
+				nick : item.creator.nick,
 				size : util.getSize(item.resource.size),
 				time : util.time(item.createTime),
 				coll : item.isFav
