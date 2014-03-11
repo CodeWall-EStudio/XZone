@@ -695,3 +695,6 @@ input[type='checkbox'] {
 	width:200px;
 	height:52px;
 }
+.check-read{
+	cursor: default;
+}

@@ -26,7 +26,10 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			$("#fileActZone .delfile").hide();
 			$("#fileActZone .movefile").hide();
 		}
-
+		handerObj.triggerHandler('bind:school',{
+			school : 1,
+			auth : myinfo.auth
+		});
 		nowGid = school.id;
 		nowFd = school.rootFolder.id;
 

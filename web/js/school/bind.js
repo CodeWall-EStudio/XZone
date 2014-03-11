@@ -6,6 +6,7 @@ define(['config'],function(config){
 		nowFd = 0,   //当前文件夹id
 		nowGid = 0,  //当前小组id
 		nowSchool = 0,
+		nowAuth = 0,
 		nowPage = 'user';
 
     $("#newFolds").validate({
@@ -275,7 +276,9 @@ define(['config'],function(config){
 			if(!nowSchool){
 		    	$('#fileActZone .sharefile').show();
 		    	$('#fileActZone .copyfile').show(); 
-		    	$('#fileActZone .movefile').show();  
+		    	 
+	    	}else if(nowAuth){
+		    	$('#fileActZone .movefile').show(); 
 	    	}
 	    	$('#fileActZone .downfile').show();
 	    	$('#fileActZone .collfile').show();    		
@@ -322,8 +325,9 @@ define(['config'],function(config){
 	    	}else{
 				if(!nowSchool){
 			    	$('#fileActZone .sharefile').show();
-			    	$('#fileActZone .copyfile').show();
-			    	$('#fileActZone .movefile').show();   
+			    	 $('#fileActZone .copyfile').show(); 
+		    	}else if(nowAuth){
+		    		$('#fileActZone .movefile').show();  
 		    	}
 		    	$('#fileActZone .downfile').show();
 		    	$('#fileActZone .collfile').show();    		
@@ -610,7 +614,13 @@ define(['config'],function(config){
     }
 
     function schoolChange(e,d){
-    	nowSchool = d;
+    	if(typeof d == 'object'){
+    		nowSchool = 1;
+    		nowAuth = d.auth;
+    	}else{
+    		nowSchool = d;
+    		nowAuth = 0;
+    	}
     }
 
     var handlers = {

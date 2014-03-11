@@ -67,7 +67,6 @@
           d.key = key;
         }  
         handerObj.triggerHandler('page:change'); 
-        handerObj.triggerHandler('bind:school',1);   
         handerObj.triggerHandler('school:init',d);              
       },
       mailbox : function(data){
