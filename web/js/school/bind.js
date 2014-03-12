@@ -272,6 +272,7 @@ define(['config'],function(config){
     	// $('#fileList .fdclick:checked').each(function(){
     	// 	$(this).attr('checked',false);
     	// });
+
 		if(n == 0){
 			if(!nowSchool){
 		    	$('#fileActZone .sharefile').show();

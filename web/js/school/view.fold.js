@@ -156,7 +156,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		}
 
 		// foldTarget.html('')
-		tmpTarget.find('fold').remove();//html('');
+		tmpTarget.html('');
 		nowFdInfo = {};
 		if(d){
 			nowGid = d.gid || 0;
@@ -299,7 +299,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			}
 		}else{
 		}
-
+		
 		if(d.root){
 			return;
 		}

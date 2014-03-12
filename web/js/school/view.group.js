@@ -31,6 +31,10 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 		}
 		nowGroup = myGroups[nowGid];
 
+			$("#fileActZone .renamefile").show();
+			$("#fileActZone .delfile").show();
+			$("#fileActZone .movefile").show();		
+
 		if(nowGroup.isMember){
 			$("#btnZone").show();
 			//$('.btn-upload').show();
