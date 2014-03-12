@@ -980,12 +980,15 @@ function moveFile(params, callback){
         var doc = {
             folder: DBRef('folder', folder._id)
         };
-
+        var creator = params.creator;
+        if(params.authManager){
+            delete params.creator;
+        }
         mFile.modify(params, doc, callback);
 
         // 记录该操作
         mLog.create({
-            fromUserId: params.creator,
+            fromUserId: creator,
 
             fileId: file._id.toString(),
             fileName: file.name,
@@ -1010,6 +1013,8 @@ exports.move = function(req, res){
     var targetId = params.targetId;
 
     var creator = req.loginUser._id;
+
+    params.authManager = U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER);
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
