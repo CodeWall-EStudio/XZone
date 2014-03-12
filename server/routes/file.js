@@ -731,7 +731,6 @@ function modifyFile(params, callback){
         doc.content = params.content;
     }
 
-    params.authManager = U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER);
 
     var ep = new EventProxy();
     ep.fail(callback);
@@ -797,10 +796,11 @@ function modifyFile(params, callback){
 }
 
 exports.modify = function(req, res){
-
+    var loginUser = req.loginUser;
     var params = req.body;
 
     params.creator = req.loginUser._id;
+    params.authManager = U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER);
 
     modifyFile(params, function(err, file){
         if(err){
