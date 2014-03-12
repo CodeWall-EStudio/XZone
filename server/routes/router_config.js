@@ -397,7 +397,11 @@ module.exports = {
     },
     '/api/manage/listPrepares': {
         method: GET
+    },
+    '/api/manage/listFiles': {
+        method: GET
     }
+
 };
 
 

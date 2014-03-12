@@ -2,6 +2,7 @@ var http = require('http');
 var EventProxy = require('eventproxy');
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
+var us = require('underscore');
 
 var config = require('../config');
 var ERR = require('../errorcode');
@@ -193,4 +194,58 @@ exports.listPrepares = function(req, res){
     });
 }
 
+exports.listFiles = function(req, res){
+    var loginUser = req.loginUser;
+    var params = req.query;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    
+    if(U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER)){
+        return ep.emit('error', 'not auth', ERR.NOT_AUTH);
+    }
+
+    db.group.findOne({ type: 0 }, ep.doneLater('getSchoolDone'));
+
+    ep.on('getSchoolDone', function(school){
+        if(!school){
+            return ep.emit('error', 'system error: no school');
+        }
+        var query = {
+            'group.$id': school._id,
+            status: 1
+        }
+        db.search('file', query, params, function(err, total, docs){
+            if(err){
+                ep.emit('error', err);
+            }else if(total && docs){
+                var defProps = { resource: ['_id', 'type', 'size'] , creator: ['_id', 'nick']};
+                
+                db.dereferences(docs, defProps, function(err, docs){
+                    if(err){
+                        ep.emit('error', err);
+                    }else{
+                        res.json({
+                            err: ERR.SUCCESS,
+                            result: {
+                                total: total,
+                                list: docs
+                            }
+                        });
+                    }
+                });
+            }else{
+                res.json({
+                    err: ERR.SUCCESS,
+                    result: {
+                        total: total,
+                        list: docs
+                    }
+                });
+            }
+        });
+    });
+}
 
