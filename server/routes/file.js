@@ -731,6 +731,8 @@ function modifyFile(params, callback){
         doc.content = params.content;
     }
 
+    params.authManager = U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER);
+
     var ep = new EventProxy();
     ep.fail(callback);
 
@@ -766,11 +768,16 @@ function modifyFile(params, callback){
             return;
         }
         var oldFileName = file.name;
+        var creator = params.creator;
+        if(params.authManager){
+            delete params.creator;
+        }
+
         mFile.modify(params, doc, callback);
 
         // 记录该操作
         mLog.create({
-            fromUserId: params.creator,
+            fromUserId: creator,
 
             fileId: file._id.toString(),
             fileName: oldFileName,
@@ -1035,6 +1042,7 @@ exports.move = function(req, res){
             fileId: fileId,
             creator: creator,
             targetId: targetId,
+            authManager: params.authManager,
             groupId: groupId
 
         }, ep.group('move'));
