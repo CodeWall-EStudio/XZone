@@ -18,7 +18,7 @@
 						<%}else{%>
 							<a class="fdname<%+item.id%>" href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
 						<%}%>
-						<%if(pr != 'group'){%>
+						<%if(pr != 'group' && !school){%>
 						<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
 							<%if(item.mark==''){%>
 								编辑备注

@@ -10,6 +10,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		nowKey = '',
 		nowFd = 0,
 		nowSchool = 0,
+		nowAuth = 0,
 		rootFd = 0,
 		nowPrep = 0, //当前是否是备课
 		nowOrder  = ['createTime',-1],
@@ -171,6 +172,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 
 			nowSchool = d.school || 0;
+			nowAuth = d.auth || 0;
 			//备课
 			nowGrade = d.grade || 0;
 			nowTag = d.tag || 0;
@@ -297,9 +299,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			}
 		}else{
 		}
-
+		
 		if(d.root){
-			console.log(d);
 			return;
 		}
 
@@ -318,11 +319,11 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				prep : nowPrep,
 				grade : nowGrade,
 				school : nowSchool,
+				auth : nowAuth,
 				tag : nowTag,
 				uid : nowUid
 			}
 		});
-
 		view.beginPanel();		
 	}
 

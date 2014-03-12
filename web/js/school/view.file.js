@@ -91,7 +91,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			//rootFd = d.rootfdid || 0;
 		}
 
-		tmpTarget.html('');
+		tmpTarget.find('.file').remove();
 
 		var tpl = 'file.table';
 		if(nowPrep){
