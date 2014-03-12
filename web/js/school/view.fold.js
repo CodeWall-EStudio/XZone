@@ -114,7 +114,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			data : {
 				list : list,
 				gid : nowGid,
-				order : nowOds
+				order : nowOds,
+				school : nowSchool
 			}
 			// },
 			// handlers : {
@@ -298,6 +299,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		}
 
 		if(d.root){
+			console.log(d);
 			return;
 		}
 
