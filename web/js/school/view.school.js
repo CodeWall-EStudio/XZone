@@ -7,11 +7,19 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		nowKey = '',
 		rootFd = 0;
 
-	var actTarget = $('#actWinZone');
+	var actTarget = $('#actWinZone'),
+		userAsideTarget = $('#userAside'),
+		userPrepAsideTarget = $('#userPrepAside'),
+		groupAsideTarget = $('#groupAside'),
+		groupPrepAsideTarget = $('#groupPrepAside');	
 
 	function init(e,d){
 		$('#userAside').hide();
 		$("#groupAside").show();
+
+		userAsideTarget.hide();
+		userPrepAsideTarget.hide();
+		groupPrepAsideTarget.hide();
 
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
