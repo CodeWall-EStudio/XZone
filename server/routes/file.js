@@ -1021,7 +1021,7 @@ exports.move = function(req, res){
 
     var creator = req.loginUser._id;
 
-    params.authManager = U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER);
+    params.authManager = U.hasRight(req.loginUser.auth, config.AUTH_SYS_MANAGER);
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
