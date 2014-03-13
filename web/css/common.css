@@ -30,7 +30,7 @@ a{
 .header .logo{
 	display:inline-block;
 	float:left;
-	background:url(imgs/logo1.png) no-repeat;
+	background:url(imgs/logo.png) no-repeat;
 	width:235px;
 	height:60px;
 }
