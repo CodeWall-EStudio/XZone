@@ -72,7 +72,7 @@ function createDepart(parent, dep, callback){
     }
 }
 
-
+// 初始化学校的部门架构
 exports.initDeparts = function(req, res){
     var skey = req.skey;
     var user = req.loginUser;
@@ -81,7 +81,7 @@ exports.initDeparts = function(req, res){
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
-    if(user.auth !== 15){
+    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
         return ep.emit('error', 'no auth');
     }
 
@@ -119,3 +119,51 @@ exports.initDeparts = function(req, res){
     });
 
 }
+
+// 合并旧的用户数据
+exports.mergeOldData = function(req, res){
+    var user = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+        return ep.emit('error', 'no auth');
+    }
+
+    db.user.find({ openid: null }, function(err, users){
+        if(err){
+            return ep.emit('error', err);
+        }
+        ep.after('mergeDone', users.length, function(){
+            res.json({ err: ERR.SUCCESS });
+        });
+
+        users.forEach(function(oldUser){
+
+            db.user.findOne({ name: oldUser.name, openid: { $exists: true } }, 
+                    function(err, user){
+
+                if(err){
+                    return ep.emit('error', err);
+                }
+                if(user){
+                    db.departuser.update({ _id: user._id }, {$set: { user: DBRef('user', oldUser._id) }}, function(){
+                        console.log('change departuser,', oldUser.name);
+                    });
+
+                    user = us.extend(user, oldUser);
+
+                    db.user.save(user, ep.group('mergeDone'));
+
+                }else{
+                    ep.emit('mergeDone');
+                }
+            });
+        });
+
+    });
+}
+
+

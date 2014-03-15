@@ -113,7 +113,7 @@ exports.loginSuccess = function(req, res, next){
 
     var ticket = req.body.ticket || req.query.ticket;
 
-    console.log('s sssss:',ticket);
+    // console.log('s sssss:',ticket);
 
     if(!ticket){
         res.json({err: ERR.NOT_LOGIN});
