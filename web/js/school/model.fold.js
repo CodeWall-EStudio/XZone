@@ -116,6 +116,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			gid = data.groupId || 0,
 			order = data.order || {},
 			fdid = data.folderId || 0,
+			type = data.type || 0,
 			tplid = data.tplid,
 			target = data.target || 0,
 			root = data.root || 0;
@@ -139,7 +140,11 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 					if(tplid){
 						handerObj.triggerHandler('file:treeload',{list:list,target:target,tplid:tplid});
 					}else{
-						handerObj.triggerHandler('fold:treeload',{list:list,target:target,root:root});
+						if(type){
+							handerObj.triggerHandler('fold:titload',{list:list,target:target,root:root});
+						}else{
+							handerObj.triggerHandler('fold:treeload',{list:list,target:target,root:root});
+						}
 					}
 				}else{
 					handerObj.triggerHandler('fold:load',{list:list,root:root});

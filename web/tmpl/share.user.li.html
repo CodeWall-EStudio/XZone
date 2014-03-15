@@ -15,7 +15,7 @@
 		for(var i=0,l=ulist.length;i<l;i++){ 
 			var item = ulist[i];
 	%>
-		<li><input type="checkbox" value="<%+item._id%>" <%if(ml && $.inArray(item._id,ml)>=0){%>checked<%}%> /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.nick%></a></li>		
+		<li><input type="checkbox" value="<%+item._id%>" <%if(typeof ml != 'undefined' && $.inArray(item._id,ml)>=0){%>checked<%}%> /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.nick%></a></li>		
 	<%
 		}
 	}

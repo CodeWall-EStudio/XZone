@@ -577,6 +577,13 @@ define(['config'],function(config){
 		}
 	});
 
+	$('body').bind('click',function(e){
+		var target = $(e.target);
+		if(!target.hasClass('dr-menu')){
+			$('.tit-menu').hide();
+		}
+	});
+
     var scrollData = {
         scrollEl: [],
         bindScroll: function(el, eventName){

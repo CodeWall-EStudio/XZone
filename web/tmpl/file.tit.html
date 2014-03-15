@@ -1,20 +1,50 @@
 <div class="fold-list-link">
 	<a cmd="tree" class="section-tit-a-first section-tit-a-border">树</a>				
 <%if(!key){%>
+	<div class="tit-div">
 	<%if(gid){%>
-	<a href="#<%if(school){%>school=1&<%}%>gid=<%+gid%>" style="z-index:20"><%-gname%></a>
+		<%if(fold){%>
+			<a class="dr-menu" data-id="<%-fold.idpath[0]%>" data-target="topFoldPath" stlyle="z-index:20"><%-gname%></a>
+		<%}else{%>
+			<a href="#<%if(school){%>school=1&<%}%>gid=<%+gid%>" style="z-index:20"><%-gname%></a>
+		<%}%>
 	<%}else{%>
-	<a href="#" style="z-index:20">个人文件</a>
+		<%if(fold){%>
+			<a class="dr-menu" data-id="<%-fold.idpath[0]%>" data-target="topFoldPath" stlyle="z-index:20">个人文件</a>
+		<%}else{%>
+		    <a href="#" style="z-index:20">个人文件</a>
+		<%}%>
 	<%}%>
+	<%if(fold){%>
+		<ul id="topFoldPath" class="dropdown-menu menu tit-menu" role="menu" aria-labelledby="dLabel1">
 
-	<%if(fold){%>	
+		</ul>
+	<%}%>
+	</div>
+	<%
+		if(fold){
+	%>	
 		<%if(fold.idpath.length>2){%>
-			<a style="z-index:19">......</a>
+			<div class="tit-div"><a style="z-index:19">......</a></div>
 		<%}%>					
-		<%if(fold.pid && fold.idpath.length>2){%>
-			<a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>" class="frist" style="z-index:19"  href="#"><%-fold.pname%></a>
-		<%}%>	
-			<a class="end" style="z-index:18"><%-fold.name%></a>
+		<%
+			if(fold.pid && fold.idpath.length>2){
+				var l = fold.idpath.length;
+		%>
+			<div class="tit-div">
+			<a  data-id="<%-fold.idpath[l-2]%>" data-target="parentFoldPath"  class="frist dr-menu" style="z-index:19"  ><%-fold.pname%></a>
+			<ul id="parentFoldPath" class="dropdown-menu menu tit-menu" role="menu" aria-labelledby="dLabel">
+				<li><a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>"><%-fold.pname%></a></li>
+			</ul>
+			</div>
+			<div class="tit-div">
+			<a data-id="<%=fold.idpath[l-1]%>" class="end dr-menu" data-target="thisFoldPath" style="z-index:18"><%-fold.name%></a>
+			<ul id="thisFoldPath" class="dropdown-menu menu tit-menu" role="menu" aria-labelledby="dLabel">
+			</ul>
+			</div>						
+		<%}else{%>	
+			<a data-id="<%=fold.idpath[l-1]%>" class="end" data-target="thisFoldPath" style="z-index:18"><%-fold.name%></a>
+		<%}%>
 		<%if(fold.pid){%>	
 		<a class="second" style="z-index:17" class="end" href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>">返回上级</a>
 		<%}%>

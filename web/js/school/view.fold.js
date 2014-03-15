@@ -73,7 +73,34 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		var view = new View({
 			target : titTarget,
 			tplid : tpl,
-			data : data				
+			data : data,
+			handlers : {
+				'.dr-menu' : {
+					'click' : function(e){
+						var t = $(this);
+							target = t.attr('data-target'),
+							id = t.attr('data-id'),
+							mt = $('#'+target);
+						//if(!mt.attr('data-loaded')){
+							var obj = {
+								folderId : id,
+								target : mt,
+								type : 'fold'
+							}
+							if(nowGid){
+								obj.groupId = nowGid;
+							}
+							if(mt.attr('loading')){
+								$('.tit-menu').hide();
+								mt.show();
+								//mt.dropdown('toggle');
+							}else{
+								handerObj.triggerHandler('fold:get',obj);
+							}
+						//}
+					}
+				}
+			}		
 		});
 		view.createPanel();
 	}
@@ -130,6 +157,30 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			// }
 		});
 		view.appendPanel();			
+	}
+
+	function titLoad(e,d){
+		var data = {
+			gid : nowGid,
+			gname : nowGinfo.name || '',
+			school : nowSchool,
+			filetype : config.filetype,
+			type : nowType,
+			key : nowKey,
+			list : d.list
+		};	
+		var view = new View({
+			target : d.target,
+			tplid : 'file.tit.list',
+			data : data,
+			after : function(){
+				//d.target.dropdown('toggle');
+				$('.tit-menu').hide();
+				d.target.show();
+				d.target.attr('loading',1);
+			}
+		});	
+		view.createPanel();
 	}
 
 	function foldTree(e,d){
@@ -472,6 +523,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	var handlers = {
+		'fold:titload' : titLoad,
 		'fold:treeload' : foldTree,
 		'fold:modifysuc' : modifySuc,
 		'fold:viewedit' : foldEdit,

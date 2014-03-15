@@ -717,3 +717,13 @@ input[type='checkbox'] {
 	float:left;
 	position:relative;
 }
+.tit-div{
+	float:left;
+	position:relative;
+}
+.section-tit .fold-list-link .tit-menu a{
+	background:transparent;
+}
+.section-tit .fold-list-link .tit-menu a:hover{
+	color:#000;
+}
