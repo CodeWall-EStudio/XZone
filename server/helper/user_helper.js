@@ -7,6 +7,7 @@ var EventProxy = require('eventproxy');
 
 var config = require('../config');
 var U = require('../util');
+var db = require('../models/db');
 var mUser = require('../models/user');
 
 exports.getUserInfo = function(skey, callback){
@@ -133,7 +134,7 @@ exports.findAndUpdateUserInfo = function(skey, type, callback){
                 ep.emitLater('error', err);
             }else if(data){
                 var userInfo = {};
-                userInfo.loginName = data.openid;
+                userInfo.openid = data.openid;
                 userInfo.name = data.nickname;
                 ep.emitLater('getUserInfoSuccess', userInfo);
             }else{
@@ -147,7 +148,9 @@ exports.findAndUpdateUserInfo = function(skey, type, callback){
             if(err){
                 ep.emitLater('error', err);
             }else if(data.success && data.userInfo){
-                ep.emitLater('getUserInfoSuccess', data.userInfo);
+                var userInfo = data.userInfo;
+                userInfo.openid = userInfo.id;
+                ep.emitLater('getUserInfoSuccess', userInfo);
             }else{
                 ep.emitLater('error', 'get userInfo error.');
             }
@@ -157,19 +160,21 @@ exports.findAndUpdateUserInfo = function(skey, type, callback){
     // 查询 user 数据库, 更新资料
     ep.on('getUserInfoSuccess', function(userInfo){
 
-        var name = userInfo.loginName;
+        var openid = userInfo.openid; // 这个 uid 是sso或者 QQ openid 的id
+        var loginName = userInfo.loginName;
         var nick = userInfo.name;
 
-        // name 是唯一的
-        mUser.getUserByName(name, function(err, user){
+        // 先用 openid 查查有没有该用户
+        db.user.findOne({ openid: openid }, function(err, user){
             if(user){ // db已经有该用户, 更新资料
                 user.nick = nick;
-
+                user.name = loginName;
                 mUser.save(user, ep.done('updateUserSuccess'));
             }else{
                 user = {
+                    openid: openid,
                     nick: nick,
-                    name: name,
+                    name: loginName,
                     auth: 0, // 15 是管理员
                     size: config.DEFAULT_USER_SPACE,
                 };
