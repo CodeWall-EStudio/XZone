@@ -184,9 +184,13 @@ exports.mergeOldData = function(req, res){
                         console.log('change departuser,', oldUser.name);
                     });
 
-                    user = us.extend(user, oldUser);
+                    de.user.remove({ _id: user._id }, function(){
+                        console.log('remove duplicate user', user.name);
+                    });
 
-                    db.user.save(user, ep.group('mergeDone'));
+                    var newUser = us.extend({}, user, oldUser);
+
+                    db.user.save(newUser, ep.group('mergeDone'));
 
                 }else{
                     ep.emit('mergeDone');
