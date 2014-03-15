@@ -74,7 +74,7 @@ function createDepart(parent, dep, callback){
 }
 
 exports.initGroups = function(req,res){
-    
+
     var param = {
         name : '教学处',
         status : 0,
@@ -93,6 +93,13 @@ exports.initGroups = function(req,res){
     group.create(param,function(){
         console.log('学校空间创建完成');
     }); 
+
+    res.json({
+        err: 0,
+        result: {
+            'msg' : '初始化完成!'
+        }
+    });
 
 }
 
