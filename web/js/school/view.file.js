@@ -379,7 +379,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	function getUList(id,list){
 		for(var i = 0,l=list.length;i<l;i++){
 			var item = list[i];
-			if(item.id == id){
+			if(item._id == id){
 				return item;
 			}
 			if(item.children){
@@ -397,7 +397,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			target : target,
 			tplid : 'share.user.li',
 			data : {
-				list : list.children
+				list : list.children,
+				ulist : list.users
 			},
 			after : function(){
 				target.find('.plus').unbind().bind('click',function(e){

@@ -7,6 +7,7 @@ var us = require('underscore');
 var config = require('../config');
 var ERR = require('../errorcode');
 var db = require('../models/db');
+var group = require('../models/group');
 var U = require('../util');
 var userHelper = require('../helper/user_helper');
 var mUser = require('../models/user');
@@ -91,6 +92,16 @@ exports.initDeparts = function(req, res){
         if(root){
             return ep.emit('error', 'already init!!!!');
         }
+
+        var param = {
+            name : '教学处',
+            status : 0,
+            type : 2,
+            pt : 1
+        }
+        group.create(param,function(){
+            console.log('教学处创建完成');
+        });
 
         userHelper.getOrgTree(skey, user.name, ep.done('getOrgTree')); 
     });

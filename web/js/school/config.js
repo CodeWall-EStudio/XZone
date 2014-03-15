@@ -24,6 +24,7 @@ define(function() {
 			logout : CGI_PATH+'user/logoff'+EXT,
 			userlist : CGI_PATH+'user/search'+EXT,
 			usearch : CGI_PATH+'user/search'+EXT,
+			departments : CGI_PATH+'user/departments'+EXT,
 
 			//文件操作
 			upload : '/upload'+EXT,

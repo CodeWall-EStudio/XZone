@@ -1,13 +1,23 @@
 <ul>
 	<%
+	if(list.length>0){
 		for(var i=0,l=list.length;i<l;i++){
 			var item = list[i];
-			console.log(item);
-			if(item.classes != 'user'){
 	%>
-		<li><i <%if(item.children){%>cmd="next" class="plus"<%}%> data-id="<%+item.id%>"></i><a title="<%+item.title%>" class="list-link" data-id="<%+item.id%>"> <%=item.title%></a></li>
-		<%}else{%>
-			<li><input type="checkbox" value="<%+item.id%>" /><a title="<%+item.title%>" class="list-link" data-id="<%+item.id%>"> <%=item.title%></a></li>		
-		<%}%>
-	<%}%>
+		<li><i <%if(item.children.length>0 || item.users.length>0){%>cmd="next" class="plus"<%}%> data-id="<%+item._id%>"></i><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
+		
+	<%
+		}
+	}
+	%>
+	<%
+	if(ulist.length>0){
+		for(var i=0,l=ulist.length;i<l;i++){
+			var item = ulist[i];
+	%>
+		<li><input type="checkbox" value="<%+item._id%>" /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.nick%></a></li>		
+	<%
+		}
+	}
+	%>
 </ul>
