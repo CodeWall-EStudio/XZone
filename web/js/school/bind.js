@@ -6,6 +6,7 @@ define(['config'],function(config){
 		nowFd = 0,   //当前文件夹id
 		nowGid = 0,  //当前小组id
 		nowSchool = 0,
+		isMember = 0,
 		nowAuth = 0,
 		nowPage = 'user';
 

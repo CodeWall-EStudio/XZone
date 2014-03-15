@@ -4,6 +4,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	var nowGid = 0,
 		action = 0,
 		nowKey = '',
+		nowGroup = null,
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
@@ -85,7 +86,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			nowUid = d.uid || 0;
 			nowKey = d.key || '';
 			nowPrep = d.prep || 0;
-
+			nowGroup = d.info || null;
 			nowSchool = d.school || 0;
 			nowAuth = d.auth || 0;
 			//rootFd = d.rootfdid || 0;
@@ -137,6 +138,16 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			data.status = 1;
 		}
 
+		if(nowGroup && nowGroup.isMember){
+			$("#fileActZone .renamefile").show();
+			$("#fileActZone .delfile").show();
+			$("#fileActZone .movefile").show();
+		}else{
+			$("#fileActZone .renamefile").hide();
+			$("#fileActZone .delfile").hide();
+			$("#fileActZone .movefile").hide();			
+		}
+
 		if(!d.info || nowSchool){
 			handerObj.triggerHandler('file:search',data);	
 		}else if((d.info && d.info.isMember) || d.open){
@@ -156,6 +167,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowPrep){
 			pr = nowPrep;
 		}
+		//console.log(nowGroup);
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'file.user.list',
@@ -163,6 +175,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				list : d.list,
 				filetype : config.filetype,
 				gid : nowGid,
+				ginfo : nowGroup,
 				down : config.cgi.filedown,
 				pr : nowPrep,
 				school : nowSchool,
@@ -361,6 +374,114 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			handerObj.triggerHandler('file:shareload',{ type : d.target,files: d.fl, list : myinfo[d.target]});
 		}
 		//handerObj.triggerHandler('file:share',{type:d.target,d.fl});
+	}
+
+	function getUList(id,list){
+		for(var i = 0,l=list.length;i<l;i++){
+			var item = list[i];
+			if(item.id == id){
+				return item;
+			}
+			if(item.children){
+				var ret = getUList(id,item.children);
+				if(ret){
+					return ret;
+				}
+			}
+		}
+		return null;
+	}
+
+	function userList(list,target){
+		var view = new View({
+			target : target,
+			tplid : 'share.user.li',
+			data : {
+				list : list.children
+			},
+			after : function(){
+				target.find('.plus').unbind().bind('click',function(e){
+						var target = $(e.target),
+							id = target.attr('data-id');
+						var p = target.parent('li');
+						if(p.find('ul').length > 0){
+							var ul = p.find('ul')[0];
+							if(target.hasClass("minus")){
+								target.removeClass('minus');
+								p.find('ul').hide();
+							}else{
+								target.addClass('minus');
+								p.find('ul').show();
+							}
+							return;
+						}else{	
+							target.addClass('minus');
+							var p = target.parent('li');
+							userList(getUList(id,list.children),p);
+						}
+				});
+			}			
+		});
+
+		view.appendPanel();
+	}
+
+	function shareuserLoad(e,d){
+		var selected = [];
+		var view = new View({
+			target : actTarget,
+			tplid : 'share.user',	
+			data : {
+				list : d.list,
+				fl : d.files
+			},
+			after : function(){
+				$("#actWin").modal('show');
+				actTarget.find('.plus').unbind().bind('click',function(e){
+						var target = $(e.target),
+							id = target.attr('data-id');
+						var p = target.parent('li');
+						if(p.find('ul').length > 0){
+							var ul = p.find('ul')[0];
+							if(target.hasClass("minus")){
+								target.removeClass('minus');
+								p.find('ul').hide();
+							}else{
+								target.addClass('minus');
+								p.find('ul').show();
+							}
+							return;
+						}else{	
+							target.addClass('minus');
+							var p = target.parent('li');
+							userList(getUList(id,d.list),p);
+						}
+				});
+			},
+			handlers : {		
+				'.btn-share' : {
+					'click' : function(){
+						var fls = [];						
+						var li = [];
+						for(var i in d.files){
+							fls.push(d.files[i].id);
+						}
+						actTarget.find('input:checked').each(function(){
+							li.push($(this).val());
+						});
+						if(li.length===0){
+							return;
+						}
+						var obj = {
+							fileId : fls
+						};
+						obj.toUserId = li;
+						handerObj.triggerHandler('file:shareto',obj);
+					}
+				}
+			}			
+		});
+		view.createPanel();
 	}
 
 	function shareLoad(e,d){
@@ -764,6 +885,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				list : [d],
 				filetype : config.filetype,
 				gid : nowGid,
+				ginfo : nowGroup,
 				down : config.cgi.filedown,
 				school : nowSchool,
 				auth : nowAuth,
@@ -780,7 +902,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	}
 
 	function sharesuc(e,d){
-		resetToolbar();
+		//resetToolbar();
 	}
 
 	function moveSuc(e,d){
@@ -788,7 +910,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		for(var i in ids){
 			$('.file'+ids[i]).remove();
 		}
-		resetToolbar();
+		//resetToolbar();
 	}
 
 	function resetToolbar(){
@@ -817,6 +939,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		'file:copy' : fileCopy,
 		'file:share' : fileShare,
 		'file:shareload' : shareLoad,
+		'file:shareuserload' : shareuserLoad,
 		'file:modifysuc' : modifySuc,
 		'file:viewedit' : fileEdit,
 		'file:delsuc' : delSuc,

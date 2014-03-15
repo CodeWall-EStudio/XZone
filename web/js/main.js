@@ -58,7 +58,8 @@
             key = data.key || 0,
             type = data.type || 0;
         var d = {
-          fdid : fdid
+          fdid : fdid,
+          type : type
         }
         if(Math.abs(od)){
           d.order = [on,od];

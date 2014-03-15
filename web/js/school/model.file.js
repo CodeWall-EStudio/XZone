@@ -1,4 +1,4 @@
-define(['config','helper/request','helper/util','cache'],function(config,request,util,Cache){
+define(['config','helper/request','helper/util','cache','helper/test'],function(config,request,util,Cache,UL){
 	var	handerObj = $(Schhandler);
 
 	function convent(data){
@@ -197,6 +197,10 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 	}
 
 	function getUser(e,d){
+		
+		// var list = UL.departmentTree.children;
+		// handerObj.triggerHandler('file:shareuserload',{ type : d.type,files: d.files, list :list});
+		// return;
 		var opt = {
 			cgi : config.cgi.userlist
 		}

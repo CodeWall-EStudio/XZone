@@ -319,6 +319,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				prep : nowPrep,
 				grade : nowGrade,
 				school : nowSchool,
+				ginfo : nowGinfo,
 				auth : nowAuth,
 				tag : nowTag,
 				uid : nowUid

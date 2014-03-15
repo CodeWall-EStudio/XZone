@@ -1,4 +1,3 @@
-		
 		<%
 			for(var i in list){
 				var item = list[i];
@@ -18,7 +17,8 @@
 						<%}else{%>
 							<a class="fdname<%+item.id%>" href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
 						<%}%>
-						<%if(pr != 'group' && !school){%>
+
+						<%if(pr != 'group' && !school && (ginfo && ginfo.isMember)){%>
 						<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
 							<%if(item.mark==''){%>
 								编辑备注

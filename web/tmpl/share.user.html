@@ -1,0 +1,49 @@
+				<%
+					var key;
+				%>
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">共享文件
+						给其他用户
+					</h4>
+				</div>
+				<div class="modal-body">
+
+					<div>
+						<div class="share-tit">
+							发送文件(<%=fl.length%>)个：
+							<i>
+								<%
+									for(var i =0,l=fl.length;i<l;i++){
+										var item = fl[i];
+								%>
+									<%if(i<8){%>
+										<%-item.name%>
+									<%}%>
+								<%}%>
+								<%if(fl.length>1){%>
+									等
+								<%}%>
+							</i>
+						</div>
+						<div>
+							选择要发送的用户
+							<ul id="searchResult" class="act-fold-list">
+								<%
+									for(var i=0,l=list.length;i<l;i++){
+										var item = list[i];
+										if(item.classes != 'user'){
+								%>
+									<li><i <%if(item.children){%>cmd="next" class="plus"<%}%> data-id="<%+item.id%>"></i><a title="<%+item.title%>" class="list-link" data-id="<%+item.id%>"> <%=item.title%></a></li>
+									<%}else{%>
+										<li><input type="checkbox" value="<%+item.id%>" /><a title="<%+item.title%>" class="list-link" data-id="<%+item.id%>"> <%=item.title%></a></li>									
+									<%}%>
+								<%}%>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary btn-share"  data-dismiss="modal">确定</button>
+				</div>

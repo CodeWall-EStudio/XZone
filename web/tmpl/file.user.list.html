@@ -14,7 +14,7 @@
 						</a>
 						<dl>
 							<dt><a href="/review.html#id=<%+item.id%>" target="_blank" class="file-name fdname<%+item.id%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
-								<%if(pr != 'group' && !school){%>
+								<%if(pr != 'group' && !school && (ginfo && ginfo.isMember)){%>
 									<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
 										<%if(item.mark==''){%>
 											编辑备注

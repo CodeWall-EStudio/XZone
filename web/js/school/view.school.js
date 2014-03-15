@@ -33,6 +33,9 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			$("#fileActZone .renamefile").hide();
 			$("#fileActZone .delfile").hide();
 			$("#fileActZone .movefile").hide();
+		}else{
+			$('.tool-zone').removeClass('hide');
+			$("#fileActZone").addClass('hide');
 		}
 		handerObj.triggerHandler('bind:school',{
 			school : 1,
