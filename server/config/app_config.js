@@ -21,6 +21,9 @@ exports.CAS_SERVICE = 'http://xzone.codewalle.com/api/user/loginSuccess';
 // 获取用户详细资料的CGI
 exports.CAS_USER_INFO_CGI = 'http://mapp.71xiaoxue.com/components/getUserInfo.htm';
 
+// 获取用户组织列表单cgi
+exports.CAS_ORG_TREE_CGI = 'http://mapp.71xiaoxue.com/components/getOrgTree.htm';
+
 // 允许新媒体跨域上传和下载资源的 host
 exports.MEDIA_CORS_URL = 'http://media.71xiaoxue.com';
 

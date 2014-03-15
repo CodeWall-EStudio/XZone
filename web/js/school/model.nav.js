@@ -46,7 +46,9 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 			o.school = data.school;
 			o.school.id = o.school._id;
 			o.school.auth = data.school.auth || 0;
-			o.school.rootFolder.id = o.school.rootFolder.$id;
+			if(data.school.rootFolder){
+				o.school.rootFolder.id = data.school.rootFolder.$id || 0;
+			}
 			o.group2key[o.school.id] = o.school;
 		}else{
 			o.school = false;

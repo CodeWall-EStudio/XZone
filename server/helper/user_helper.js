@@ -36,7 +36,36 @@ exports.getUserInfo = function(skey, callback){
             }
         }
     });
+}
 
+exports.getOrgTree = function(skey,loginName,callback){
+    var data = querystring.stringify({
+        key : skey,
+        loginName : loginName
+    });
+
+    U.request({
+        url: config.CAS_ORG_TREE_CGI,
+        method: 'POST',
+        data: data,
+        headers: {  
+            "Content-Type": 'application/x-www-form-urlencoded',  
+            "Content-Length": data.length  
+        }
+
+    }, function(err, data){
+        if(err){
+            callback(err);
+        }else{
+            console.log(data);
+            try{
+                callback(null, JSON.parse(data));
+            }catch(e){
+                console.error('getUserInfo Error', data);
+                callback('getUserInfo JSON parse error: ' + e.message);
+            }
+        }
+    });    
 }
 
 exports.getUserInfoFromQQ = function(accessToken, callback){

@@ -116,3 +116,6 @@ CAS.prototype.validate = function(ticket, callback) {
       callback(e);
     });
 };
+
+CAS.prototype.getOrgTree = function(){
+}

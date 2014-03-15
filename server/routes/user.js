@@ -26,7 +26,6 @@ var oauth = new OAuth2(
     config.QQ_CONNECT_TOKEN_PATH
 );
 
-
 exports.gotoLogin = function(req, res){
     var type = req.type || req.query.type || 'cas';
     var url;
@@ -47,6 +46,25 @@ exports.gotoLogin = function(req, res){
     }
 
     res.redirect(url);
+}
+
+function convent(list){
+
+}
+
+exports.getorgtree = function(req,res){
+    var skey = req.cookies.skey || req.body.skey || req.query.skey;
+    var user = req.loginUser;
+
+    console.log('>>>getOrgTree');
+    userHelper.getOrgTree(skey,user.name,function(err,d){
+        if(!err){
+            if(d.sucess){
+                console.log(d.departmentTree);   
+            }
+        }
+    });    
+
 }
 
 exports.get = function(req, res){
@@ -94,6 +112,8 @@ exports.loginSuccess = function(req, res, next){
     req.redirectUrl = '/index.html';
 
     var ticket = req.body.ticket || req.query.ticket;
+
+    console.log('s sssss:',ticket);
 
     if(!ticket){
         res.json({err: ERR.NOT_LOGIN});
