@@ -170,6 +170,28 @@ exports.findAndUpdateUserInfo = function(skey, type, callback){
                 user.nick = nick;
                 user.name = loginName;
                 mUser.save(user, ep.done('updateUserSuccess'));
+            }else if(loginName){ // 没有 openid, 有loginName的话, 尝试查一下是否有旧数据, 关联起来
+                db.user.findOne({ name: loginName }, function(err, user){
+                    if(user){ // 有旧用户
+                        user.openid = openid;
+                        user.nick = nick;
+                        user.name = loginName;
+                        mUser.save(user, ep.done('updateUserSuccess'));
+                    }else{
+                        // 没有旧用户
+                        user = {
+                            openid: openid,
+                            nick: nick,
+                            name: loginName,
+                            auth: 0, // 15 是管理员
+                            size: config.DEFAULT_USER_SPACE,
+                        };
+                        if(type === 'qq'){
+                            user.from = 'qq';
+                        }
+                        mUser.create(user, ep.done('updateUserSuccess'));
+                    }
+                });
             }else{
                 user = {
                     openid: openid,
