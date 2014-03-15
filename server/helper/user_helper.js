@@ -58,12 +58,12 @@ exports.getOrgTree = function(skey,loginName,callback){
         if(err){
             callback(err);
         }else{
-            console.log(data);
+            // console.log(data);
             try{
                 callback(null, JSON.parse(data));
             }catch(e){
-                console.error('getUserInfo Error', data);
-                callback('getUserInfo JSON parse error: ' + e.message);
+                console.error('getOrgTree Error', data);
+                callback('getOrgTree JSON parse error: ' + e.message);
             }
         }
     });    

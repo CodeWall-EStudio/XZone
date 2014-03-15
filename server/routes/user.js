@@ -201,6 +201,23 @@ exports.loginSuccessWithQQ = function(req, res, next){
 
 }
 
+exports.departments = function(req, res){
+    var params = req.query;
+
+    mUser.getAllDepartments(params, function(err, data){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else{
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    list: data.children
+                }
+            });
+        }
+    });
+}
+
 
 exports.logoff = function(req, res){
 

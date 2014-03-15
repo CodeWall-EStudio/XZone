@@ -16,7 +16,7 @@ exports.AUTH_TYPE = 'auto';// auto, sso, qq
 exports.CAS_BASE_URL = 'http://dand.71xiaoxue.com:80/sso.web';
 
 exports.CAS_SERVICE = 'http://xzone.codewalle.com/api/user/loginSuccess';
-//exports.CAS_SERVICE = 'http://localhost:8091/api/user/loginSuccess';
+// exports.CAS_SERVICE = 'http://localhost:8091/api/user/loginSuccess';
 
 // 获取用户详细资料的CGI
 exports.CAS_USER_INFO_CGI = 'http://mapp.71xiaoxue.com/components/getUserInfo.htm';

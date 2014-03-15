@@ -168,6 +168,8 @@ exports.addHelper(exports, 'fav');
 exports.addHelper(exports, 'board');
 exports.addHelper(exports, 'message');
 exports.addHelper(exports, 'log');
+exports.addHelper(exports, 'department');
+exports.addHelper(exports, 'departuser');
 
 // test code
 // exports.open(function(err, db){
