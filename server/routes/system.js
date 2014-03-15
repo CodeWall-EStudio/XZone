@@ -73,6 +73,29 @@ function createDepart(parent, dep, callback){
     }
 }
 
+exports.initGroups = function(req,res){
+    
+    var param = {
+        name : '教学处',
+        status : 0,
+        type : 2,
+        pt : 1
+    }
+    group.create(param,function(){
+        console.log('教学处创建完成');
+    });
+
+   var param = {
+        name : '学校空间',
+        status : 0,
+        type : 0,
+    }
+    group.create(param,function(){
+        console.log('学校空间创建完成');
+    }); 
+
+}
+
 // 初始化学校的部门架构
 exports.initDeparts = function(req, res){
     var skey = req.skey;
@@ -91,17 +114,7 @@ exports.initDeparts = function(req, res){
     ep.on('getSchoolDep', function(root){
         if(root){
             return ep.emit('error', 'already init!!!!');
-        }
-
-        var param = {
-            name : '教学处',
-            status : 0,
-            type : 2,
-            pt : 1
-        }
-        group.create(param,function(){
-            console.log('教学处创建完成');
-        });
+        }     
 
         userHelper.getOrgTree(skey, user.name, ep.done('getOrgTree')); 
     });
