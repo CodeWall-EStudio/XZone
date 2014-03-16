@@ -13,8 +13,10 @@
 			<td><%-item.name%></td>
 			<td class="group<%+item.id%>" >
 				 <a cmd="edit" data-id="<%+item.id%>">修改</a>
-				 <%if(!item.status){%>
-				 	已审核
+				 <%if(item.validateStatus == 0){%>
+				 	审核不通过
+				 <%}else if(item.validateStatus == 1){%>
+				 	审核通过
 				 <%}%>
 				 <a cmd="pass" data-id="<%+item.id%>">审核通过</a>  <a cmd="notpass"  data-id="<%+item.id%>">审核不通过</a>	
 			</td>

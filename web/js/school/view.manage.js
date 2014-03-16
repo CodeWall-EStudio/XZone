@@ -206,6 +206,7 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 		}
 		var obj = {
 			groupId : id,
+			name : name,
 			content : desc,
 			members : members,
 			managers : manages,
