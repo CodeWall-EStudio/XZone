@@ -176,7 +176,7 @@ function fetchDepartments(dep, callback){
         dep.users = [];
 
         ep.after('fetchDepartUsers', depUsers.length, function(list){
-            dep.users = list;
+            dep.users = us.compact(list);
 
             ep.emit('getUsersDone');
         });
