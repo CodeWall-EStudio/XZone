@@ -698,3 +698,6 @@ input[type='checkbox'] {
 .check-read{
 	cursor: default;
 }
+.school-link{
+	cursor:pointer;
+}
