@@ -550,6 +550,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 						}else{
 							obj.toGroupId = li;
 						}
+						if(li.length===0){
+							return;
+						}
 
 						handerObj.triggerHandler('file:shareto',obj);
 					}
