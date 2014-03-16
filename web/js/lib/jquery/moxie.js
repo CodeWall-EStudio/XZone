@@ -2387,7 +2387,7 @@ define('moxie/runtime/RuntimeClient', [
 							runtime.clients++;
 							// this will be triggered on component
 							comp.trigger('RuntimeInit', runtime);
-						}, 1);
+						}, 200);
 					});
 
 					runtime.bind('Error', function() {
