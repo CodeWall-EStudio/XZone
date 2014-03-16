@@ -156,6 +156,7 @@ exports.getUserAllInfo = function(userId, callback){
             data.departments = result.departments;
             data.prepares = result.prepares;
             if(result.school && school){
+                console.log(school);
                 school.auth = result.school.auth || 0;
             }
         }
