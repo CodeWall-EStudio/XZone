@@ -580,7 +580,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowGid){
 			fold = Cache.get('rootFolder'+nowGid);
 			info = Cache.get('myinfo');
-			rootfd = info.group2key[nowGid].rootFolder._id;
+			rootfd = info.group2key[nowGid].rootFolder._id || info.group2key[nowGid].rootFolder.$id || info.group2key[nowGid].rootFolder.id;
 		}else{
 			fold = Cache.get('myfold');
 			info = Cache.get('myinfo');
