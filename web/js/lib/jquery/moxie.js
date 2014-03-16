@@ -2403,7 +2403,10 @@ define('moxie/runtime/RuntimeClient', [
 						return;
 					}
 
-					runtime.init();
+					setTimeout(function(){
+						runtime.init();
+					},200);
+					
 				}
 
 				// check if a particular runtime was requested
