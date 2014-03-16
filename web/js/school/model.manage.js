@@ -51,7 +51,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	function allUser(e,d){
 		var opt = {
 			cgi : config.cgi.userlist,
-			data : {}
+			data : {order : '{name:1}'}
 		}
 
 		var success = function(d){
