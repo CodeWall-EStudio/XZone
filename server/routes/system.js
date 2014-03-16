@@ -76,23 +76,38 @@ function createDepart(parent, dep, callback){
 exports.initGroups = function(req,res){
 
     var param = {
-        name : '教学处',
+        name : '备课检查',
         status : 0,
         type : 2,
         pt : 1
     }
-    group.create(param,function(){
-        console.log('教学处创建完成');
+    // 防止重复创建
+    db.group.findOne(param, function(err, doc){
+        if(!doc){
+            group.create(param,function(){
+                console.log('备课检查创建完成');
+            });
+        }else{
+            console.log('备课检查已经创建');
+        }
     });
+    
 
-   var param = {
+   var param2 = {
         name : '学校空间',
         status : 0,
         type : 0,
     }
-    group.create(param,function(){
-        console.log('学校空间创建完成');
-    }); 
+    // 防止重复创建
+    db.group.findOne(param2, function(err, doc){
+        if(!doc){
+            group.create(param2,function(){
+                console.log('学校空间创建完成');
+            });
+        }else{
+            console.log('学校空间已经创建了!!');
+        }
+    });
 
     res.json({
         err: 0,
