@@ -18,6 +18,7 @@ var WHITE_LIST = [
 
 var ADMIN_CGI = '/api/manage/';
 var MEDIA_UPLOAD_CGI = '/api/media/upload';
+var MEDIA_DOWNLOAD_CGI = '/api/media/download';
 
 function getRouter(path, method){
 
@@ -205,5 +206,30 @@ exports.mediaUpload = function(req, res, next){
     }
 }
 
+
+exports.mediaDownload = function(req, res, next){
+    var params = req.body;
+
+    //设置跨域请求用的返回头
+    res.set({
+        'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
+        'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
+        'Access-Control-Allow-Credentials': 'true',
+        'Access-Control-Allow-Headers': 'Origin,Content-Type',
+        'Access-Control-Max-Age': '30'
+    });
+    if(req.method === 'OPTIONS'){
+        res.send(200);
+        return;
+    }
+    var skey = req.cookies.skey || req.body.skey || req.query.skey;
+    if(!skey){
+        skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
+    }
+    req.skey = skey;
+    // 新媒体的下载
+    getRouter(MEDIA_DOWNLOAD_CGI, req.method)(req, res, next);
+
+}
 
 

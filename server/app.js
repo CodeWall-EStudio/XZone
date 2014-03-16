@@ -45,6 +45,8 @@ app.all('/', routes.verifyAndLogin);
 
 app.all('/api/file/upload', routes.mediaUpload);
 
+app.all('/download', routes.mediaDownload);
+
 // verify authorization
 app.all('/api/*', routes.verify);
 
