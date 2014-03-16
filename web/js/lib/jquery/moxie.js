@@ -2381,13 +2381,13 @@ define('moxie/runtime/RuntimeClient', [
 					runtime.bind('Init', function() {
 						// mark runtime as initialized
 						runtime.initialized = true;
-
 						// jailbreak ...
 						setTimeout(function() {
+							//console.log(runtime,typeof runtime);
 							runtime.clients++;
 							// this will be triggered on component
 							comp.trigger('RuntimeInit', runtime);
-						}, 200);
+						}, 2000);
 					});
 
 					runtime.bind('Error', function() {
