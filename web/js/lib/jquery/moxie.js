@@ -2376,7 +2376,7 @@ define('moxie/runtime/RuntimeClient', [
 
 					// try initializing the runtime
 					runtime = new constructor(options);
-					alert(runtime);
+					//alert(runtime);
 
 					runtime.bind('Init', function() {
 						// mark runtime as initialized
