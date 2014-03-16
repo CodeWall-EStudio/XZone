@@ -151,12 +151,13 @@ exports.getUserAllInfo = function(userId, callback){
             user: user,
             school: school
         };
+        console.log(result);
+        console.log(school);
         if(result){
             data.groups = result.groups;
             data.departments = result.departments;
             data.prepares = result.prepares;
             if(result.school && school){
-                console.log(school);
                 school.auth = result.school.auth || 0;
             }
         }
