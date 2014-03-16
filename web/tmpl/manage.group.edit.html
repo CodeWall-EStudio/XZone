@@ -82,6 +82,11 @@
 									<td><input class="check-member" type="checkbox" value="<%+item.id%>" <%if(members[item.id]){%>checked<%}%> <%if(item.id == my){%>disabled<%}%> /></td>
 									<td><input class="check-manage" type="checkbox" value="<%+item.id%>" <%if(members[item.id] && members[item.id].auth){%>checked<%}%> <%if(item.id == my){%>disabled<%}%> /></td>
 									<td><%-item.nick%></td>
+									<%if(item.id == my){
+											console.log(item,my);
+											console.log(members[item.id]);
+										}
+									%>
 								</tr>
 								<%}%>
 							</table>							

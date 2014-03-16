@@ -30,7 +30,9 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	function conventMembers(list){
 		var ml = [];
 		for(var i in list){
+			if(list[i]){
 			ml.push(list[i]._id);
+			}
 		}
 		return ml;
 	}
@@ -38,8 +40,10 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	function convent2Members(list){
 		var ml = {};
 		for(var i in list){
+			if(list[i]){
 			list[i].id = list[i]._id;
 			ml[list[i]._id] = list[i];
+			}
 		}
 		return ml;
 	}	

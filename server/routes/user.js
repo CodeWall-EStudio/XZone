@@ -72,6 +72,7 @@ exports.get = function(req, res){
     var loginUser = req.loginUser;
     
     mUser.getUserAllInfo(loginUser._id, function(err, data){
+        console.log(loginUser,data);
         if(err){
             res.json({ err: data || ERR.SERVER_ERROR, msg: err});
         }else{
