@@ -70,9 +70,12 @@ exports.getorgtree = function(req,res){
 exports.get = function(req, res){
 
     var loginUser = req.loginUser;
-    
+    console.log('---------------');
+    console.log(loginUser);
+
     mUser.getUserAllInfo(loginUser._id, function(err, data){
         console.log(loginUser,data);
+        console.log('---------------');
         if(err){
             res.json({ err: data || ERR.SERVER_ERROR, msg: err});
         }else{
