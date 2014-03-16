@@ -19,6 +19,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 			tplid : 'recy.tit',
 			data : {
 				filetype : config.filetype,
+				type : nowType,
 				key : nowKey
 			}
 		});

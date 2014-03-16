@@ -18,6 +18,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 			tplid : 'coll.tit',
 			data : {
 				filetype : config.filetype,
+				type : nowType,
 				key : nowKey
 			}
 		});

@@ -16,6 +16,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		nowOrder  = ['createTime',-1],
 		nowOds = '';
 		nowUid = 0,
+		nowType = 0,
 		nowGrade = 0,
 		nowTag = 0,	
 		nowPid = 0,	
@@ -39,6 +40,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			gname : nowGinfo.name || '',
 			school : nowSchool,
 			filetype : config.filetype,
+			type : nowType,
 			key : nowKey,
 			fold : obj || 0,
 			fdid : nowFd
@@ -166,6 +168,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			nowPrep = d.prep || 0;
 			nowUid = d.uid || 0;
 			rootFd = d.rootfdid || 0;
+			nowType = d.type;
 			if(d.order){
 				nowOrder = d.order;
 			}

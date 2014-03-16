@@ -5,6 +5,7 @@ define(function() {
 	return {
 		pagenum : 10,
 		filetype : {
+			0 : '全部类型',
 			1 : '图片',
 			2 : '文档',
 			3 : '音乐',

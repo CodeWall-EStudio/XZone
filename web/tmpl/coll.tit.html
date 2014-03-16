@@ -5,10 +5,9 @@
 <ul class="act-zone">
 	<li class="all-file file-type dropdown" id="changeFileType">
 		<a id="drop-type" "button" data-toggle="dropdown" >
-			全部类型
+			<%-filetype[type]%>
 		<b class="caret"></b></a>
 		<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
-			<li><a href="#mycoll=1&type=0">全部类型</a></li>
 			<%
 				for(var i in filetype){
 					var item = filetype[i];
