@@ -182,6 +182,8 @@ exports.getGroupMembers = function(groupId, needDetail, callback){
                     fetchGroupUser(doc, ep.group('fetchUser'));
                 }
             });
+        }else{
+            callback(null, []);
         }
     });
 }

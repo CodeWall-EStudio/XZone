@@ -46,9 +46,6 @@ exports.getUserById = function(id, callback){
     db.user.findOne({ _id: new ObjectID(id)}, callback);
 }
 
-exports.getUserByName = function(name, callback){
-    db.user.findOne({ name: name }, callback);
-}
 
 exports.save = function(user, callback){
     db.user.save(user, function(err, result){
@@ -179,7 +176,7 @@ function fetchDepartments(dep, callback){
         dep.users = [];
 
         ep.after('fetchDepartUsers', depUsers.length, function(list){
-            dep.users = list;
+            dep.users = us.compact(list);
 
             ep.emit('getUsersDone');
         });
