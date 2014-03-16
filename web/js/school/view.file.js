@@ -142,7 +142,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			$("#fileActZone .renamefile").show();
 			$("#fileActZone .delfile").show();
 			$("#fileActZone .movefile").show();
-		}else{
+		}else if(nowGroup){
 			$("#fileActZone .renamefile").hide();
 			$("#fileActZone .delfile").hide();
 			$("#fileActZone .movefile").hide();			

@@ -32,10 +32,10 @@ define(['config','cache','helper/view','model.file'],function(config,Cache,View)
 		if(!myInfo){
 			myInfo = Cache.get('myinfo');
 		}
-		
-			$("#fileActZone .renamefile").show();
-			$("#fileActZone .delfile").show();
-			$("#fileActZone .movefile").show();			
+	
+		$("#fileActZone .renamefile").show();
+		$("#fileActZone .delfile").show();
+		$("#fileActZone .movefile").show();			
 		$("#btnZone").show();
 		$('.btn-newfold').show();
 		$('.btn-upload').show();
