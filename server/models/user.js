@@ -146,13 +146,13 @@ exports.getUserAllInfo = function(userId, callback){
             return;
         }
         user.mailnum = count || 0;
-        school && (school.auth = 0);
+        //school && (school.auth = 0);
+        school && (school.auth = user.auth?1:0);
         var data = {
             user: user,
             school: school
         };
-        console.log(result);
-        console.log(school);
+
         if(result){
             data.groups = result.groups;
             data.departments = result.departments;
