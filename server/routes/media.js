@@ -166,7 +166,7 @@ function verifyDownload(params, callback){
 
 exports.download = function(req, res){
 
-    var fileId = req.query.fileId;
+    var fileId = req.fileId || req.query.fileId;
     var skey = req.skey; 
     
     var ep = new EventProxy();

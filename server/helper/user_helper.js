@@ -30,7 +30,11 @@ exports.getUserInfo = function(skey, callback){
             callback(err);
         }else{
             try{
-                callback(null, JSON.parse(data));
+                if(!data){
+                    callback('the sso server does not return any thing');
+                }else{
+                    callback(null, JSON.parse(data));
+                }
             }catch(e){
                 console.error('getUserInfo Error', data);
                 callback('getUserInfo JSON parse error: ' + e.message);

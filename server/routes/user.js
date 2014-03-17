@@ -121,7 +121,8 @@ exports.loginSuccess = function(req, res, next){
     }
     validateTicket(ticket, function(err, valData, user){
         if(err){
-            res.json({err: valData || ERR.NOT_LOGIN, msg: err});
+            // res.json({err: valData || ERR.NOT_LOGIN, msg: err});
+            res.redirect('/loginfail.html');
             console.log(err,valData,user);
             console.log('>>>validateTicket error:', err);
         }else{
