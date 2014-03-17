@@ -34,7 +34,12 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 			tplid : 'manage.userlist',
 			data : {
 				list : userList
-			}
+			},
+			handlers : {
+				'.btn-search' : {
+					'click' : searchUser
+				}
+			}			
 		});
 		view.createPanel();			
 	}
@@ -105,6 +110,26 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 		}
 	}
 
+	function searchUser(e){
+		var t = $(e.target);
+		var v = t.prevAll('.search-member').val();
+		var p = t.parents('td');
+		console.log(v);
+		if(v == ''){
+			p.find('.group-members').removeClass('hide');
+		}else{
+			for(var i in userList){
+				var item = userList[i];
+				if(item.nick.indexOf(v)<0){
+					p.find('.mb'+i).addClass('hide');
+				}else{
+					p.find('.mb'+i).removeClass('hide');
+				}
+			}
+		}
+	}
+
+
 	function groupOne(e,d){
 		addTarget.addClass('hide');
 		listTarget.addClass('hide');
@@ -122,6 +147,11 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 				$('#editGroupBtn').bind('click',function(){
 					editgroup(d.id);
 				});
+			},
+			handlers : {
+				'.btn-search' : {
+					'click' : searchUser
+				}
 			}
 		});
 		view.createPanel();
