@@ -4,11 +4,7 @@
 		for(var i=0,l=list.length;i<l;i++){
 			var item = list[i];
 	%>
-		<li><i <%if(item.children.length>0 || item.users.length>0){%>cmd="next" class="plus"<%}%> data-id="<%+item._id%>"></i>
-			<%if(item.user && item.user.length>0){%>
-				<input type="checkbox" class="select-all" value="<%+item._id%>" />
-			<%}%>
-			<a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
+		<li><i <%if(item.children.length>0 || item.users.length>0){%>cmd="next" class="plus"<%}%> data-id="<%+item._id%>"></i><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
 		
 	<%
 		}

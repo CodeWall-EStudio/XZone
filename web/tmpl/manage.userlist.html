@@ -4,12 +4,11 @@
 		<th width="60">管理员</th>
 		<th>昵称</th>
 	</tr>
-	<input type="text" class="search-member" /> <button class="btn btn-primary btn-search">搜索</button>
 	<%
 		for(var i in list){
 			var item = list[i];
 	%>
-	<tr class="group-members mb<%+item.id%>">
+	<tr>
 		<td><input class="check-member" type="checkbox" value="<%+item.id%>" /></td>
 		<td><input class="check-manage" type="checkbox" value="<%+item.id%>" /></td>
 		<td><%-item.nick%></td>
