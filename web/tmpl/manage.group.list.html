@@ -10,7 +10,18 @@
 			var item = list[i];
 	%>
 		<tr>
-			<td><%-item.name%></td>
+			<td>
+				<%if(item.type==0){%>
+				 学校空间 :
+				<%}else if(item.type==1){%>
+				小组 :
+				<%}else if(item.type==2){%>
+				部门 :				
+				<%}else if(item.type==3){%>
+				备课 :
+				<%}%>
+				<%-item.name%>
+			</td>
 			<td class="group<%+item.id%>" >
 				 <a cmd="edit" data-id="<%+item.id%>">修改</a>
 				 <%if(item.validateStatus == 0){%>
