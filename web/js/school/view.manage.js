@@ -114,7 +114,6 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 		var t = $(e.target);
 		var v = t.prevAll('.search-member').val();
 		var p = t.parents('td');
-		console.log(v);
 		if(v == ''){
 			p.find('.group-members').removeClass('hide');
 		}else{
@@ -254,10 +253,10 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 		var ul = [],
 			ml = [];
 		//managers
-		$(".check-member:checked").each(function(){
+		addTarget.find(".check-member:checked").each(function(){
 			ul.push($(this).val());
 		});
-		$(".check-manage:checked").each(function(){
+		addTarget.find(".check-manage:checked").each(function(){
 			ml.push($(this).val());
 		});	
 		var pid = 0,
