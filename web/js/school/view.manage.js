@@ -241,6 +241,9 @@ define(['config','helper/view','cache','model.manage','msg'],function(config,Vie
 			managers : manages,
 		}
 		//console.log(obj);
+		addTarget.addClass('hide');
+		listTarget.removeClass('hide');
+		editTarget.addClass('hide');		
 		handerObj.triggerHandler('manage:modify',obj);				
 	};
 
