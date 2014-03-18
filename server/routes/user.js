@@ -221,13 +221,21 @@ exports.departments = function(req, res){
 
 
 exports.logoff = function(req, res){
+    var type = req.type || req.query.type || 'cas';
+
+    if(config.AUTH_TYPE !== 'auto'){
+        type = config.AUTH_TYPE;
+    }
 
     req.session.destroy();
 
     res.clearCookie('skey');
     res.clearCookie('connect.sid');
-
-    res.redirect('/');
+    if(type == 'qq'){
+        res.redirect('/');
+    }else{
+        res.redirect(cas.getLogoutUrl());
+    }
 }
 
 exports.search = function(req, res){

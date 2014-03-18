@@ -55,7 +55,16 @@ CAS.prototype.getLoginUrl = function(){
     hostname: this.hostname,
     port: this.port,
     pathname: this.base_path+'/login',
-    query: { service: this.service, renew: true }
+    query: { service: this.service}
+  });
+}
+
+CAS.prototype.getLogoutUrl = function(){
+  return url.format({
+    hostname: this.hostname,
+    port: this.port,
+    pathname: this.base_path+'/logout',
+    query: { service: this.service }
   });
 }
 
@@ -117,5 +126,3 @@ CAS.prototype.validate = function(ticket, callback) {
     });
 };
 
-CAS.prototype.getOrgTree = function(){
-}
