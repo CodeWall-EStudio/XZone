@@ -200,42 +200,74 @@ define(['config','helper/request','helper/util','cache','helper/test'],function(
 
 	}
 
+	// function getUser(e,d){
+		
+	// 	// var list = UL.departmentTree.children;
+	// 	// handerObj.triggerHandler('file:shareuserload',{ type : d.type,files: d.files, list :list});
+	// 	// return;
+	// 	var departments = Cache.get('departments');
+	// 	if(departments){
+	// 		handerObj.triggerHandler('file:shareuserload',{ type : d.type,files: d.files, list :departments});
+	// 		return;
+	// 	}
+	// 	var opt = {
+	// 		cgi : config.cgi.departments //userlist
+	// 	}
+	// 	var success = function(data){
+	// 		if(data.err == 0){
+	// 			handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list});
+	// 			handerObj.triggerHandler('file:shareuserload',{ type : d.type,files: d.files, list :data.result.list});
+	// 			// var list = [];
+	// 			// var myinfo = Cache.get('myinfo');
+	// 			// for(var i = 0,l=data.result.list.length;i<l;i++){
+
+	// 			// 	var item = data.result.list[i];
+	// 			// 	if(item._id != myinfo.id){
+	// 			// 	list.push({
+	// 			// 		id : item._id,
+	// 			// 		name : item.nick
+	// 			// 	});
+	// 			// 	}
+	// 			// }
+	// 			// handerObj.triggerHandler('file:shareload',{ type : d.type,files: d.files, list :list});
+	// 		}else{
+	// 			handerObj.triggerHandler('msg:error',d.err);
+	// 		}
+	// 	}
+	// 	request.get(opt,success);
+	// }
+
 	function getUser(e,d){
 		
-		// var list = UL.departmentTree.children;
-		// handerObj.triggerHandler('file:shareuserload',{ type : d.type,files: d.files, list :list});
-		// return;
-		var departments = Cache.get('departments');
-		if(departments){
-			handerObj.triggerHandler('file:shareuserload',{ type : d.type,files: d.files, list :departments});
-			return;
-		}
+		// var departments = Cache.get('departments');
+		// if(departments){
+		// 	handerObj.triggerHandler('file:shareuserload',{ type : d.type,files: d.files, list :departments});
+		// 	return;
+		// }
 		var opt = {
-			cgi : config.cgi.departments //userlist
+			cgi : config.cgi.userlist
 		}
 		var success = function(data){
 			if(data.err == 0){
-				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list});
-				handerObj.triggerHandler('file:shareuserload',{ type : d.type,files: d.files, list :data.result.list});
-				// var list = [];
-				// var myinfo = Cache.get('myinfo');
-				// for(var i = 0,l=data.result.list.length;i<l;i++){
+				var list = [];
+				var myinfo = Cache.get('myinfo');
+				for(var i = 0,l=data.result.list.length;i<l;i++){
 
-				// 	var item = data.result.list[i];
-				// 	if(item._id != myinfo.id){
-				// 	list.push({
-				// 		id : item._id,
-				// 		name : item.nick
-				// 	});
-				// 	}
-				// }
-				// handerObj.triggerHandler('file:shareload',{ type : d.type,files: d.files, list :list});
+					var item = data.result.list[i];
+					if(item._id != myinfo.id){
+					list.push({
+						id : item._id,
+						name : item.nick
+					});
+					}
+				}
+				handerObj.triggerHandler('file:shareload',{ type : d.type,files: d.files, list :list});
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}
 		}
 		request.get(opt,success);
-	}
+	}	
 
 	function fileMove(e,d){
 		var fids = d.fileId;

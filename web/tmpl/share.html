@@ -58,7 +58,6 @@
 							<%}%>
 								<ul id="searchResult">
 									<%
-										var loop = 0;
 										for(var i=0,l=list.length;i<l;i++){
 											var item = list[i];
 										if(type == 'dep'){
@@ -73,9 +72,6 @@
 										<%}else{%>
 											<li class="tag<%+item.id%>"><input type="checkbox" value="<%+item.id%>" /> <%-item.name%></li>
 										<%}%>
-									<%}%>
-									<%if(!loop){%>
-										<li>你还没有加入小组或部门.不能分享文件!</li>
 									<%}%>
 								</ul>
 							</div>
