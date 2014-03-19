@@ -102,8 +102,10 @@ exports.index = function(req, res, next){
         // 权限没有问题, 如果有问题, 就抛出 error 事件
         next();
     });
+}
 
-
+function getUserRoles(user, parameter, callback){
+    
 }
 
 
