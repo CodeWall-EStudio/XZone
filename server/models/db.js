@@ -90,7 +90,7 @@ exports.dereferences = function(docs, keys, callback){
     docs.forEach(function(doc){
         exports.dereference(doc, keys, ep.group('deref'));
     });
-}
+};
 
 exports.search = function(collectionName, query, options, callback){
     var order = options.order || null;
@@ -124,7 +124,7 @@ exports.search = function(collectionName, query, options, callback){
         }
         cursor.toArray(ep.done('result'));
     });
-}
+};
 
 exports.batchAddMethod = function(context, collectionName, methods){
     context = context[collectionName] = {};
@@ -141,7 +141,7 @@ exports.batchAddMethod = function(context, collectionName, methods){
             });
         } // end of context[method]
     });
-}
+};
 
 exports.addHelper = function(context, collectionName){
 
@@ -155,7 +155,7 @@ exports.addHelper = function(context, collectionName){
         'findAndModify',
         'findAndRemove'
     ]);
-}
+};
 
 // add a large of quick access method
 exports.addHelper(exports, 'user');

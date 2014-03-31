@@ -1,8 +1,8 @@
-//!! 2.0 重构部分
 
 var EventProxy = require('eventproxy');
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
+var us = require('underscore');
 
 var db = require('../models/db');
 var ERR = require('../errorcode.js');
@@ -24,7 +24,7 @@ function findOne(coll, value, pcfg, callback){
             return callback('can\' find ' + value, ERR.NOT_FOUND);
         }
         callback(null, doc);
-    }
+    });
 }
 
 function findArray(coll, value, pcfg, callback){
@@ -134,7 +134,7 @@ var checkers = {
         findArray('user', value, pcfg, callback);
     }
 
-}
+};
 
 
 function verifyParam(value, pcfg, parameter, callback){
@@ -142,10 +142,22 @@ function verifyParam(value, pcfg, parameter, callback){
         return callback(pcfg.name + ' is required');
     }
     if(value){
-        var checkMethod = checkers[pcfg.type || 'string'];
+        var type = pcfg.type || 'string';
+        var checkMethod = checkers[type];
         checkMethod(value, pcfg, function(err, newValue){
             if(err){
                 return callback(err, newValue);
+            }
+            if(pcfg.required){
+                if(!newValue){
+                    return callback(pcfg.name + '\'s value is null');
+                }
+                if(us.isArray(newValue) && !newValue.length){
+                    return callback(pcfg.name + '\'s length is 0');
+                }
+            }
+            if(newValue){
+                newValue.__type = type;
             }
             parameter[pcfg.name] = newValue;
             callback();
@@ -153,7 +165,6 @@ function verifyParam(value, pcfg, parameter, callback){
     }else{
         callback();
     }
-    
 }
 
 /**
@@ -174,10 +185,15 @@ exports.index = function(req, res, next){
     
     var ep = new EventProxy();
     ep.fail(function(error, errCode){
+        if(errCode === ERR.NOT_FOUND && config.DOWNLOAD_APIS.indexOf(path) > -1){
+            console.error(err, errCode);
+            //NOTE: 下载接口, 如果找不到文件, 直接跳 404 页面
+            return res.redirect(config.NOT_FOUND_PAGE);
+        }
         res.json({ err: errCode || ERR.PARAM_ERROR, msg: error });
     });
 
-    if(cfg.method !== method){
+    if(cfg.method.indexOf(method) === -1){
         return res.json({ err: ERR.NOT_SUPPORT, msg: 'not support method [' + method + ']' });
     }
 
@@ -190,4 +206,4 @@ exports.index = function(req, res, next){
         verifyParam(value, pcfg, parameter, ep.group('verifyParamDone'));
     });
 
-}
+};

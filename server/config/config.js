@@ -1,14 +1,30 @@
 
+// 服务器运行的端口
+exports.PORT = 8091;
+
+// 数据库的名字为 xzone, 账号为 xzone_user 密码: HeMHFxTAMPAjlRVH
+// 可以自行修改
+exports.DB_URI = 'mongodb://xzone_user:HeMHFxTAMPAjlRVH@127.0.0.1:27017/xzone';
+
+// cookie 的加密key
+exports.COOKIE_SECRET= 'xzone_HeMHFxTAMPAjlRVH_secret';
+
+// 文件保存的根目录
+exports.FILE_SAVE_ROOT = '/home/swall/xzone/';
+
+// 上传的文件保存的目录, 相对于 FILE_SAVE_ROOT
+// 文件上传后会保存到 FILE_SAVE_ROOT + FILE_SAVE_DIR 下
+exports.FILE_SAVE_DIR = '/data/71xiaoxue/';
+
+// 批量下载时打包成zip包的保存目录, 相对于 FILE_SAVE_ROOT
+exports.FILE_ZIP_DIR = '/data/zip/';
+
+// jodconverter 的路径, 用于把doc转换为pdf
+exports.JOD_CONVERTER = '/var/run/jodconverter/lib/jodconverter-core-3.0-beta-4.jar';
+
+
 // 默认每个用户的空间大小 3G
 exports.DEFAULT_USER_SPACE = 3 * 1024 * 1024 * 1024;
-
-// 权限的常量
-// 权限 0x0 普通 0x1 小组管理员 0x2 部门管理员 0x4 管理员 0x8 系统管理员
-exports.AUTH_USER = 0x0;
-exports.AUTH_GROUP_MANAGER = 0x1;
-exports.AUTH_DEPART_MANAGER = 0x2;
-exports.AUTH_MANAGER = 0x4;
-exports.AUTH_SYS_MANAGER = 0x8;
 
 exports.AUTH_TYPE = 'auto';// auto, sso, qq
 
@@ -25,7 +41,9 @@ exports.CAS_USER_INFO_CGI = 'http://mapp.71xiaoxue.com/components/getUserInfo.ht
 exports.CAS_ORG_TREE_CGI = 'http://mapp.71xiaoxue.com/components/getOrgTree.htm';
 
 // 允许新媒体跨域上传和下载资源的 host
-exports.MEDIA_CORS_URL = 'http://media.71xiaoxue.com';
+exports.MEDIA_CORS_URL = [
+    'http://media.71xiaoxue.com'
+];
 
 // QQ 互联的 appid
 exports.QQ_CONNECT_APPID = '100548719';
@@ -47,3 +65,7 @@ exports.QQ_CONNECT_USERINFO_PATH = '/user/get_user_info';
 
 exports.NOT_FOUND_PAGE = '/404.html';
 
+exports.DOWNLOAD_APIS = [
+    '/api/file/download',
+    '/api/file/batchDownload'
+];

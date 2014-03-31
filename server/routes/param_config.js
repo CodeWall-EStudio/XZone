@@ -1,13 +1,9 @@
-//!! 2.0 重构部分
-
-var POST = 'POST';
-var GET = 'GET';
 
 
 module.exports = {
     // file 
     '/api/file': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'fileId',
@@ -17,7 +13,7 @@ module.exports = {
         ]
     },
     '/api/file/upload': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'name',
@@ -27,11 +23,26 @@ module.exports = {
                 name: 'folderId',
                 type: 'folder',
                 required: true
+            },
+            {
+                name: 'file_path'
+            },
+            {
+                name: 'file_name'
+            },
+            {
+                name: 'file_md5'
+            },
+            {
+                name: 'file_content_type'
+            },
+            {
+                name: 'file_size'
             }
         ]
     },
     '/api/file/download': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'fileId',
@@ -41,7 +52,7 @@ module.exports = {
         ]
     },
     '/api/file/batchDownload': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -51,7 +62,7 @@ module.exports = {
         ]
     },
     '/api/file/preview': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'fileId',
@@ -61,21 +72,21 @@ module.exports = {
         ]
     },
     '/api/file/save': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'messageId',
                 type: 'message',
                 required: true
-            },
+            }/*,
             {
                 name: 'folderId',
                 type: 'folder'
-            }
+            }*/
         ]
     },
     '/api/file/modify': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -83,17 +94,19 @@ module.exports = {
                 required: true
             },
             {
-                name: 'groupId',
-                type: 'group'
-            },
-            {
                 name: 'name',
                 type: 'string'
+            },
+            {
+                name: 'mark'
+            },
+            {
+                name: 'content'
             }
         ]
     },
     '/api/file/copy': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -104,15 +117,15 @@ module.exports = {
                 name: 'targetId',
                 type: 'folder',
                 required: true
-            },
+            }/*,
             {
                 name: 'groupId',
                 type: 'group'
-            }
+            }*/
         ]
     },
     '/api/file/move': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -123,15 +136,15 @@ module.exports = {
                 name: 'targetId',
                 type: 'folder',
                 required: true
-            },
+            }/*,
             {
                 name: 'groupId',
                 type: 'group'
-            }
+            }*/
         ]
     },
     '/api/file/share': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -153,7 +166,7 @@ module.exports = {
         ]
     },
     '/api/file/delete': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -167,7 +180,7 @@ module.exports = {
         ]
     },
     '/api/file/search': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'folderId',
@@ -177,32 +190,39 @@ module.exports = {
             {
                 name: 'page',
                 type: 'number',
+                min: 0,
                 required: true
             },
             {
                 name: 'pageNum',
                 type: 'number',
+                min: 0,
                 required: true
             },
-            {
-                name: 'groupId',
-                type: 'group'
-            },
+            // {
+            //     name: 'groupId',
+            //     type: 'group'
+            // },
             {
                 name: 'keyword'
             },
             {
                 name: 'type',
+                min: 0,
                 type: 'number'
             },
             {
                 name: 'order',
                 type: 'object'
+            },
+            {
+                name: 'status',
+                type: 'number'
             }
         ]
     },
     '/api/file/query': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'page',
@@ -235,7 +255,7 @@ module.exports = {
 
     // media
     '/api/media/upload': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'name',
@@ -250,7 +270,7 @@ module.exports = {
         ]
     },
     '/api/media/download': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'file',
@@ -262,7 +282,7 @@ module.exports = {
 
     // folder
     '/api/folder/create': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'folderId',
@@ -286,7 +306,7 @@ module.exports = {
         ]
     },
     '/api/folder': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'folderId',
@@ -300,7 +320,7 @@ module.exports = {
         ]
     },
     '/api/folder/delete': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'folderId',
@@ -314,7 +334,7 @@ module.exports = {
         ]
     },
     '/api/folder/modify': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'folderId',
@@ -332,7 +352,7 @@ module.exports = {
         ]
     },
     '/api/folder/list': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'folderId',
@@ -346,7 +366,7 @@ module.exports = {
         ]
     },
     '/api/folder/search': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'folderId',
@@ -383,7 +403,7 @@ module.exports = {
 
     // fav
     '/api/fav/create': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -397,7 +417,7 @@ module.exports = {
         ]
     },
     '/api/fav/delete': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -407,7 +427,7 @@ module.exports = {
         ]
     },
     '/api/fav/search': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'page',
@@ -439,7 +459,7 @@ module.exports = {
 
     // group
     '/api/group/create': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'name',
@@ -468,7 +488,7 @@ module.exports = {
         ]
     },
     '/api/group/modify': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'groupId',
@@ -496,7 +516,7 @@ module.exports = {
         ]
     },
     '/api/group/': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'groupId',
@@ -507,7 +527,7 @@ module.exports = {
 
     // user
     '/user/loginSuccessWithQQ': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'code',
@@ -522,7 +542,7 @@ module.exports = {
 
     // recycle
     '/api/recycle/delete': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -537,7 +557,7 @@ module.exports = {
 
     },
     '/api/recycle/revert': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -552,7 +572,7 @@ module.exports = {
 
     },
     '/api/recycle/search': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'page',
@@ -584,7 +604,7 @@ module.exports = {
 
     // board
     '/api/board/create': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'content',
@@ -602,7 +622,7 @@ module.exports = {
         ]
     },
     '/api/board/approve': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'boardId',
@@ -621,7 +641,7 @@ module.exports = {
         ]
     },
     '/api/board/delete': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'boardId',
@@ -631,7 +651,7 @@ module.exports = {
         ]
     },
     '/api/board/search': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'page',
@@ -664,7 +684,7 @@ module.exports = {
 
     // message 
     '/api/message/search': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'page',
@@ -698,7 +718,7 @@ module.exports = {
 
     // manage
     '/api/manage/listGroups': {
-        method: GET,
+        method: 'GET',
         params: [
             {
                 name: 'page',
@@ -717,7 +737,7 @@ module.exports = {
         ]
     },
     '/api/manage/approveGroup': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'groupId',
@@ -736,7 +756,7 @@ module.exports = {
         ]
     },
     '/api/manage/approveFile': {
-        method: POST,
+        method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -755,7 +775,7 @@ module.exports = {
         ]
     },
     '/api/manage/listPrepares': {
-        method: GET
+        method: 'GET'
     }
 };
 

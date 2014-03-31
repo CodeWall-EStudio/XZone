@@ -72,7 +72,7 @@ exports.create = function(params, callback){
 
         // });
     });
-}
+};
 
 exports.modify = function(params, doc, callback){
 
@@ -83,9 +83,9 @@ exports.modify = function(params, doc, callback){
         query['creator.$id'] = ObjectID(params.creator);
     }
 
-    db.file.findAndModify(query, [],  { $set: doc }, 
+    db.file.findAndModify(query, [],  { $set: doc },
             { 'new':true}, callback);
-}
+};
 
 exports.delete = function(params, callback){
 
@@ -100,12 +100,12 @@ exports.delete = function(params, callback){
     db.file.findAndRemove(query, [], ep.doneLater('remove'));
 
     ep.on('remove', function(file){
-        if(file){ 
+        if(file){
             // 将 resource 的引用计数减一
             mRes.updateRef(file.resource.oid.toString(), -1, ep.done('updateRef'));
             if(params.creator){ // 指定了刪除用戶的才需要更新 used
                 // 修改用户表的 used 
-                mUser.updateUsed(params.creator,  -1 * (file.size || 0), ep.done('incUsed'))
+                mUser.updateUsed(params.creator,  -1 * (file.size || 0), ep.done('incUsed'));
             }else{
                 ep.emitLater('incUsed');
             }
@@ -117,7 +117,7 @@ exports.delete = function(params, callback){
     ep.all('remove', 'updateRef', 'incUsed', function(file){
         callback(null, file);
     });
-}
+};
 
 exports.batchDelete = function(query, params, callback){
     
@@ -135,25 +135,25 @@ exports.batchDelete = function(query, params, callback){
             });
         }
     });
-}
+};
 
 exports.softDelete = function(params, callback){
 
     exports.modify(params, { del: true }, callback);
 
-}
+};
 
 exports.revertDelete = function(params, callback){
 
 
     exports.modify(params, { del: false }, callback);
-}
+};
 
 exports.getFile = function(query, callback){
     console.log('>>>getFile: ', query);
     db.file.findOne(query, callback);
 
-}
+};
 
 exports.search = function(params, callback){
     var folderId = params.folderId;
@@ -169,7 +169,7 @@ exports.search = function(params, callback){
     var extendQuery = params.extendQuery;
     var extendDefProps = params.extendDefProps;
 
-    var query = { 
+    var query = {
         del: false
     };
 
@@ -234,5 +234,5 @@ exports.search = function(params, callback){
 
     
     
-}
+};
 

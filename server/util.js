@@ -12,7 +12,7 @@ exports.calculate = function(arr){
         result += a;
     });
     return result;
-}
+};
 
 exports.filterProp = function(data, props){
     var obj = {};
@@ -24,7 +24,7 @@ exports.filterProp = function(data, props){
     }else{
         return data;
     }
-}
+};
 
 exports.objectSize = function(obj){
     var count = 0;
@@ -34,7 +34,7 @@ exports.objectSize = function(obj){
         }
     }
     return count;
-}
+};
 
 /**
  * 格式化日期
@@ -69,7 +69,7 @@ exports.formatDate = function(date, format) {
         }
     }
     return format;
-}
+};
 
 
 /**
@@ -97,7 +97,7 @@ exports.mkdirsSync = function(dirpath, mode) {
 };
 
 exports.moveFile = function(src, dst, callback){
-    var is = fs.createReadStream(src)
+    var is = fs.createReadStream(src);
     var os = fs.createWriteStream(dst);
 
     is.on('end', function(){
@@ -109,22 +109,25 @@ exports.moveFile = function(src, dst, callback){
     });
 
     is.pipe(os);
-}
+};
 
 exports.jsonParse = function(jsonStr){
-    return Function('return ' + jsonStr)();
-}
+    if(typeof jsonStr === 'string'){
+        return Function('return ' + jsonStr)();
+    }
+    return jsonStr;
+};
 
 exports.hasRight = function(auth, needAuth){
     return Number(auth) & needAuth;
-}
+};
 
 exports.encodeRegexp = function(str){
 
     return str.replace(/([\.\\\/\+\*\(\)\[\]\?\^\$\|\-])/g, function(u, $1){
         return '\\' + $1;
     });
-}
+};
 
 exports.request = function(params, callback){
 
@@ -156,7 +159,7 @@ exports.request = function(params, callback){
         req.write(params.data + '\n');
     }
     req.end();
-}
+};
 
 exports.parseCallbackData = function(str){
     var reg = /callback\((.+?)\)/;
@@ -169,4 +172,4 @@ exports.parseCallbackData = function(str){
         }
     }
     return null;
-}
+};

@@ -5,6 +5,7 @@ var DBRef = require('mongodb').DBRef;
 var EventProxy = require('eventproxy');
 var process = require('child_process');
 var archiver = require('archiver');
+var us = require('underscore');
 
 var db = require('../models/db');
 var config = require('../config');
@@ -22,13 +23,10 @@ var fileHelper = require('../helper/file_helper');
 
 
 exports.upload = function(req, res){
-    var params = req.query;
-    var folderId = params.folderId;
+    var parameter = req.parameter;
+    var folder = parameter.folderId;
 
-    //TODO 如果这个文件夹关闭了上传, 就不能传了
-    var body = req.body;
     var loginUser = req.loginUser;
-    var uploadFilePath = body.file_path;
 
     var ep = new EventProxy();
     ep.fail(function(err, code){
@@ -36,29 +34,17 @@ exports.upload = function(req, res){
         res.json({ err: code || ERR.SERVER_ERROR, msg: err });
     });
 
-    if(!uploadFilePath){
+    if(!parameter.file_path){
         ep.emit('error', 'upload file fail');
         return;
     }
 
-    fileHelper.hasFolderAccessRight(loginUser._id, folderId, null, ep.doneLater('checkRight'));
-
-    ep.on('checkRight', function(role){
-        if(!role || role === 'department'){
-            return ep.emit('error', 'upload to this folder is not auth', ERR.NOT_AUTH);
-        }
-        mUser.getUserById(loginUser._id, ep.done('getUser'));
-    });
-
-    ep.on('getUser', function(user){
-        loginUser = user;
-        fileHelper.saveUploadFile({
-            folderId: folderId,
-            loginUser: loginUser,
-            body: body,
-            createSWFForDoc: true
-        }, ep.done('saveFileSuccess'));
-    });
+    fileHelper.saveUploadFile({
+        folder: folder,
+        loginUser: loginUser,
+        parameter: parameter,
+        createSWFForDoc: true
+    }, ep.done('saveFileSuccess'));
 
     ep.on('saveFileSuccess', function(file){
         console.log('>>>file upload success:',file._id);
@@ -67,114 +53,99 @@ exports.upload = function(req, res){
             result: {
                 data: file
             }
-        })
+        });
     });
-    
-
-}
-
-function verifyDownload(params, callback){
-    var fileId = params.fileId;
-    var creator = params.creator;
-
-    var ep = new EventProxy();
-
-    ep.fail(callback);
-
-    mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
-
-    ep.on('getFile', function(file){
-        if(!file){
-            ep.emit('error', 'no such file: ' + fileId, ERR.NOT_FOUND);
-            return;
-        }
-        
-        mFolder.getFolder({ _id: file.folder.oid }, ep.done('getFolder'));
-
-        mRes.getResource(file.resource.oid.toString(), ep.done('getRes'));
-
-    });
-
-    ep.all('getFile', 'getFolder', 'getRes', function(file, folder, resource){
-        if(!resource){
-            ep.emit('error', 'no such resource: ' + file.resource.oid, ERR.NOT_FOUND);
-            return;
-        }
-
-        // 检查权限
-        if(file.creator.oid.toString() === creator){
-            // 自己的文件, 可以下载
-            console.log('download: from self',fileId);
-            ep.emit('checkRight', { file: file, resource: resource, folder: folder });
-        }else{
-            // 检查是否是自己收件箱的文件
-            mMessage.getMessage({ 
-                'resource.$id': resource._id,
-                $or: [
-                    { 'fromUser.$id': ObjectID(creator) },
-                    { 'toUser.$id': ObjectID(creator) }
-                ]
-            }, ep.done('getMessage'));
-        }
-    });
-
-    ep.all('getFile', 'getFolder', 'getRes', 'getMessage', 
-            function(file, folder, resource, msg){
-
-        if(msg){ // 是自己收到的, 可以下载
-            console.log('download: from in out box',fileId);
-            ep.emit('checkRight', { file: file, resource: resource, folder: folder });
-
-        }else{
-            // 檢查是否該目錄的訪問權限
-            fileHelper.hasFolderAccessRight(creator, folder._id.toString(), 
-                    null, ep.done('checkRight', function(role, folder){
-
-                if(!role || role === 'department'){// 么有权限或者是部门的非公开文件夹
-                    return ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
-                }else{
-                    return { file: file, resource: resource, folder: folder };
-                }
-            }));
-        }
-    });
-
-    ep.on('checkRight', function(data){
-        if(data){ // 是自己所在小组的
-            callback(null, data);
-        }else{
-            ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
-        }
-    });
-
-}
+};
 
 exports.download = function(req, res){
-    var fileId = req.query.fileId;
+    var parameter = req.parameter;
+    var file = parameter.fileId;
     var loginUser = req.loginUser;
-    var creator = loginUser._id;
     
-    verifyDownload({
-        fileId: fileId,
-        creator: creator
-    }, function(err, data){
-        if(err){
-            if(data === ERR.NOT_FOUND){
-                return res.redirect(config.NOT_FOUND_PAGE);
-            }
-            return res.json({ err: data || ERR.SERVER_ERROR, msg: err });
-        }
-        var file = data.file, resource = data.resource, folder = data.folder;
-        var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
-        console.log('redirect to :' + filePath, 'mimes: ' + resource.mimes);
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
+    });
+
+    var folder = file.__folder;
+    var resource = file.__resource;
+
+    var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
+    console.log('redirect to :' + filePath, 'mimes: ' + resource.mimes);
+    res.set({
+        'Content-Type': resource.mimes,
+        'Content-Disposition': 'attachment; filename=' + file.name,
+        'Content-Length': resource.size,
+        'X-Accel-Redirect': filePath
+    });
+
+    res.send();
+
+    mLog.create({
+        fromUserId: loginUser._id,
+        fromUserName: loginUser.nick,
+
+        fileId: file._id.toString(),
+        fileName: file.name,
+
+        //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+        //6: delete 7: 预览 8: 保存
+        operateType: 2,
+
+        srcFolderId: folder._id.toString(),
+        // distFolderId: folderId,
+        fromGroupId: folder.group && folder.group.oid.toString()
+        // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+    });
+
+};
+
+exports.batchDownload = function(req, res){
+    var parameter = req.parameter;
+
+    var files = parameter.fileId;
+    var loginUser = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
+    });
+
+
+    var zipName = Math.floor(Math.random() * 1000000) + '.zip';
+    var dir = U.formatDate(new Date(), 'yyyy-MM-dd/');
+    var zipDir = path.join(config.FILE_SAVE_ROOT, config.FILE_ZIP_DIR, dir);
+    var zipPath = path.join(config.FILE_ZIP_DIR, dir, zipName);
+
+    U.mkdirsSync(zipDir);
+    var output = fs.createWriteStream(zipDir + zipName);
+    var archive = archiver('zip');
+
+    output.on('close', function(){
+
         res.set({
-            'Content-Type': resource.mimes,
-            'Content-Disposition': 'attachment; filename=' + file.name,
-            'Content-Length': resource.size,
-            'X-Accel-Redirect': filePath
+            'Content-Type': 'application/zip',
+            'Content-Disposition': 'attachment; filename=files.zip',
+            'Content-Length': archive.pointer(),
+            'X-Accel-Redirect': zipPath
         });
 
         res.send();
+    });
+
+    archive.on('error', function(err) {
+        ep.emit('error', err);
+    });
+
+    archive.pipe(output);
+
+    files.forEach(function(file){
+
+        var resource = file.__resource,
+            folder = file.__folder;
+
+        var filePath = path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, resource.path);
+        archive.file(filePath, { name: file.name });
 
         mLog.create({
             fromUserId: loginUser._id,
@@ -185,222 +156,133 @@ exports.download = function(req, res){
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存
-            operateType: 2, 
+            operateType: 2,
 
             srcFolderId: file.folder.oid.toString(),
             // distFolderId: folderId,
-            fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            fromGroupId: folder.group && folder.group.oid.toString()
             // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
         });
-    });
-}
-
-exports.batchDownload = function(req, res){
-    var fileIds = req.body.fileId;
-    var loginUser = req.loginUser;
-    var creator = loginUser._id;
-
-    if(!fileIds.length){
-        res.json({ err: ERR.PARAM_ERROR, msg: 'no file to download' });
-        return;
-    }
-    var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
-    });
-    ep.after('verifyDownload', fileIds.length, function(list){
-        var zipName = Math.floor(Math.random() * 1000000) + '.zip';
-        var dir = U.formatDate(new Date(), 'yyyy-MM-dd/');
-        var zipDir = path.join(config.FILE_SAVE_ROOT, config.FILE_ZIP_DIR, dir);
-        var zipPath = path.join(config.FILE_ZIP_DIR, dir, zipName);
-
-        U.mkdirsSync(zipDir);
-        var output = fs.createWriteStream(zipDir + zipName);
-        var archive = archiver('zip');
-
-        output.on('close', function(){
-
-            res.set({
-                'Content-Type': 'application/zip',
-                'Content-Disposition': 'attachment; filename=files.zip',
-                'Content-Length': archive.pointer(),
-                'X-Accel-Redirect': zipPath
-            });
-
-            res.send();
-        });
-
-        archive.on('error', function(err) {
-            ep.emit('error', err);
-        });
-
-        archive.pipe(output);
-
-        list.forEach(function(data){
-
-            var file = data.file, resource = data.resource, folder = data.folder;
-            var filePath = path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, resource.path);
-            archive.file(filePath, { name: file.name });
-
-            mLog.create({
-                fromUserId: loginUser._id,
-                fromUserName: loginUser.nick,
-
-                fileId: file._id.toString(),
-                fileName: file.name,
-
-                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-                //6: delete 7: 预览 8: 保存
-                operateType: 2, 
-
-                srcFolderId: file.folder.oid.toString(),
-                // distFolderId: folderId,
-                fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-                // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
-            });
-
-        });
-        archive.finalize();
 
     });
+    archive.finalize();
 
-    fileIds.forEach(function(fileId){
-        verifyDownload({ fileId: fileId, creator: creator }, ep.group('verifyDownload'));
-    });
 
-}
+
+};
 
 exports.preview = function(req, res){
-    var fileId = req.query.fileId;
+    var parameter = req.parameter;
+
+    var file = parameter.fileId;
     var loginUser = req.loginUser;
-    var creator = loginUser._id;
+
+    var resource = file.__resource,
+        folder = file.__folder;
 
     //1. 图片, 直接给url
     //2. 文档, 给出swf url
     //3. txt, 给出 text的文本内容
     //4. 音频/视频, 直接给出url
 
-    verifyDownload({
-        fileId: fileId,
-        creator: creator
-    }, function(err, data){
-        if(err){
-            res.json({ err: data || ERR.SERVER_ERROR, msg: err });
-            return;
-        }
-        var file = data.file, resource = data.resource, folder = data.folder;
-        var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
+    var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
 
-        if(resource.type === 8){//text
-            var fileName = path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, resource.path);
-            fs.readFile(fileName, function(err, data){
-                if(!data){
-                    res.json({ err: ERR.NOT_FOUND, msg: 'can not find this file' });
-                    return;
-                }
-                res.send(data);
-            });
-
-        }else{
-            switch(resource.type){
-                case 2:// 文档
-                    res.set({
-                        'Content-Type': 'application/x-shockwave-flash',
-                        'X-Accel-Redirect': filePath + '.swf'
-                    });
-                    res.send();
-                    break;
-                case 1://image
-                case 3://audio
-                case 4://video
-                case 5://stream
-
-                    res.set({
-                        'Content-Type': resource.type,
-                        'X-Accel-Redirect': filePath
-                    });
-                    res.send();
-                    break;
-                default:
-                    res.json({ err: ERR.NOT_SUPPORT, msg: 'not support mimes' });
+    if(resource.type === 8){//text
+        var fileName = path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, resource.path);
+        fs.readFile(fileName, function(err, data){
+            if(!data){
+                res.json({ err: ERR.NOT_FOUND, msg: 'can not find this file' });
+                return;
             }
-        }// else
-        mLog.create({
-            fromUserId: loginUser._id,
-            fromUserName: loginUser.nick,
-
-            fileId: file._id.toString(),
-            fileName: file.name,
-
-            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-            //6: delete 7: 预览 8: 保存
-            operateType: 7, 
-
-            srcFolderId: file.folder.oid.toString(),
-            // distFolderId: folderId,
-            fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+            res.send(data);
         });
+
+    }else{
+        switch(resource.type){
+            case 2:// 文档
+                res.set({
+                    'Content-Type': 'application/x-shockwave-flash',
+                    'X-Accel-Redirect': filePath + '.swf'
+                });
+                res.send();
+                break;
+            case 1://image
+            case 3://audio
+            case 4://video
+            case 5://stream
+
+                res.set({
+                    'Content-Type': resource.type,
+                    'X-Accel-Redirect': filePath
+                });
+                res.send();
+                break;
+            default:
+                res.json({ err: ERR.NOT_SUPPORT, msg: 'not support mimes' });
+        }
+    }// else
+    mLog.create({
+        fromUserId: loginUser._id,
+        fromUserName: loginUser.nick,
+
+        fileId: file._id.toString(),
+        fileName: file.name,
+
+        //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+        //6: delete 7: 预览 8: 保存
+        operateType: 7,
+
+        srcFolderId: file.folder.oid.toString(),
+        // distFolderId: folderId,
+        fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+        // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
     });
 
-}
+};
 
 // 保存收件箱中的文件到自己的目录
 exports.save = function(req, res){
-    var params = req.body;
+    var params = req.parameter;
     var loginUser = req.loginUser;
-    var messageId = params.messageId;
-    var rootFolderId = loginUser.rootFolder['$id'];
+
+    var msg = params.messageId;
+    var rootFolderId = loginUser.rootFolder.oid;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    var query = {
-        _id: ObjectID(messageId),
-        $or: [
-            { 'fromUser.$id': ObjectID(loginUser._id) },
-            { 'toUser.$id': ObjectID(loginUser._id) }
-        ]
+    var param = {
+        name: msg.name,
+        'folder.$id': rootFolderId
     };
-    mMessage.getMessage(query, ep.doneLater('getMessage'));
-
-    ep.on('getMessage', function(msg){
-        if(!msg){
-            ep.emit('error', 'no allow to save', ERR.NOT_AUTH);
+    console.log('>>>file.save getfile ', param);
+    // 检查重名
+    mFile.getFile(param, function(err, file){
+        if(file){
+            ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
             return;
         }
-        var param = {
-            name: msg.name,
-            'folder.$id': ObjectID(rootFolderId)
-        };
-        console.log('>>>file.save getfile ', param);
-        mFile.getFile(param, function(err, file){
-            if(file){
-                ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
-                return;
-            }
-            mRes.getResource(msg.resource.oid.toString(), ep.done('getResource'));
-        });
-        
+        mRes.getResource(msg.resource.oid.toString(), ep.done('getResource'));
     });
-
-    ep.all('getMessage', 'getResource', function(msg, resource){
+        
+    ep.on('getResource', function(resource){
         var file = {
-            creator: loginUser._id,
-            folderId: rootFolderId,
+            creator: loginUser._id.toString(),
+            folderId: rootFolderId.toString(),
             name: msg.name,
             type: resource.type,
             size: resource.size,
             src: 1, //分享过来的文件
             resourceId: resource._id.toString()
-        }
+        };
 
         mFile.create(file, ep.done('createFile'));
-        if(targetRole === 'creator'){
-            mUser.updateUsed(loginUser._id, (resource.size || 0), function(){});
+        if(loginUser.__role & config.ROLE_FOLDER_CREATOR){
+            mUser.updateUsed(loginUser._id.toString(), (resource.size || 0), function(){});
         }
+
         mMessage.modify({ _id: msg._id }, { saved: true }, function(){});
     });
 
@@ -420,7 +302,7 @@ exports.save = function(req, res){
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存
-            operateType: 8, 
+            operateType: 8,
 
             // srcFolderId: file.folder.oid.toString(),
             distFolderId: file.folder.oid.toString()
@@ -429,84 +311,62 @@ exports.save = function(req, res){
         });
     });
 
-}
+};
 
 exports.get = function(req, res){
-    var params = req.query;
-    var fileId = params.fileId;
+    var params = req.parameter;
+    var file = params.fileId;
 
     var loginUser = req.loginUser;
 
-    var query = { 
-        _id: ObjectID(fileId) 
-    };
-    
-    mFile.getFile(query, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else if(!doc){
-            res.json({ err: ERR.NOT_FOUND, msg: 'no such file'});
-        }else{
+    db.dereference(file, { resource: ['_id', 'type', 'size'] }, function(err){
 
-            db.dereference(doc, { resource: ['_id', 'type', 'size']}, function(err, resource){
-
-                res.json({
-                    err: ERR.SUCCESS,
-                    result: {
-                        data: doc
-                    }
-                });
-            });
-
-        }
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                data: file
+            }
+        });
     });
-}
+};
 
-function shareToUser(params, callback){
-    var fileId = params.fileId;
-    var toUserId = params.toUserId;
-    var fromUserId = params.fromUserId;
+function shareToUser(loginUser, params, callback){
+    var file = params.file;
+    var user = params.user;
 
     var content = params.content || '';
 
     var ep = new EventProxy();
     ep.fail(callback);
 
-    // 1. 先获取文件信息
-    mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
-    
-    ep.on('getFile', function(file){
-        if(!file){
-            ep.emit('error', 'no such file', ERR.NOT_FOUND);
-            return;
-        }
-        // 2. 获取资源
-        mRes.getResource(file.resource.oid.toString(), ep.done('getResource'));
-    });
-    ep.all('getFile', 'getResource', function(file, resource){
+
+    // 获取资源
+    mRes.getResource(file.resource.oid.toString(), ep.doneLater('getResource'));
+
+    ep.on('getResource', function(resource){
         if(!resource){
             ep.emit('error', 'no such file', ERR.NOT_FOUND);
             return;
         }
         var msg = {
             content: content,
-            toUserId: toUserId,
-            fromUserId: fromUserId,
+            toUserId: user._id.toString(),
+            fromUserId: loginUser._id.toString(),
             fileName: file.name,
             fileType: resource.type,
             fileSize: resource.size,
 
             resourceId: resource._id.toString()
-        }
+        };
         
         // 创建一条分享消息
         mMessage.create(msg, callback);
 
         // 记录该操作
         mLog.create({
-            fromUserId: fromUserId,
+            fromUserId: loginUser._id.toString(),
 
-            toUserId: toUserId,
+            toUserId: user._id.toString(),
 
             fileId: file._id.toString(),
             fileName: file.name,
@@ -523,79 +383,55 @@ function shareToUser(params, callback){
     });
 }
 
-function shareToUsers(params, callback){
-    var userIds = params.userIds;
+function shareToUsers(loginUser, params, callback){
+    var users = params.users;
     var ep = new EventProxy();
     ep.fail(callback);
     
-    ep.after('shareToUser', userIds.length, function(list){
+    ep.after('shareToUser', users.length, function(list){
         callback(null);
     });
-    userIds.forEach(function(userId){
-        shareToUser({
-            fileId: params.fileId,
-            toUserId: userId,
-            fromUserId: params.creator,
+    users.forEach(function(user){
+        shareToUser(loginUser, {
+            file: params.file,
+            user: user,
             content: params.content
         }, ep.group('shareToUser'));
     });
 }
 
 
-function shareToGroup(params, callback){
-    var fileId = params.fileId;
-    var toGroupId = params.toGroupId;
-    var toFolderId = params.toFolderId;
+function shareToGroup(loginUser, params, callback){
+    var file = params.file;
+    var group = params.group;
+    var folder = params.folder;
 
     var ep = new EventProxy();
     ep.fail(callback);
 
-    if(!toGroupId && !toFolderId){
-        return callback('folderId and groupId must have one', ERR.PARAM_ERROR);
+    if(!group){
+        mGroup.getGroup(folder.group.oid.toString(), function(err, gp){
+            if(err){
+                return callback(err);
+            }
+            group = gp;
+            ep.emit('ready');
+        });
+    }else if(!folder){
+        mFolder.getFolder({ _id: group.rootFolder.oid }, function(err, fld){
+            if(err){
+                return callback(err);
+            }
+            folder = fld;
+            ep.emit('ready');
+        });
     }
 
-    // 1. 先获取文件信息
-    mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
-    if(toGroupId){
-        // 2. 获取小组信息
-        mGroup.getGroup(toGroupId, ep.doneLater('getGroup'));
-    }else{
-        mFolder.getFolder({ _id: ObjectID(toFolderId)}, ep.doneLater('getFolder'));
-    }
-
-    ep.on('getGroup', function(group){
-        if(!group){
-            ep.emit('error', 'no such group', ERR.NOT_FOUND);
-            return;
-        }
-        if(!toFolderId){
-            toFolderId = group.rootFolder.oid.toString();
-        }
-        ep.emit('groupReady', group);
-    });
-
-    ep.on('getFolder', function(folder){
-        if(!folder){
-            ep.emit('error', 'no such folder', ERR.NOT_FOUND);
-            return;
-        }
-        if(!folder.group){
-            ep.emit('error', 'the folder is not a group folder', ERR.PARAM_ERROR);
-            return;
-        }
-        toGroupId = folder.group.oid.toString();
-        mGroup.getGroup(toGroupId, ep.done('groupReady'));
-    });
-
-    ep.all('getFile', 'groupReady', function(file, group){
-        if(!file){
-            ep.emit('error', 'no such file', ERR.NOT_FOUND);
-            return;
-        }
+    ep.on('ready', function(){
         
         mFile.getFile({ // 重名检查
             name: file.name,
-            'folder.$id': ObjectID(toFolderId)
+            'folder.$id': folder._id
         }, function(err, file){
             if(file){
                 ep.emit('checkName', false);
@@ -605,7 +441,7 @@ function shareToGroup(params, callback){
         });
     });
 
-    ep.all('getFile', 'checkName', function(file, bool){
+    ep.on('checkName', function(bool){
         if(!bool){
             return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
         }
@@ -613,9 +449,9 @@ function shareToGroup(params, callback){
         // 拷贝 到目标文件夹
         file.resourceId = file.resource.oid.toString();
 
-        file.groupId = toGroupId;
-        file.folderId  = toFolderId;
-        file.creator = params.creator;
+        file.groupId = group._id.toString();
+        file.folderId  = folder._id.toString();
+        file.creator = loginUser._id.toString();
         file.src = 1; // 分享到小组的文件
 
         var srcFolderId = file.folder.oid.toString();
@@ -623,9 +459,9 @@ function shareToGroup(params, callback){
 
         // 记录该操作
         mLog.create({
-            fromUserId: params.creator,
+            fromUserId: loginUser._id.toString(),
 
-            fileId: fileId,
+            fileId: file._id.toString(),
             fileName: file.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
@@ -633,32 +469,31 @@ function shareToGroup(params, callback){
             operateType: 10,
 
             srcFolderId: srcFolderId,
-            distFolderId: toFolderId,
+            distFolderId: folder._id.toString(),
             // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-            toGroupId: toGroupId
+            toGroupId: group._id.toString()
         });
     });
     
 }
 
-function shareToGroups(params, callback){
-    var fileId = params.fileId;
-    var groupIds = params.groupIds;
-    var folderIds = params.folderIds || [];
-    var creator = params.creator;
+function shareToGroups(loginUser, params, callback){
+    var file = params.file;
+    var groups = params.groups;
+    var folders = params.folders || [];
 
     var ep = new EventProxy();
     ep.fail(callback);
-    var ids = groupIds.length ? groupIds : folderIds ;
+
+    var ids = groups.length ? groups : folders ;
     ep.after('shareToGroup', ids.length, function(list){
         callback(null, list);
     });
     for(var i = 0; i < ids.length; i++){
-        shareToGroup({
-            fileId: fileId,
-            toGroupId: groupIds[i],
-            toFolderId: folderIds[i],
-            creator: creator
+        shareToGroup(loginUser, {
+            file: file,
+            group: groups[i],
+            folder: folders[i]
         }, ep.group('shareToGroup'));
     }
 
@@ -666,59 +501,49 @@ function shareToGroups(params, callback){
 
 exports.share = function(req, res){
 
-    var params = req.body;
+    var params = req.parameter;
     var loginUser = req.loginUser;
-    var fileIds = params.fileId;
-    var toUserIds = params.toUserId;
-    var toGroupIds = params.toGroupId;
-    var toFolderIds = params.toFolderId;
-    var content = params.content;
 
-    params.creator = loginUser._id;
+    var files = params.fileId;
+    var toUsers = params.toUserId;
+    var toGroups = params.toGroupId;
+    var toFolders = params.toFolderId;
+    var content = params.content;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    if(!toGroupIds && !toUserIds){
+    if((!toGroups && !toUsers) || (!toGroups.length && !toUsers.length) ){
         ep.emit('error', 'must has a share target', ERR.PARAM_ERROR);
         return;
-    }else{ 
-        ep.after('share', fileIds.length, function(list){
-            ep.emit('shareSuccess');
-        });
-
-        fileIds.forEach(function(fileId){
-            if(toGroupIds){// 共享给多个小组
-                shareToGroups({
-                    fileId: fileId,
-                    groupIds: toGroupIds,
-                    folderIds: toFolderIds,
-                    creator: loginUser._id
-                }, ep.group('share'));
-            }else{
-                shareToUsers({// 共享给多个人
-                    fileId: fileId,
-                    userIds: toUserIds,
-                    content: content,
-                    creator: loginUser._id
-                }, ep.group('share'));
-            }
-        });
-
     }
-
-    ep.on('shareSuccess', function(){
+    ep.after('share', files.length, function(list){
         res.json({
             err: ERR.SUCCESS
         });
     });
 
-}
+    files.forEach(function(file){
+        if(toGroups){// 共享给多个小组
+            shareToGroups(loginUser, {
+                file: file,
+                groups: toGroups,
+                folders: toFolders,
+            }, ep.group('share'));
+        }else{
+            shareToUsers(loginUser, {// 共享给多个人
+                file: file,
+                users: toUsers,
+                content: content
+            }, ep.group('share'));
+        }
+    });
+};
 
-function modifyFile(params, callback){
-    var fileId = params.fileId;
+function modifyFile(user, params, callback){
+    var file = params.fileId;
 
     var doc = {};
     if(params.mark){
@@ -731,56 +556,41 @@ function modifyFile(params, callback){
         doc.content = params.content;
     }
 
-
     var ep = new EventProxy();
     ep.fail(callback);
 
-    mFile.getFile({
-        _id: ObjectID(fileId)
-    }, ep.doneLater('getFile'));
+    if(params.name && params.name !== file.name){
+        // 检查重名
+        mFile.getFile({
+            name: params.name,
+            'folder.$id': file.folder.oid
+        }, function(err, file){
+            if(file){
+                ep.emit('checkName', false);
+            }else{
+                ep.emit('checkName', true);
+            }
+        });
+    }else{
+        ep.emitLater('checkName', true);
+    }
 
-    ep.on('getFile', function(file){
-        if(!file){
-            ep.emit('error', 'no such file', ERR.NOT_FOUND);
-            return;
-        }
-        if(params.name){
-            mFile.getFile({
-                name: params.name,
-                'folder.$id': file.folder.oid
-            }, function(err, file){
-                if(file){
-                    ep.emit('checkName', false);
-                }else{
-                    ep.emit('checkName', true);
-                }
-            });
-        }else{
-            ep.emit('checkName', true);
-        }
-
-    });
-
-    ep.all('getFile', 'checkName', function(file, result){
+    ep.on('checkName', function(result){
         if(!result){
             ep.emit('error', 'has the same fileName in this folder', ERR.DUPLICATE);
             return;
         }
         var oldFileName = file.name;
-        var creator = params.creator;
-        if(params.authManager){
-            delete params.creator;
-        }
 
-        mFile.modify(params, doc, callback);
+        mFile.modify({ _id: file._id }, doc, callback);
 
         // 记录该操作
         mLog.create({
-            fromUserId: creator,
+            fromUserId: user._id.toString(),
 
             fileId: file._id.toString(),
             fileName: oldFileName,
-            newFileName: params.name,
+            newFileName: file.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
@@ -791,18 +601,13 @@ function modifyFile(params, callback){
             // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
             // toGroupId: toGroupId
         });
-            
+
     });
 }
 
 exports.modify = function(req, res){
-    var loginUser = req.loginUser;
-    var params = req.body;
 
-    params.creator = req.loginUser._id;
-    params.authManager = U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER);
-
-    modifyFile(params, function(err, file){
+    modifyFile(req.loginUser, req.parameter, function(err, file){
         if(err){
             res.json({ err: file || ERR.SERVER_ERROR, msg: err});
             return;
@@ -813,73 +618,50 @@ exports.modify = function(req, res){
                 data: file
             }
         });
-        
     });
+};
 
+function copyFile(user, params, callback){
+    var file = params.file;
 
-}
+    var targetFolder = params.targetFolder;
 
-function copyFile(params, callback){
-    var fileId = params.fileId;
-    var groupId = params.groupId;
-    var targetId = params.targetId;
-    var targetRole;
     var ep = new EventProxy();
 
     ep.fail(callback);
 
-    mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
 
-    ep.on('getFile', function(file){
-        if(!file){
-            return ep.emit('error', 'no such file', ERR.NOT_FOUND);
+    mFile.getFile({ // 重名检查
+        name: file.name,
+        'folder.$id': targetFolder._id
+    }, function(err, file){
+        if(file){
+            ep.emit('checkName', false);
+        }else{
+            ep.emit('checkName', true);
         }
-        // 检查是否有源目录的访问权限
-        fileHelper.hasFolderAccessRight(params.creator, file.folder.oid.toString(), groupId, ep.done('checkSourceFolderRight'));
-        // 检查是否有目标目录的访问权限
-        fileHelper.hasFolderAccessRight(params.creator, targetId, null, ep.done('checkTargetFolderRight'));
-
     });
 
-    ep.all('getFile', 'checkSourceFolderRight', 'checkTargetFolderRight', function(file, srcRole, dstRole){
-        if(!srcRole || srcRole === 'department'){
-            return ep.emit('error', 'no auth to access the srouce file', ERR.NOT_AUTH);
-        }
-        if(!dstRole || dstRole === 'department'){
-            return ep.emit('error', 'no auth to access the target folder', ERR.NOT_AUTH);
-        }
-        targetRole = dstRole;
-        mFile.getFile({ // 重名检查
-            name: file.name,
-            'folder.$id': ObjectID(targetId)
-        }, function(err, file){
-            if(file){
-                ep.emit('checkName', false);
-            }else{
-                ep.emit('checkName', true);
-            }
-        });
-    });
 
-    ep.all('getFile', 'checkName', function(file, bool){
+    ep.on('checkName', function(bool){
         if(!bool){
             return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
         }
         // 权限检查没问题
         file.resourceId = file.resource.oid.toString();
 
-        file.groupId = groupId;
-        file.folderId  = targetId;
-        file.creator = params.creator;
+        file.groupId = targetFolder.group && targetFolder.group.oid.toString();
+        file.folderId  = targetFolder._id.toString();
+        file.creator = user._id.toString();
         
         mFile.create(file, callback);
-        if(targetRole === 'creator'){
-            mUser.updateUsed(params.creator, (file.size || 0), function(){});
+        if(user.__role & config.ROLE_FOLDER_CREATOR){
+            mUser.updateUsed(user._id.toString(), (file.size || 0), function(){});
         }
 
         // 记录该操作
         mLog.create({
-            fromUserId: params.creator,
+            fromUserId: user._id.toString(),
 
             fileId: file._id.toString(),
             fileName: file.name,
@@ -889,7 +671,7 @@ function copyFile(params, callback){
             operateType: 3,
 
             srcFolderId: file.folder.oid.toString(),
-            distFolderId: targetId
+            distFolderId: targetFolder._id.toString()
             // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
             // toGroupId: toGroupId
         });
@@ -900,19 +682,19 @@ function copyFile(params, callback){
 }
 
 exports.copy = function(req, res){
-    var params = req.body;
-    var fileIds = params.fileId;
-    var groupId = params.groupId;
-    var targetId = params.targetId;
+    var params = req.parameter;
+    var files = params.fileId;
+    // var group = params.groupId;
+    var targetFolder = params.targetId;
 
-    var creator = req.loginUser._id;
+    var loginUser = req.loginUser;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('copy', fileIds.length, function(list){
+    ep.after('copy', files.length, function(list){
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -921,81 +703,48 @@ exports.copy = function(req, res){
         });
     });
 
-    fileIds.forEach(function(fileId){
-        copyFile({
-            fileId: fileId,
-            creator: creator,
-            targetId: targetId,
-            groupId: groupId
-
+    files.forEach(function(file){
+        copyFile(loginUser, {
+            file: file,
+            targetFolder: targetFolder
         }, ep.group('copy'));
     });
 
-}
+};
 
-function moveFile(params, callback){
+function moveFile(user, params, callback){
     var ep = new EventProxy();
-
     ep.fail(callback);
 
-    mFile.getFile({ _id: ObjectID(params.fileId) }, ep.doneLater('getFile'));
+    var file = params.file;
+    var targetFolder = params.targetFolder;
 
-    mFolder.getFolder({ _id: ObjectID(params.targetId) }, ep.doneLater('getFolder'));
-
-    ep.all('getFile', 'getFolder', function(file, folder){
-        if(!file){
-            ep.emit('error', 'no such file', ERR.NOT_FOUND);
-            return;
-        }
-        if(!folder){
-            ep.emit('error', 'no such target folder', ERR.NOT_FOUND);
-            return;
-        }
-        if(params.groupId){
-            // 这次操作是小组操作
-            if(folder.group.oid.toString() !== params.groupId){
-                // , 但是小组不匹配
-                ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
-                return;
-            }
+    mFile.getFile({ // 重名检查
+        name: file.name,
+        'folder.$id': ObjectID(params.targetId)
+    }, function(err, file){
+        if(file){
+            ep.emit('checkName', false);
         }else{
-            // 这次操作是个人文件夹操作
-            if(folder.creator.oid.toString() !== params.creator){
-                // , 但是不是同一个用户的目录
-                ep.emit('error', 'no auth to access target folder', ERR.NOT_AUTH);
-                return;
-            }
+            ep.emit('checkName', true);
         }
-
-        mFile.getFile({ // 重名检查
-            name: file.name,
-            'folder.$id': ObjectID(params.targetId)
-        }, function(err, file){
-            if(file){
-                ep.emit('checkName', false);
-            }else{
-                ep.emit('checkName', true);
-            }
-        });
     });
 
-    ep.all('getFile', 'getFolder', 'checkName', function(file, folder, bool){
+
+    ep.on('checkName', function(bool){
         if(!bool){
             return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
         }
 
         var doc = {
-            folder: DBRef('folder', folder._id)
+            folder: DBRef('folder', targetFolder._id)
         };
-        var creator = params.creator;
-        if(params.authManager){
-            delete params.creator;
-        }
-        mFile.modify(params, doc, callback);
+
+        mFile.modify({ _id: file._id }, doc, callback);
 
         // 记录该操作
         mLog.create({
-            fromUserId: creator,
+            fromUserId: user._id.toString(),
 
             fileId: file._id.toString(),
             fileName: file.name,
@@ -1005,30 +754,28 @@ function moveFile(params, callback){
             operateType: 4,
 
             srcFolderId: file.folder.oid.toString(),
-            distFolderId: params.targetId,
-            fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            distFolderId: targetFolder._id.toString(),
+            fromGroupId: targetFolder.group && targetFolder.group.oid.toString()
             // toGroupId: toGroupId
         });
     });
 }
 
 exports.move = function(req, res){
-    var params = req.body;
+    var params = req.parameter;
 
-    var fileIds = params.fileId;
-    var groupId = params.groupId;
-    var targetId = params.targetId;
+    var files = params.fileId;
+    // var groupId = params.groupId;
+    var targetFolder = params.targetId;
 
-    var creator = req.loginUser._id;
-
-    params.authManager = U.hasRight(req.loginUser.auth, config.AUTH_SYS_MANAGER);
+    var loginUser = req.loginUser;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('move', fileIds.length, function(list){
+    ep.after('move', files.length, function(list){
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -1037,81 +784,69 @@ exports.move = function(req, res){
         });
     });
 
-    fileIds.forEach(function(fileId){
-        moveFile({
-            fileId: fileId,
-            creator: creator,
-            targetId: targetId,
-            authManager: params.authManager,
-            groupId: groupId
-
+    files.forEach(function(file){
+        moveFile(loginUser, {
+            file: file,
+            targetFolder: targetFolder
         }, ep.group('move'));
     });
 
-}
+};
 
 
 exports.delete = function(req, res){
 
-    var params = req.body;
-    var fileIds = params.fileId; 
+    var params = req.parameter;
+    var files = params.fileId; 
     var loginUser = req.loginUser;
-    var creator = loginUser._id;
+
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('delete', fileIds.length, function(list){
+    ep.after('delete', files.length, function(list){
         res.json({
             err: ERR.SUCCESS
         });
     });
     
-    if(U.hasRight(loginUser.auth, config.AUTH_SYS_MANAGER)){
-        // 超级管理员可以删任何文件
-        creator = null;
-    }
-
-    fileIds.forEach(function(fileId){
+    files.forEach(function(file){
         // 设置删除标志位
         mFile.softDelete({
-            fileId: fileId,
-            creator: creator
+            fileId: file._id.toString()
         }, ep.group('delete', function(file){
-            if(file){
-                // 记录该操作
-                mLog.create({
-                    fromUserId: loginUser._id,
-                    fromUserName: loginUser.nick,
+            // 记录该操作
+            mLog.create({
+                fromUserId: loginUser._id.toString(),
+                fromUserName: loginUser.nick,
 
-                    fileId: file._id.toString(),
-                    fileName: file.name,
+                fileId: file._id.toString(),
+                fileName: file.name,
 
-                    //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-                    //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 11: delete(移动到回收站)
-                    operateType: 11,
+                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 11: delete(移动到回收站)
+                operateType: 11,
 
-                    srcFolderId: file.folder.oid.toString()
-                    // distFolderId: params.targetId,
-                    // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-                    // toGroupId: toGroupId
-                });
-            }
+                srcFolderId: file.folder.oid.toString()
+                // distFolderId: params.targetId,
+                // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+                // toGroupId: toGroupId
+            });
             
             return file;
         }));
         
     });
 
-}
+};
 
 
 exports.search = function(req, res){
-    var params = req.query;
-    var folderId = params.folderId;
-    var groupId = params.groupId;
+    var parameter = req.parameter;
+    var folder = params.folderId;
+
     var loginUser = req.loginUser;
 
     var ep = new EventProxy();
@@ -1119,52 +854,51 @@ exports.search = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    // 检查权限
-    fileHelper.hasFolderAccessRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
-
-    ep.on('checkRight', function(role, folder, group){
-        if(!role){
-            ep.emit('error', 'not auth to search this folder', ERR.NOT_AUTH);
-            return;
-        }
-        if(role === 'creator'){
-            params.creator = loginUser._id;
-        }else if(role === 'school'){
-            params.extendQuery = {};
-            if(('status' in params) && U.hasRight(loginUser.auth, config.AUTH_MANAGER)){
-                // status 参数只对管理员生效
-                params.extendQuery.status = Number(params.status) || 0;
-            }else{
-                params.extendQuery.validateStatus = 1// 学校空间只能看审核通过的文件
-            }
-        }else if(role === 'department'){
-            // 非部门公開就不返回內容
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    total: 0,
-                    list: []
-                }
-            });
-            return;
-        }else if(role === 'pubFolder'){
-            // 公開文件夾下只能看到部门成员和本人上传的文件
-            var ids = [ObjectID(loginUser._id)];
-            params.extendQuery = {
-                'creator.$id': { $in: ids }
-            };
-            mGroup.getGroupMemberIds(group._id.toString(), function(err, docs){
-                if(docs && docs.length){
-                    docs.forEach(function(doc){
-                        ids.push(doc.user.oid);
-                    });
-                }
-                mFile.search(params, ep.done('search'));
-            });
-            return;
-        }
-        mFile.search(params, ep.done('search'));
+    var searchParams = us.extend({}, parameter, {
+        folderId: folder._id.toString()
     });
+
+    if(loginUser.__role & config.ROLE_FOLDER_CREATOR){
+        // 搜索自己创建的文件
+        searchParams.creator = loginUser._id.toString();
+    }else if(folder.__role === config.FOLDER_SCHOOL){
+        // 学校空间的文件夹
+        searchParams.extendQuery = {};
+        if(('status' in searchParams) && (user.__role & config.ROLE_MANAGER)){
+            // 管理员可以使用 status 参数搜索
+            searchParams.extendQuery.status = searchParams.status || 0;
+        }else{
+            // 否则只返回审核通过的文件
+            searchParams.extendQuery.validateStatus = 1;
+        }
+    }else if(folder.__role === config.FOLDER_DEPARTMENT_PRIVATE){
+        // 非部门公開就不返回內容
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                total: 0,
+                list: []
+            }
+        });
+        return;
+    }else if(folder.__role === config.FOLDER_DEPARTMENT_PUBLIC){
+        // 公開文件夾下只能看到部门成员和本人上传的文件
+        var ids = [loginUser._id];
+        searchParams.extendQuery = {
+            'creator.$id': { $in: ids }
+        };
+        mGroup.getGroupMemberIds(folder.group.oid.toString(), function(err, docs){
+            if(docs && docs.length){
+                docs.forEach(function(doc){
+                    ids.push(doc.user.oid);
+                });
+            }
+            mFile.search(searchParams, ep.done('search'));
+        });
+        return;
+    }
+    
+    mFile.search(searchParams, ep.done('search'));
 
     ep.on('search', function(total, docs){
         res.json({
@@ -1175,38 +909,49 @@ exports.search = function(req, res){
             }
         });
     });
-}
+};
 
+/**
+ * 查询该用户共享给其他部门的文件
+ * @param  {[type]} req [description]
+ * @param  {[type]} res [description]
+ * @return {[type]}     [description]
+ */
 exports.query = function(req, res){
-    var params = req.query;
-    var cate = Number(params.cate);
-    var creator = req.loginUser._id;
+    var parameter = req.parameter;
+    var cate = parameter.cate;
+    var loginUser = req.loginUser;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
+    var searchParams = us.extend({}, parameter);
+    var group = parameter.groupId;
 
     if(cate === 1){
-        if(!params.groupId){
-            params.extendQuery = {
+        if(!group){
+            searchParams.extendQuery = {
                 group: {$exists: true}
             };
+        }else{
+            searchParams.groupId = group._id.toString();
         }
-        params.creator = creator;
+        searchParams.creator = loginUser._id.toString();
     }else{
         ep.emit('error', 'not support query cate', ERR.PARAM_ERROR);
         return;
     }
 
-    params.extendDefProps = {
+    searchParams.extendDefProps = {
         folder: ['_id', 'name'],
         group: ['_id', 'name'],
         creator: ['_id','nick', 'name']
     };
 
-    mFile.search(params, ep.doneLater('search'));
+    mFile.search(searchParams, ep.doneLater('search'));
+
     ep.on('search', function(total, docs){
         res.json({
             err: ERR.SUCCESS,
@@ -1216,4 +961,4 @@ exports.query = function(req, res){
             }
         });
     });
-}
+};

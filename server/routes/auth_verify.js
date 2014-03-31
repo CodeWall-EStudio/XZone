@@ -1,14 +1,16 @@
-//!! 2.0 重构部分
 
 var EventProxy = require('eventproxy');
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
+var us = require('underscore');
 
 var db = require('../models/db');
 var ERR = require('../errorcode.js');
 var U = require('../util');
+var config = require('./config');
 var AuthConfig = require('./auth_config');
 var mUser = require('../models/user');
+var mGroup = require('../models/group');
 var routeUser = require('./user');
 
 
@@ -71,7 +73,7 @@ exports.checkAuthAndLogin = function(req, res, next){
         req.loginUid = loginUid;
         next();
     }
-}
+};
 
 /**
  * 检查 api 调用权限, 所有 api 权限检查都在这里完成, api 的具体实现里就不在涉及跟权限有关的代码
@@ -84,6 +86,11 @@ exports.index = function(req, res, next){
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
+        if(errCode === ERR.NOT_FOUND && config.DOWNLOAD_APIS.indexOf(path) > -1){
+            console.error(err, errCode);
+            //NOTE: 下载接口, 如果找不到文件, 直接跳 404 页面
+            return res.redirect(config.NOT_FOUND_PAGE);
+        }
         res.json({err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
@@ -102,10 +109,30 @@ exports.index = function(req, res, next){
         // 权限没有问题, 如果有问题, 就抛出 error 事件
         next();
     });
-}
+};
 
 function getUserRoles(user, parameter, callback){
-    
+    var role = config.ROLE_NORMAL;
+    if((user.auth & config.AUTH_MANAGER) || (user.auth & config.AUTH_SYS_MANAGER)){
+        role |= config.ROLE_MANAGER;
+    }
+
+    mGroup.isPrepareMember(user._id.toString(), function(err, result){
+        if(result){
+            role |= config.ROLE_PREPARE_MEMBER;
+        }
+        user.__role = role;
+        callback(err, user);
+    });
 }
 
-
+function checkAPIAuth(path, user, parameter, callback){
+    if(AuthConfig.AUTH_WHITE_LIST.indexOf(path) > -1){
+        return callback(null);
+    }
+    var rule = AuthConfig.RULES[path];
+    if(!rule || !rule.verify){
+        return callback(null);
+    }
+    rule.verify(user, parameter, callback);
+}

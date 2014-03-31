@@ -19,9 +19,9 @@ var mLog = require('../models/log');
 var U = require('../util');
 
 exports.saveUploadFile = function(params, callback){
-    var folderId = params.folderId;
+    var folder = params.folderId;
     var loginUser = params.loginUser;
-    var body = params.body;
+    var body = params.parameter;
 
     //1. 先把文件保存到 data 目录
     var uploadFilePath = body.file_path;
@@ -44,8 +44,6 @@ exports.saveUploadFile = function(params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
-    var oFolderId = ObjectID(folderId);
-    mFolder.getFolder({_id: oFolderId}, ep.doneLater('getFolder'));
     // 在同一个文件夹下，不允许出现文件名相同且作者相同的文件。
     // 文件名相同且作者相同时，比较文件MD5。若MD5相同，提示重复文件，终止写操作；
     // 若MD5不同，提示改名后继续操作。
@@ -53,19 +51,16 @@ exports.saveUploadFile = function(params, callback){
         ep.emit('error', 'file name is required', ERR.PARAM_ERROR);
         return;
     }
-    var query = { 
-        name: name, 
-        'folder.$id': oFolderId, 
+    var query = {
+        name: name,
+        'folder.$id': folder._id,
         'creator.$id': loginUser._id
     };
     // console.log('>>>check file name', query);
     mFile.getFile(query, ep.doneLater('getFile'));
 
-    ep.all('getFolder', 'getFile', function(folder, file){
-        if(!folder){
-            ep.emit('error', 'no such folder', ERR.NOT_FOUND);
-            return;
-        }
+    ep.on('getFile', function(file){
+
         if(file){
             ep.emit('error', 'has the same filename', ERR.DUPLICATE);
             return;
@@ -78,7 +73,7 @@ exports.saveUploadFile = function(params, callback){
             loginUser.used = loginUser.used + fileSize;
 
             // 修改用户表的 used 
-            mUser.updateUsed(loginUser._id.toString(),  (fileSize || 0), ep.done('updateSpaceUsed'))
+            mUser.updateUsed(loginUser._id.toString(),  (fileSize || 0), ep.done('updateSpaceUsed'));
 
         }
     });
@@ -96,7 +91,7 @@ exports.saveUploadFile = function(params, callback){
             size: fileSize,
             mimes: contentType,
             type: fileType
-        }
+        };
 
         if(params.createSWFForDoc){
             // 转换文档为 swf
@@ -109,23 +104,23 @@ exports.saveUploadFile = function(params, callback){
 
     });
 
-    ep.all('getFolder', 'saveRes', function(folder, resource){
+    ep.on('saveRes', function(resource){
         // 添加文件记录
         var file = {
             creator: loginUser._id.toString(),
-            folderId: folderId,
+            folderId: folder._id.toString(),
             name: name,
             type: fileType,
             size: fileSize,
             groupId: folder.group && folder.group.oid.toString(),
             resourceId: resource._id.toString()
-        }
+        };
         resource.ref = 1;
 
         mFile.create(file, ep.done('createFile'));
     });
 
-    ep.all('getFolder', 'saveRes', 'createFile', function(folder, savedRes, file){
+    ep.all('saveRes', 'createFile', function(savedRes, file){
         if(savedRes){
             file.resource = U.filterProp(savedRes, ['_id', 'type', 'size']);
         }
@@ -139,17 +134,17 @@ exports.saveUploadFile = function(params, callback){
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存
-            operateType: 1, 
+            operateType: 1,
 
             // srcFolderId: null,
-            distFolderId: folderId,
+            distFolderId: folder._id.toString(),
 
             toGroupId: folder.group && folder.group.oid.toString()
         });
 
     });
 
-}
+};
 
 function formatType(mimes, ext){
     if (  config.FILE_MIMES['image'].indexOf(mimes) > -1 ) {
@@ -302,4 +297,4 @@ exports.hasFolderAccessRight = function(userId, folderId, groupId, callback){
         console.log('checkRight, role: ', role);
         callback(null, role, folder, group);
     });
-}
+};

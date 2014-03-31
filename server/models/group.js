@@ -25,7 +25,7 @@ exports.create = function(params, callback){
 
     var nameQuery = {
         name: params.name
-    }
+    };
     if(params.parentId){
         nameQuery['parent.$id'] = ObjectID(params.parentId);
     }else{
@@ -195,9 +195,9 @@ exports.getGroupMemberIds = function(groupId, callback){
 
 exports.isGroupMember = function(groupId, userId, callback){
     // console.log('>>>isGroupMember', groupId, userId);
-    var query = { 
-        'group.$id': ObjectID(groupId), 
-        'user.$id': ObjectID(userId) 
+    var query = {
+        'group.$id': ObjectID(groupId),
+        'user.$id': ObjectID(userId)
     };
     db.groupuser.findOne(query, function(err, doc){
         if(doc){
@@ -206,7 +206,7 @@ exports.isGroupMember = function(groupId, userId, callback){
             callback(null, false);
         }
     });
-}
+};
 
 exports.isPrepareMember = function(userId, callback){
     // console.log('>>>isPrepareMember', userId);
@@ -222,7 +222,7 @@ exports.isPrepareMember = function(userId, callback){
             exports.isGroupMember(group._id.toString(), userId, callback);
         }
     });
-}
+};
 
 
 exports.modify = function(params, doc, callback){
