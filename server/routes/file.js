@@ -85,17 +85,17 @@ exports.download = function(req, res){
         fromUserId: loginUser._id,
         fromUserName: loginUser.nick,
 
-        fileId: file._id.toString(),
+        fileId: file._id,
         fileName: file.name,
 
         //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
         //6: delete 7: 预览 8: 保存
         operateType: 2,
 
-        srcFolderId: folder._id.toString(),
+        srcFolderId: folder._id,
         // distFolderId: folderId,
-        fromGroupId: folder.group && folder.group.oid.toString()
-        // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+        fromGroupId: folder.group && folder.group.oid
+        // toGroupId: saveFolder.group || saveFolder.group.oid
     });
 
 };
@@ -151,17 +151,17 @@ exports.batchDownload = function(req, res){
             fromUserId: loginUser._id,
             fromUserName: loginUser.nick,
 
-            fileId: file._id.toString(),
+            fileId: file._id,
             fileName: file.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存
             operateType: 2,
 
-            srcFolderId: file.folder.oid.toString(),
+            srcFolderId: file.folder.oid,
             // distFolderId: folderId,
-            fromGroupId: folder.group && folder.group.oid.toString()
-            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+            fromGroupId: folder.group && folder.group.oid
+            // toGroupId: saveFolder.group || saveFolder.group.oid
         });
 
     });
@@ -200,11 +200,29 @@ exports.preview = function(req, res){
     }else{
         switch(resource.type){
             case 2:// 文档
-                res.set({
-                    'Content-Type': 'application/x-shockwave-flash',
-                    'X-Accel-Redirect': filePath + '.swf'
-                });
-                res.send();
+                var swfFile = path.join(config.FILE_SAVE_ROOT, filePath, '.swf');
+                if(!fs.existsSync(swfFile)){
+                    console.error('can\'t find ' + swfFile + '! try to convert...');
+                    var suffix = path.extname(filePath).slice(1);
+                    fileHelper.convertWord(path.join(config.FILE_SAVE_ROOT, filePath), resource.mimes, suffix, function(err){
+                        if(err){
+                            res.json({ err: ERR.NOT_FOUND, msg: 'can not find this file and convert failure' });
+                            return;
+                        }
+                        console.log('convert success: ' + filePath);
+                        res.set({
+                            'Content-Type': 'application/x-shockwave-flash',
+                            'X-Accel-Redirect': filePath + '.swf'
+                        });
+                        res.send();
+                    });
+                }else{
+                    res.set({
+                        'Content-Type': 'application/x-shockwave-flash',
+                        'X-Accel-Redirect': filePath + '.swf'
+                    });
+                    res.send();
+                }
                 break;
             case 1://image
             case 3://audio
@@ -225,17 +243,17 @@ exports.preview = function(req, res){
         fromUserId: loginUser._id,
         fromUserName: loginUser.nick,
 
-        fileId: file._id.toString(),
+        fileId: file._id,
         fileName: file.name,
 
         //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
         //6: delete 7: 预览 8: 保存
         operateType: 7,
 
-        srcFolderId: file.folder.oid.toString(),
+        srcFolderId: file.folder.oid,
         // distFolderId: folderId,
-        fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-        // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+        fromGroupId: folder ? folder.group && folder.group.oid : null
+        // toGroupId: saveFolder.group || saveFolder.group.oid
     });
 
 };
@@ -264,23 +282,23 @@ exports.save = function(req, res){
             ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
             return;
         }
-        mRes.getResource(msg.resource.oid.toString(), ep.done('getResource'));
+        mRes.getResource({ _id: msg.resource.oid }, ep.done('getResource'));
     });
         
     ep.on('getResource', function(resource){
         var file = {
-            creator: loginUser._id.toString(),
-            folderId: rootFolderId.toString(),
+            creator: loginUser._id,
+            folderId: rootFolderId,
             name: msg.name,
             type: resource.type,
             size: resource.size,
             src: 1, //分享过来的文件
-            resourceId: resource._id.toString()
+            resourceId: resource._id
         };
 
         mFile.create(file, ep.done('createFile'));
         if(loginUser.__role & config.ROLE_FOLDER_CREATOR){
-            mUser.updateUsed(loginUser._id.toString(), (resource.size || 0), function(){});
+            mUser.updateUsed(loginUser._id, (resource.size || 0), function(){});
         }
 
         mMessage.modify({ _id: msg._id }, { saved: true }, function(){});
@@ -297,17 +315,17 @@ exports.save = function(req, res){
             fromUserId: loginUser._id,
             fromUserName: loginUser.nick,
 
-            fileId: file._id.toString(),
+            fileId: file._id,
             fileName: file.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存
             operateType: 8,
 
-            // srcFolderId: file.folder.oid.toString(),
-            distFolderId: file.folder.oid.toString()
-            // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+            // srcFolderId: file.folder.oid,
+            distFolderId: file.folder.oid
+            // fromGroupId: folder ? folder.group && folder.group.oid : null
+            // toGroupId: saveFolder.group || saveFolder.group.oid
         });
     });
 
@@ -341,7 +359,7 @@ function shareToUser(loginUser, params, callback){
 
 
     // 获取资源
-    mRes.getResource(file.resource.oid.toString(), ep.doneLater('getResource'));
+    mRes.getResource({ _id: file.resource.oid}, ep.doneLater('getResource'));
 
     ep.on('getResource', function(resource){
         if(!resource){
@@ -350,13 +368,13 @@ function shareToUser(loginUser, params, callback){
         }
         var msg = {
             content: content,
-            toUserId: user._id.toString(),
-            fromUserId: loginUser._id.toString(),
+            toUserId: user._id,
+            fromUserId: loginUser._id,
             fileName: file.name,
             fileType: resource.type,
             fileSize: resource.size,
 
-            resourceId: resource._id.toString()
+            resourceId: resource._id
         };
         
         // 创建一条分享消息
@@ -364,21 +382,21 @@ function shareToUser(loginUser, params, callback){
 
         // 记录该操作
         mLog.create({
-            fromUserId: loginUser._id.toString(),
+            fromUserId: loginUser._id,
 
-            toUserId: user._id.toString(),
+            toUserId: user._id,
 
-            fileId: file._id.toString(),
+            fileId: file._id,
             fileName: file.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
             operateType: 9,
 
-            srcFolderId: file.folder.oid.toString()
-            // distFolderId: file.folder.oid.toString()
-            // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+            srcFolderId: file.folder.oid
+            // distFolderId: file.folder.oid
+            // fromGroupId: folder ? folder.group && folder.group.oid : null
+            // toGroupId: saveFolder.group || saveFolder.group.oid
         });
     });
 }
@@ -410,7 +428,7 @@ function shareToGroup(loginUser, params, callback){
     ep.fail(callback);
 
     if(!group){
-        mGroup.getGroup(folder.group.oid.toString(), function(err, gp){
+        mGroup.getGroup({ _id: folder.group.oid }, function(err, gp){
             if(err){
                 return callback(err);
             }
@@ -447,21 +465,21 @@ function shareToGroup(loginUser, params, callback){
         }
 
         // 拷贝 到目标文件夹
-        file.resourceId = file.resource.oid.toString();
+        file.resourceId = file.resource.oid;
 
-        file.groupId = group._id.toString();
-        file.folderId  = folder._id.toString();
-        file.creator = loginUser._id.toString();
+        file.groupId = group._id;
+        file.folderId  = folder._id;
+        file.creator = loginUser._id;
         file.src = 1; // 分享到小组的文件
 
-        var srcFolderId = file.folder.oid.toString();
+        var srcFolderId = file.folder.oid;
         mFile.create(file, callback);
 
         // 记录该操作
         mLog.create({
-            fromUserId: loginUser._id.toString(),
+            fromUserId: loginUser._id,
 
-            fileId: file._id.toString(),
+            fileId: file._id,
             fileName: file.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
@@ -469,9 +487,9 @@ function shareToGroup(loginUser, params, callback){
             operateType: 10,
 
             srcFolderId: srcFolderId,
-            distFolderId: folder._id.toString(),
-            // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-            toGroupId: group._id.toString()
+            distFolderId: folder._id,
+            // fromGroupId: folder ? folder.group && folder.group.oid : null
+            toGroupId: group._id
         });
     });
     
@@ -586,9 +604,9 @@ function modifyFile(user, params, callback){
 
         // 记录该操作
         mLog.create({
-            fromUserId: user._id.toString(),
+            fromUserId: user._id,
 
-            fileId: file._id.toString(),
+            fileId: file._id,
             fileName: oldFileName,
             newFileName: file.name,
 
@@ -596,9 +614,9 @@ function modifyFile(user, params, callback){
             //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
             operateType: 5,
 
-            srcFolderId: file.folder.oid.toString()
+            srcFolderId: file.folder.oid
             // distFolderId: toFolderId,
-            // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            // fromGroupId: folder ? folder.group && folder.group.oid : null
             // toGroupId: toGroupId
         });
 
@@ -648,31 +666,31 @@ function copyFile(user, params, callback){
             return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
         }
         // 权限检查没问题
-        file.resourceId = file.resource.oid.toString();
+        file.resourceId = file.resource.oid;
 
-        file.groupId = targetFolder.group && targetFolder.group.oid.toString();
-        file.folderId  = targetFolder._id.toString();
-        file.creator = user._id.toString();
+        file.groupId = targetFolder.group && targetFolder.group.oid;
+        file.folderId  = targetFolder._id;
+        file.creator = user._id;
         
         mFile.create(file, callback);
         if(user.__role & config.ROLE_FOLDER_CREATOR){
-            mUser.updateUsed(user._id.toString(), (file.size || 0), function(){});
+            mUser.updateUsed(user._id, (file.size || 0), function(){});
         }
 
         // 记录该操作
         mLog.create({
-            fromUserId: user._id.toString(),
+            fromUserId: user._id,
 
-            fileId: file._id.toString(),
+            fileId: file._id,
             fileName: file.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
             operateType: 3,
 
-            srcFolderId: file.folder.oid.toString(),
-            distFolderId: targetFolder._id.toString()
-            // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+            srcFolderId: file.folder.oid,
+            distFolderId: targetFolder._id
+            // fromGroupId: folder ? folder.group && folder.group.oid : null
             // toGroupId: toGroupId
         });
 
@@ -721,7 +739,7 @@ function moveFile(user, params, callback){
 
     mFile.getFile({ // 重名检查
         name: file.name,
-        'folder.$id': ObjectID(params.targetId)
+        'folder.$id': params.targetId
     }, function(err, file){
         if(file){
             ep.emit('checkName', false);
@@ -744,18 +762,18 @@ function moveFile(user, params, callback){
 
         // 记录该操作
         mLog.create({
-            fromUserId: user._id.toString(),
+            fromUserId: user._id,
 
-            fileId: file._id.toString(),
+            fileId: file._id,
             fileName: file.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组
             operateType: 4,
 
-            srcFolderId: file.folder.oid.toString(),
-            distFolderId: targetFolder._id.toString(),
-            fromGroupId: targetFolder.group && targetFolder.group.oid.toString()
+            srcFolderId: file.folder.oid,
+            distFolderId: targetFolder._id,
+            fromGroupId: targetFolder.group && targetFolder.group.oid
             // toGroupId: toGroupId
         });
     });
@@ -797,7 +815,7 @@ exports.move = function(req, res){
 exports.delete = function(req, res){
 
     var params = req.parameter;
-    var files = params.fileId; 
+    var files = params.fileId;
     var loginUser = req.loginUser;
 
 
@@ -815,23 +833,23 @@ exports.delete = function(req, res){
     files.forEach(function(file){
         // 设置删除标志位
         mFile.softDelete({
-            fileId: file._id.toString()
+            fileId: file._id
         }, ep.group('delete', function(file){
             // 记录该操作
             mLog.create({
-                fromUserId: loginUser._id.toString(),
+                fromUserId: loginUser._id,
                 fromUserName: loginUser.nick,
 
-                fileId: file._id.toString(),
+                fileId: file._id,
                 fileName: file.name,
 
                 //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
                 //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 11: delete(移动到回收站)
                 operateType: 11,
 
-                srcFolderId: file.folder.oid.toString()
+                srcFolderId: file.folder.oid
                 // distFolderId: params.targetId,
-                // fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
+                // fromGroupId: folder ? folder.group && folder.group.oid : null
                 // toGroupId: toGroupId
             });
             
@@ -855,12 +873,12 @@ exports.search = function(req, res){
     });
 
     var searchParams = us.extend({}, parameter, {
-        folderId: folder._id.toString()
+        folderId: folder._id
     });
 
     if(loginUser.__role & config.ROLE_FOLDER_CREATOR){
         // 搜索自己创建的文件
-        searchParams.creator = loginUser._id.toString();
+        searchParams.creator = loginUser._id;
     }else if(folder.__role === config.FOLDER_SCHOOL){
         // 学校空间的文件夹
         searchParams.extendQuery = {};
@@ -887,7 +905,7 @@ exports.search = function(req, res){
         searchParams.extendQuery = {
             'creator.$id': { $in: ids }
         };
-        mGroup.getGroupMemberIds(folder.group.oid.toString(), function(err, docs){
+        mGroup.getGroupMemberIds(folder.group.oid, function(err, docs){
             if(docs && docs.length){
                 docs.forEach(function(doc){
                     ids.push(doc.user.oid);
@@ -936,9 +954,9 @@ exports.query = function(req, res){
                 group: {$exists: true}
             };
         }else{
-            searchParams.groupId = group._id.toString();
+            searchParams.groupId = group._id;
         }
-        searchParams.creator = loginUser._id.toString();
+        searchParams.creator = loginUser._id;
     }else{
         ep.emit('error', 'not support query cate', ERR.PARAM_ERROR);
         return;

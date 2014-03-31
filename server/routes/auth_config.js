@@ -291,7 +291,24 @@ exports.RULES = {
                 type: 'number',
                 min: 1
             }
-        ]
+        ],
+        verify: function(user, parameter, callback){
+            var folder = parameter.folderId;
+
+            var msg = 'not auth to create folder in this folder, folderId: ' + folder._id;
+
+            verifyFolder(user, folder, function(err, folder){
+                if(err){
+                    return callback(err, folder);
+                }
+                if(folder.__writable){
+                    callback(null);
+                }
+                // 么有权限写该文件夹
+                return callback(msg, ERR.NOT_AUTH);
+            });// verifyFolder
+
+        }
     },
     '/api/folder': {
         method: 'GET',
@@ -797,7 +814,7 @@ function verifyDownload(user, file, callback){
             return callback(null);
         }
         mFolder.getFolder({ _id: file.folder.oid }, ep.done('getFolder'));
-        mRes.getResource(file.resource.oid.toString(), ep.done('getRes'));
+        mRes.getResource({ _id: file.resource.oid }, ep.done('getRes'));
     });
 
     ep.all('getFolder', 'getRes', function(folder, resource){
@@ -860,7 +877,7 @@ function verifyFolder(user, folder, callback){
         return callback(msg, ERR.NOT_AUTH);
     }
 
-    mGroup.getGroup(folder.group.oid.toString(), function(err, group){
+    mGroup.getGroup({ _id: folder.group.oid }, function(err, group){
         if(err){
             return callback(err);
         }
@@ -879,8 +896,8 @@ function verifyFolder(user, folder, callback){
             folder.__role = config.FOLDER_PREPARE;
         }
         // 看是否是部门/小组成员
-        mGroup.isGroupMember(group._id.toString(),
-                user._id.toString(), function(err, result){
+        mGroup.isGroupMember(group._id, user._id,
+                function(err, result){
 
             if(err){
                 callback(err);

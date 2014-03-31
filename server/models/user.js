@@ -21,7 +21,7 @@ exports.create = function(params, callback){
         mailnum: 0,
         from: params.from,
         lastGroup: null
-    }
+    };
     db.user.save(user, function(err, result){
         if(err){
             return callback(err);
@@ -39,39 +39,38 @@ exports.create = function(params, callback){
             });
         });
     });
-}
+};
 
-exports.getUserById = function(id, callback){
+exports.getUser = function(query, callback){
 
-    db.user.findOne({ _id: new ObjectID(id)}, callback);
-}
+    db.user.findOne(query, callback);
+};
 
 
 exports.save = function(user, callback){
     db.user.save(user, function(err, result){
         callback(err, user);
     });
-}
+};
 
-exports.update = function(userId, doc, callback){
+exports.update = function(query, doc, callback){
 
-    db.user.findAndModify({ _id: ObjectID(userId) }, [], 
+    db.user.findAndModify(query, [],
             { $set: doc }, { 'new': true }, callback);
-}
+};
 
 exports.updateUsed = function(userId, count, callback){
     console.log('>>>updateUsed:', userId, count);
-    db.user.findAndModify({ _id: ObjectID(userId) }, [], 
+    db.user.findAndModify({ _id: userId }, [],
             { $inc: { used: count } }, { 'new': true }, callback);
-}
+};
 
 exports.getUserAllInfo = function(userId, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
-    var oid = new ObjectID(userId);
     // 获取用户资料
-    db.user.findOne({ _id: oid}, ep.doneLater('getUserCb'));
+    db.user.findOne({ _id: userId}, ep.doneLater('getUserCb'));
 
     mGroup.isPrepareMember(userId, ep.doneLater('checkPrepare'));
 
@@ -136,7 +135,7 @@ exports.getUserAllInfo = function(userId, callback){
     // 获取学校信息
     db.group.findOne({ type: 0 }, ep.doneLater('getSchoolCb'));
 
-    ep.all('getUserCb', 'getGroupsCb2', 'getUnReadNumCb', 'getSchoolCb', 
+    ep.all('getUserCb', 'getGroupsCb2', 'getUnReadNumCb', 'getSchoolCb',
            function(user, result, count, school){
         if(!user){
             callback('no such user', ERR.NOT_FOUND);
@@ -144,7 +143,7 @@ exports.getUserAllInfo = function(userId, callback){
         }
         user.mailnum = count || 0;
         //school && (school.auth = 0);
-        school && (school.auth = user.auth?1:0);
+        school && (school.auth = user.auth ? 1 : 0);
         var data = {
             user: user,
             school: school
@@ -161,7 +160,7 @@ exports.getUserAllInfo = function(userId, callback){
         callback(null, data);
     });
      
-}
+};
 
 
 function fetchDepartments(dep, callback){
@@ -184,7 +183,7 @@ function fetchDepartments(dep, callback){
         depUsers.forEach(function(doc){
 
             // 过滤掉测试用户
-            db.user.findOne({ _id: doc.user.oid, test: null }, ep.group('fetchDepartUsers'))
+            db.user.findOne({ _id: doc.user.oid, test: null }, ep.group('fetchDepartUsers'));
 
         });
 
@@ -218,7 +217,7 @@ exports.getAllDepartments = function(params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
-    db.department.findOne({ parent: null }, ep.doneLater('getSchoolDep')); 
+    db.department.findOne({ parent: null }, ep.doneLater('getSchoolDep'));
 
     ep.on('getSchoolDep', function(root){
 
@@ -247,15 +246,14 @@ exports.getAllDepartments = function(params, callback){
             callback(allDone);
         }
     });
-}
+};
 
 exports.search = function(params, callback){
     var keyword = params.keyword || '';
 
     var extendQuery = params.extendQuery || {};
 
-    var query = { 
-    };
+    var query = {};
 
     if(keyword){
         query['nick'] = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
@@ -265,4 +263,4 @@ exports.search = function(params, callback){
 
     db.search('user', query, params, callback);
 
-}
+};

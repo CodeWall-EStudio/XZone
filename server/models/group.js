@@ -27,7 +27,7 @@ exports.create = function(params, callback){
         name: params.name
     };
     if(params.parentId){
-        nameQuery['parent.$id'] = ObjectID(params.parentId);
+        nameQuery['parent.$id'] = params.parentId;
     }else{
         nameQuery['parent.$id'] = null;
     }
@@ -43,8 +43,8 @@ exports.create = function(params, callback){
             name: params.name,
             content: params.content || '',
             type: type,
-            parent: params.parentId ? DBRef('group', ObjectID(params.parentId)) : null,
-            creator: DBRef('user', ObjectID(params.creator)),
+            parent: params.parentId ? DBRef('group', params.parentId) : null,
+            creator: DBRef('user', params.creator),
             status: status, // 标示小组审核状态 1 审核中 0 已审核
             pt: Number(params.pt) || 0,
             tag: params.tag || null,
@@ -56,7 +56,7 @@ exports.create = function(params, callback){
             validateStatus: status === 0 ? 1 : null, //0 不通过 1 通过
             validateTime: null,//审核时间
             validator: null
-        }
+        };
 
         db.group.save(doc, ep.done('createGroup'));
 
@@ -67,7 +67,7 @@ exports.create = function(params, callback){
         mFolder.create({
             creator: params.creator,
             name: '根目录',
-            groupId: group._id.toString()
+            groupId: group._id
         }, ep.done('createFolder'));
 
     });
@@ -76,16 +76,16 @@ exports.create = function(params, callback){
 
         group.rootFolder = DBRef('folder', folder._id);
 
-        db.group.findAndModify({ _id: group._id }, [],  { $set: {rootFolder: group.rootFolder } }, 
-                    { 'new':true}, callback)
+        db.group.findAndModify({ _id: group._id }, [],  { $set: {rootFolder: group.rootFolder } },
+                    { 'new':true}, callback);
 
     });
     
-}
+};
 
 function dereferenceGroup(groupId, ext, callback){
     // 只返回审核通过的
-    db.group.findOne({ _id: ObjectID(groupId), validateStatus: 1 }, function(err, doc){
+    db.group.findOne({ _id: groupId, validateStatus: 1 }, function(err, doc){
         if(err){
             return callback(err);
         }
@@ -100,8 +100,8 @@ function dereferenceGroup(groupId, ext, callback){
     });
 }
 
-exports.getGroupByUser = function(uid, callback){
-    db.groupuser.find({ 'user.$id': ObjectID(uid) }, function(err, docs){
+exports.getGroupByUser = function(userId, callback){
+    db.groupuser.find({ 'user.$id': userId }, function(err, docs){
 
         if(err || !docs || !docs.length){
             return callback(err, []);
@@ -116,42 +116,42 @@ exports.getGroupByUser = function(uid, callback){
         });
         docs.forEach(function(doc){
 
-            dereferenceGroup(doc.group.oid.toString(), doc, proxy.group('getGroup'));
+            dereferenceGroup(doc.group.oid, doc, proxy.group('getGroup'));
         });
     });
 }
 
 exports.addUserToGroup = function(params, callback){
     var doc = {
-        user: DBRef('user', ObjectID(params.userId)),
-        group: DBRef('group', ObjectID(params.groupId)),
+        user: DBRef('user', params.userId),
+        group: DBRef('group', params.groupId),
         auth: Number(params.auth) || 0
     };
     db.groupuser.save(doc, function(err, result){
         callback(err, doc);
     });
-}
+};
 
 exports.removeUserFromGroup = function(params, callback){
     var doc = {
-        user: DBRef('user', ObjectID(params.userId)),
-        group: DBRef('group', ObjectID(params.groupId))
+        user: DBRef('user', params.userId),
+        group: DBRef('group', params.groupId)
     };
     db.groupuser.remove(doc, function(err, result){
         callback(err, result);
     });
 
-}
+};
 exports.modifyUserAuth = function(params, callback){
     var query = {
-        user: DBRef('user', ObjectID(params.userId)),
-        group: DBRef('group', ObjectID(params.groupId))
+        user: DBRef('user', params.userId),
+        group: DBRef('group', params.groupId)
     };
     db.groupuser.update(query, {$set: {auth: Number(params.auth) || 0}}, callback);
-}
+};
 
 function fetchGroupUser(doc, callback){
-    db.user.findOne({ _id: doc.user.oid }, { fields: {_id: 1, nick: 1} }, 
+    db.user.findOne({ _id: doc.user.oid }, { fields: {_id: 1, nick: 1} },
             function(err, user){
 
         if(user){
@@ -162,7 +162,7 @@ function fetchGroupUser(doc, callback){
 }
 
 exports.getGroupMembers = function(groupId, needDetail, callback){
-    db.groupuser.find({ 'group.$id': ObjectID(groupId)}, function(err, docs){
+    db.groupuser.find({ 'group.$id': groupId}, function(err, docs){
         if(err){
             return callback(err);
         }
@@ -186,18 +186,18 @@ exports.getGroupMembers = function(groupId, needDetail, callback){
             callback(null, []);
         }
     });
-}
+};
 
 exports.getGroupMemberIds = function(groupId, callback){
 
-    db.groupuser.find({ 'group.$id': ObjectID(groupId)}, callback);
-}
+    db.groupuser.find({ 'group.$id': groupId}, callback);
+};
 
 exports.isGroupMember = function(groupId, userId, callback){
     // console.log('>>>isGroupMember', groupId, userId);
     var query = {
-        'group.$id': ObjectID(groupId),
-        'user.$id': ObjectID(userId)
+        'group.$id': groupId,
+        'user.$id': userId
     };
     db.groupuser.findOne(query, function(err, doc){
         if(doc){
@@ -219,7 +219,7 @@ exports.isPrepareMember = function(userId, callback){
             console.log('>>>isPrepareMember, no pt=1 group');
             callback('can not find prepare group');
         }else{
-            exports.isGroupMember(group._id.toString(), userId, callback);
+            exports.isGroupMember(group._id, userId, callback);
         }
     });
 };
@@ -233,9 +233,9 @@ exports.modify = function(params, doc, callback){
     if(params.name){
         var nameQuery = {
             name: params.name
-        }
+        };
         if(params.parentId){
-            nameQuery['parent.$id'] = ObjectID(params.parentId);
+            nameQuery['parent.$id'] = params.parentId;
         }else{
             nameQuery['parent.$id'] = null;
         }
@@ -254,19 +254,19 @@ exports.modify = function(params, doc, callback){
     }
     ep.on('checkNameSucc', function(){
         doc.updatetime = Date.now();
-        var query = { _id: new ObjectID(params.groupId) };
-        db.group.findAndModify(query, [], { $set: doc }, 
+        var query = { _id: params.groupId };
+        db.group.findAndModify(query, [], { $set: doc },
                     { 'new':true }, callback);
     });
 
 
-}
+};
 
-exports.getGroup = function(groupId, callback){
+exports.getGroup = function(query, callback){
     // console.log('>>>getGroup, groupId', groupId, typeof groupId);
-    db.group.findOne({ _id: new ObjectID(groupId) }, callback);
+    db.group.findOne(query, callback);
 
-}
+};
 
 
 exports.search = function(params, callback){
@@ -274,11 +274,11 @@ exports.search = function(params, callback){
 
     var query = { };
 
-    query = us.extend(query, extendQuery);  
+    query = us.extend(query, extendQuery);
 
     db.search('group', query, params, callback);
 
-}
+};
 
 
 

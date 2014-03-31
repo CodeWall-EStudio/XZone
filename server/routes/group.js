@@ -114,7 +114,7 @@ exports.modify = function(req, res){
     });
 
 
-    mGroup.getGroup(groupId, ep.doneLater('getGroup'));
+    mGroup.getGroup({ _id: groupId }, ep.doneLater('getGroup'));
 
     ep.on('getGroup', function(group){
         if(!group){
@@ -262,7 +262,7 @@ exports.modify = function(req, res){
 exports.get = function(req, res){
     var params = req.query;
 
-    mGroup.getGroup(params.groupId, function(err, doc){
+    mGroup.getGroup({ _id: params.groupId }, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else if(!doc){

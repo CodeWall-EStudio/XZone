@@ -33,7 +33,7 @@ function getFolder(params, callback){
 
     mFolder.getFolder({
         name: params.name,
-        'creator.$id': ObjectID(params.creator)
+        'creator.$id': params.creator
     }, ep.doneLater('getFolderSucc'));
 
     ep.on('getFolderSucc', function(folder){
@@ -80,8 +80,8 @@ exports.upload = function(req, res){
         // TODO 这里应该有个 session 保存起来, 不要每次都去请求服务器
         getFolder({
             name: '新媒体资源',
-            creator: loginUser._id.toString(),
-            parentId: user.rootFolder.oid.toString()
+            creator: loginUser._id,
+            parentId: user.rootFolder.oid
         }, ep.done('getMediaFolderSucc'));
 
     });
@@ -89,8 +89,8 @@ exports.upload = function(req, res){
     ep.on('getMediaFolderSucc', function(mediaFolder){
         getFolder({
             name: activityId + '',
-            creator: loginUser._id.toString(),
-            parentId: mediaFolder._id.toString()
+            creator: loginUser._id,
+            parentId: mediaFolder._id
         }, ep.done('getActFolderSucc'));
     });
     
@@ -128,7 +128,7 @@ function verifyDownload(params, callback){
 
     mFolder.getFolder({ _id: file.folder.oid }, ep.doneLater('getFolder'));
 
-    mRes.getResource(file.resource.oid.toString(), ep.doneLater('getRes'));
+    mRes.getResource({ _id: file.resource.oid }, ep.doneLater('getRes'));
 
     ep.all('getFolder', 'getRes', function(folder, resource){
         if(!resource){
@@ -181,7 +181,7 @@ exports.download = function(req, res){
 
         verifyDownload({
             file: file
-            // creator: user._id.toString()
+            // creator: user._id
         }, ep.done('verifyDownloadSucc'));
 
     // });
@@ -200,20 +200,20 @@ exports.download = function(req, res){
         res.send();
 
         mLog.create({
-            // fromUserId: loginUser._id.toString(),
+            // fromUserId: loginUser._id,
             fromUserName: 'media download',
 
-            fileId: file._id.toString(),
+            fileId: file._id,
             fileName: file.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存
             operateType: 2,
 
-            srcFolderId: file.folder.oid.toString(),
+            srcFolderId: file.folder.oid,
             // distFolderId: folderId,
-            fromGroupId: folder ? folder.group && folder.group.oid.toString() : null
-            // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
+            fromGroupId: folder ? folder.group && folder.group.oid : null
+            // toGroupId: saveFolder.group || saveFolder.group.oid
         });
     });
 };

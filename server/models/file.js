@@ -22,10 +22,10 @@ exports.create = function(params, callback){
     }
 
     var doc = {
-        resource: DBRef('resource', ObjectID(params.resourceId)),
+        resource: DBRef('resource', params.resourceId),
         folder: DBRef('folder', ObjectID(folderId)),
         name: params.name,
-        creator: DBRef('user', ObjectID(params.creator)),
+        creator: DBRef('user', params.creator),
         createTime: Date.now(),
         updateTime: Date.now(),
         type: Number(params.type) || 0,
@@ -43,10 +43,10 @@ exports.create = function(params, callback){
         validateTime: null,//审核时间
         validator: null
     };
-    if(groupId){
-        doc.group = DBRef('group', ObjectID(groupId));
+    // if(groupId){
+        // doc.group = DBRef('group', ObjectID(groupId));
         // doc.fromGroup = params.fromGroup ? DBRef('group', ObjectID(params.fromGroup)) : doc.group;
-    }
+    // }
     // if(params.fromGroup){
 
     // }
@@ -63,7 +63,7 @@ exports.create = function(params, callback){
         //         return callback(err);
         //     }
             // 将 resource 的引用计数加一
-            mRes.updateRef(file.resource.oid.toString(), 1, function(err, newRes){
+            mRes.updateRef(file.resource.oid, 1, function(err, newRes){
                 if(err){
                     return callback(err);
                 }
@@ -78,9 +78,9 @@ exports.modify = function(params, doc, callback){
 
     doc.updateTime = Date.now();
 
-    var query = { _id: new ObjectID(params.fileId) };
+    var query = { _id: params.fileId };
     if(params.creator){
-        query['creator.$id'] = ObjectID(params.creator);
+        query['creator.$id'] = params.creator;
     }
 
     db.file.findAndModify(query, [],  { $set: doc },
@@ -89,9 +89,9 @@ exports.modify = function(params, doc, callback){
 
 exports.delete = function(params, callback){
 
-    var query = { _id: new ObjectID(params.fileId) };
+    var query = { _id: params.fileId };
     if(params.creator){
-        query['creator.$id'] = ObjectID(params.creator);
+        query['creator.$id'] = params.creator;
     }
     console.log('>>>delete file:', query);
     var ep = new EventProxy();
@@ -102,7 +102,7 @@ exports.delete = function(params, callback){
     ep.on('remove', function(file){
         if(file){
             // 将 resource 的引用计数减一
-            mRes.updateRef(file.resource.oid.toString(), -1, ep.done('updateRef'));
+            mRes.updateRef(file.resource.oid, -1, ep.done('updateRef'));
             if(params.creator){ // 指定了刪除用戶的才需要更新 used
                 // 修改用户表的 used 
                 mUser.updateUsed(params.creator,  -1 * (file.size || 0), ep.done('incUsed'));
@@ -131,7 +131,7 @@ exports.batchDelete = function(query, params, callback){
             });
             proxy.fail(callback);
             docs.forEach(function(doc){
-                exports.delete({ fileId: doc._id.toString() , creator: params.creator }, proxy.group('delete'));
+                exports.delete({ fileId: doc._id , creator: params.creator }, proxy.group('delete'));
             });
         }
     });
@@ -159,7 +159,7 @@ exports.search = function(params, callback){
     var folderId = params.folderId;
     var groupId = params.groupId || null;
 
-    var userId = params.creator || null;
+    var creator = params.creator || null;
 
     var keyword = params.keyword || '';
 
@@ -178,10 +178,10 @@ exports.search = function(params, callback){
     }
     
     if(userId){
-        query['creator.$id'] = ObjectID(userId);
+        query['creator.$id'] = creator;
     }
     if(groupId){
-        query['group.$id'] = ObjectID(groupId);
+        query['group.$id'] = groupId;
     }
     if(hasType){
         query['type'] = type;
@@ -192,7 +192,7 @@ exports.search = function(params, callback){
     if(folderId && keyword){
         mFolder.search({ folderId: folderId }, ep.doneLater('paramReady'));
     }else if(folderId){
-        ep.emitLater('paramReady', 1, [{ _id: ObjectID(folderId) }]);
+        ep.emitLater('paramReady', 1, [{ _id: folderId }]);
     }else{
         ep.emitLater('paramReady');
     }
@@ -231,8 +231,5 @@ exports.search = function(params, callback){
             }
         });
     });
-
-    
-    
 };
 

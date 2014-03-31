@@ -10,76 +10,66 @@ var U = require('../util');
 var mFile = require('./file');
 
 exports.create = function(params, callback){
-    var groupId = params.groupId;
-    var folderId = params.folderId;
+    var group = params.group;
+    var folder = params.folder;
     var isOpen = Number(params.isOpen) || 0;
     var isReadonly = Number(params.isReadonly) || 0;
 
-    var that = this;
+    var doc = {
+        name: params.name,
+        creator: DBRef('user', params.creator),
+        mark: params.mark || '',
+        createTime: Date.now(),
+        updateTime: Date.now(),
+        type: 0,
+        parent: null,
+        deletable: ('deletable' in params) ? params.deletable : true,
+        isOpen: isOpen === 1, // 0 非公开, 1 公开
+        isReadonly: isReadonly === 1, // 0 读写, 1 只读
+        top: null,
+        hasChild: false
+    };
+    if(groupId){
+        doc.group = DBRef('group', ObjectID(groupId));
+        doc.closeTime = Number(params.closeTime) || 0;
+    }else{
+        doc.prepare = params.prepareId ? DBRef('group', ObjectID(params.prepareId)) : null;
+    }
+    if(folder){
+        doc.parent = DBRef('folder', folder._id);
+        doc.top = folder.top || doc.parent;
 
-    var proxy = EventProxy.create('folder', function(folder){
-        var doc = {
-            name: params.name,
-            creator: DBRef('user', ObjectID(params.creator)),
-            mark: params.mark || '',
-            createTime: Date.now(),
-            updateTime: Date.now(),
-            type: 0,
-            parent: null,
-            deletable: ('deletable' in params) ? params.deletable : true,
-            isOpen: isOpen === 1, // 0 非公开, 1 公开
-            isReadonly: isReadonly === 1, // 0 读写, 1 只读
-            top: null, 
-            hasChild: false
-        };
-        if(groupId){
-            doc.group = DBRef('group', ObjectID(groupId));
-            doc.closeTime = Number(params.closeTime) || 0;
-        }else{
-            doc.prepare = params.prepareId ? DBRef('group', ObjectID(params.prepareId)) : null;
-        }
-        if(folder){
-            doc.parent = DBRef('folder', folder._id);
-            doc.top = folder.top || doc.parent;
-
-            folder.hasChild = true;
-            db.folder.save(folder, function(err){
-                if(err){
-                    console.log('models/folder/create', err);
-                }
-            });
-        }else{
-            doc.parent = doc.top = null;
-        }
-        db.folder.insert(doc, function(err, result){
+        folder.hasChild = true;
+        db.folder.save(folder, function(err){
             if(err){
-                return proxy.emit('error', err);
+                console.log('models/folder/create', err);
             }
-            result = result[0];
-            if(folder){
-                result.idpath = folder.idpath + ',' + result._id;
-            }else{
-                result.idpath = result._id.toString();
-            }
-
-            db.folder.save(result, function(err){
-                if(err){
-                    console.log('models/folder/create', err);
-                }
-            });
-            callback(err, result);
         });
+    }else{
+        doc.parent = doc.top = null;
+    }
+    db.folder.insert(doc, function(err, result){
+        if(err){
+            return proxy.emit('error', err);
+        }
+        result = result[0];
+        if(folder){
+            result.idpath = folder.idpath + ',' + result._id;
+        }else{
+            result.idpath = result._id.toString();
+        }
 
+        db.folder.save(result, function(err){
+            if(err){
+                console.log('models/folder/create', err);
+            }
+        });
+        callback(err, result);
     });
 
-    proxy.fail(callback);
 
-    if(folderId){
-        db.folder.findOne({ _id: new ObjectID(folderId.toString())}, proxy.done("folder"));
-    }else{
-        proxy.emit('folder', null);
-    }
-}
+
+};
 
 exports.getFolder = function(query, callback){
 

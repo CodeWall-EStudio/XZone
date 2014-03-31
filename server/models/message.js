@@ -11,14 +11,14 @@ var U = require('../util');
 exports.create = function(params, callback){
     
     var doc = {
-        fromUser: DBRef('user', ObjectID(params.fromUserId)),
+        fromUser: DBRef('user', params.fromUserId),
         toUser: null,
         content: params.content || '',
         name: params.fileName || '',
         type: params.fileType || 0,
         size: params.fileSize || 0,
 
-        resource: DBRef('resource', ObjectID(params.resourceId)),
+        resource: DBRef('resource', params.resourceId),
         // parent: params.parentId ? DBRef('message', ObjectID(params.parentId)) : null,
 
         // toGroup: null,
@@ -32,43 +32,43 @@ exports.create = function(params, callback){
     }
 
     if(params.toUserId){
-        doc.toUser = DBRef('user', ObjectID(params.toUserId));
+        doc.toUser = DBRef('user', params.toUserId);
     }
     if(params.toGroupId){
-        doc.toGroup = DBRef('group', ObjectID(params.toGroupId));
+        doc.toGroup = DBRef('group', params.toGroupId);
     }
     if(params.toFolderId){
-        doc.toFolder = DBRef('folder', ObjectID(params.toFolderId));
+        doc.toFolder = DBRef('folder', params.toFolderId);
     }
 
     db.message.save(doc, function(err, result){
 
         callback(null, doc);
     });
-}
+};
 
-exports.delete = function(msgId, callback){
+exports.delete = function(query, callback){
 
-    db.message.findAndRemove({ _id: new ObjectID(msgId)}, [], callback);
-}
+    db.message.findAndRemove(query, [], callback);
+};
 
 exports.modify = function(query, doc, callback){
 
     db.message.findAndModify(query, [],  { $set: doc }, 
             { 'new':true}, callback);
-}
+};
 
 exports.getMessage = function(query, callback){
 
     db.message.findOne(query, callback);
-}
+};
 
 exports.getUnReadNum = function(userId, callback){
 
     var query = {
-        'toUser.$id': ObjectID(userId),
+        'toUser.$id': userId,
         toUserLooked: false
-    }
+    };
     db.getCollection('message', function(err, collection){
         
         var cursor = collection.find(query);
@@ -76,13 +76,13 @@ exports.getUnReadNum = function(userId, callback){
         cursor.count(callback);
 
     });
-}
+};
 
 exports.search = function(params, callback){
 
     var userId = params.creator || null;
     var keyword = params.keyword || '';
-    var type = Number(params.type) || 0; 
+    var type = Number(params.type) || 0;
     var cate = Number(params.cate) || 0;// 1: 我的收件箱, 2: 我的发件箱, 3: 未读邮件
 
     var query = {};
@@ -92,11 +92,11 @@ exports.search = function(params, callback){
     }
 
     if(cate === 1){
-        query['toUser.$id'] = ObjectID(userId);
+        query['toUser.$id'] = userId;
     }else if(cate === 2){
-        query['fromUser.$id'] = ObjectID(userId);
+        query['fromUser.$id'] = userId;
     }else if(cate === 3){
-        query['toUser.$id'] = ObjectID(userId);
+        query['toUser.$id'] = userId;
         query['toUserLooked'] = false;
     }else{
         callback('params error: cate should be 1 , 2 or 3', ERR.PARAM_ERROR);
@@ -110,14 +110,14 @@ exports.search = function(params, callback){
             callback(err);
         }else if(total && docs){
             var keys = {
-                toUser: ['_id', 'nick'], 
+                toUser: ['_id', 'nick'],
                 fromUser: ['_id', 'nick'],
                 toGroup: ['_id', 'name'],
                 resource: ['_id', 'type', 'size']
             };
             db.dereferences(docs, keys, function(err, docs){
                 if(err){
-                    callback(err)
+                    callback(err);
                 }else{
                     callback(null, total || 0, docs);
                 }
@@ -127,6 +127,6 @@ exports.search = function(params, callback){
         }
     });
 
-}
+};
 
 

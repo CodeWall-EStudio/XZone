@@ -21,14 +21,14 @@ exports.open = function(callback){
         }
         callback(err, db);
     });
-}
+};
 
 exports.close = function(){
     if(ins){
         ins.close();
         ins = null;
     }
-}
+};
 
 exports.getCollection = function(name, callback){
     exports.open(function(err, db){
@@ -38,7 +38,7 @@ exports.getCollection = function(name, callback){
             callback(null, db.collection(name));
         }
     });
-}
+};
 
 exports.dereference = function(doc, keys, callback){
     exports.open(function(err, db){
@@ -55,20 +55,20 @@ exports.dereference = function(doc, keys, callback){
             for(var key in keys){
 
                 if(doc[key]){
-                    db.dereference(doc[key], ep.group('deref', 
-                    (function(key, keepProps){
-                        return function(data){
-                            if(data && keepProps){
-                                doc[key] = {};
-                                keepProps.forEach(function(prop){
-                                    doc[key][prop] = data[prop];
-                                });
-                            }else if(data){
-                                doc[key] = data;
+                    db.dereference(doc[key], ep.group('deref',
+                        (function(key, keepProps){
+                            return function(data){
+                                if(data && keepProps){
+                                    doc[key] = {};
+                                    keepProps.forEach(function(prop){
+                                        doc[key][prop] = data[prop];
+                                    });
+                                }else if(data){
+                                    doc[key] = data;
+                                }
+                                return null;
                             }
-                            return null;
-                        }
-                    })(key, keys[key])
+                        })(key, keys[key]);
                     ));
                 }else{
                     ep.emit('deref');
@@ -76,7 +76,7 @@ exports.dereference = function(doc, keys, callback){
             };
         }
     });
-}
+};
 
 exports.dereferences = function(docs, keys, callback){
     var ep = new EventProxy();

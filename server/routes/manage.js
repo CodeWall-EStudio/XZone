@@ -114,7 +114,7 @@ exports.approveFile = function(req, res){
 }
 
 function fetchGroupMembers(group, callback){
-    mGroup.getGroupMembers(group._id.toString(), true, function(err, list){
+    mGroup.getGroupMembers(group._id, true, function(err, list){
         if(err){
             callback(err);
         }else{

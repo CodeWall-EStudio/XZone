@@ -73,7 +73,7 @@ exports.saveUploadFile = function(params, callback){
             loginUser.used = loginUser.used + fileSize;
 
             // 修改用户表的 used 
-            mUser.updateUsed(loginUser._id.toString(),  (fileSize || 0), ep.done('updateSpaceUsed'));
+            mUser.updateUsed(loginUser._id,  (fileSize || 0), ep.done('updateSpaceUsed'));
 
         }
     });
@@ -107,13 +107,13 @@ exports.saveUploadFile = function(params, callback){
     ep.on('saveRes', function(resource){
         // 添加文件记录
         var file = {
-            creator: loginUser._id.toString(),
-            folderId: folder._id.toString(),
+            creator: loginUser._id,
+            folderId: folder._id,
             name: name,
             type: fileType,
             size: fileSize,
-            groupId: folder.group && folder.group.oid.toString(),
-            resourceId: resource._id.toString()
+            groupId: folder.group && folder.group.oid,
+            resourceId: resource._id
         };
         resource.ref = 1;
 
@@ -191,26 +191,31 @@ function formatType(mimes, ext){
 }
 
 function convert(filePath, mimes, ext, callback){
-    console.log('>>>convert file: mimes',mimes,ext);
+    console.log('>>>convert file: mimes',filePath, mimes, ext);
+    var cmd;
     //doc 文档要生成 swf 格式文件
     if(config.FILE_MIMES['document'].indexOf(mimes) > -1 || config.FILE_SUFFIX['document'].indexOf(ext) > -1){
-        var cmd = 'java -jar ' + config.JOD_CONVERTER + ' ' + filePath + ' ' + filePath + '.pdf';
+        cmd = 'java -jar ' + config.JOD_CONVERTER + ' ' + filePath + ' ' + filePath + '.pdf';
 
         process.exec(cmd, function(err){
             if(!err){
                 cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
                 process.exec(cmd, function(err){
                     callback(err);
+                    console.error('>>>file convert error: to swf: ', err, mimes, ext);
                 });
             }else{
                 callback(err);
-                console.log('>>>file convert error: ', err, mimes, ext);
+                console.error('>>>file convert error: to pdf', err, mimes, ext);
             }
         });
     }else if(config.FILE_MIMES['pdf'].indexOf(mimes) > -1 || config.FILE_SUFFIX['pdf'].indexOf(ext) > -1){
-        var cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
+        cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
         process.exec(cmd, function(err){
             callback(err);
+            if(err){
+                console.error('>>>file convert error: to swf', err, mimes, ext);
+            }
         });
 
     }else{
@@ -218,84 +223,86 @@ function convert(filePath, mimes, ext, callback){
     }
 }
 
+exports.convertWord = convert;
+
 exports.hasFolderAccessRight = function(userId, folderId, groupId, callback){
 
-    var ep = new EventProxy();
-    ep.fail(callback);
+    // var ep = new EventProxy();
+    // ep.fail(callback);
     
-    mFolder.getFolder({_id: ObjectID(folderId)}, ep.doneLater('getFolder'));
+    // mFolder.getFolder({_id: ObjectID(folderId)}, ep.doneLater('getFolder'));
 
-    ep.on('getFolder', function(folder){
-        if(!folder){
-            return ep.emit('error', 'no such folder', ERR.NOT_FOUND);
-        }
-        if(!groupId && folder.group){ // 如果没传入 group, 且文件夹有group, 自动使用改group
-            groupId = folder.group.oid.toString();
-        }
-        if(groupId){
-            mGroup.getGroup(groupId, ep.done('getGroup'));
-        }else{
-            ep.emit('getGroup', false);
-        }
-    });
+    // ep.on('getFolder', function(folder){
+    //     if(!folder){
+    //         return ep.emit('error', 'no such folder', ERR.NOT_FOUND);
+    //     }
+    //     if(!groupId && folder.group){ // 如果没传入 group, 且文件夹有group, 自动使用改group
+    //         groupId = folder.group.oid.toString();
+    //     }
+    //     if(groupId){
+    //         mGroup.getGroup({_id: groupId}, ep.done('getGroup'));
+    //     }else{
+    //         ep.emit('getGroup', false);
+    //     }
+    // });
 
     
-    ep.all('getFolder', 'getGroup', function(folder, group){
-        if(groupId && !group){
-            return ep.emit('error', 'a wrong groupId');
-        }
+    // ep.all('getFolder', 'getGroup', function(folder, group){
+    //     if(groupId && !group){
+    //         return ep.emit('error', 'a wrong groupId');
+    //     }
 
-        // 下面检查文件夹是否是该用户的, 以及 该用户是否是小组成员
-        if(!groupId){
-            // 检查该用户是否是该文件夹所有者
-            return ep.emit('checkRight', userId === folder.creator.oid.toString() ? 'creator' : false);
-        }
-        // 检查该用户是否是小组成员
-        if(group.type === 0){ // type=0 是学校空间
-            ep.emit('checkRight', 'school');
-        }else if(group.type === 3){ // 这是备课小组, 如果是备课的成员都能看
-            // 先检查是不是属于该组的成员
-            mGroup.isGroupMember(groupId, userId, ep.doneLater('checkMemberRight'));
+    //     // 下面检查文件夹是否是该用户的, 以及 该用户是否是小组成员
+    //     if(!groupId){
+    //         // 检查该用户是否是该文件夹所有者
+    //         return ep.emit('checkRight', userId === folder.creator.oid.toString() ? 'creator' : false);
+    //     }
+    //     // 检查该用户是否是小组成员
+    //     if(group.type === 0){ // type=0 是学校空间
+    //         ep.emit('checkRight', 'school');
+    //     }else if(group.type === 3){ // 这是备课小组, 如果是备课的成员都能看
+    //         // 先检查是不是属于该组的成员
+    //         mGroup.isGroupMember(groupId, userId, ep.doneLater('checkMemberRight'));
 
-            ep.on('checkMemberRight', function(hasRight){
-                if(hasRight){
-                    ep.emit('checkRight', 'member');
-                }else{ // 检查是否是备课小组的成员
-                    mGroup.isPrepareMember(userId, ep.done('checkRight', function(hasRight){
-                        if(hasRight){
-                            return 'prepare';
-                        }
-                        return hasRight;
-                    }));
-                }
-            });
-        }else if(group.type === 2){ // 部门, 非成員可以查看公开文件夹
-            // 先检查是不是属于该部門的成员
-            mGroup.isGroupMember(groupId, userId, ep.doneLater('checkMemberRight'));
+    //         ep.on('checkMemberRight', function(hasRight){
+    //             if(hasRight){
+    //                 ep.emit('checkRight', 'member');
+    //             }else{ // 检查是否是备课小组的成员
+    //                 mGroup.isPrepareMember(userId, ep.done('checkRight', function(hasRight){
+    //                     if(hasRight){
+    //                         return 'prepare';
+    //                     }
+    //                     return hasRight;
+    //                 }));
+    //             }
+    //         });
+    //     }else if(group.type === 2){ // 部门, 非成員可以查看公开文件夹
+    //         // 先检查是不是属于该部門的成员
+    //         mGroup.isGroupMember(groupId, userId, ep.doneLater('checkMemberRight'));
 
-            ep.on('checkMemberRight', function(hasRight){
-                if(hasRight){
-                    ep.emit('checkRight', 'member');
-                }else if(folder.isOpen){ // 公开文件夹
-                    ep.emit('checkRight', 'pubFolder');
-                }else{ // 部门的文件夹, 不知道有没有权限, 要进一步判断
-                    ep.emit('checkRight', 'department');
-                }
-            });
+    //         ep.on('checkMemberRight', function(hasRight){
+    //             if(hasRight){
+    //                 ep.emit('checkRight', 'member');
+    //             }else if(folder.isOpen){ // 公开文件夹
+    //                 ep.emit('checkRight', 'pubFolder');
+    //             }else{ // 部门的文件夹, 不知道有没有权限, 要进一步判断
+    //                 ep.emit('checkRight', 'department');
+    //             }
+    //         });
 
-        }else{// 是否是部门成员
-            mGroup.isGroupMember(groupId, userId, ep.done('checkRight', function(hasRight){
-                if(hasRight){
-                    return 'member';
-                }
-                return hasRight;
-            }));
-        }
+    //     }else{// 是否是部门成员
+    //         mGroup.isGroupMember(groupId, userId, ep.done('checkRight', function(hasRight){
+    //             if(hasRight){
+    //                 return 'member';
+    //             }
+    //             return hasRight;
+    //         }));
+    //     }
 
-    });
+    // });
     
-    ep.all('checkRight', 'getFolder', 'getGroup', function(role, folder, group){
-        console.log('checkRight, role: ', role);
-        callback(null, role, folder, group);
-    });
+    // ep.all('checkRight', 'getFolder', 'getGroup', function(role, folder, group){
+    //     console.log('checkRight, role: ', role);
+    //     callback(null, role, folder, group);
+    // });
 };

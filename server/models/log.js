@@ -16,35 +16,35 @@ exports.create = function(params, callback){
     var fileId = params.fileId;
 
     var doc = {
-        fromUserId: params.fromUserId,
+        fromUserId: params.fromUserId && params.fromUserId.toString(),
         fromUserName: params.fromUserName,
 
-        fileId: params.fileId,
+        fileId: params.fileId && params.fileId.toString(),
         fileName: params.fileName,
 
-        folderId: params.folderId,
+        folderId: params.folderId && params.folderId.toString(),
         folderName: params.folderName,
 
         operateTime: Date.now(),
         //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
         //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
         //11: delete(移动到回收站) 12: 创建文件夹
-        operateType: params.operateType, 
+        operateType: params.operateType,
 
-        srcFolderId: params.srcFolderId,
-        distFolderId: params.distFolderId
+        srcFolderId: params.srcFolderId && params.srcFolderId.toString(),
+        distFolderId: params.distFolderId && params.distFolderId.toString()
 
-    }
+    };
     if(params.fromGroupId){
-        doc.fromGroupId = params.fromGroupId;
+        doc.fromGroupId = params.fromGroupId.toString();
         doc.fromGroupName = params.fromGroupName;
     }
     if(params.toGroupId){
-        doc.toGroupId = params.toGroupId;
+        doc.toGroupId = params.toGroupId.toString();
         doc.toGroupName = params.toGroupName;
     }
     if(params.toUserId){
-        doc.toUserId = params.toUserId;
+        doc.toUserId = params.toUserId.toString();
         doc.toUserName = params.toUserName;
     }
 
@@ -54,7 +54,7 @@ exports.create = function(params, callback){
         }
     });
 
-}
+};
 
 
 

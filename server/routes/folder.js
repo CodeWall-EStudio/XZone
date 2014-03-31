@@ -13,51 +13,46 @@ var fileHelper = require('../helper/file_helper');
 exports.create = function(req, res){
     var loginUser = req.loginUser;
 
-    var params = req.body;
-    var groupId = params.groupId;
-    var folderId = params.folderId;
-    var name = params.name;
+    var parameter = req.parameter;
+    // var groupId = params.groupId;
+    var folder = parameter.folderId;
+    var name = parameter.name;
 
-    params.creator = loginUser._id;
+    var createParams = us.extend({}, parameter);
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-
-    // 检查权限
-    fileHelper.hasFolderAccessRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
-
-    ep.on('checkRight', function(role, folder){
-        if(!role || role === 'department'){
-            ep.emit('error', 'not auth to create folder on this folder', ERR.NOT_AUTH);
-            return;
-        }
-
+    if(folder.__role === config.FOLDER_DEPARTMENT){
         // 继承父文件夹的公开和读写状态
         if(folder.isOpen){
-            params.isOpen = 1;
+            createParams.isOpen = 1;
         }
         if(folder.isReadonly){
-            params.isReadonly = 1;
+            createParams.isReadonly = 1;
         }
+    }
 
-        // 检查重名
-        mFolder.getFolder({ 
-            name: name,
-            'parent.$id': ObjectID(folderId)
-        }, ep.done('checkName'));
+    // 检查重名
+    mFolder.getFolder({
+        name: name,
+        'parent.$id': folder._id
+    }, ep.done('checkName'));
 
-    });
 
-    ep.on('checkName', function(folder){
-        if(folder){
+    ep.on('checkName', function(fld){
+        if(fld){
             ep.emit('error', 'has the same folder name', ERR.DUPLICATE);
             return;
         }
 
-        mFolder.create(params, ep.done('create'));
+        createParams.creator = loginUser._id;
+        createParams.folder = folder;
+        createParams.group = folder.group || null;
+
+        mFolder.create(createParams, ep.done('create'));
 
     });
     

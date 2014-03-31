@@ -309,14 +309,14 @@ module.exports = {
                 type: 'string',
                 required: true
             },
-            {
-                name: 'groupId',
-                type: 'group'
-            },
+            // {
+            //     name: 'groupId',
+            //     type: 'group'
+            // },
             {
                 name: 'closeTime',
                 type: 'number',
-                min: 1
+                min: 0
             }
         ]
     },

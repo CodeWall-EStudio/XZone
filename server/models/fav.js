@@ -22,9 +22,9 @@ exports.create = function(params, callback){
         if(!file){
             return callback('no such file', ERR.NOT_FOUND);
         }
-        var resourceId = file.resource.oid.toString();
+        var resourceId = file.resource.oid;
 
-        mRes.getResource(resourceId, function(err, resource){
+        mRes.getResource({ _id: resourceId }, function(err, resource){
             if(err){
                 return callback(err);
             }
@@ -32,8 +32,8 @@ exports.create = function(params, callback){
                 return callback('no such resource', ERR.NOT_FOUND);
             }
             var doc = {
-                user: DBRef('user', ObjectID(creator)),
-                resource: DBRef('resource', ObjectID(resourceId)),
+                user: DBRef('user', creator),
+                resource: DBRef('resource', resourceId),
                 name: params.name || file.name || '',
                 remark: params.remark || file.name || '',
                 fromFile: DBRef('file', file._id),
@@ -41,14 +41,14 @@ exports.create = function(params, callback){
                 updateTime: Date.now(),
                 type: Number(resource.type) || 0,
                 size: Number(resource.size) || 0
-            }
+            };
             if(params.groupId){
-                doc.fromGroup = DBRef('group', ObjectID(params.groupId));
+                doc.fromGroup = DBRef('group', params.groupId);
             }
 
             db.fav.save(doc, function(err, result){
 
-                db.file.findAndModify({ _id: new ObjectID(fileId), 'creator.$id': ObjectID(creator) }, [],  
+                db.file.findAndModify({ _id: fileId, 'creator.$id': creator }, [],  
                         { $set: { isFav: true } }, function(err2){
 
                     callback(err, doc);
@@ -68,14 +68,14 @@ exports.create = function(params, callback){
     });
 
 
-}
+};
 
 exports.delete = function(params, callback){
     var fileId = params.fileId;
     var creator = params.creator;
 
     // 先去掉 file 的收藏状态, 防止 fav 不存在导致的收藏无法取消问题
-    db.file.findAndModify({ _id: ObjectID(fileId), 'creator.$id': ObjectID(creator) }, [],  
+    db.file.findAndModify({ _id: fileId, 'creator.$id': ObjectID(creator) }, [],  
             { $set: { isFav: false } }, { 'new':true}, function(err, file){
 
         console.log('>>>delete fav file: ', file);
