@@ -266,6 +266,21 @@ module.exports = {
                 name: 'activityId',
                 type: 'string',
                 required: true
+            },
+            {
+                name: 'file_path'
+            },
+            {
+                name: 'file_name'
+            },
+            {
+                name: 'file_md5'
+            },
+            {
+                name: 'file_content_type'
+            },
+            {
+                name: 'file_size'
             }
         ]
     },

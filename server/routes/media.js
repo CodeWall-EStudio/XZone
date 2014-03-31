@@ -52,12 +52,11 @@ function getFolder(params, callback){
 
 exports.upload = function(req, res){
 
-    var body = req.body;
+    var parameter = req.parameter;
     var loginUser;
-    var uploadFilePath = body.file_path;
     var skey = req.skey;
     console.log('>>>media upload, skey:',skey);
-    var activityId = body.activityId;
+    var activityId = parameter.activityId;
 
     var ep = new EventProxy();
     ep.fail(function(err, code){
@@ -69,18 +68,16 @@ exports.upload = function(req, res){
     if(!skey){
         ep.emit('error', 'need login', ERR.NOT_LOGIN);
         return;
-    }else if(!activityId){
-        ep.emit('error', 'need activityId', ERR.PARAM_ERROR);
-        return;
-    }else if(!uploadFilePath){
+    }else if(!parameter.file_path){
         ep.emit('error', 'upload file fail');
         return;
     }
 
-    userHelper.findAndUpdateUserInfo(skey, 'sso', ep.doneLater('getUserInfoSuccess'));
+    userHelper.findAndUpdateUserInfo(skey, config.AUTH_TYPE, ep.doneLater('getUserInfoSuccess'));
 
     ep.on('getUserInfoSuccess', function(user){
         loginUser = user;
+        // TODO 这里应该有个 session 保存起来, 不要每次都去请求服务器
         getFolder({
             name: '新媒体资源',
             creator: loginUser._id.toString(),
@@ -98,12 +95,11 @@ exports.upload = function(req, res){
     });
     
     ep.on('getActFolderSucc', function(activityFolder){
-        var folderId = activityFolder._id.toString();
 
         fileHelper.saveUploadFile({
-            folderId: folderId,
+            folder: activityFolder,
             loginUser: loginUser,
-            body: body
+            parameter: parameter
         }, ep.done('saveFileSuccess'));
 
     });
@@ -120,54 +116,49 @@ exports.upload = function(req, res){
         });
     });
 
-}
+};
 
 function verifyDownload(params, callback){
 
-    var fileId = params.fileId;
+    var file = params.file;
     // var creator = params.creator;
 
     var ep = new EventProxy();
-
     ep.fail(callback);
 
-    mFile.getFile({_id: ObjectID(fileId) }, ep.doneLater('getFile'));
+    mFolder.getFolder({ _id: file.folder.oid }, ep.doneLater('getFolder'));
 
-    ep.on('getFile', function(file){
-        if(!file){
-            ep.emit('error', 'no such file: ' + fileId, ERR.NOT_FOUND);
-            return;
-        }
-        
-        mFolder.getFolder({ _id: file.folder.oid }, ep.done('getFolder'));
+    mRes.getResource(file.resource.oid.toString(), ep.doneLater('getRes'));
 
-        mRes.getResource(file.resource.oid.toString(), ep.done('getRes'));
-
-    });
-
-    ep.all('getFile', 'getFolder', 'getRes', function(file, folder, resource){
+    ep.all('getFolder', 'getRes', function(folder, resource){
         if(!resource){
             ep.emit('error', 'no such resource: ' + file.resource.oid, ERR.NOT_FOUND);
             return;
         }
+        file.__folder = folder;
+        file.__resource = resource;
+
         //FIXME 新媒体文件夹的暂时不做权限检查
-        ep.emit('checkRight', { file: file, resource: resource, folder: folder });
+        callback(null, file);
+        // ep.emit('checkRight', { file: file, resource: resource, folder: folder });
     });
 
-    ep.on('checkRight', function(data){
-        if(data){ // 是自己所在小组的
-            callback(null, data);
-        }else{
-            ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
-        }
-    });
+    // ep.on('checkRight', function(data){
+    //     if(data){ // 是自己所在小组的
+    //         callback(null, data);
+    //     }else{
+    //         ep.emit('error', 'not auth to access this file: ' + fileId, ERR.NOT_AUTH);
+    //     }
+    // });
 
 }
 
 exports.download = function(req, res){
 
-    var fileId = req.fileId || req.query.fileId;
-    var skey = req.skey; 
+    var parameter = req.parameter;
+
+    var file = parameter.fileId;
+    var skey = req.skey;
     
     var ep = new EventProxy();
     ep.fail(function(err, code){
@@ -189,14 +180,14 @@ exports.download = function(req, res){
     // ep.on('getUserInfoSuccess', function(user){
 
         verifyDownload({
-            fileId: fileId
+            file: file
             // creator: user._id.toString()
         }, ep.done('verifyDownloadSucc'));
 
     // });
 
     ep.all(/*'getUserInfoSuccess', */'verifyDownloadSucc', function(/*loginUser, */data){
-        var file = data.file, resource = data.resource, folder = data.folder;
+        var resource = file.__resource, folder = file.__folder;
         var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
         console.log('>>>media download: ' + filePath, ':', resource.mimes);
         res.set({
@@ -210,14 +201,14 @@ exports.download = function(req, res){
 
         mLog.create({
             // fromUserId: loginUser._id.toString(),
-            // fromUserName: loginUser.nick,
+            fromUserName: 'media download',
 
             fileId: file._id.toString(),
             fileName: file.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存
-            operateType: 2, 
+            operateType: 2,
 
             srcFolderId: file.folder.oid.toString(),
             // distFolderId: folderId,
@@ -225,4 +216,4 @@ exports.download = function(req, res){
             // toGroupId: saveFolder.group || saveFolder.group.oid.toString()
         });
     });
-}
+};

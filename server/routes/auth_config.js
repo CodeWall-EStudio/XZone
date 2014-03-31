@@ -263,31 +263,10 @@ exports.RULES = {
     },
 
     // media
-    '/api/media/upload': {
-        method: 'POST',
-        params: [
-            {
-                name: 'name',
-                type: 'string',
-                required: true
-            },
-            {
-                name: 'activityId',
-                type: 'string',
-                required: true
-            }
-        ]
-    },
-    '/api/media/download': {
-        method: 'GET',
-        params: [
-            {
-                name: 'file',
-                type: 'fileId',
-                required: true
-            }
-        ]
-    },
+    // '/api/media/upload': {
+    // },
+    // '/api/media/download': {
+    // },
 
     // folder
     '/api/folder/create': {

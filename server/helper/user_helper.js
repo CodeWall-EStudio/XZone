@@ -123,7 +123,7 @@ exports.getUserInfoFromQQ = function(accessToken, callback){
             ep.emit('error', data.msg);
         }
     });
-}
+};
 
 exports.findAndUpdateUserInfo = function(skey, type, callback){
 

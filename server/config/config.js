@@ -26,7 +26,7 @@ exports.JOD_CONVERTER = '/var/run/jodconverter/lib/jodconverter-core-3.0-beta-4.
 // 默认每个用户的空间大小 3G
 exports.DEFAULT_USER_SPACE = 3 * 1024 * 1024 * 1024;
 
-exports.AUTH_TYPE = 'auto';// auto, sso, qq
+exports.AUTH_TYPE = 'sso';// auto, sso, qq
 
 // CAS 的配置以及登录成功后的跳转 URL
 exports.CAS_BASE_URL = 'http://dand.71xiaoxue.com:80/sso.web';

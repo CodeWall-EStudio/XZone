@@ -188,7 +188,7 @@ exports.index = function(req, res, next){
         if(errCode === ERR.NOT_FOUND && config.DOWNLOAD_APIS.indexOf(path) > -1){
             console.error(err, errCode);
             //NOTE: 下载接口, 如果找不到文件, 直接跳 404 页面
-            return res.redirect(config.NOT_FOUND_PAGE);
+            return res.redirect(config.NOT_FOUND_PAGE, 404);
         }
         res.json({ err: errCode || ERR.PARAM_ERROR, msg: error });
     });

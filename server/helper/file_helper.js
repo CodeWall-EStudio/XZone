@@ -19,7 +19,7 @@ var mLog = require('../models/log');
 var U = require('../util');
 
 exports.saveUploadFile = function(params, callback){
-    var folder = params.folderId;
+    var folder = params.folder;
     var loginUser = params.loginUser;
     var body = params.parameter;
 
@@ -125,6 +125,7 @@ exports.saveUploadFile = function(params, callback){
             file.resource = U.filterProp(savedRes, ['_id', 'type', 'size']);
         }
         callback(null, file);
+        // 打log
         mLog.create({
             fromUserId: loginUser._id.toString(),
             fromUserName: loginUser.nick,
