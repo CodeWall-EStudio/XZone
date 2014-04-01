@@ -296,6 +296,20 @@ module.exports = {
     },
 
     // folder
+    '/api/folder': {
+        method: 'GET',
+        params: [
+            {
+                name: 'folderId',
+                type: 'folder',
+                required: true
+            }/*,
+            {
+                name: 'groupId',
+                type: 'group'
+            }*/
+        ]
+    },
     '/api/folder/create': {
         method: 'POST',
         params: [
@@ -320,17 +334,25 @@ module.exports = {
             }
         ]
     },
-    '/api/folder': {
-        method: 'GET',
+    '/api/folder/modify': {
+        method: 'POST',
         params: [
             {
                 name: 'folderId',
                 type: 'folder',
                 required: true
             },
+            // {
+            //     name: 'groupId',
+            //     type: 'group'
+            // },
             {
-                name: 'groupId',
-                type: 'group'
+                name: 'name',
+                type: 'string'
+            },
+            {
+                name: 'mark',
+                type: 'string'
             }
         ]
     },
@@ -341,29 +363,11 @@ module.exports = {
                 name: 'folderId',
                 type: 'folders',
                 required: true
-            },
+            }/*,
             {
                 name: 'groupId',
                 type: 'group'
-            }
-        ]
-    },
-    '/api/folder/modify': {
-        method: 'POST',
-        params: [
-            {
-                name: 'folderId',
-                type: 'folder',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
-            },
-            {
-                name: 'name',
-                type: 'string'
-            }
+            }*/
         ]
     },
     '/api/folder/list': {
@@ -373,12 +377,12 @@ module.exports = {
                 name: 'folderId',
                 type: 'folder',
                 required: true
-            },
+            }/*,
             {
                 name: 'groupId',
                 type: 'group'
             }
-        ]
+*/        ]
     },
     '/api/folder/search': {
         method: 'GET',
@@ -398,10 +402,10 @@ module.exports = {
                 type: 'number',
                 required: true
             },
-            {
+            /*{
                 name: 'groupId',
                 type: 'group'
-            },
+            },*/
             {
                 name: 'keyword'
             },
@@ -563,12 +567,12 @@ module.exports = {
                 name: 'fileId',
                 type: 'files',
                 required: true
-            },
+            }/*,
             {
                 name: 'groupId',
                 type: 'group'
             }
-        ]
+*/        ]
 
     },
     '/api/recycle/revert': {
@@ -578,11 +582,11 @@ module.exports = {
                 name: 'fileId',
                 type: 'files',
                 required: true
-            },
+            }/*,
             {
                 name: 'groupId',
                 type: 'group'
-            }
+            }*/
         ]
 
     },
@@ -599,10 +603,10 @@ module.exports = {
                 type: 'number',
                 required: true
             },
-            {
-                name: 'groupId',
-                type: 'group'
-            },
+            // {
+            //     name: 'groupId',
+            //     type: 'group'
+            // },
             {
                 name: 'keyword'
             },

@@ -18,6 +18,7 @@ module.exports = exports = {
     DUPLICATE: 1014,
     NOT_MATCH: 1015,
     UNDELETABLE: 1016,
+    NOT_EMPTY: 1017,
 
     SUCCESS: 0
-}
+};

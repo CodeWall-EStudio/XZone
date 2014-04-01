@@ -79,21 +79,19 @@ exports.modify = function(params, doc, callback){
     doc.updateTime = Date.now();
 
     var query = { _id: params.fileId };
-    if(params.creator){
-        query['creator.$id'] = params.creator;
-    }
+    // if(params.creator){
+    //     query['creator.$id'] = params.creator;
+    // }
 
     db.file.findAndModify(query, [],  { $set: doc },
             { 'new':true}, callback);
 };
 
-exports.delete = function(params, callback){
+exports.delete = function(file, callback){
 
-    var query = { _id: params.fileId };
-    if(params.creator){
-        query['creator.$id'] = params.creator;
-    }
+    var query = { _id: file._id };
     console.log('>>>delete file:', query);
+
     var ep = new EventProxy();
     ep.fail(callback);
 
@@ -103,9 +101,9 @@ exports.delete = function(params, callback){
         if(file){
             // 将 resource 的引用计数减一
             mRes.updateRef(file.resource.oid, -1, ep.done('updateRef'));
-            if(params.creator){ // 指定了刪除用戶的才需要更新 used
+            if(file.creator){ // 指定了刪除用戶的才需要更新 used
                 // 修改用户表的 used 
-                mUser.updateUsed(params.creator,  -1 * (file.size || 0), ep.done('incUsed'));
+                mUser.updateUsed(file.creator,  -1 * (file.size || 0), ep.done('incUsed'));
             }else{
                 ep.emitLater('incUsed');
             }
@@ -119,7 +117,7 @@ exports.delete = function(params, callback){
     });
 };
 
-exports.batchDelete = function(query, params, callback){
+exports.batchDelete = function(query, callback){
     
     db.file.find(query, function(err, docs){
         if(err || !docs || !docs.length){
@@ -131,7 +129,7 @@ exports.batchDelete = function(query, params, callback){
             });
             proxy.fail(callback);
             docs.forEach(function(doc){
-                exports.delete({ fileId: doc._id , creator: params.creator }, proxy.group('delete'));
+                exports.delete(doc, proxy.group('delete'));
             });
         }
     });
@@ -157,6 +155,7 @@ exports.getFile = function(query, callback){
 
 exports.search = function(params, callback){
     var folderId = params.folderId;
+
     var groupId = params.groupId || null;
 
     var creator = params.creator || null;
@@ -168,16 +167,18 @@ exports.search = function(params, callback){
 
     var extendQuery = params.extendQuery;
     var extendDefProps = params.extendDefProps;
+    var recursive = params.recursive;
+    var noDef = params.noDef;
 
     var query = {
-        del: false
+        del: false // 默认只能搜索未删除的文件
     };
 
     if(keyword){
         query['name'] = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
     
-    if(userId){
+    if(creator){
         query['creator.$id'] = creator;
     }
     if(groupId){
@@ -189,7 +190,7 @@ exports.search = function(params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
     
-    if(folderId && keyword){
+    if(folderId && (recursive || keyword)){
         mFolder.search({ folderId: folderId }, ep.doneLater('paramReady'));
     }else if(folderId){
         ep.emitLater('paramReady', 1, [{ _id: folderId }]);
@@ -214,7 +215,8 @@ exports.search = function(params, callback){
         db.search('file', query, params, function(err, total, docs){
             if(err){
                 callback(err);
-            }else if(total && docs){
+            }else if(total && docs && !noDef){
+
                 var defProps = { resource: ['_id', 'type', 'size'] , creator: ['_id', 'nick']};
                 if(extendDefProps){
                     defProps = us.extend(defProps, extendDefProps);

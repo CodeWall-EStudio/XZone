@@ -5,6 +5,7 @@ var ObjectID = require('mongodb').ObjectID;
 var config = require('../config');
 var ERR = require('../errorcode');
 var mFolder = require('../models/folder');
+var mFile = require('../models/file');
 var mGroup = require('../models/group');
 var mLog = require('../models/log');
 var U = require('../util');
@@ -25,7 +26,7 @@ exports.create = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    if(folder.__role === config.FOLDER_DEPARTMENT){
+    if(folder.__role & config.FOLDER_DEPARTMENT){
         // 继承父文件夹的公开和读写状态
         if(folder.isOpen){
             createParams.isOpen = 1;
@@ -50,7 +51,9 @@ exports.create = function(req, res){
 
         createParams.creator = loginUser._id;
         createParams.folder = folder;
-        createParams.group = folder.group || null;
+        if(folder.group){
+            createParams.groupId = folder.group.oid;
+        }
 
         mFolder.create(createParams, ep.done('create'));
 
@@ -68,7 +71,7 @@ exports.create = function(req, res){
             fromUserId: loginUser._id,
             fromUserName: loginUser.nick,
 
-            folderId: folder._id.toString(),
+            folderId: folder._id,
             folderName: folder.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
@@ -78,12 +81,12 @@ exports.create = function(req, res){
 
             srcFolderId: folderId,
             // distFolderId: params.targetId,
-            fromGroupId: folder.group && folder.group.oid.toString()
+            fromGroupId: folder.group && folder.group.oid
             // toGroupId: toGroupId
         });
     });
 
-}
+};
 
 exports.get = function(req, res){
     var params = req.query;
@@ -100,14 +103,14 @@ exports.get = function(req, res){
             });
         }
     });
-}
+};
 
 exports.modify = function(req, res){
     // 只能修改自己的
-    var params = req.body;
-    var folderId = params.folderId;
+    var params = req.parameter;
+    var folder = params.folderId;
     var loginUser = req.loginUser;
-    params.creator = loginUser._id;
+
 
     var doc = {};
     if(params.mark){
@@ -122,55 +125,41 @@ exports.modify = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    mFolder.getFolder({
-        _id: ObjectID(folderId)
-    }, ep.doneLater('getFolder'));
 
-    ep.on('getFolder', function(folder){
-        if(!folder){
-            ep.emit('error', 'no such folder', ERR.NOT_FOUND);
-            return;
-        }
-        if(folder.creator.oid.toString() !== params.creator){
-            ep.emit('error', 'no allow', ERR.NOT_AUTH);
-            return;
-        }
-        if(params.name){
-            if(params.name === folder.name){
-                // 名字没变过, 就不要改了
-                delete doc.name;
-                delete params.name;
-                ep.emit('checkName', true);
-                return;
-            }
-            mFolder.getFolder({
-                name: params.name,
-                'parent.$id': folder.parent._id
-            }, function(err, doc){
-                if(doc){
-                    ep.emit('checkName', false);
-                }else{
-                    ep.emit('checkName', true);
-                }
-            });
-        }else{
+    if(params.name){
+        if(params.name === folder.name){
+            // 名字没变过, 就不要改了
+            delete doc.name;
+            delete params.name;
             ep.emit('checkName', true);
+            return;
         }
+        mFolder.getFolder({
+            name: params.name,
+            'parent.$id': folder.parent._id
+        }, function(err, doc){
+            if(doc){
+                ep.emit('checkName', false);
+            }else{
+                ep.emit('checkName', true);
+            }
+        });
+    }else{
+        ep.emit('checkName', true);
+    }
 
-    });
-
-    ep.all('getFolder', 'checkName', function(folder, result){
+    ep.on('checkName', function(result){
         if(!result){
             ep.emit('error', 'has the same name in this folder', ERR.DUPLICATE);
             return;
         }
         var oldFolderName = folder.name;
+        params.folderId = folder._id;
+
         mFolder.modify(params, doc, function(err, doc){
             if(err){
                 res.json({ err: ERR.SERVER_ERROR, msg: err});
-            }else if(!doc){
-                res.json({ err: ERR.NOT_FOUND, msg: 'no such folder'});
-            }else{
+            }else {
                 res.json({ err: ERR.SUCCESS , result: { data: doc }});
                 // 记录该操作
                 mLog.create({
@@ -195,66 +184,70 @@ exports.modify = function(req, res){
         });
     });
 
-}
+};
 
-function deleteFolder(params, callback){
+function deleteFolder(loginUser, folder, callback){
     // 检查改目录下是否有不是自己的文件, 有就不能删
     // 管理员不受限制
-    var ep = new EventProxy();
-    ep.fail(callback);
 
-    mFolder.getFolder({
-        _id: ObjectID(params.folderId), 
-        'creator.$id': ObjectID(params.creator)
-    }, ep.doneLater('getFolderSucc'));
+    if(('deletable' in folder) && !folder.deletable){
+        callback('can not delete this folder', ERR.UNDELETABLE);
+        return;
+    }
 
-    ep.on('getFolderSucc', function(folder){
-        if(!folder){
-            ep.emit('error', 'no such folder', ERR.NOT_FOUND);
-            return;
+    //检查是否有不属于自己的文件, 有就不能删
+    var searchParams = {
+        noDef: true,
+        recursive: true,
+        folderId: folder._id,
+        extendQuery: {
+            'creator.$id': { $ne: loginUser._id }
         }
-        if(('deletable' in folder) && !folder.deletable){
-            ep.emit('error', 'can not delete this folder', ERR.UNDELETABLE);
-            return;
+    };
+
+    mFile.search(searchParams, function(err, total, docs){
+        if(err){
+            return callback(err);
         }
-        //TODO 检查是否有不属于自己的文件, 有就不能删
-        mFolder.delete(params, callback);
-        // if(folder.parent && !folder.parent.oid){
-        //     console.log('ugly folder: ', folder);
-        // }
+        // ROLE_FOLDER_MANAGER === 系统管理员 | 超级管理员 | 小组管理员 | 部门管理员
+        if(total && !(folder.__user_role & config.ROLE_FOLDER_MANAGER)){
+            return callback('there are some files create by another', ERR.NOT_EMPTY);
+        }
+
+        mFolder.delete({ folder: folder } , callback);
         // 记录该操作
         mLog.create({
-            fromUserId: params.creator,
+            fromUserId: loginUser._id,
+            fromUserName: loginUser.nick,
 
-            folderId: params.folderId,
+            folderId: folder._id,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
             //11: delete(移动到回收站) 12: 创建文件夹
             operateType: 6,
             // 这里要用 parent._id, 因为 getFolder 方法把它解开了
-            srcFolderId: folder.parent && folder.parent._id && folder.parent._id.toString(),
+            srcFolderId: folder.parent && folder.parent._id,
             // distFolderId: params.targetId,
-            fromGroupId: folder.group && folder.group.oid.toString()
+            fromGroupId: folder.group && folder.group.oid
             // toGroupId: toGroupId
         });
     });
-    
 }
 
 exports.delete = function(req, res){
-    var params = req.body;
-    var folderIds = params.folderId;
-    var groupId = params.groupId;
+    var params = req.parameter;
+    var folders = params.folderId;
+    // var groupId = params.groupId;
     var loginUser = req.loginUser;
-    var creator = loginUser._id;
+    // var creator = loginUser._id;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('delete', folderIds.length, function(list){
+    ep.after('delete', folders.length, function(list){
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -263,24 +256,18 @@ exports.delete = function(req, res){
         });
     });
 
-    folderIds.forEach(function(folderId){
+    folders.forEach(function(folder){
 
-        deleteFolder({
-            folderId: folderId,
-            groupId: groupId,
-            creator: creator
-        }, ep.group('delete'));
-
+        deleteFolder(loginUser, folder, ep.group('delete'));
 
     });
-
-}
+};
 
 exports.list = function(req, res){
-    var params = req.query;
+    var params = req.parameter;
 
-    var folderId = params.folderId;
-    var groupId = params.groupId || null;
+    var folder = params.folderId;
+    // var groupId = params.groupId || null;
 
     var loginUser = req.loginUser;
 
@@ -289,24 +276,22 @@ exports.list = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
     
-    // 检查权限
-    fileHelper.hasFolderAccessRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
+    params.folderId = folder._id;
+    params.isDeref = true;
 
-    ep.on('checkRight', function(role){
-        if(!role){
-            ep.emit('error', 'not auth to search this folder', ERR.NOT_AUTH);
-            return;
-        }
-        if(role === 'creator'){
-            params.creator = loginUser._id;
-        }else if(role === 'pubFolder' || role === 'department'){
-            params.extendQuery = {// 公開文件夾可以搜索文件夾, 非公開就不返回內容
-                isOpen: true
-            };
-        }
-        params.isDeref = true;
-        mFolder.list(params, ep.done('search'));
-    });
+    if(folder.__role & config.FOLDER_PRIVATE){
+        // 个人空间搜索, 搜索自己创建的文件
+        params.creator = loginUser._id;
+    }else if((folder.__role & config.FOLDER_DEPARTMENT) && (loginUser.__role & config.ROLE_VISITOR)){
+        // 不是部门文件夹的授权访问者, 就只能看公开文件夹
+        // 
+        params.extendQuery = {// 公開文件夾可以搜索文件夾, 非公開就不返回內容
+            isOpen: true
+        };
+    }
+
+    mFolder.list(params, ep.done('search'));
+
     ep.on('search', function(total, docs){
         res.json({
             err: ERR.SUCCESS,
@@ -316,13 +301,12 @@ exports.list = function(req, res){
             }
         });
     });
-}
+};
 
 exports.search = function(req, res){
-    var params = req.query;
+    var params = req.parameter;
 
-    var folderId = params.folderId;
-    var groupId = params.groupId || null;
+    var folder = params.folderId;
 
     var loginUser = req.loginUser;
     
@@ -331,24 +315,20 @@ exports.search = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    // 检查权限
-    fileHelper.hasFolderAccessRight(loginUser._id, folderId, groupId, ep.doneLater('checkRight'));
+    params.folderId = folder._id;
+    params.isDeref = true;
 
-    ep.on('checkRight', function(role){
-        if(!role){
-            ep.emit('error', 'not auth to search this folder', ERR.NOT_AUTH);
-            return;
-        }
-        if(role === 'creator'){
-            params.creator = loginUser._id;
-        }else if(role === 'pubFolder' || role === 'department'){
-            params.extendQuery = {// 公開文件夾可以搜索文件夾, 非公開就不返回內容
-                isOpen: true
-            };
-        }
-        params.isDeref = true;
-        mFolder.search(params, ep.done('search'));
-    });
+    if(folder.__role & config.FOLDER_PRIVATE){
+        // 个人空间搜索, 搜索自己创建的文件
+        params.creator = loginUser._id;
+    }else if((folder.__role & config.FOLDER_DEPARTMENT) && (loginUser.__role & config.ROLE_VISITOR)){
+        // 不是文件夹的授权访问者, 就只能看 公开文件夹
+        params.extendQuery = {// 公開文件夾可以搜索文件夾, 非公開就不返回內容
+            isOpen: true
+        };
+    }
+    
+    mFolder.search(params, ep.done('search'));
 
     ep.on('search', function(total, docs){
         res.json({
@@ -359,4 +339,4 @@ exports.search = function(req, res){
             }
         });
     });
-}
+};

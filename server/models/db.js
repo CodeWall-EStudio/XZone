@@ -73,7 +73,7 @@ exports.dereference = function(doc, keys, callback){
                 }else{
                     ep.emit('deref');
                 }
-            };
+            }
         }
     });
 };
@@ -139,7 +139,7 @@ exports.batchAddMethod = function(context, collectionName, methods){
                     collection[method].apply(collection, argus);
                 }
             });
-        } // end of context[method]
+        }; // end of context[method]
     });
 };
 

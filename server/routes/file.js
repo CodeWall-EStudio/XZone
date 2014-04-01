@@ -832,6 +832,7 @@ exports.delete = function(req, res){
     
     files.forEach(function(file){
         // 设置删除标志位
+        // TODO 如果删除的是小组的文件, 就没有回收站了
         mFile.softDelete({
             fileId: file._id
         }, ep.group('delete', function(file){
@@ -876,10 +877,10 @@ exports.search = function(req, res){
         folderId: folder._id
     });
 
-    if(loginUser.__role & config.ROLE_FOLDER_CREATOR){
-        // 搜索自己创建的文件
+    if(folder.__role & config.FOLDER_PRIVATE){
+        // 个人空间搜索, 搜索自己创建的文件
         searchParams.creator = loginUser._id;
-    }else if(folder.__role === config.FOLDER_SCHOOL){
+    }else if(folder.__role & config.FOLDER_SCHOOL){
         // 学校空间的文件夹
         searchParams.extendQuery = {};
         if(('status' in searchParams) && (user.__role & config.ROLE_MANAGER)){
@@ -889,7 +890,7 @@ exports.search = function(req, res){
             // 否则只返回审核通过的文件
             searchParams.extendQuery.validateStatus = 1;
         }
-    }else if(folder.__role === config.FOLDER_DEPARTMENT_PRIVATE){
+    }else if(folder.__role & config.FOLDER_DEPARTMENT_PRIVATE){
         // 非部门公開就不返回內容
         res.json({
             err: ERR.SUCCESS,
@@ -899,7 +900,7 @@ exports.search = function(req, res){
             }
         });
         return;
-    }else if(folder.__role === config.FOLDER_DEPARTMENT_PUBLIC){
+    }else if(folder.__role & config.FOLDER_DEPARTMENT_PUBLIC){
         // 公開文件夾下只能看到部门成员和本人上传的文件
         var ids = [loginUser._id];
         searchParams.extendQuery = {

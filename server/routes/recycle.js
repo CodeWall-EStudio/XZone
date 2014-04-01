@@ -1,17 +1,18 @@
 var EventProxy = require('eventproxy');
+var us = require('underscore');
 
 var config = require('../config');
 var ERR = require('../errorcode');
-
+var mLog = require('../models/log');
 var mFile = require('../models/file');
 
+
 exports.delete = function(req, res){
-    var params = req.body;
+    var params = req.parameter;
 
-    var fileIds = params.fileId;
-    var groupId = params.groupId;
+    var files = params.fileId;
 
-    var creator = req.loginUser._id;
+    var loginUser = req.loginUser;
 
     var ep = new EventProxy();
 
@@ -19,30 +20,44 @@ exports.delete = function(req, res){
         res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('delete', fileIds.length, function(list){
+    ep.after('delete', files.length, function(list){
         res.json({
             err: ERR.SUCCESS
         });
     });
 
-    fileIds.forEach(function(fileId){
-        mFile.delete({ 
-            fileId: fileId, 
-            groupId: groupId,
-            creator: creator
-        }, ep.group('delete'));
+    files.forEach(function(file){
+        mFile.delete(file, ep.group('delete', function(result){
+            // 记录该操作
+            mLog.create({
+                fromUserId: loginUser._id,
+                fromUserName: loginUser.nick,
+
+                fileId: file._id,
+
+                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+                //11: delete(移动到回收站) 12: 创建文件夹
+                operateType: 6,
+                // 这里要用 parent._id, 因为 getFolder 方法把它解开了
+                srcFolderId: file.folder && file.folder._id,
+                // distFolderId: params.targetId,
+                fromGroupId: file.folder && file.folder.group && file.folder.group.oid
+                // toGroupId: toGroupId
+            });
+            return result;
+        }));
     });
 
-}
+};
 
 exports.revert = function(req, res){
 
-    var params = req.body;
+    var params = req.parameter;
 
-    var fileIds = params.fileId;
-    var groupId = params.groupId;
+    var files = params.fileId;
 
-    var creator = req.loginUser._id;
+    var loginUser = req.loginUser;
 
     var ep = new EventProxy();
 
@@ -50,31 +65,35 @@ exports.revert = function(req, res){
         res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('revert', fileIds.length, function(list){
+    ep.after('revert', files.length, function(list){
         res.json({
             err: ERR.SUCCESS
         });
     });
 
-    fileIds.forEach(function(fileId){
-        mFile.revertDelete({ 
-            fileId: fileId, 
-            groupId: groupId
+    files.forEach(function(file){
+        mFile.revertDelete({
+            fileId: file._id
         }, ep.group('revert'));
     });
-}
+};
 
 
 exports.search = function(req, res){
-    var params = req.query;
+    var parameter = req.parameter;
+    var loginUser = req.loginUser;
 
-    params.extendQuery = {
-        del: true,
-    }
-    if(!params.groupId){ // TODO 小组的回收站要怎么处理
-        params.creator = req.loginUser._id; // 只能搜索自己的回收站
-    }
-    mFile.search(params, function(err, total, docs){
+    var searchParams = us.extend({}, parameter);
+
+    searchParams.extendQuery = {
+        del: true
+    };
+
+    // 只能搜索自己的回收站
+    searchParams.creator = loginUser._id;
+
+    // TODO 小组的回收站要怎么处理
+    mFile.search(searchParams, function(err, total, docs){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
@@ -87,4 +106,4 @@ exports.search = function(req, res){
             });
         }
     });
-}
+};

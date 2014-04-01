@@ -85,7 +85,7 @@ exports.RULES = {
                     // 么有权限写该文件夹
                     return callback(msg, ERR.NOT_AUTH);
                 }
-                if(folder.__role === config.FOLDER_DEPARTMENT_PUBLIC){
+                if(folder.__role & config.FOLDER_DEPARTMENT_PUBLIC){
                     // 公开文件夹还有个关闭上传的时间控制
                     if(folder.closeTime && Date.now() > folder.closeTime){
                         return callback('the folder has close upload', ERR.NOT_AUTH);
@@ -113,7 +113,7 @@ exports.RULES = {
             ep.fail(callback);
 
             var files = parameter.fileId;
-            ep.after('verifyDone', function(list){
+            ep.after('verifyDone', files.length, function(list){
                 callback(null);
             });
 
@@ -241,9 +241,9 @@ exports.RULES = {
             var folder = parameter.folderId;
             var msg = 'not auth to access file to this folder, folderId: ' + folder._id;
 
-            verifyFolder(user, folder, function(err, folder){
+            verifyFolder(user, folder, function(err, fld){
                 if(err){
-                    if(folder === ERR.NOT_AUTH && folder.__role === config.FOLDER_DEPARTMENT_PRIVATE){
+                    if(fld === ERR.NOT_AUTH && (folder.__role & config.FOLDER_DEPARTMENT_PRIVATE)){
                         // 部门的私有目录也允许通过, 但是接口里只会返回空数组
                         return callback(null);
                     }
@@ -269,29 +269,14 @@ exports.RULES = {
     // },
 
     // folder
+    '/api/folder': {
+        verify: function(user, parameter, callback){
+            // 这个接口不鉴权
+            callback(null);
+        }
+    },
     '/api/folder/create': {
-        method: 'POST',
-        params: [
-            {
-                name: 'folderId',
-                type: 'folder',
-                required: true
-            },
-            {
-                name: 'name',
-                type: 'string',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
-            },
-            {
-                name: 'closeTime',
-                type: 'number',
-                min: 1
-            }
-        ],
+        
         verify: function(user, parameter, callback){
             var folder = parameter.folderId;
 
@@ -307,68 +292,66 @@ exports.RULES = {
                 // 么有权限写该文件夹
                 return callback(msg, ERR.NOT_AUTH);
             });// verifyFolder
-
         }
     },
-    '/api/folder': {
-        method: 'GET',
-        params: [
-            {
-                name: 'folderId',
-                type: 'folder',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
-            }
-        ]
+    '/api/folder/modify': {
+        verify: function(user, parameter, callback){
+            var folder = parameter.folderId;
+
+            var msg = 'not auth to modify this folder, folderId: ' + folder._id;
+
+            verifyFolder(user, folder, function(err, folder){
+                if(err){
+                    return callback(err, folder);
+                }
+                if(folder.__writable && !(folder.__user_role & config.ROLE_VISITOR)){
+                    // 部门公开文件夹是可上传文件的, 但是普通游客不可修改
+                    callback(null);
+                }
+                // 么有权限写该文件夹
+                return callback(msg, ERR.NOT_AUTH);
+            });// verifyFolder
+        }
     },
     '/api/folder/delete': {
-        method: 'POST',
-        params: [
-            {
-                name: 'folderId',
-                type: 'folders',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
-            }
-        ]
-    },
-    '/api/folder/modify': {
-        method: 'POST',
-        params: [
-            {
-                name: 'folderId',
-                type: 'folder',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
-            },
-            {
-                name: 'name',
-                type: 'string'
-            }
-        ]
+        verify: function(user, parameter, callback){
+            var folders = parameter.folderId;
+
+            var msg = 'not auth to delete this folder, folderId: ';
+
+            var ep = new EventProxy();
+            ep.fail(callback);
+
+            ep.after('verifyDone', folders.length, function(list){
+                callback(null);
+            });
+
+            folders.forEach(function(folder){
+                verifyFolder(user, folder, ep.group('verifyDone', function(folder){
+                    if(folder.__writable && (folder.__user_role & config.ROLE_FOLDER_MANAGER)){
+                        // 只有文件夹的管理员才能删
+                        
+                    }else{
+                        ep.emit('error', msg + folder._id, ERR.NOT_AUTH);
+                    }
+                    return folder;
+                }));
+            });
+        }
     },
     '/api/folder/list': {
-        method: 'GET',
-        params: [
-            {
-                name: 'folderId',
-                type: 'folder',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
-            }
-        ]
+        verify: function(user, parameter, callback){
+            var folder = parameter.folderId;
+
+            var msg = 'not auth to search this folder, folderId: ' + folder._id;
+
+            verifyFolder(user, folder, function(err, folder){
+                if(err){
+                    return callback(err, folder);
+                }
+                callback(null);
+            });// verifyFolder
+        }
     },
     '/api/folder/search': {
         method: 'GET',
@@ -547,64 +530,39 @@ exports.RULES = {
 
     // recycle
     '/api/recycle/delete': {
-        method: 'POST',
-        params: [
-            {
-                name: 'fileId',
-                type: 'files',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
+        verify: function(user, parameter, callback){
+            var files = parameter.fileId;
+            var uid = user._id.toString();
+            var msg = 'not auth to delete this file, fileId: ';
+            for(var i = 0, file; i < files.length; i++){
+                file = files[i];
+                if(file.creator.oid.toString() !== uid){
+                    return callback(msg + file._id, ERR.NOT_AUTH);
+                }
             }
-        ]
-
+            callback(null);
+        }
     },
     '/api/recycle/revert': {
-        method: 'POST',
-        params: [
-            {
-                name: 'fileId',
-                type: 'files',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
+        verify: function(user, parameter, callback){
+            var files = parameter.fileId;
+            var uid = user._id.toString();
+            var msg = 'not auth to revert this file, fileId: ';
+            for(var i = 0, file; i < files.length; i++){
+                file = files[i];
+                if(file.creator.oid.toString() !== uid){
+                    return callback(msg + file._id, ERR.NOT_AUTH);
+                }
             }
-        ]
-
+            callback(null);
+        }
     },
     '/api/recycle/search': {
-        method: 'GET',
-        params: [
-            {
-                name: 'page',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'pageNum',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
-            },
-            {
-                name: 'keyword'
-            },
-            {
-                name: 'type',
-                type: 'number'
-            },
-            {
-                name: 'order',
-                type: 'object'
-            }
-        ]
+        verify: function(user, parameter, callback){
+            // 该接口不鉴权
+            callback(null);
+        }
+
     },
 
     // board
@@ -832,7 +790,8 @@ function verifyDownload(user, file, callback){
     });
 
     ep.on('verifyFolder', function(folder){
-        if(folder.__role === config.FOLDER_SCHOOL){
+
+        if(folder.__role & config.FOLDER_SCHOOL){
             if(file.validateStatus === 1){
                 // 学校空间通过审核的才能下载
                 return callback(null);
@@ -855,25 +814,36 @@ function verifyFolder(user, folder, callback){
     // 可访问的文件夹权限控制
     // 管理员; 自己创建的文件夹; 自己所属部门/小组的文件; 部门的公开文件夹; 学校空间的文件
     var msg = 'not auth to access this folder, folderId: ' + folder._id;
+    var hasAuth = false;
+
     folder.__role = config.FOLDER_NORMAL;
     folder.__writable = false;
-    if(user.auth & config.ROLE_MANAGER){
+
+    if(user.__role & config.ROLE_MANAGER){
+
         // 这人是管理员大大
         folder.__writable = true;
-        return callback(null, folder);
+        hasAuth = true;
+        // return callback(null, folder);
     }
+    if(user._id.toString() === folder.creator.oid.toString()){
 
+        // 这里设置为只要是自己创建的文件夹, 不管是不是小组的, 创建者都有权修改
+        user.__role |= config.ROLE_FOLDER_CREATOR;
+        folder.__writable = true;
+        hasAuth = true;
+    }
     if(!folder.group){
-        // 只在非小组时才进行判断是否是自己创建的文件夹, 避免出现逻辑混乱
-        // 因为在小组里, 也有自己创建的文件夹, 这时的权限依赖于是否是成员来控制
-        if(user._id.toString() === folder.creator.oid.toString()){
 
-            user.__role |= config.ROLE_FOLDER_CREATOR;
-            folder.__writable = true;
-            // 自己创建的文件夹
+        folder.__user_role = user.__role;
+        if(hasAuth){
+
+            // 个人的私人文件夹
+            folder.__role |= config.FOLDER_PRIVATE;
+            // 个人空间是完全私密的，除超级管理员之外，其它用户不可访问
             return callback(null, folder);
         }
-
+        // 这个文件夹不是小组的, 又不是创建者, 就没有权限访问
         return callback(msg, ERR.NOT_AUTH);
     }
 
@@ -884,46 +854,80 @@ function verifyFolder(user, folder, callback){
         folder.__group = group;
         
         if(group.type === config.GROUP_SCHOOL){
+            
+            folder.__role |= config.FOLDER_SCHOOL;
             // 学校空间的文件夹, 允许访问
-            folder.__role = config.FOLDER_SCHOOL;
+            hasAuth = true;
+            user.__role |= config.ROLE_VISITOR;
+            // return callback(null, folder);
+        }else if(group.type === config.GROUP_DEPARTNMENT){
+
+            folder.__role |= config.FOLDER_DEPARTMENT;
+
+            if(folder.isOpen){
+                // 部门的公开文件夹
+                hasAuth = true;
+                // 注意: 这里可能会误判, 在 isGroupMemberHandler 里需要回滚
+                user.__role |= config.ROLE_VISITOR;
+                folder.__role |= config.FOLDER_DEPARTMENT_PUBLIC;
+                if(!folder.isReadonly){
+                    
+                    folder.__writable = true;
+                }
+            }else{
+                // 部门私有目录
+                folder.__role |= config.FOLDER_DEPARTMENT_PRIVATE;
+            }
+
+        }else if(group.type === config.GROUP_GROUP) {
+            
+            folder.__role |= config.FOLDER_GROUP;
+        }else if(group.type === config.GROUP_PREPARE){
+            
+            folder.__role |= config.FOLDER_PREPARE;
+
+            if(user.__role & config.ROLE_PREPARE_MEMBER) {
+                // 备课小组(pt === 1 的 group)的成员, 可以访问备课(type === 3)的文件
+                hasAuth = true;
+                user.__role |= config.ROLE_VISITOR;
+            }
+        }
+
+        // 看是否是部门/小组成员
+        mGroup.isGroupMember(group._id, user._id, isGroupMemberHandler);
+    });
+
+    // 这里不用 EventProxy, 尽量提高性能
+    function isGroupMemberHandler(err, bool, result){
+
+        var group = folder.__group;
+        if(err){
+
+            return callback(err);
+        }else if(bool){
+            // 自己所属部门/小组的文件, 可能是管理员
+            folder.__writable = true;
+            hasAuth = true;
+            // FIXME depart manager 之前没有启用过, 所以这里也不进行判断了
+            // 如果要改, 需要改动到 routes/group#modify
+            if(result.auth & config.AUTH_GROUP_MANAGER){
+
+                user.__role |= config.ROLE_GROUP_MANAGER;
+            }
+            if(result.auth & config.AUTH_DEPART_MANAGER){
+
+                user.__role |= config.ROLE_DEPARTMENT_MANAGER;
+            }
+            // 上面的公开文件夹判断可能会把成员也判断成 visitor, 这里要回滚一下
+            user.__role &= ~config.ROLE_VISITOR;
+            // 小组管理员可以读写小组空间所有数据
+            // 部门管理员可以读写部门空间所有数据
+
+        }
+        folder.__user_role = user.__role;
+        if(hasAuth){
             return callback(null, folder);
         }
-        if(group.type === config.GROUP_DEPARTNMENT){
-            folder.__role = config.FOLDER_DEPARTMENT;
-        }else if(group.type === config.GROUP_GROUP) {
-            folder.__role = config.FOLDER_GROUP;
-        }else if(group.type === config.GROUP_PREPARE){
-            folder.__role = config.FOLDER_PREPARE;
-        }
-        // 看是否是部门/小组成员
-        mGroup.isGroupMember(group._id, user._id,
-                function(err, result){
-
-            if(err){
-                callback(err);
-            }else if(result){
-                // 自己所属部门/小组的文件
-                folder.__writable = true;
-                callback(null, folder);
-            }else if(group.type === config.GROUP_DEPARTNMENT){
-                if(folder.isOpen){
-                    // 部门的公开文件夹
-                    folder.__role = config.FOLDER_DEPARTMENT_PUBLIC;
-                    if(!folder.isReadonly){
-                        folder.__writable = true;
-                    }
-                    return callback(null, folder);
-                }
-
-                // 部门私有目录
-                folder.__role = config.FOLDER_DEPARTMENT_PRIVATE;
-                callback(msg, ERR.NOT_AUTH);
-            }else if(group.type === config.GROUP_PREPARE && (user.__role & config.ROLE_PREPARE_MEMBER)) {
-                // 备课小组(pt === 1 的 group)的成员, 可以访问备课(type === 3)的文件
-                callback(null, folder);
-            }else{
-                callback(msg, ERR.NOT_AUTH);
-            }
-        });
-    });
+        return callback(msg, ERR.NOT_AUTH);
+    }
 }
