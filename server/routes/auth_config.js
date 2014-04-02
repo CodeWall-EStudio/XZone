@@ -64,12 +64,12 @@ exports.AUTH_WHITE_LIST = [
 
 exports.RULES = {
     // file 
-    '/api/file': {
-        verify: function(user, parameter, callback){
-            // 这个接口不鉴权
-            callback(null);
-        }
-    },
+    // '/api/file': {
+    //     verify: function(user, parameter, callback){
+    //         // 这个接口不鉴权
+    //         callback(null);
+    //     }
+    // },
     '/api/file/upload': {
         verify: function(user, parameter, callback){
             // 可以上传文件的文件夹要求
@@ -253,14 +253,14 @@ exports.RULES = {
             });// verifyFolder
         }
     },
-    '/api/file/query': {
-        verify: function(user, parameter, callback){
-            // 可以搜索:
-            // 查询该用户共享给其他部门/小组的文件          
-            // 不进行鉴权
-            callback(null);
-        }
-    },
+    // '/api/file/query': {
+    //     verify: function(user, parameter, callback){
+    //         // 可以搜索:
+    //         // 查询该用户共享给其他部门/小组的文件          
+    //         // 不进行鉴权
+    //         callback(null);
+    //     }
+    // },
 
     // media
     // '/api/media/upload': {
@@ -269,12 +269,12 @@ exports.RULES = {
     // },
 
     // folder
-    '/api/folder': {
-        verify: function(user, parameter, callback){
-            // 这个接口不鉴权
-            callback(null);
-        }
-    },
+    // '/api/folder': {
+    //     verify: function(user, parameter, callback){
+    //         // 这个接口不鉴权
+    //         callback(null);
+    //     }
+    // },
     '/api/folder/create': {
         
         verify: function(user, parameter, callback){
@@ -369,117 +369,68 @@ exports.RULES = {
     },
 
     // fav
-    '/api/fav/create': {
+    // '/api/fav/create': {
 
-        verify: function(user, parameter, callback){
-            // 该接口不鉴权
-            callback(null);
-        }
-    },
-    '/api/fav/delete': {
-        verify: function(user, parameter, callback){
-            // 该接口不鉴权
-            callback(null);
-        }
-    },
-    '/api/fav/search': {
-        method: 'GET',
-        params: [
-            {
-                name: 'page',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'pageNum',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
-            },
-            {
-                name: 'keyword'
-            },
-            {
-                name: 'type',
-                type: 'number'
-            },
-            {
-                name: 'order',
-                type: 'object'
-            }
-        ]
-    },
+    //     verify: function(user, parameter, callback){
+    //         // 该接口不鉴权
+    //         callback(null);
+    //     }
+    // },
+    // '/api/fav/delete': {
+    //     verify: function(user, parameter, callback){
+    //         // 该接口不鉴权
+    //         callback(null);
+    //     }
+    // },
+    // '/api/fav/search': {
+    //     verify: function(user, parameter, callback){
+    //         // 该接口不鉴权
+    //         callback(null);
+    //     }
+    // },
 
     // group
-    '/api/group/create': {
-        method: 'POST',
-        params: [
-            {
-                name: 'name',
-                type: 'string',
-                required: true
-            },
-            {
-                name: 'type',
-                type: 'number'
-            },
-            {
-                name: 'content',
-                type: 'string'
-            },
-            {
-                name: 'parentId',
-                type: 'group'
-            },
-            {   name: 'members',
-                type: 'users'
-            },
-            {
-                name: 'managers',
-                type: 'users'
-            }
-        ]
-    },
+    // '/api/group/': {
+    //     verify: function(user, parameter, callback){
+    //         // 该接口不鉴权
+    //         callback(null);
+    //     }
+    // },
+
+    // '/api/group/create': {
+        
+    //     verify: function(user, parameter, callback){
+    //         // 该接口不鉴权
+    //         // 任何人都能申请创建小组
+    //         callback(null);
+    //     }
+    // },
     '/api/group/modify': {
-        method: 'POST',
-        params: [
-            {
-                name: 'groupId',
-                type: 'group'
-            },
-            {
-                name: 'name',
-                type: 'string'
-            },
-            {
-                name: 'content',
-                type: 'string'
-            },
-            {
-                name: 'parentId',
-                type: 'group'
-            },
-            {   name: 'members',
-                type: 'users'
-            },
-            {
-                name: 'managers',
-                type: 'users'
+
+        verify: function(user, parameter, callback){
+            // 可以修改小组的权限
+            // 系统管理员; 小组管理员; 部门管理员
+            var group = parameter.groupId;
+            var msg = 'not auth to modify this group, groupId: ' + group._id;
+            if(user.__role & config.ROLE_MANAGER){
+                return callback(null);
             }
-        ]
+            mGroup.isGroupMember(group._id, user._id, function(err, bool, result){
+                if(err){
+                    return callback(err);
+                }
+                if(bool && ( (result.auth & config.AUTH_GROUP_MANAGER) ||
+                        (result.auth & config.AUTH_DEPART_MANAGER) )){
+
+                    return callback(null);
+                }
+                callback(msg, ERR.NOT_AUTH);
+            });
+        }
     },
-    '/api/group/': {
-        method: 'GET',
-        params: [
-            {
-                name: 'groupId',
-                type: 'group'
-            }
-        ]
-    },
+    // '/api/group/list': {
+    // },
+    
 
     // user
     '/user/loginSuccessWithQQ': {
@@ -525,13 +476,12 @@ exports.RULES = {
             callback(null);
         }
     },
-    '/api/recycle/search': {
-        verify: function(user, parameter, callback){
-            // 该接口不鉴权
-            callback(null);
-        }
-
-    },
+    // '/api/recycle/search': {
+    //     verify: function(user, parameter, callback){
+    //         // 该接口不鉴权
+    //         callback(null);
+    //     }
+    // },
 
     // board
     '/api/board/create': {

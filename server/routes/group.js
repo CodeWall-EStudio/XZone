@@ -1,6 +1,7 @@
 var http = require('http');
 var EventProxy = require('eventproxy');
 var us = require('underscore');
+var ObjectID = require('mongodb').ObjectID;
 
 var config = require('../config');
 var U = require('../util');
@@ -9,34 +10,69 @@ var db = require('../models/db');
 var mGroup = require('../models/group');
 
 exports.create = function(req, res){
-    var params = req.body;
+    var parameter = req.parameter;
+    var loginUser = req.loginUser;
 
-    params.creator = req.loginUser._id;
+    var name = parameter.name;
+    var type = parameter.type;
+    var content = parameter.content;
+    var parent = parameter.parentId;
+    var members = parameter.members || [];
+    var managers = parameter.managers || [];
 
-    if(U.hasRight(req.loginUser.auth, config.AUTH_MANAGER)){
-        params.status = 0; // 管理员以上创建小组不用审核
-    }else{
-        delete params.status;
-    }
-
-
-    var members = params.members || [];
-    var managers = params.managers || [];
-    managers.push(params.creator);
-    
-    members = members.concat(managers);
-    members = us.uniq(members); // 唯一化, 防止出现两个相同的用户
+    var createParams = us.extend({}, parameter);
 
     var ep = new EventProxy();
-
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    mGroup.create(params, ep.doneLater('create'));
+    // 小组的名字在同一个group下要唯一
+    var nameQuery = {
+        name: name
+    };
+    if(parent){
+        nameQuery['parent.$id'] = parent._id;
+    }else{
+        nameQuery['parent.$id'] = null;
+    }
+    mGroup.getGroup(nameQuery, ep.doneLater('getGroup'));
 
-    ep.on('create', function(group){
-        var groupId = group._id.toString();
+    ep.on('getGroup', function(group){
+        if(group){
+            return ep.emit('error', 'name duplicate', ERR.DUPLICATE);
+        }
+
+        if(loginUser.__role & config.ROLE_MANAGER){
+            createParams.status = 0; // 管理员以上创建小组不用审核
+        }else{
+            delete createParams.status;
+        }
+
+        if(parent){
+            createParams.parentId = parent._id;
+        }
+        createParams.creator = loginUser._id;
+
+        mGroup.create(createParams, ep.doneLater('createGroup'));
+
+    });
+
+    ep.on('createGroup', function(group){
+
+        // 创建者默认为小组管理员
+        managers.push(loginUser);
+        // 把 object 提取出 字符串的 _id
+        managers = us.map(managers, function(user){
+            return user._id.toString();
+        });
+        members = us.map(members, function(user){
+            return user._id.toString();
+        });
+
+        // 唯一化, 防止出现两个相同的用户
+        members = us.uniq(members.concat(managers));
+
 
         ep.after('applyMember', members.length, function(list){
             res.json({
@@ -46,26 +82,242 @@ exports.create = function(req, res){
                 }
             });
         });
-        members.forEach(function(member){
-            // 创建者默认为小组管理员
+        members.forEach(function(userId){
 
             var auth = config.AUTH_USER;
-            if(managers.indexOf(member) > -1){
+            if(managers.indexOf(userId) > -1){
                 auth = config.AUTH_GROUP_MANAGER;
             }
 
             mGroup.addUserToGroup({
-                userId: member,
-                groupId: groupId,
+                userId: ObjectID(userId),
+                groupId: group._id,
                 auth: auth
             }, ep.group('applyMember'));
         });
         
     });
+};
+
+exports.get = function(req, res){
+    var parameter = req.parameter;
+    var group = parameter.group;
+
+    mGroup.getGroupMembers(group._id, true, function(err, members){
+        group.members = members;
+        res.json({ err: ERR.SUCCESS , result: { data: group }});
+    });
+};
+
+
+function modifyMembers(group, members, managers, callback){
+    var needModifyManager = !!managers.length;
+    var creatorId = group.creator.oid.toString();
+    var groupId = group._id;
+    var docs = group.__members;
+
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    if(!docs.length){// 没有的话所有 memebers都是新增的
+        if(!members.length){ // 没有新增成员
+            callback(null);
+            return;
+        }
+        
+        ep.after('applyMember', members.length, function(list){
+            callback(null);
+        });
+        members.forEach(function(userId){
+
+            var auth = config.AUTH_USER;
+            if(managers.indexOf(userId) > -1){
+                auth = config.AUTH_GROUP_MANAGER;
+            }else if(creatorId === userId){
+                // 给创建者加上管理员
+                auth = config.AUTH_GROUP_MANAGER;
+            }
+            mGroup.addUserToGroup({
+                userId: ObjectID(userId),
+                groupId: groupId,
+                auth: auth
+            }, ep.group('applyMember'));
+
+            console.log('>>>modify group add member[all]', userId);
+        });
+        
+    }else{ // >>>>>>>>>>>>>>>> !!!!!!!!!!!!!!!!!!!
+        // 这里要对成员做删减改
+        ep.after('modifyMember', docs.length, function(list){
+            if(members.length){// 如果 members 还有数据, 说明有新增用户
+                ep.after('applyMember', members.length, function(list){
+                    callback(null);
+                });
+                members.forEach(function(userId){
+
+                    var auth = config.AUTH_USER;
+                    if(managers.indexOf(userId) > -1){
+                        auth = config.AUTH_GROUP_MANAGER;
+                    }
+                    mGroup.addUserToGroup({
+                        userId: ObjectID(userId),
+                        groupId: groupId,
+                        auth: auth
+                    }, ep.group('applyMember'));
+
+                    console.log('>>>modify group add member', userId);
+                });
+            }else{ //没有的话就处理完了
+                ep.emit('modifyMemberSuccess');
+            }
+        });
+
+        docs.forEach(function(doc){
+            var userId = doc.user.oid.toString();
+            var oldAuth = doc.auth;
+            var mIndex = members.indexOf(userId);
+            if(mIndex === -1){
+                
+                //防止创建者被删掉
+                if(creatorId === userId){
+                    ep.emit('modifyMember');
+                    console.log('>>>modify group can not remove creator: ', userId);
+                }else if(!needModifyManager && oldAuth !== 0){
+                    // 没有修改管理员时, 不能删掉管理员
+                    ep.emit('modifyMember');
+                    console.log('>>>modify group managers empty, not remove manager', userId);
+                }else{
+                    // 这个用户被删了
+                    mGroup.removeUserFromGroup({
+                        userId: ObjectID(userId),
+                        groupId: groupId
+                    }, ep.group('modifyMember'));
+                    console.log('>>>modify group remove member', userId);
+                }
+                
+            }else{
+                // 这次可能被修改了权限的用户
+                var auth = config.AUTH_USER;
+                if(creatorId === userId){
+                    // 创建者必须是管理员
+                    auth = config.AUTH_GROUP_MANAGER;
+                }else if(needModifyManager){
+                    if(managers.indexOf(userId) > -1){
+                        auth = config.AUTH_GROUP_MANAGER;
+                    }
+                }else{// 没有修改管理员时, 权限用旧的
+                    auth = oldAuth || 0;
+                }
+
+                mGroup.modifyUserAuth({
+                    userId: ObjectID(userId),
+                    groupId: groupId,
+                    auth: auth
+                }, ep.group('modifyMember'));
+                // 从 members 里删除
+                members.splice(mIndex, 1);
+                console.log('>>>modify group change member auth', userId, auth);
+            }
+        });
+    }
 }
 
+exports.modify = function(req, res){
+    var params = req.parameter;
+    var loginUser = req.loginUser;
+
+    var group = params.groupId;
+    var name = params.name;
+    var content = params.content;
+    var members = params.members;
+    var managers = params.managers;
+
+    var parentId = group.parent && group.parent.oid;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    if(name === group.name){
+        // 名字一样就没必要改
+        name = null;
+    }
+    if(name){
+        // 小组的名字在同一个group下要唯一
+        var nameQuery = {
+            name: name
+        };
+        if(parentId){
+            nameQuery['parent.$id'] = parentId;
+        }else{
+            nameQuery['parent.$id'] = null;
+        }
+        mGroup.getGroup(nameQuery, ep.doneLater('getGroup'));
+
+        ep.on('getGroup', function(group){
+            if(group){
+                return ep.emit('error', 'name duplicate', ERR.DUPLICATE);
+            }
+
+            ep.emit('checkNameReady');
+
+        });
+    }else{
+        ep.emitLater('checkNameReady');
+    }
+
+    ep.on('checkNameReady', function(){
+        var doc = {};
+
+        if(name){
+            doc.name = name;
+        }
+        if(content){
+            doc.content = content;
+        }
+
+        mGroup.modify({ _id: group._id }, doc, ep.done('modifyGroup'));
+
+        mGroup.getGroupMemberIds(group._id, ep.done('getMemberIds'));
+
+    });
+
+    ep.all('modifyGroup', 'getMemberIds', function(group, docs){
+
+        // 把 object 提取出 字符串的 _id
+        managers = us.map(managers, function(user){
+            return user._id.toString();
+        });
+        members = us.map(members, function(user){
+            return user._id.toString();
+        });
+
+        // 唯一化, 防止出现两个相同的用户
+        members = us.uniq(members.concat(managers));
+
+        // 原来的成员
+        group.__members = docs;
+
+        if(members.length){
+            // 修改成员和管理员
+            modifyMembers(group, members, managers, ep.done('modifyMembersSuccess'));
+        }else{
+            ep.emit('modifyMembersSuccess');
+        }
+
+    });
+
+    ep.all('modifyGroup', 'modifyMembersSuccess', function(group){
+
+        db.dereference(group, { rootFolder: null }, function(){
+            res.json({ err: ERR.SUCCESS , result: { data: group }});
+        });
+    });
+};
+
 exports.list = function(req, res){
-    var params = req.query;
+    var params = req.parameter;
 
     var userId = req.loginUser._id;
 
@@ -82,196 +334,4 @@ exports.list = function(req, res){
         }
 
     });
-}
-
-exports.modify = function(req, res){
-    var params = req.body;
-    var loginUser = req.loginUser;
-    var groupId = params.groupId;
-
-    var doc = {};
-
-    if(params.name){ // 要检查重名
-        doc.name = params.name;
-    }
-    if(params.content){
-        doc.content = params.content;
-    }
-    
-    var members = params.members || [];
-    var managers = params.managers || [];
-    var needModifyManager = !!managers.length ;
-
-    // 修改成员
-    members = members.concat(managers);
-    members = us.uniq(members); // 唯一化
-
-
-    var ep = new EventProxy();
-
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
-    });
-
-
-    mGroup.getGroup({ _id: groupId }, ep.doneLater('getGroup'));
-
-    ep.on('getGroup', function(group){
-        if(!group){
-            ep.emit('error', 'no such group', ERR.NOT_FOUND);
-            return;
-        }
-        if(doc.name && doc.name === group.name){
-            // 名字没变过, 就不写了
-            delete doc.name;
-            delete params.name;
-        }
-        if(U.hasRight(loginUser.auth, config.AUTH_MANAGER)){
-            // 当前用户是管理员或者系统管理员
-            ep.emit('ready');
-        }else{
-            mGroup.isGroupMember(groupId, loginUser._id, ep.done('checkAuth'));
-        }
-    });
-
-    ep.on('checkAuth', function(result, doc){
-        if(result && U.hasRight(doc.auth, config.AUTH_GROUP_MANAGER)){
-            ep.emit('ready')
-        }else{
-            ep.emit('error', 'not auth to modify this group', ERR.NOT_AUTH);
-        }
-    });
-
-    ep.on('ready', function(){
-
-        mGroup.modify(params, doc, ep.done('modifySuccess'));
-
-        mGroup.getGroupMemberIds(groupId, ep.done('getMemberIds'));
-
-    });// ready
-
-    ep.all('getGroup', 'getMemberIds', function(group, docs){
-        var creator = group.creator.oid.toString();
-        if(!docs.length){// 没有的话所有 memebers都是新增的
-            if(!members.length){
-                ep.emit('modifyMemberSuccess');
-                return;
-            }
-            
-            ep.after('applyMember', members.length, function(list){
-                ep.emit('modifyMemberSuccess');
-            });
-            members.forEach(function(userId){
-
-                var auth = config.AUTH_USER;
-                if(managers.indexOf(userId) > -1){
-                    auth = config.AUTH_GROUP_MANAGER;
-                }
-                mGroup.addUserToGroup({
-                    userId: userId,
-                    groupId: groupId,
-                    auth: auth
-                }, ep.group('applyMember'));
-
-                console.log('>>>modify group add member[all]', userId);
-            });
-            
-        }else{
-            ep.after('modifyMember', docs.length, function(list){
-                if(members.length){// 如果 members 还有数据, 说明有新增用户
-                    ep.after('applyMember', members.length, function(list){
-                        ep.emit('modifyMemberSuccess');
-                    });
-                    members.forEach(function(userId){
-
-                        var auth = config.AUTH_USER;
-                        if(managers.indexOf(userId) > -1){
-                            auth = config.AUTH_GROUP_MANAGER;
-                        }
-                        mGroup.addUserToGroup({
-                            userId: userId,
-                            groupId: groupId,
-                            auth: auth
-                        }, ep.group('applyMember'));
-
-                        console.log('>>>modify group add member', userId);
-                    });
-                }else{ //没有的话就处理完了
-                    ep.emit('modifyMemberSuccess');
-                }
-            });
-
-            docs.forEach(function(doc){
-                var userId = doc.user.oid.toString();
-                var oldAuth = doc.auth;
-                var mIndex = members.indexOf(userId);
-                if(mIndex === -1){
-                    //防止创建者被删掉
-                    if(creator === userId){
-                        ep.emit('modifyMember');
-                        console.log('>>>modify group can not remove creator', userId);
-                    }else if(!needModifyManager && oldAuth !== 0){
-                        // 没有修改管理员时, 不能删掉管理员
-                        ep.emit('modifyMember');
-                        console.log('>>>modify group managers empty, not remove manager', userId);
-                    }else{
-                        // 这个用户被删了
-                        mGroup.removeUserFromGroup({
-                            userId: userId,
-                            groupId: groupId
-                        }, ep.group('modifyMember'));
-                        console.log('>>>modify group remove member', userId);
-                    }
-                    
-                }else{
-                    // 这次可能被修改了权限的用户
-                    var auth = config.AUTH_USER;
-                    if(creator === userId){
-                        // 创建者必须是管理员
-                        auth = config.AUTH_GROUP_MANAGER;
-                    }else if(needModifyManager){
-                        if(managers.indexOf(userId) > -1){
-                            auth = config.AUTH_GROUP_MANAGER;
-                        }
-                    }else{// 没有修改管理员时, 权限用旧的
-                        auth = oldAuth || 0;
-                    }
-
-                    mGroup.modifyUserAuth({
-                        userId: userId,
-                        groupId: groupId,
-                        auth: auth
-                    }, ep.group('modifyMember'));
-                    // 从 members 里删除
-                    members.splice(mIndex, 1);
-                    console.log('>>>modify group change member auth', userId, auth);
-                }
-            });
-        }
-    });
-
-
-    ep.all('modifySuccess', 'modifyMemberSuccess', function(doc){
-
-        db.dereference(doc, { rootFolder: null }, function(){
-            res.json({ err: ERR.SUCCESS , result: { data: doc }});
-        });
-    });
-}
-
-exports.get = function(req, res){
-    var params = req.query;
-
-    mGroup.getGroup({ _id: params.groupId }, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else if(!doc){
-            res.json({ err: ERR.NOT_FOUND, msg: 'no such group'});
-        }else{
-            mGroup.getGroupMembers(params.groupId, true, function(err, members){
-                doc.members = members;
-                res.json({ err: ERR.SUCCESS , result: { data: doc }});
-            });
-        }
-    });
-}
+};

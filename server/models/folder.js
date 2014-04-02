@@ -30,10 +30,10 @@ exports.create = function(params, callback){
         hasChild: false
     };
     if(groupId){
-        doc.group = DBRef('group', ObjectID(groupId));
+        doc.group = DBRef('group', groupId);
         doc.closeTime = Number(params.closeTime) || 0;
     }else{
-        doc.prepare = params.prepareId ? DBRef('group', ObjectID(params.prepareId)) : null;
+        doc.prepare = params.prepareId ? DBRef('group', params.prepareId) : null;
     }
     if(folder){
         doc.parent = DBRef('folder', folder._id);
@@ -208,7 +208,7 @@ exports.search = function(params, callback){
         query['creator.$id'] = creator;
     }
     if(groupId){
-        query['group.$id'] = ObjectID(groupId);
+        query['group.$id'] = groupId;
     }
     if(extendQuery){
         query = us.extend(query, extendQuery);

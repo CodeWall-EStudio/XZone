@@ -23,44 +23,27 @@ exports.create = function(params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
-    var nameQuery = {
-        name: params.name
+    var doc = {
+        name: params.name,
+        content: params.content || '',
+        type: type,
+        parent: params.parentId ? DBRef('group', params.parentId) : null,
+        creator: DBRef('user', params.creator),
+        status: status, // 标示小组审核状态 1 审核中 0 已审核
+        pt: Number(params.pt) || 0,
+        tag: params.tag || null,
+        grade: params.grade || null,
+
+        //TODO 小组配额没有加
+
+        validateText: null,//审核评语
+        validateStatus: status === 0 ? 1 : null, //0 不通过 1 通过
+        validateTime: null,//审核时间
+        validator: null
     };
-    if(params.parentId){
-        nameQuery['parent.$id'] = params.parentId;
-    }else{
-        nameQuery['parent.$id'] = null;
-    }
-    // 小组的名字在同一个group下要唯一
-    db.group.findOne(nameQuery, ep.doneLater('findGroup'));
 
-    ep.on('findGroup', function(doc){
-        if(doc){
-            callback('already has a group naming [' + params.name + '] ', ERR.DUPLICATE);
-            return;
-        }
-        var doc = {
-            name: params.name,
-            content: params.content || '',
-            type: type,
-            parent: params.parentId ? DBRef('group', params.parentId) : null,
-            creator: DBRef('user', params.creator),
-            status: status, // 标示小组审核状态 1 审核中 0 已审核
-            pt: Number(params.pt) || 0,
-            tag: params.tag || null,
-            grade: params.grade || null,
+    db.group.save(doc, ep.doneLater('createGroup'));
 
-            //TODO 小组配额没有加
-
-            validateText: null,//审核评语
-            validateStatus: status === 0 ? 1 : null, //0 不通过 1 通过
-            validateTime: null,//审核时间
-            validator: null
-        };
-
-        db.group.save(doc, ep.done('createGroup'));
-
-    });
 
     ep.on('createGroup',  function(group){
 
@@ -119,7 +102,7 @@ exports.getGroupByUser = function(userId, callback){
             dereferenceGroup(doc.group.oid, doc, proxy.group('getGroup'));
         });
     });
-}
+};
 
 exports.addUserToGroup = function(params, callback){
     var doc = {
@@ -142,6 +125,7 @@ exports.removeUserFromGroup = function(params, callback){
     });
 
 };
+
 exports.modifyUserAuth = function(params, callback){
     var query = {
         user: DBRef('user', params.userId),
@@ -227,37 +211,12 @@ exports.isPrepareMember = function(userId, callback){
 
 exports.modify = function(params, doc, callback){
 
-    var ep = new EventProxy();
-    ep.fail(callback);
+    doc.updatetime = Date.now();
 
-    if(params.name){
-        var nameQuery = {
-            name: params.name
-        };
-        if(params.parentId){
-            nameQuery['parent.$id'] = params.parentId;
-        }else{
-            nameQuery['parent.$id'] = null;
-        }
-        // 小组的名字在同一个group下要唯一
-        db.group.findOne(nameQuery, function(err, group){
-            if(err){
-                ep.emit('error', err);
-            }else if(group){
-                ep.emit('error', 'name duplicate', ERR.DUPLICATE);
-            }else{
-                ep.emitLater('checkNameSucc');
-            }
-        });
-    }else{
-        ep.emitLater('checkNameSucc');
-    }
-    ep.on('checkNameSucc', function(){
-        doc.updatetime = Date.now();
-        var query = { _id: params.groupId };
-        db.group.findAndModify(query, [], { $set: doc },
-                    { 'new':true }, callback);
-    });
+    var query = { _id: params.groupId };
+    
+    db.group.findAndModify(query, [], { $set: doc },
+            { 'new':true }, callback);
 
 
 };

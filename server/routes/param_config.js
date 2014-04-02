@@ -477,6 +477,17 @@ module.exports = {
     },
 
     // group
+    '/api/group/': {
+        method: 'GET',
+        params: [
+            {
+                name: 'groupId',
+                type: 'group',
+                required: true
+            }
+        ]
+    },
+
     '/api/group/create': {
         method: 'POST',
         params: [
@@ -503,6 +514,16 @@ module.exports = {
             {
                 name: 'managers',
                 type: 'users'
+            },
+            {
+                name: 'pt',
+                type: 'number'
+            },
+            {
+                name: 'tag'
+            },
+            {
+                name: 'grade'
             }
         ]
     },
@@ -511,7 +532,8 @@ module.exports = {
         params: [
             {
                 name: 'groupId',
-                type: 'group'
+                type: 'group',
+                required: true
             },
             {
                 name: 'name',
@@ -521,10 +543,10 @@ module.exports = {
                 name: 'content',
                 type: 'string'
             },
-            {
-                name: 'parentId',
-                type: 'group'
-            },
+            // { // 暂不支持改层级
+            //     name: 'parentId',
+            //     type: 'group'
+            // },
             {   name: 'members',
                 type: 'users'
             },
@@ -534,13 +556,9 @@ module.exports = {
             }
         ]
     },
-    '/api/group/': {
+    '/api/group/list': {
         method: 'GET',
         params: [
-            {
-                name: 'groupId',
-                type: 'group'
-            }
         ]
     },
 

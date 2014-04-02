@@ -89,18 +89,13 @@ exports.create = function(req, res){
 };
 
 exports.get = function(req, res){
-    var params = req.query;
+    var params = req.parameter;
+    var folder = params.folderId;
 
-    mFolder.getFolder({ _id: ObjectID(params.folderId) }, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    data: doc
-                }
-            });
+    res.json({
+        err: ERR.SUCCESS,
+        result: {
+            data: folder
         }
     });
 };

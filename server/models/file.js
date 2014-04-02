@@ -23,7 +23,7 @@ exports.create = function(params, callback){
 
     var doc = {
         resource: DBRef('resource', params.resourceId),
-        folder: DBRef('folder', ObjectID(folderId)),
+        folder: DBRef('folder', folderId),
         name: params.name,
         creator: DBRef('user', params.creator),
         createTime: Date.now(),
