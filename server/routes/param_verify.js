@@ -99,6 +99,11 @@ var checkers = {
         findOne('folder', value, pcfg, callback);
     },
 
+    'fav': function(value, pcfg, callback){
+
+        findOne('fav', value, pcfg, callback);
+    },
+
     'group': function(value, pcfg, callback){
 
         findOne('group', value, pcfg, callback);
@@ -122,6 +127,11 @@ var checkers = {
     'folders': function(value, pcfg, callback){
 
         findArray('folder', value, pcfg, callback);
+    },
+
+    'favs': function(value, pcfg, callback){
+
+        findArray('fav', value, pcfg, callback);
     },
 
     'groups': function(value, pcfg, callback){

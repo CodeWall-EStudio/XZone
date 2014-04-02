@@ -7,9 +7,10 @@ var mFav = require('../models/fav');
 
 exports.create = function(req, res){
 
-    var fileIds = req.body.fileId;
-    var groupId = req.body.groupId;
-    var creator = req.loginUser._id;
+    var parameter = req.parameter;
+    var files = parameter.fileId;
+    var group = parameter.groupId;
+    var loginUser = req.loginUser;
 
 
     var ep = new EventProxy();
@@ -18,7 +19,7 @@ exports.create = function(req, res){
         res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('create', fileIds.length, function(list){
+    ep.after('create', files.length, function(list){
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -27,17 +28,21 @@ exports.create = function(req, res){
         });
     });
 
-    fileIds.forEach(function(fileId){
-        mFav.create({ fileId: fileId, creator: creator, groupId: groupId}, ep.group('create'));
+    files.forEach(function(file){
+        mFav.create({
+            file: file,
+            creator: loginUser._id,
+            group: group
+        }, ep.group('create'));
     });
 
-}
+};
 
 
 exports.delete = function(req, res){
-
-    var fileIds = req.body.fileId;
-    var creator = req.loginUser._id;
+    var parameter = req.parameter;
+    var files = parameter.fileId;
+    var loginUser = req.loginUser;
 
     var ep = new EventProxy();
 
@@ -45,22 +50,26 @@ exports.delete = function(req, res){
         res.json({ err: ERR.SERVER_ERROR, msg: 'delete failure' });
     });
 
-    ep.after('delete', fileIds.length, function(list){
+    ep.after('delete', files.length, function(list){
         res.json({
             err: ERR.SUCCESS
         });
     });
 
-    fileIds.forEach(function(fileId){
-        mFav.delete({ fileId: fileId, creator: creator }, ep.group('delete'));
+    files.forEach(function(file){
+        mFav.delete({
+            fileId: file._id,
+            creator: loginUser._id
+        }, ep.group('delete'));
     });
 
-}
+};
 
 
 
 exports.search = function(req, res){
-    var params = req.query;
+    var params = req.parameter;
+
     params.creator = req.loginUser._id;
 
     mFav.search(params, function(err, total, docs){
@@ -76,4 +85,4 @@ exports.search = function(req, res){
             });
         }
     });
-}
+};

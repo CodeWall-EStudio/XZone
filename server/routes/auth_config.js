@@ -304,7 +304,7 @@ exports.RULES = {
                 if(err){
                     return callback(err, folder);
                 }
-                if(folder.__writable && !(folder.__user_role & config.ROLE_VISITOR)){
+                if(folder.__editable){
                     // 部门公开文件夹是可上传文件的, 但是普通游客不可修改
                     callback(null);
                 }
@@ -354,65 +354,33 @@ exports.RULES = {
         }
     },
     '/api/folder/search': {
-        method: 'GET',
-        params: [
-            {
-                name: 'folderId',
-                type: 'folder',
-                required: true
-            },
-            {
-                name: 'page',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'pageNum',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
-            },
-            {
-                name: 'keyword'
-            },
-            {
-                name: 'type',
-                type: 'number'
-            },
-            {
-                name: 'order',
-                type: 'object'
-            }
-        ]
+        verify: function(user, parameter, callback){
+            var folder = parameter.folderId;
+
+            var msg = 'not auth to search this folder, folderId: ' + folder._id;
+
+            verifyFolder(user, folder, function(err, folder){
+                if(err){
+                    return callback(err, folder);
+                }
+                callback(null);
+            });// verifyFolder
+        }
     },
 
     // fav
     '/api/fav/create': {
-        method: 'POST',
-        params: [
-            {
-                name: 'fileId',
-                type: 'files',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group'
-            }
-        ]
+
+        verify: function(user, parameter, callback){
+            // 该接口不鉴权
+            callback(null);
+        }
     },
     '/api/fav/delete': {
-        method: 'POST',
-        params: [
-            {
-                name: 'fileId',
-                type: 'files',
-                required: true
-            }
-        ]
+        verify: function(user, parameter, callback){
+            // 该接口不鉴权
+            callback(null);
+        }
     },
     '/api/fav/search': {
         method: 'GET',
@@ -818,11 +786,13 @@ function verifyFolder(user, folder, callback){
 
     folder.__role = config.FOLDER_NORMAL;
     folder.__writable = false;
+    folder.__editable = false;
 
     if(user.__role & config.ROLE_MANAGER){
 
         // 这人是管理员大大
         folder.__writable = true;
+        folder.__editable = true;
         hasAuth = true;
         // return callback(null, folder);
     }
@@ -831,6 +801,7 @@ function verifyFolder(user, folder, callback){
         // 这里设置为只要是自己创建的文件夹, 不管是不是小组的, 创建者都有权修改
         user.__role |= config.ROLE_FOLDER_CREATOR;
         folder.__writable = true;
+        folder.__editable = true;
         hasAuth = true;
     }
     if(!folder.group){
@@ -855,10 +826,10 @@ function verifyFolder(user, folder, callback){
         
         if(group.type === config.GROUP_SCHOOL){
             
+            user.__role |= config.ROLE_VISITOR;
             folder.__role |= config.FOLDER_SCHOOL;
             // 学校空间的文件夹, 允许访问
             hasAuth = true;
-            user.__role |= config.ROLE_VISITOR;
             // return callback(null, folder);
         }else if(group.type === config.GROUP_DEPARTNMENT){
 
@@ -907,6 +878,7 @@ function verifyFolder(user, folder, callback){
         }else if(bool){
             // 自己所属部门/小组的文件, 可能是管理员
             folder.__writable = true;
+            folder.__editable = true;
             hasAuth = true;
             // FIXME depart manager 之前没有启用过, 所以这里也不进行判断了
             // 如果要改, 需要改动到 routes/group#modify

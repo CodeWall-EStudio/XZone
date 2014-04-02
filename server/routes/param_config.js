@@ -458,10 +458,10 @@ module.exports = {
                 type: 'number',
                 required: true
             },
-            {
-                name: 'groupId',
-                type: 'group'
-            },
+            // {
+            //     name: 'groupId',
+            //     type: 'group'
+            // },
             {
                 name: 'keyword'
             },
