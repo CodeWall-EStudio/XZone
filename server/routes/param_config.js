@@ -563,7 +563,26 @@ module.exports = {
     },
 
     // user
-    '/user/loginSuccessWithQQ': {
+    '/api/user/': {
+        method: 'GET',
+        params: []
+    },
+
+    '/api/user/gotoLogin': {
+        method: 'GET',
+        params: []
+    },
+
+    '/api/user/loginSuccess': {
+        method: 'GET',
+        params: [
+            {
+                name: 'ticket',
+                required: true
+            }
+        ]
+    },
+    '/api/user/loginSuccessWithQQ': {
         method: 'GET',
         params: [
             {
@@ -573,6 +592,38 @@ module.exports = {
             {
                 name: 'state',
                 required: true
+            }
+        ]
+    },
+    '/api/user/logoff': {
+        method: 'GET',
+        params: [
+        ]
+    },
+    '/api/user/departments': {
+        method: 'GET',
+        params: [
+        ]
+    },
+    '/api/user/search': {
+        method: 'GET',
+        params: [
+            {
+                name: 'page',
+                type: 'number',
+                required: true
+            },
+            {
+                name: 'pageNum',
+                type: 'number',
+                required: true
+            },
+            {
+                name: 'keyword'
+            },
+            {
+                name: 'order',
+                type: 'object'
             }
         ]
     },

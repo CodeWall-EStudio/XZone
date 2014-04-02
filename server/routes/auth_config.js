@@ -433,19 +433,8 @@ exports.RULES = {
     
 
     // user
-    '/user/loginSuccessWithQQ': {
-        method: 'GET',
-        params: [
-            {
-                name: 'code',
-                required: true
-            },
-            {
-                name: 'state',
-                required: true
-            }
-        ]
-    },
+
+
 
     // recycle
     '/api/recycle/delete': {

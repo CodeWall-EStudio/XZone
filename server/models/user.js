@@ -4,6 +4,7 @@ var us = require('underscore');
 var EventProxy = require('eventproxy');
 
 var db = require('./db');
+var config = require('../config');
 var ERR = require('../errorcode');
 var mGroup = require('../models/group');
 var mFolder = require('../models/folder');
@@ -27,13 +28,13 @@ exports.create = function(params, callback){
             return callback(err);
         }
         mFolder.create({
-            creator: user._id.toString(),
+            creator: user._id,
             name: '根目录'
         }, function(err, folder){
             if(err){
                 return callback(err);
             }
-            user.rootFolder = DBRef('folder', folder._id.toString());
+            user.rootFolder = DBRef('folder', folder._id);
             db.user.save(user, function(err, result){
                 callback(err, user);
             });
@@ -65,14 +66,11 @@ exports.updateUsed = function(userId, count, callback){
             { $inc: { used: count } }, { 'new': true }, callback);
 };
 
-exports.getUserAllInfo = function(userId, callback){
+exports.getUserAllInfo = function(user, callback){
+    var userId = user._id;
+
     var ep = new EventProxy();
     ep.fail(callback);
-
-    // 获取用户资料
-    db.user.findOne({ _id: userId}, ep.doneLater('getUserCb'));
-
-    mGroup.isPrepareMember(userId, ep.doneLater('checkPrepare'));
 
     // 获取用户参与的小组信息
     mGroup.getGroupByUser(userId , ep.doneLater('getGroupsCb', function(results){
@@ -107,10 +105,12 @@ exports.getUserAllInfo = function(userId, callback){
     }));
 
 
-    ep.all('checkPrepare', 'getGroupsCb', function(hasRight, result){
+    ep.on('getGroupsCb', function(result){
         var memberDep = result.departments;
         // 读取所有部门
-        db.search('group', { type: 2 , validateStatus: { $in: [1, null] } }, {}, ep.done('getGroupsCb2', function(total, docs){
+        db.search('group', { type: 2 , validateStatus: { $in: [1, null] } }, {},
+                    ep.done('getGroupsCb2', function(total, docs){
+
             result.departments = [];
             docs.forEach(function(doc){
                 var dep = memberDep[doc._id.toString()];
@@ -120,7 +120,7 @@ exports.getUserAllInfo = function(userId, callback){
                 }else{
                     doc.isMember = false;
                 }
-                if(doc.pt === 1 && !hasRight){
+                if(doc.pt === 1 && !(user.__role & config.ROLE_PREPARE_MEMBER)){
                     // 不是备课组的成员, 就不返回这个部门
                 }else{
                     result.departments.push(doc);
@@ -135,12 +135,9 @@ exports.getUserAllInfo = function(userId, callback){
     // 获取学校信息
     db.group.findOne({ type: 0 }, ep.doneLater('getSchoolCb'));
 
-    ep.all('getUserCb', 'getGroupsCb2', 'getUnReadNumCb', 'getSchoolCb',
-           function(user, result, count, school){
-        if(!user){
-            callback('no such user', ERR.NOT_FOUND);
-            return;
-        }
+    ep.all('getGroupsCb2', 'getUnReadNumCb', 'getSchoolCb',
+           function(result, count, school){
+
         user.mailnum = count || 0;
         //school && (school.auth = 0);
         school && (school.auth = user.auth ? 1 : 0);

@@ -27,7 +27,7 @@ var oauth = new OAuth2(
 );
 
 exports.gotoLogin = function(req, res){
-    var type = req.type || req.query.type || 'cas';
+    var type = req.type || req.paramter.type || 'cas';
     var url;
     if(config.AUTH_TYPE !== 'auto'){
         type = config.AUTH_TYPE;
@@ -46,32 +46,14 @@ exports.gotoLogin = function(req, res){
     }
 
     res.redirect(url);
-}
+};
 
-function convent(list){
-
-}
-
-exports.getorgtree = function(req,res){
-    var skey = req.cookies.skey || req.body.skey || req.query.skey;
-    var user = req.loginUser;
-
-    console.log('>>>getOrgTree');
-    userHelper.getOrgTree(skey,user.name,function(err,d){
-        if(!err){
-            if(d.sucess){
-                console.log(d.departmentTree);   
-            }
-        }
-    });    
-
-}
 
 exports.get = function(req, res){
 
     var loginUser = req.loginUser;
     
-    mUser.getUserAllInfo(loginUser._id, function(err, data){
+    mUser.getUserAllInfo(loginUser, function(err, data){
         if(err){
             res.json({ err: data || ERR.SERVER_ERROR, msg: err});
         }else{
@@ -81,37 +63,38 @@ exports.get = function(req, res){
             });
         }// end of else 
     });
-}
+};
 
 var validateTicket = function(ticket, callback){
-    var ep = EventProxy.create('validate', 'userInfo', 
-            function(valData, user){
-        
-        callback(null, valData, user);
-
-    });
+    var ep = new EventProxy();
 
     ep.fail(callback);
 
-    cas.validate(ticket, ep.done('validate', function(status, response){
+    cas.validate(ticket, function(status, response){
         if(!status){
             ep.emit('error', 'the ticket "' + ticket + '" is not correct!', ERR.TICKET_ERROR);
             return null;
         }
-
         var data = JSON.parse(response);
+
+        ep.emit('validate', data);
+    }); // end validate
+
+    ep.on('validate', function(data){
         var skey = data.encodeKey;
 
         userHelper.findAndUpdateUserInfo(skey, 'sso', ep.done('userInfo'));
+    });
 
-        return data;
-    })); // end validate
-}
+    ep.all('validate', 'userInfo', function(valData, user){
+        callback(null, valData, user);
+    });
+};
 
 exports.loginSuccess = function(req, res, next){
     req.redirectUrl = '/index.html';
 
-    var ticket = req.body.ticket || req.query.ticket;
+    var ticket = req.paramter.ticket;
 
     // console.log('s sssss:',ticket);
 
@@ -126,7 +109,7 @@ exports.loginSuccess = function(req, res, next){
             console.log(err,valData,user);
             console.log('>>>validateTicket error:', err);
         }else{
-            req.session[valData.encodeKey] = user;
+            req.session[valData.encodeKey] = user._id.toString();
             res.cookie('skey', valData.encodeKey, { });
             // console.log('>>>validateTicket success', req.session);
             if(req.redirectUrl){
@@ -141,10 +124,10 @@ exports.loginSuccess = function(req, res, next){
             }// end redirectUrl
         }
     });
-}
+};
 
 exports.loginSuccessWithQQ = function(req, res, next){
-    var params = req.query;
+    var params = req.paramter;
     var code = params.code;
     var state = params.state;
     var type = req.session[state];
@@ -162,7 +145,7 @@ exports.loginSuccessWithQQ = function(req, res, next){
     oauth.getOAuthAccessToken(code, {
                 'grant_type': 'authorization_code',
                 'redirect_uri': config.QQ_CONNECT_CALLBACK
-            }, 
+            },
             function (err, access_token, refresh_token, data){
 
         if(err){
@@ -183,7 +166,7 @@ exports.loginSuccessWithQQ = function(req, res, next){
                 res.json({err: user || ERR.NOT_LOGIN, msg: err});
                 console.log('>>>qq findAndUpdateUserInfo error:', err);
             }else{
-                req.session[accessToken] = user;
+                req.session[accessToken] = user._id.toString();
                 res.cookie('skey', accessToken, { });
 
                 if(req.redirectUrl){
@@ -200,10 +183,10 @@ exports.loginSuccessWithQQ = function(req, res, next){
         });
     });
 
-}
+};
 
 exports.departments = function(req, res){
-    var params = req.query;
+    var params = req.paramter;
 
     mUser.getAllDepartments(params, function(err, data){
         if(err){
@@ -217,11 +200,11 @@ exports.departments = function(req, res){
             });
         }
     });
-}
+};
 
 
 exports.logoff = function(req, res){
-    var type = req.type || req.query.type || 'cas';
+    var type = req.type || req.paramter.type || 'cas';
 
     if(config.AUTH_TYPE !== 'auto'){
         type = config.AUTH_TYPE;
@@ -236,10 +219,10 @@ exports.logoff = function(req, res){
     }else{
         res.redirect(cas.getLogoutUrl());
     }
-}
+};
 
 exports.search = function(req, res){
-    var params = req.query;
+    var params = req.paramter;
 
     mUser.search(params, function(err, total, docs){
         if(err){
@@ -254,4 +237,4 @@ exports.search = function(req, res){
             });
         }
     });
-}
+};

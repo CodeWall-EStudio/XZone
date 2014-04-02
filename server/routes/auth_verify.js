@@ -37,7 +37,7 @@ exports.checkAuth = function(req, res, next){
         req.loginUid = loginUid;
 
         // 这里改成每次请求都从数据库读取用户信息, 为了数据的一致性, 只能牺牲下性能
-        db.user.findOne({ _id: ObjectID(loginUid) }, function(err, user){
+        mUser.getUser({ _id: ObjectID(loginUid) }, function(err, user){
             if(err){
                 res.json({ err: ERR.SERVER_ERROR, msg: 'verify user error' });
             }if(user){
@@ -48,7 +48,7 @@ exports.checkAuth = function(req, res, next){
             }
         });
     }
-}
+};
 
 /**
  * 检查是否登录, 如果没有登录, 跳转到登录页
