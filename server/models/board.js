@@ -13,17 +13,17 @@ exports.create = function(params, callback){
     var groupId = params.groupId;
 
     var doc = {
-        creator: DBRef('user', ObjectID(params.creator)),
-        parent: params.parentId ? DBRef('board', ObjectID(params.parentId)) : null,
+        creator: DBRef('user', params.creator),
+        parent: params.parentId ? DBRef('board', params.parentId) : null,
         content: params.content || '',
 
         createTime: Date.now(),
         updateTime: Date.now(),
 
-        resource: params.resourceId ? DBRef('resource', ObjectID(params.resourceId)) : null,
+        resource: params.resourceId ? DBRef('resource', params.resourceId) : null,
         type: 0, //类型 0 个人 1 小组 的文件
 
-        group: DBRef('group', ObjectID(groupId)),
+        group: DBRef('group', groupId),
 
         status: 1, // 审核状态 1 审核中 0 已审核
 
@@ -31,34 +31,31 @@ exports.create = function(params, callback){
         validateStatus: null, //0 不通过 1 通过
         validateTime: null,//审核时间
         validator: null
-    }
+    };
 
     db.board.save(doc, function(err, result){
 
         callback(null, doc);
     });
-}
+};
 
 exports.modify = function(params, doc, callback){
 
-    var query = {_id: ObjectID(params.boardId)};
-    if(params.creator){
-        query['creator.$id'] = ObjectID(params.creator);
-    }
+    var query = {_id: params.boardId };
 
     db.board.findAndModify(params, [], { $set: doc }, 
             { 'new': true }, callback);
 
-}
+};
 
-exports.delete = function(boardId, callback){
+exports.delete = function(query, callback){
 
-    db.board.findAndRemove({ _id: new ObjectID(boardId)}, [], callback);
-}
+    db.board.findAndRemove(query, [], callback);
+};
 
 exports.search = function(params, callback){
 
-    var userId = params.uid || null;
+    var creator = params.creator;
     var keyword = params.keyword || '';
     var groupId = params.groupId;
     
@@ -68,11 +65,11 @@ exports.search = function(params, callback){
         query.content = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
 
-    if(userId){
-        query['creator.$id'] = ObjectID(userId);
+    if(creator){
+        query['creator.$id'] = creator;
     }
     if(groupId){
-        query['group.$id'] = ObjectID(groupId);
+        query['group.$id'] = groupId;
     }
 
     if('validateStatus' in params){
@@ -85,7 +82,7 @@ exports.search = function(params, callback){
         }else if(total && docs){
             db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
                 if(err){
-                    callback(err)
+                    callback(err);
                 }else{
                     callback(null, total || 0, docs);
                 }
@@ -94,10 +91,9 @@ exports.search = function(params, callback){
             callback(null, total || 0, docs);
         }
     });
+};
 
-}
+exports.getBoard = function(query, callback){
 
-exports.getBoard = function(boardId, callback){
-
-    db.board.findOne({ _id: ObjectID(boardId)}, callback);
-}
+    db.board.findOne(query, callback);
+};

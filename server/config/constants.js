@@ -35,6 +35,8 @@ exports.ROLE_FOLDER_MANAGER = exports.ROLE_MANAGER
         | exports.ROLE_GROUP_MANAGER
         | exports.ROLE_DEPARTMENT_MANAGER;
 
+exports.ROLE_GROUPS_MANAGER = exports.ROLE_FOLDER_MANAGER;
+
 // ROLE_FOLDER_MEMBER === 管理员们 | 文件夹创建者 | 小组成员 | 部门成员
 exports.ROLE_FOLDER_MEMBER = exports.ROLE_FOLDER_MANAGER
         | exports.ROLE_FOLDER_CREATOR

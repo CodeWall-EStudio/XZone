@@ -706,6 +706,10 @@ module.exports = {
             {
                 name: 'parentId',
                 type: 'board'
+            },
+            {
+                name: 'resourceId',
+                type: 'resource'
             }
         ]
     },

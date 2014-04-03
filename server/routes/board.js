@@ -9,12 +9,19 @@ var mBoard = require('../models/board');
 var mGroup = require('../models/group');
 
 exports.create = function(req, res){
-    var params = req.body;
+    var params = req.parameter;
 
     var loginUser = req.loginUser;
 
     params.creator = loginUser._id;
-    
+    params.groupId = params.groupId._id;
+    if(params.parentId){
+        params.parentId = params.parentId._id;
+    }
+    if(params.resourceId){
+        params.resourceId = params.resourceId._id;
+    }
+
     mBoard.create(params, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
@@ -22,7 +29,7 @@ exports.create = function(req, res){
             doc.creator = {
                 _id: loginUser._id,
                 nick: loginUser.nick
-            }
+            };
             res.json({
                 err: ERR.SUCCESS,
                 result: {
@@ -31,11 +38,11 @@ exports.create = function(req, res){
             });
         }
     });
-}
+};
 
 exports.approve = function(req, res){
-    var params = req.body;
-
+    var params = req.parameter;
+    var board = params.boardId;
     var loginUser = req.loginUser;
     
     var doc = {
@@ -43,10 +50,10 @@ exports.approve = function(req, res){
         validateText: params.validateText || '',//审核评语
         validateStatus: Number(params.validateStatus) || 0, //0 不通过 1 通过
         validateTime: Date.now(),//审核时间
-        validator: DBRef('user', ObjectID(loginUser._id))
+        validator: DBRef('user', loginUser._id)
     };
     
-    mBoard.modify({ boardId: params.boardId }, doc, function(err, doc){
+    mBoard.modify({ boardId: board._id }, doc, function(err, doc){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
@@ -55,63 +62,39 @@ exports.approve = function(req, res){
             });
         }
     });
-}
+};
 
 exports.delete = function(req, res){
 
-    var params = req.body;
+    var board = req.parameter.boardId;
     var loginUser = req.loginUser;
 
-    var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
-    });
-
-    mBoard.getBoard(params.boardId, ep.doneLater('getBoard'));
-    ep.on('getBoard', function(doc){
-        if(!doc){
-            ep.emit('error', 'no such board', ERR.NOT_FOUND);
-            return;
-        }
-        if(U.hasRight(loginUser.auth, config.AUTH_MANAGER)){
-            // 管理员可以直接删
-            ep.emit('ready');
+    mBoard.delete({ _id: board._id }, function(err, doc){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
-            mGroup.isGroupMember(doc.group.oid.toString(), loginUser._id, ep.done('checkAuth'));
+            res.json({
+                err: ERR.SUCCESS
+            });
         }
-    });
-
-    ep.on('checkAuth', function(result, doc){
-        if(result && U.hasRight(doc.auth, config.AUTH_GROUP_MANAGER)){
-            ep.emit('ready');
-        }else{
-            ep.emit('error', 'not auth', ERR.NOT_AUTH);
-        }
-    });
-
-    ep.on('ready', function(){
-        mBoard.delete(params.boardId, function(err, doc){
-            if(err){
-                res.json({ err: ERR.SERVER_ERROR, msg: err});
-            }else{
-                res.json({
-                    err: ERR.SUCCESS
-                });
-            }
-        });
     });
     
-}
+};
 
 
 exports.search = function(req, res){
-    var params = req.query;
+    var params = req.parameter;
+    var group = params.groupId;
 
     var loginUser = req.loginUser;
-    // if(loginUser.auth === config.AUTH_USER){
-    //     params.uid = loginUser._id; //普通用户只能搜索自己的
-    //     params.validateStatus = 1; // 普通用户只能搜索审核通过的
-    // }
+
+    params.groupId = group._id;
+
+    if (!group.__editable) {
+        // 非管理员, 只能查看审核通过的
+        // TODO 暂时不需要审核
+        // params.validateStatus = 1;
+    }
 
     mBoard.search(params, function(err, total, docs){
         if(err){
@@ -126,4 +109,4 @@ exports.search = function(req, res){
             });
         }
     });
-}
+};

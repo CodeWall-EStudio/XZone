@@ -412,19 +412,13 @@ exports.RULES = {
             // 系统管理员; 小组管理员; 部门管理员
             var group = parameter.groupId;
             var msg = 'not auth to modify this group, groupId: ' + group._id;
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            mGroup.isGroupMember(group._id, user._id, function(err, bool, result){
-                if(err){
-                    return callback(err);
-                }
-                if(bool && ( (result.auth & config.AUTH_GROUP_MANAGER) ||
-                        (result.auth & config.AUTH_DEPART_MANAGER) )){
 
-                    return callback(null);
+            verifyGroup(user, group, function(err){
+                if (err || !group.__editable) {
+                    return callback(msg, ERR.NOT_AUTH);
                 }
-                callback(msg, ERR.NOT_AUTH);
+
+                return callback(null);
             });
         }
     },
@@ -442,6 +436,7 @@ exports.RULES = {
             var files = parameter.fileId;
             var uid = user._id.toString();
             var msg = 'not auth to delete this file, fileId: ';
+
             for(var i = 0, file; i < files.length; i++){
                 file = files[i];
                 if(file.creator.oid.toString() !== uid){
@@ -456,6 +451,7 @@ exports.RULES = {
             var files = parameter.fileId;
             var uid = user._id.toString();
             var msg = 'not auth to revert this file, fileId: ';
+
             for(var i = 0, file; i < files.length; i++){
                 file = files[i];
                 if(file.creator.oid.toString() !== uid){
@@ -474,82 +470,68 @@ exports.RULES = {
 
     // board
     '/api/board/create': {
-        method: 'POST',
-        params: [
-            {
-                name: 'content',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group',
-                required: true
-            },
-            {
-                name: 'parentId',
-                type: 'board'
-            }
-        ]
+
     },
     '/api/board/approve': {
-        method: 'POST',
-        params: [
-            {
-                name: 'boardId',
-                type: 'board',
-                required: true
-            },
-            {
-                name: 'validateText',
-                type: 'string'
-            },
-            {
-                name: 'validateStatus',
-                type: 'number',
-                required: true
-            }
-        ]
+        
+        verify: function(user, parameter, callback){
+            // 可以审核留言板的权限:
+            // 管理员; 小组/部门管理员
+            var board = parameter.boardId;
+            var msg = 'not auth to approve this board, boardId: ' + board._id;
+            
+            mGroup.getGroup({ _id: board.group.oid }, function(err, group){
+
+                if (err) {
+                    return callback(err);
+                }
+
+                verifyGroup(user, group, function(err){
+                    if (err || !group.__editable) {
+                        return callback(msg, ERR.NOT_AUTH);
+                    }
+
+                    return callback(null);
+                });
+            });
+
+        }
     },
     '/api/board/delete': {
-        method: 'POST',
-        params: [
-            {
-                name: 'boardId',
-                type: 'board',
-                required: true
-            }
-        ]
+        verify: function(user, parameter, callback){
+            // 可以删除留言板的权限:
+            // 管理员; 小组/部门管理员
+            var board = parameter.boardId;
+            var msg = 'not auth to delete this board, boardId: ' + board._id;
+            
+            mGroup.getGroup({ _id: board.group.oid }, function(err, group){
+
+                if (err) {
+                    return callback(err);
+                }
+
+                verifyGroup(user, group, function(err){
+                    if (err || !group.__editable) {
+                        return callback(msg, ERR.NOT_AUTH);
+                    }
+
+                    return callback(null);
+                });
+            });
+
+        }
     },
     '/api/board/search': {
-        method: 'GET',
-        params: [
-            {
-                name: 'page',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'pageNum',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'groupId',
-                type: 'group',
-                required: true
-            },
-            {
-                name: 'keyword'
-            },
-            {
-                name: 'type',
-                type: 'number'
-            },
-            {
-                name: 'order',
-                type: 'object'
-            }
-        ]
+        verify: function(user, parameter, callback){
+
+            var group = parameter.groupId;
+                
+            verifyGroup(user, group, function(err){
+
+                // 这里是为了获取 group 的 editable 属性
+                return callback(null);
+            });
+        }
     },
 
     // message 
@@ -804,41 +786,76 @@ function verifyFolder(user, folder, callback){
         }
 
         // 看是否是部门/小组成员
-        mGroup.isGroupMember(group._id, user._id, isGroupMemberHandler);
+        verifyGroup(user, group, verifyGroupHandler);
     });
-
+    
     // 这里不用 EventProxy, 尽量提高性能
-    function isGroupMemberHandler(err, bool, result){
+    function verifyGroupHandler(err, group){
 
-        var group = folder.__group;
-        if(err){
-
-            return callback(err);
-        }else if(bool){
+        if (!err) {
             // 自己所属部门/小组的文件, 可能是管理员
             folder.__writable = true;
             folder.__editable = true;
             hasAuth = true;
-            // FIXME depart manager 之前没有启用过, 所以这里也不进行判断了
-            // 如果要改, 需要改动到 routes/group#modify
-            if(result.auth & config.AUTH_GROUP_MANAGER){
-
-                user.__role |= config.ROLE_GROUP_MANAGER;
-            }
-            if(result.auth & config.AUTH_DEPART_MANAGER){
-
-                user.__role |= config.ROLE_DEPARTMENT_MANAGER;
-            }
+            
             // 上面的公开文件夹判断可能会把成员也判断成 visitor, 这里要回滚一下
             user.__role &= ~config.ROLE_VISITOR;
             // 小组管理员可以读写小组空间所有数据
             // 部门管理员可以读写部门空间所有数据
-
         }
+
         folder.__user_role = user.__role;
+
         if(hasAuth){
             return callback(null, folder);
         }
         return callback(msg, ERR.NOT_AUTH);
+
     }
+
+}
+
+/**
+ * [verifyGroup description]
+ * @param  {[type]}   user     [description]
+ * @param  {[type]}   group    [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
+function verifyGroup(user, group, callback){
+
+    var msg = 'not auth to access this group, groupId: ' + group._id;
+
+    if (user.__role & config.ROLE_MANAGER) {
+
+        group.__editable = true;
+    }
+
+    mGroup.isGroupMember(group._id, user._id, function(err, bool, result){
+
+        if (err) {
+
+            return callback(err);
+        } else if (!bool) {
+
+            return callback(msg, ERR.NOT_AUTH);
+        }
+
+        // FIXME depart manager 之前没有启用过, 所以这里也不进行判断了
+        // 如果要改, 需要改动到 routes/group#modify
+
+        if (result.auth & config.AUTH_GROUP_MANAGER) {
+
+            user.__role |= config.ROLE_GROUP_MANAGER;
+            group.__editable = true;
+        }
+        if (result.auth & config.AUTH_DEPART_MANAGER) {
+
+            user.__role |= config.ROLE_DEPARTMENT_MANAGER;
+            group.__editable = true;
+        }
+        group.__user_role = user.__role;
+
+        return callback(null, group);
+    });
 }
