@@ -21,7 +21,7 @@ function setLookStatus(type, docs){
 }
 
 exports.search = function(req, res){
-    var params = req.paramter;
+    var params = req.parameter;
     var cate = Number(params.cate) || 0;
     params.userId = req.loginUser._id;
 

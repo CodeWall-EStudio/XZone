@@ -8,7 +8,7 @@ var us = require('underscore');
 var db = require('../models/db');
 var ERR = require('../errorcode.js');
 var U = require('../util');
-var config = require('./config');
+var config = require('../config');
 var mUser = require('../models/user');
 var mGroup = require('../models/group');
 var mFolder = require('../models/folder');
@@ -250,7 +250,7 @@ exports.RULES = {
                     return callback(err, folder);
                 }
                 if(folder.__writable){
-                    callback(null);
+                    return callback(null);
                 }
                 // 么有权限写该文件夹
                 return callback(msg, ERR.NOT_AUTH);
@@ -269,7 +269,7 @@ exports.RULES = {
                 }
                 if(folder.__editable){
                     // 部门公开文件夹是可上传文件的, 但是普通游客不可修改
-                    callback(null);
+                    return callback(null);
                 }
                 // 么有权限写该文件夹
                 return callback(msg, ERR.NOT_AUTH);
@@ -353,7 +353,7 @@ exports.RULES = {
     // },
 
     // group
-    // '/api/group/': {
+    // '/api/group': {
     //     verify: function(user, parameter, callback){
     //         // 该接口不鉴权
     //         callback(null);
@@ -743,10 +743,11 @@ function verifyFolder(user, folder, callback){
 function verifyGroup(user, group, callback){
 
     var msg = 'not auth to access this group, groupId: ' + group._id;
-
+    var hasAuth = false;
     if (user.__role & config.ROLE_MANAGER) {
 
         group.__editable = true;
+        hasAuth = true;
     }
 
     mGroup.isGroupMember(group._id, user._id, function(err, bool, result){
@@ -754,26 +755,29 @@ function verifyGroup(user, group, callback){
         if (err) {
 
             return callback(err);
-        } else if (!bool) {
+        } else if (bool) {
+            // FIXME depart manager 之前没有启用过, 所以这里也不进行判断了
+            // 如果要改, 需要改动到 routes/group#modify
 
-            return callback(msg, ERR.NOT_AUTH);
+            if (result.auth & config.AUTH_GROUP_MANAGER) {
+
+                user.__role |= config.ROLE_GROUP_MANAGER;
+                group.__editable = true;
+            }
+            if (result.auth & config.AUTH_DEPART_MANAGER) {
+
+                user.__role |= config.ROLE_DEPARTMENT_MANAGER;
+                group.__editable = true;
+            }
+
+            hasAuth = true;
         }
 
-        // FIXME depart manager 之前没有启用过, 所以这里也不进行判断了
-        // 如果要改, 需要改动到 routes/group#modify
-
-        if (result.auth & config.AUTH_GROUP_MANAGER) {
-
-            user.__role |= config.ROLE_GROUP_MANAGER;
-            group.__editable = true;
-        }
-        if (result.auth & config.AUTH_DEPART_MANAGER) {
-
-            user.__role |= config.ROLE_DEPARTMENT_MANAGER;
-            group.__editable = true;
-        }
+        
         group.__user_role = user.__role;
-
-        return callback(null, group);
+        if (hasAuth) {
+            return callback(null, group);
+        }
+        return callback(msg, ERR.NOT_AUTH);
     });
 }

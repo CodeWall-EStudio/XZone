@@ -27,7 +27,7 @@ var oauth = new OAuth2(
 );
 
 exports.gotoLogin = function(req, res){
-    var type = req.type || req.paramter.type || 'cas';
+    var type = req.type || req.param('type') || 'cas';
     var url;
     if(config.AUTH_TYPE !== 'auto'){
         type = config.AUTH_TYPE;
@@ -70,10 +70,12 @@ var validateTicket = function(ticket, callback){
 
     ep.fail(callback);
 
-    cas.validate(ticket, function(status, response){
-        if(!status){
-            ep.emit('error', 'the ticket "' + ticket + '" is not correct!', ERR.TICKET_ERROR);
-            return null;
+    cas.validate(ticket, function(err, status, response){
+
+        if (err) {
+            return ep.emit('error', err);
+        } else if (!status) {
+            return ep.emit('error', 'the ticket "' + ticket + '" is not correct!', ERR.TICKET_ERROR);
         }
         var data = JSON.parse(response);
 
@@ -94,7 +96,7 @@ var validateTicket = function(ticket, callback){
 exports.loginSuccess = function(req, res, next){
     req.redirectUrl = '/index.html';
 
-    var ticket = req.paramter.ticket;
+    var ticket = req.param('ticket');
 
     // console.log('s sssss:',ticket);
 
@@ -127,9 +129,8 @@ exports.loginSuccess = function(req, res, next){
 };
 
 exports.loginSuccessWithQQ = function(req, res, next){
-    var params = req.paramter;
-    var code = params.code;
-    var state = params.state;
+    var code = req.param('code');
+    var state = req.param('state');
     var type = req.session[state];
 
     req.redirectUrl = '/index.html';
@@ -186,7 +187,7 @@ exports.loginSuccessWithQQ = function(req, res, next){
 };
 
 exports.departments = function(req, res){
-    var params = req.paramter;
+    var params = req.parameter;
 
     mUser.getAllDepartments(params, function(err, data){
         if(err){
@@ -204,7 +205,7 @@ exports.departments = function(req, res){
 
 
 exports.logoff = function(req, res){
-    var type = req.type || req.paramter.type || 'cas';
+    var type = req.type || req.parameter.type || 'cas';
 
     if(config.AUTH_TYPE !== 'auto'){
         type = config.AUTH_TYPE;
@@ -214,7 +215,7 @@ exports.logoff = function(req, res){
 
     res.clearCookie('skey');
     res.clearCookie('connect.sid');
-    if(type == 'qq'){
+    if(type === 'qq'){
         res.redirect('/');
     }else{
         res.redirect(cas.getLogoutUrl());
@@ -222,7 +223,7 @@ exports.logoff = function(req, res){
 };
 
 exports.search = function(req, res){
-    var params = req.paramter;
+    var params = req.parameter;
 
     mUser.search(params, function(err, total, docs){
         if(err){

@@ -67,8 +67,8 @@ exports.dereference = function(doc, keys, callback){
                                     doc[key] = data;
                                 }
                                 return null;
-                            }
-                        })(key, keys[key]);
+                            };
+                        }(key, keys[key]))
                     ));
                 }else{
                     ep.emit('deref');

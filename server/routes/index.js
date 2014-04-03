@@ -1,235 +1,90 @@
+var us = require('underscore');
+
 var ERR = require('../errorcode');
-var routeUser = require('./user');
-var U = require('../util');
 var config = require('../config');
 
-var ROUTER_CONFIG = require('./router_config');
+us.extend(exports, require('./param_verify'));
 
-var WHITE_LIST = [
-    '/api/user/login',
-    '/api/user/logoff',
-    '/api/user/gotoLogin',
-    '/api/user/loginSuccess',
-    '/api/user/loginWithQQ',
-    '/api/user/loginSuccessWithQQ',
-    '/api/media/upload',
-    '/api/media/download'
-];
+us.extend(exports, require('./auth_verify'));
 
-var ADMIN_CGI = '/api/manage/';
+
 var MEDIA_UPLOAD_CGI = '/api/media/upload';
 var MEDIA_DOWNLOAD_CGI = '/api/media/download';
 
 function getRouter(path, method){
 
-    var arr = path.split('/');
-    if(arr[1] === 'api'){
-        var module = require('./' + arr[2]);
-        if(arr[3]){
-            return module[arr[3]];
-        }else{
-            return module[method.toLowerCase()];
-        }
-    }
-    return null;
-}
-
-function getVerifyMsg(field, value, condition){
-    // console.log('verifyParams:', field, value, condition);
-    var type = condition[0];
-    if(type === 'array'){
-        if(!value.forEach){
-            return field + ' must be an array';
-        }
-        var msg, con = condition.slice(1);
-        for(var i = 0; i < value.length; i++){
-            msg = getVerifyMsg(field+'[' + i + ']', value[i], con);
-            if(msg){
-                return msg;
+    var arr = path.split('/'), module;
+    try{
+        if(arr[1] === 'api'){
+            module = require('./' + arr[2]);
+            if(arr[3]){
+                return module[arr[3]];
+            }else{
+                return module[method.toLowerCase()];
             }
         }
-    }else if(type === 'object'){
-        try{
-            value = U.jsonParse(value);
-        }catch(e){
-            return field + ' must be an object';
-        }
-    }else if(type === 'string'){
-        if(condition.length > 1 && value.length < condition[1]){
-            return field + ' is too short, at least ' + condition[1] + ' letters';
-        }
-    }else if(type === 'number'){
-        value = Number(value);
-        if(isNaN(value)){
-            return field + ' must be an number';
-        }
-        if(condition.length > 1 &&  value < condition[1]){
-            return field + ' must greater than ' + condition[1];
-        }
-        if(condition.length > 2 && value > condition[2]){
-            return field + ' must less than ' + condition[2];
-        }
-    }/*else if(type === 'boolean'){
-        if(value === 'true' || value === '0'){
-            value = true;
-        }
-    }*/
-}
-
-function verifyParam(req, map, required, all){
-    var field, condition, value, msg, parameter;
-    if(req.method === 'POST'){
-        parameter = req.body;
-    }else if(req.method === 'GET'){
-        parameter = req.query;
-    }
-
-    for(field in map){
-        condition = map[field];
-        if(all){
-            value = req.param(field);
-        }else{
-            value = parameter[field];
-        }
-        if(typeof value !== 'undefined'){
-            if(msg = getVerifyMsg(field, value, condition)){
-                return msg;
-            }
-        }else if(required){
-            // console.log('verifyParams:', field, value, condition);
-            return field + ' is required';
-        }
+    }catch(e){
+        console.error('getRouter(', path, method, ') Error: ', e.message);
     }
     return null;
-}
-
-function verifyParams(req, config){
-    var msg, map;
-    if((map = config.require) && (msg = verifyParam(req, map, true)) ){
-        return msg;
-    }
-
-    if((map = config.optional) && (msg = verifyParam(req, map, false)) ){
-        return msg;
-    }
-
-    if((map = config.all) && (msg = verifyParam(req, map, true, true)) ){
-        return msg;
-    }
-    return null;
-}
-
-exports.verifyAndLogin = function(req, res, next){
-    var skey = req.cookies.skey || req.cookies.accessToken;
-    var loginUser;
-    console.log('>>>verifyAndLogin', req.url, req.method);
-
-    if(!req.session || !skey || !(loginUser = req.session[skey])){
-        routeUser.gotoLogin(req, res);
-    }else{
-        next();
-    }
-}
-
-exports.verify = function(req, res, next){
-    var path = req.path;
-    var skey = req.cookies.skey || req.body.skey || req.query.skey;
-    if(!skey){
-        skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
-    }
-    req.skey = skey;
-
-    if(WHITE_LIST.indexOf(path) >= 0){
-        next();
-    }else{
-        var loginUser;
-        if(!req.session || !skey || !(loginUser = req.session[skey])){
-            res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
-            return;
-        }
-        req.loginUser = loginUser;
-        next();
-    }
 }
 
 exports.route = function(req, res, next){
-    var path = req.path, 
-        method = req.method,
-        params,
-        config,
-        verifyMsg;
+    var path = req.redirectPath || req.path;
+    var method = req.method;
+
     var router = getRouter(path, method);
-    if(router){
-        if(config = ROUTER_CONFIG[path]){
-            if(config.method && config.method !== method){
-                res.json({ err: ERR.NOT_SUPPORT, msg: 'not support method [' + method + ']' });
-                return;
-            }
-            if(verifyMsg = verifyParams(req, config)){
-                res.json({ err: ERR.PARAM_ERROR, msg: verifyMsg });
-                return;
-            }
-        }
+    if (router) {
+
         router(req, res, next);
-    }else{
+    } else {
         next();
     }
 };
 
+exports.setXHR2Headers = function(req, res, next){
+    var origin = req.headers['origin'];
+    var method = req.method;
+    var index;
+    if ( (index = config.XHR2_ALLOW_ORIGIN.indexOf(origin) ) > -1) {
 
-exports.mediaUpload = function(req, res, next){
-    var params = req.body;
-    var type = Number(params.media) || 0;
-    //设置跨域请求用的返回头
-    res.set({
-        'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
-        'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Headers': 'Origin,Content-Type',
-        'Access-Control-Max-Age': '30'
-    });
-    if(req.method === 'OPTIONS'){
-        res.send(200);
-        return;
+        res.setHeader('Access-Control-Allow-Origin', config.XHR2_ALLOW_ORIGIN[index]);
+        res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Headers', 'origin,content-type');
+        res.setHeader('Access-Control-Max-Age', '30');
     }
-    if(type === 1){
-        var skey = req.cookies.skey || req.body.skey || req.query.skey;
-        if(!skey){
-            skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
-        }
-        req.skey = skey;
-        // 新媒体的上传, 路由到 media/upload
-        getRouter(MEDIA_UPLOAD_CGI, req.method)(req, res, next);
-        // res.redirect('/api/media/upload');
-    }else{
+    if (method === 'OPTIONS') {
+
+        res.send(200);
+    } else {
         next();
     }
-}
+};
+
+exports.mediaUpload = function(req, res, next){
+
+    var type = req.param('media', 0);
+
+    if (type === 1) {
+        req.redirectPath = MEDIA_UPLOAD_CGI;
+    }
+    next();
+};
 
 
 exports.mediaDownload = function(req, res, next){
-    var params = req.body;
+    var fileId = req.param('fileId', '');
 
-    //设置跨域请求用的返回头
-    res.set({
-        'Access-Control-Allow-Origin': config.MEDIA_CORS_URL,
-        'Access-Control-Allow-Methods': 'POST,GET,OPTIONS',
-        'Access-Control-Allow-Credentials': 'true',
-        'Access-Control-Allow-Headers': 'Origin,Content-Type',
-        'Access-Control-Max-Age': '30'
-    });
-    if(req.method === 'OPTIONS'){
-        res.send(200);
-        return;
-    }
     var skey = req.cookies.skey || req.body.skey || req.query.skey;
     if(!skey){
         skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
     }
-    req.skey = skey;
-    // 新媒体的下载
-    getRouter(MEDIA_DOWNLOAD_CGI, req.method)(req, res, next);
+    skey = skey || '';
 
-}
+    var url = MEDIA_DOWNLOAD_CGI + '?fileId=' + fileId + '&skey=' + skey;
+    res.redirect(url);
+
+};
 
 

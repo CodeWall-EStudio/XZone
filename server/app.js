@@ -37,20 +37,30 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, '../web')));
 
 // development only
-if ('development' == app.get('env')) {
+if ('development' === app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.all('/', routes.verifyAndLogin);
+// 检查是否登录, 如果没有登录, 跳转到登录页
+app.all('/', routes.checkAuthAndLogin);
 
+// 设置跨域请求头
+app.all('/', routes.setXHR2Headers);
+
+// 适配多媒体的上传下载
 app.all('/api/file/upload', routes.mediaUpload);
-
 app.all('/download', routes.mediaDownload);
 
-// verify authorization
-app.all('/api/*', routes.verify);
+// 检查是否登录, 如果登录了, 从数据库把用户信息找出; 没有登录则返回错误
+app.all('/api/*', routes.checkAuth);
 
-// route the request
+// 检查参数合法性
+app.all('/api/*', routes.checkParams);
+
+// 检查 API 调用权限
+app.all('/api/*', routes.checkAPI);
+
+// 路由请求
 app.all('/api/*', routes.route);
 
 http.createServer(app).listen(app.get('port'), function(){

@@ -148,10 +148,11 @@ var checkers = {
 
 
 function verifyParam(value, pcfg, parameter, callback){
-    if(!value && pcfg.required){
+    var valueHasSet = typeof value !== 'undefined';
+    if(!valueHasSet && pcfg.required){
         return callback(pcfg.name + ' is required');
     }
-    if(value){
+    if(valueHasSet){
         var type = pcfg.type || 'string';
         var checkMethod = checkers[type];
         checkMethod(value, pcfg, function(err, newValue){
@@ -159,16 +160,16 @@ function verifyParam(value, pcfg, parameter, callback){
                 return callback(err, newValue);
             }
             if(pcfg.required){
-                if(!newValue){
+                if(typeof newValue === 'undefined'){
                     return callback(pcfg.name + '\'s value is null');
                 }
                 if(us.isArray(newValue) && !newValue.length){
                     return callback(pcfg.name + '\'s length is 0');
                 }
             }
-            if(newValue){
-                newValue.__type = type;
-            }
+            // if(newValue){
+            //     newValue.__type = type;
+            // }
             parameter[pcfg.name] = newValue;
             callback();
         });
@@ -182,8 +183,8 @@ function verifyParam(value, pcfg, parameter, callback){
  * 2. 检查参数值是否正确, 查询参数所代表的数据是否在数据库中, 
  *     如果有, 则取出来, 存入 parameter 替换掉原来的参数
  */
-exports.index = function(req, res, next){
-    var path = req.path;
+exports.checkParams = function(req, res, next){
+    var path = req.redirectPath || req.path;
     var method = req.method;
     var cfg = ParamConfig[path];
     var parameter = req.parameter = {};
@@ -197,7 +198,7 @@ exports.index = function(req, res, next){
     ep.fail(function(error, errCode){
         if(errCode === ERR.NOT_FOUND && config.DOWNLOAD_APIS.indexOf(path) > -1){
             console.error(err, errCode);
-            //NOTE: 下载接口, 如果找不到文件, 直接跳 404 页面
+            // NOTE: 下载接口, 如果找不到文件, 直接跳 404 页面
             return res.redirect(config.NOT_FOUND_PAGE, 404);
         }
         res.json({ err: errCode || ERR.PARAM_ERROR, msg: error });

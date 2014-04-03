@@ -38,6 +38,10 @@ module.exports = {
             },
             {
                 name: 'file_size'
+            },
+            {
+                name: 'media',
+                type: 'number'
             }
         ]
     },
@@ -477,7 +481,7 @@ module.exports = {
     },
 
     // group
-    '/api/group/': {
+    '/api/group': {
         method: 'GET',
         params: [
             {
@@ -563,14 +567,18 @@ module.exports = {
     },
 
     // user
-    '/api/user/': {
+    '/api/user': {
         method: 'GET',
         params: []
     },
 
     '/api/user/gotoLogin': {
         method: 'GET',
-        params: []
+        params: [
+            {
+                name: 'type'
+            }
+        ]
     },
 
     '/api/user/loginSuccess': {
@@ -610,13 +618,11 @@ module.exports = {
         params: [
             {
                 name: 'page',
-                type: 'number',
-                required: true
+                type: 'number'
             },
             {
                 name: 'pageNum',
-                type: 'number',
-                required: true
+                type: 'number'
             },
             {
                 name: 'keyword'

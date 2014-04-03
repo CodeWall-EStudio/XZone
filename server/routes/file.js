@@ -864,7 +864,7 @@ exports.delete = function(req, res){
 
 exports.search = function(req, res){
     var parameter = req.parameter;
-    var folder = params.folderId;
+    var folder = parameter.folderId;
 
     var loginUser = req.loginUser;
 

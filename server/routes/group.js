@@ -101,8 +101,8 @@ exports.create = function(req, res){
 
 exports.get = function(req, res){
     var parameter = req.parameter;
-    var group = parameter.group;
-
+    var group = parameter.groupId;
+    // console.log(parameter);
     mGroup.getGroupMembers(group._id, true, function(err, members){
         group.members = members;
         res.json({ err: ERR.SUCCESS , result: { data: group }});

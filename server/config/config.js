@@ -32,7 +32,7 @@ exports.AUTH_TYPE = 'sso';// auto, sso, qq
 exports.CAS_BASE_URL = 'http://dand.71xiaoxue.com:80/sso.web';
 
 exports.CAS_SERVICE = 'http://xzone.codewalle.com/api/user/loginSuccess';
-// exports.CAS_SERVICE = 'http://localhost:8091/api/user/loginSuccess';
+exports.CAS_SERVICE = 'http://localhost:8091/api/user/loginSuccess';
 
 // 获取用户详细资料的CGI
 exports.CAS_USER_INFO_CGI = 'http://mapp.71xiaoxue.com/components/getUserInfo.htm';
@@ -41,7 +41,7 @@ exports.CAS_USER_INFO_CGI = 'http://mapp.71xiaoxue.com/components/getUserInfo.ht
 exports.CAS_ORG_TREE_CGI = 'http://mapp.71xiaoxue.com/components/getOrgTree.htm';
 
 // 允许新媒体跨域上传和下载资源的 host
-exports.MEDIA_CORS_URL = [
+exports.XHR2_ALLOW_ORIGIN = [
     'http://media.71xiaoxue.com'
 ];
 
