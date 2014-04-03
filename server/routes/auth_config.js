@@ -473,7 +473,7 @@ exports.RULES = {
 
     },
     '/api/board/approve': {
-        
+
         verify: function(user, parameter, callback){
             // 可以审核留言板的权限:
             // 管理员; 小组/部门管理员
@@ -536,35 +536,7 @@ exports.RULES = {
 
     // message 
     '/api/message/search': {
-        method: 'GET',
-        params: [
-            {
-                name: 'page',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'pageNum',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'cate',
-                type: 'number',
-                required: true
-            },
-            {
-                name: 'keyword'
-            },
-            {
-                name: 'type',
-                type: 'number'
-            },
-            {
-                name: 'order',
-                type: 'object'
-            }
-        ]
+        
     },
 
 

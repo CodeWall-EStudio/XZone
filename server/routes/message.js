@@ -12,7 +12,7 @@ function setLookStatus(type, docs){
         1: 'toUserLooked',
         2: 'fromUserLooked',
         3: 'toUserLooked'
-    }
+    };
     var doc = {};
     doc[keys[type]] = true;
     docs.forEach(function(msg){
@@ -21,9 +21,9 @@ function setLookStatus(type, docs){
 }
 
 exports.search = function(req, res){
-    var params = req.query;
+    var params = req.paramter;
     var cate = Number(params.cate) || 0;
-    params.creator = req.loginUser._id;
+    params.userId = req.loginUser._id;
 
     mMessage.search(params, function(err, total, docs){
         if(err){
@@ -42,5 +42,5 @@ exports.search = function(req, res){
             }
         }
     });
-}
+};
 

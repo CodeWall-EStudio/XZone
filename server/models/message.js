@@ -29,7 +29,7 @@ exports.create = function(params, callback){
         saved: false,
         fromUserLooked: false,
         toUserLooked: false
-    }
+    };
 
     if(params.toUserId){
         doc.toUser = DBRef('user', params.toUserId);
@@ -80,7 +80,7 @@ exports.getUnReadNum = function(userId, callback){
 
 exports.search = function(params, callback){
 
-    var userId = params.creator || null;
+    var userId = params.userId || null;
     var keyword = params.keyword || '';
     var type = Number(params.type) || 0;
     var cate = Number(params.cate) || 0;// 1: 我的收件箱, 2: 我的发件箱, 3: 未读邮件
