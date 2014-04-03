@@ -209,12 +209,10 @@ exports.isPrepareMember = function(userId, callback){
 };
 
 
-exports.modify = function(params, doc, callback){
+exports.modify = function(query, doc, callback){
 
     doc.updatetime = Date.now();
 
-    var query = { _id: params.groupId };
-    
     db.group.findAndModify(query, [], { $set: doc },
             { 'new':true }, callback);
 

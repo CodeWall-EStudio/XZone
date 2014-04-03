@@ -27,7 +27,7 @@ exports.delete = function(req, res){
     });
 
     files.forEach(function(file){
-        mFile.delete(file, ep.group('delete', function(result){
+        mFile.delete({ _id: file._id }, ep.group('delete', function(result){
             // 记录该操作
             mLog.create({
                 fromUserId: loginUser._id,

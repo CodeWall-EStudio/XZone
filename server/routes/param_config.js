@@ -825,6 +825,10 @@ module.exports = {
             {
                 name: 'order',
                 type: 'object'
+            },
+            {
+                name: 'status',
+                type: 'number'
             }
         ]
     },
@@ -847,6 +851,9 @@ module.exports = {
             }
         ]
     },
+    '/api/manage/listPrepares': {
+        method: 'GET'
+    },
     '/api/manage/approveFile': {
         method: 'POST',
         params: [
@@ -866,8 +873,24 @@ module.exports = {
             }
         ]
     },
-    '/api/manage/listPrepares': {
-        method: 'GET'
+    '/api/manage/listFiles': {
+        method: 'GET',
+        params: [
+            {
+                name: 'page',
+                type: 'number',
+                required: true
+            },
+            {
+                name: 'pageNum',
+                type: 'number',
+                required: true
+            },
+            {
+                name: 'order',
+                type: 'object'
+            }
+        ]
     }
 };
 

@@ -54,6 +54,8 @@ exports.delete = function(query, callback){
 
 exports.modify = function(query, doc, callback){
 
+    doc.updateTime = Date.now();
+    
     db.message.findAndModify(query, [],  { $set: doc }, 
             { 'new':true}, callback);
 };

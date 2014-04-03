@@ -74,22 +74,16 @@ exports.create = function(params, callback){
     });
 };
 
-exports.modify = function(params, doc, callback){
+exports.modify = function(query, doc, callback){
 
     doc.updateTime = Date.now();
-
-    var query = { _id: params.fileId };
-    // if(params.creator){
-    //     query['creator.$id'] = params.creator;
-    // }
 
     db.file.findAndModify(query, [],  { $set: doc },
             { 'new':true}, callback);
 };
 
-exports.delete = function(file, callback){
+exports.delete = function(query, callback){
 
-    var query = { _id: file._id };
     console.log('>>>delete file:', query);
 
     var ep = new EventProxy();
