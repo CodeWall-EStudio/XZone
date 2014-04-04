@@ -17,6 +17,7 @@
 				<textarea class="new-group-desc" style="width:400px;height:120px;"><%-group.content%></textarea>
 			</td>
 		</tr>	
+		<!--
 		<tr>
 			<td width="100">成员管理:</td>
 			<td>
@@ -25,8 +26,10 @@
 				</div>
 			</td>
 		</tr>
+		-->
 		<tr>
 			<td colspan="2">
+				<!--
 					用户列表
 					<ul id="searchResult" class="group-member-list">
 						<%
@@ -36,6 +39,20 @@
 							<li class="tag<%+item.id%>"><input type="checkbox" value="<%-item.id%>" <%if($.inArray(item.id,group.ml)>=0 && group.mlist[item.id].auth){%>disabled<%}%> <%if($.inArray(item.id,group.ml)>=0){%>checked<%}%> /> <%-item.nick%></li>
 						<%}%>
 					</ul>
+				-->
+						<div>
+							用户列表
+							<ul id="searchResult" class="act-fold-list" style="height:180px;overflow-y:auto;">
+								<%
+									for(var i=0,l=list.length;i<l;i++){
+										var item = list[i];
+										if(item.children || item.users){
+								%>
+									<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
+									<%}%>
+								<%}%>
+							</ul>
+						</div>					
 			</td>
 		</tr>
 		<tr>

@@ -1,4 +1,4 @@
-define(['config','helper/request','cache'],function(config,request,cache){
+define(['config','helper/request','cache'],function(config,request,Cache){
 
 	var	handerObj = $(Schhandler);
 
@@ -19,7 +19,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 			item.id = item._id;
 			list[item.id] = item;
 		}
-		handerObj.triggerHandler('cache:set',{key: 'alluser2key',data: list});
+		handerObj.triggerHandler('Cache:set',{key: 'alluser2key',data: list});
 	}
 
 	function conventGroup(data){
@@ -27,10 +27,31 @@ define(['config','helper/request','cache'],function(config,request,cache){
 		return data;
 	}
 
+	function getDepUser(e,d){
+		var departments = Cache.get('departments');
+		if(departments){
+			handerObj.triggerHandler('nav:userload',{ type : d.type,files: d.files, list :departments});
+			return;
+		}
+		var opt = {
+			cgi : config.cgi.departments //userlist
+		}
+		
+		var success = function(data){
+			if(data.err == 0){
+				handerObj.triggerHandler('Cache:set',{key: 'departments',data: data.result.list});
+				handerObj.triggerHandler('nav:userload',{ type : d.type,data:d.data,list :data.result.list});
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);		
+	}
+
 	function getUser(e,d){
 		var type = d.type,
-			data = d.data;
-		var ul = cache.get('alluser');
+			data = d.data
+		var ul = Cache.get('alluser');
 		if(ul){
 			if(type != 'prep'){
 				handerObj.triggerHandler('nav:userload',{list:ul,type:type,data:data});
@@ -49,7 +70,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 			if(d.err == 0){
 				var obj = convent(d.result.list);
 				conventUid2key(d.result.list);
-				handerObj.triggerHandler('cache:set',{key: 'alluser',data: obj});
+				handerObj.triggerHandler('Cache:set',{key: 'alluser',data: obj});
 				if(type != 'prep'){
 					handerObj.triggerHandler('nav:userload',{list:obj,type:type,data:data});
 				}else{
@@ -95,6 +116,7 @@ define(['config','helper/request','cache'],function(config,request,cache){
 
 	var handlers = {
 		'nav:getuser' : getUser,
+		'nav:getdep' : getDepUser,
 		'manage.nav:new' : newGroup,
 		'manage.nav:modify' : modifyGroup
 	}

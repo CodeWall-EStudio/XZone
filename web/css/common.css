@@ -30,7 +30,7 @@ a{
 .header .logo{
 	display:inline-block;
 	float:left;
-	background:url(imgs/logo1.png) no-repeat;
+	background:url(imgs/logo.png) no-repeat;
 	width:235px;
 	height:60px;
 }
@@ -700,4 +700,20 @@ input[type='checkbox'] {
 }
 .school-link{
 	cursor:pointer;
+}
+.file-type-zone a{
+	text-decoration: none;
+	display:block;
+	font-size:16px;
+	height:53px;
+	line-height:53px;
+	text-align:center;
+	margin-right:0;
+}
+.file-type-zone a.selected{
+	background-color:#ebeef3;
+}
+.file-tit-div{
+	float:left;
+	position:relative;
 }

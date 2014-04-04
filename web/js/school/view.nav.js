@@ -5,7 +5,8 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),		
 		userasideTarget = $('#userAside'),
-		userList = null,
+		userlist = null,
+		nowGroup = null,
 		navView = new View(),
 		myView = new View();
 
@@ -69,9 +70,65 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		handerObj.triggerHandler('site:start');
 	}
 
+	function getUList(id,list){
+		for(var i = 0,l=list.length;i<l;i++){
+			var item = list[i];
+			if(item._id == id){
+				return item;
+			}
+			if(item.children){
+				var ret = getUList(id,item.children);
+				if(ret){
+					return ret;
+				}
+			}
+		}
+		return null;
+	}
+
+
+	function userList(list,target){
+		var data = {
+			list : list.children,
+			ulist : list.users
+		}
+		if(nowGroup){
+			data.ml = nowGroup.ml;
+		}
+		var view = new View({
+			target : target,
+			tplid : 'share.user.li',
+			data : data,
+			after : function(){
+				target.find('.plus').unbind().bind('click',function(e){
+						var target = $(e.target),
+							id = target.attr('data-id');
+						var p = target.parent('li');
+						if(p.find('ul').length > 0){
+							var ul = p.find('ul')[0];
+							if(target.hasClass("minus")){
+								target.removeClass('minus');
+								p.find('ul').hide();
+							}else{
+								target.addClass('minus');
+								p.find('ul').show();
+							}
+							return;
+						}else{	
+							target.addClass('minus');
+							var p = target.parent('li');
+							userList(getUList(id,list.children),p);
+						}
+				});
+			}			
+		});
+
+		view.appendPanel();
+	}		
+
 	function userLoad(e,d){
-		if(!userList){
-			userList = d.list;
+		if(!userlist){
+			userlist = d.list;
 		}
 
 		var data = {
@@ -86,10 +143,31 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 			target : actTarget,
 			tplid : tplid,
 			after : function(){
-				actWin.modal('show');			
+				actWin.modal('show');	
+				actTarget.find('.plus').unbind().bind('click',function(e){
+						var target = $(e.target),
+							id = target.attr('data-id');
+						var p = target.parent('li');
+						if(p.find('ul').length > 0){
+							var ul = p.find('ul')[0];
+							if(target.hasClass("minus")){
+								target.removeClass('minus');
+								p.find('ul').hide();
+							}else{
+								target.addClass('minus');
+								p.find('ul').show();
+							}
+							return;
+						}else{	
+							target.addClass('minus');
+							var p = target.parent('li');
+							userList(getUList(id,d.list),p);
+						}
+				});						
 			},			
 			data : data,
 			handlers : {
+				/*
 				'.act-search-input' : {
 					'focus' : function(e){
 						var target = $(this),
@@ -130,6 +208,7 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 						}
 					}					
 				},
+				*/
 				'.btn-post' : {
 					'click' : function(){
 						var name = actTarget.find('.new-group-name').val(),
@@ -157,6 +236,8 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 						if(d.data){
 							obj.groupId = d.data.id;
 						}
+						console.log(tplid);
+						console.log(obj);
 						if(tplid == 'group.new'){
 							handerObj.triggerHandler('manage.nav:new',obj);
 						}else{
@@ -171,10 +252,11 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 
 
 	function newGroup(e,d){
-		if(userList){
-			handerObj.triggerHandler('nav:userload',{list:userList,type:'new'});
+		nowGroup = null;
+		if(userlist){
+			handerObj.triggerHandler('nav:userload',{list:userlist,type:'new'});
 		}else{
-			handerObj.triggerHandler('nav:getuser',{type:'new'});
+			handerObj.triggerHandler('nav:getdep',{type:'new'});
 		}
 	}
 
@@ -185,10 +267,11 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 	}
 
 	function infoSuc(e,d){
-		if(userList){
-			handerObj.triggerHandler('nav:userload',{list:userList,type:'modify',data:d});
+		nowGroup = d;
+		if(userlist){
+			handerObj.triggerHandler('nav:userload',{list:userlist,type:'modify',data:d});
 		}else{
-			handerObj.triggerHandler('nav:getuser',{type:'modify',data: d});
+			handerObj.triggerHandler('nav:getdep',{type:'modify',data: d});
 		}
 	}	
 
