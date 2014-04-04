@@ -14,6 +14,7 @@
 	if(ulist.length>0){
 		for(var i=0,l=ulist.length;i<l;i++){
 			var item = ulist[i];
+			
 	%>
 		<li><input type="checkbox" value="<%+item._id%>" /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.nick%></a></li>		
 	<%
