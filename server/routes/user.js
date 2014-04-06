@@ -60,7 +60,7 @@ exports.get = function(req, res){
         }else{
             var user = us.extend({}, data.user);
             for(var i in user){
-                if(i.indexOf('__') >= -1){
+                if(i.indexOf('__') === 0){
                     delete user[i];
                 }
             }
