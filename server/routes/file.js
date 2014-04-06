@@ -337,14 +337,13 @@ exports.get = function(req, res){
 
     var loginUser = req.loginUser;
 
-    for(var i in file){
-        if(i.indexOf('__') >= -1){
-            delete file[i];
-        }
-    }
-
     db.dereference(file, { resource: ['_id', 'type', 'size'] }, function(err){
-
+        
+        for(var i in file){
+            if(i.indexOf('__') >= -1){
+                delete file[i];
+            }
+        }
         res.json({
             err: ERR.SUCCESS,
             result: {

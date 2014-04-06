@@ -2,6 +2,7 @@ var http = require('http');
 var querystring = require('querystring');
 var EventProxy = require('eventproxy');
 var OAuth2 = require('oauth').OAuth2;
+var us = require('underscore');
 
 var CAS = require('../lib/cas');
 var config = require('../config');
@@ -53,16 +54,17 @@ exports.get = function(req, res){
 
     var loginUser = req.loginUser;
 
-    for(var i in loginUser){
-        if(i.indexOf('__') >= -1){
-            delete loginUser[i];
-        }
-    }
-
     mUser.getUserAllInfo(loginUser, function(err, data){
         if(err){
             res.json({ err: data || ERR.SERVER_ERROR, msg: err});
         }else{
+            var user = us.extend({}, data.user);
+            for(var i in user){
+                if(i.indexOf('__') >= -1){
+                    delete user[i];
+                }
+            }
+            data.user = user;
             res.json({
                 err: ERR.SUCCESS,
                 result: data
