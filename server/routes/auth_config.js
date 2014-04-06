@@ -559,36 +559,38 @@ exports.RULES = {
 function verifyDownload(user, file, callback){
     // 下载的权限控制
     // 自己创建的文件; 自己所在部门/小组的文件; 自己收件箱的文件; 别的部门的公开文件夹的文件; 学校空间的文件
+    var msg = 'not auth to view this file, fileId: ' + file._id;
+    var hasAuth = false;
+
     var ep = new EventProxy();
     ep.fail(callback);
 
     if(user._id.toString() === file.creator.oid.toString()){
         user.__role |= config.ROLE_FILE_CREATOR;
         // 自己创建的文件
-        return callback(null);
+        hasAuth = true;
+        // return callback(null);
     }
+    
+    mFolder.getFolder({ _id: file.folder.oid }, ep.done('getFolder'));
+
+    mRes.getResource({ _id: file.resource.oid }, ep.done('getRes'));
+
     // 检查是否是自己收件箱的文件
-    mMessage.getMessage({
-        'resource.$id': file.resource.oid,
-        'toUser.$id': user._id
-    }, ep.doneLater('getMessage'));
+    mMessage.getMessage({ 'resource.$id': file.resource.oid, 'toUser.$id': user._id}, ep.doneLater('getMessage'));
 
-    ep.on('getMessage', function(msg){
-        if(msg){
-            // 自己收件箱的文件
-            return callback(null);
-        }
-        mFolder.getFolder({ _id: file.folder.oid }, ep.done('getFolder'));
-        mRes.getResource({ _id: file.resource.oid }, ep.done('getRes'));
-    });
-
-    ep.all('getFolder', 'getRes', function(folder, resource){
+    ep.all('getFolder', 'getRes', 'getMessage', function(folder, resource, message){
         if(!folder){
             return callback('no folder contain this file, fileId: ' + file._id, ERR.NOT_FOUND);
         }
         if(!resource){
-            return callback('can not find the resource, fileId: ' + file._id, ERR.NOT_FOUND);
+            return callback('can\'t find the resource, fileId: ' + file._id, ERR.NOT_FOUND);
         }
+        if(message){
+            // 自己收件箱的文件
+            hasAuth = true;
+        }
+
         file.__folder = folder;
         file.__resource = resource;
 
@@ -601,12 +603,16 @@ function verifyDownload(user, file, callback){
         if(folder.__role & config.FOLDER_SCHOOL){
             if(file.validateStatus === 1){
                 // 学校空间通过审核的才能下载
-                return callback(null);
+                hasAuth = true;
+                // return callback(null);
             }else{
                 return callback('this file has not validate, fileId: ' + file._id, ERR.NOT_AUTH);
             }
         }
-        return callback(null);
+        if(hasAuth){
+            return callback(null);
+        }
+        return callback(msg, ERR.NOT_AUTH);
     });
 }
 
