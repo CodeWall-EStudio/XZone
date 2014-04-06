@@ -80,7 +80,7 @@ exports.initGroups = function(req,res){
         status : 0,
         type : 2,
         pt : 1
-    }
+    };
     // 防止重复创建
     db.group.findOne(param, function(err, doc){
         if(!doc){
@@ -97,7 +97,7 @@ exports.initGroups = function(req,res){
         name : '学校空间',
         status : 0,
         type : 0,
-    }
+    };
     // 防止重复创建
     db.group.findOne(param2, function(err, doc){
         if(!doc){
@@ -116,7 +116,7 @@ exports.initGroups = function(req,res){
         }
     });
 
-}
+};
 
 // 初始化学校的部门架构
 exports.initDeparts = function(req, res){
@@ -164,7 +164,7 @@ exports.initDeparts = function(req, res){
         ep.emit('error', err);
     });
 
-}
+};
 
 // 合并旧的用户数据
 exports.mergeOldData = function(req, res){
@@ -214,6 +214,6 @@ exports.mergeOldData = function(req, res){
         });
 
     });
-}
+};
 
 

@@ -70,13 +70,7 @@ exports.create = function(params, callback){
 
 exports.getFolder = function(query, callback){
 
-    db.folder.findOne(query, function(err, doc){
-        if(err || !doc){
-            callback(err, doc);
-            return;
-        }
-        db.dereference(doc, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, callback);
-    });
+    db.folder.findOne(query, callback);
 
 };
 

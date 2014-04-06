@@ -218,6 +218,10 @@ exports.getAllDepartments = function(params, callback){
 
     ep.on('getSchoolDep', function(root){
 
+        if(!root){
+            return callback('can\'t find the root of departments');
+        }
+
         // 查询一级部门
         db.department.find({ 'parent.$id': root._id }, function(err, docs){
             if(err){

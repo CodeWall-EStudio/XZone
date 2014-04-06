@@ -94,12 +94,23 @@ exports.get = function(req, res){
     var params = req.parameter;
     var folder = params.folderId;
 
-    res.json({
-        err: ERR.SUCCESS,
-        result: {
-            data: folder
+    db.dereference(folder, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, function(err, doc){
+        if (err) {
+            res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
+
+        } else {
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    data: folder
+                }
+            });
         }
     });
+    
 };
 
 exports.modify = function(req, res){
