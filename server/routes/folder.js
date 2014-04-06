@@ -5,6 +5,7 @@ var us = require('underscore');
 
 var config = require('../config');
 var ERR = require('../errorcode');
+var db = require('../models/db');
 var mFolder = require('../models/folder');
 var mFile = require('../models/file');
 var mGroup = require('../models/group');
