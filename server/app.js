@@ -28,7 +28,7 @@ app.use(express.session({
     store: new MongoStore({
         url: config.DB_URI
     }, function () {
-        console.log("db connection open");
+        console.log(">>>db connection open");
     })
 }));
 app.use(express.bodyParser());

@@ -202,11 +202,11 @@ function convert(filePath, mimes, ext, callback){
                 cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
                 process.exec(cmd, function(err, stdout, stderr){
                     callback(err);
-                    console.error('>>>file convert error: to swf: ', err, stdout, stderr, mimes, ext);
+                    console.error('>>>file convert error: to swf: ', err, stderr, mimes, ext);
                 });
             }else{
                 callback(err);
-                console.error('>>>file convert error: to pdf', err, stdout, stderr, mimes, ext);
+                console.error('>>>file convert error: to pdf', err, stderr, mimes, ext);
             }
         });
     }else if(config.FILE_MIMES['pdf'].indexOf(mimes) > -1 || config.FILE_SUFFIX['pdf'].indexOf(ext) > -1){
@@ -214,7 +214,7 @@ function convert(filePath, mimes, ext, callback){
         process.exec(cmd, function(err, stdout, stderr){
             callback(err);
             if(err){
-                console.error('>>>file convert error: to swf', err, stdout, stderr, mimes, ext);
+                console.error('>>>file convert error: to swf', err, stderr, mimes, ext);
             }
         });
 
