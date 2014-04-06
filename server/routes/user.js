@@ -54,7 +54,7 @@ exports.get = function(req, res){
     var loginUser = req.loginUser;
 
     for(var i in loginUser){
-        if(i.indexOf('__')){
+        if(i.indexOf('__') >= -1){
             delete loginUser[i];
         }
     }

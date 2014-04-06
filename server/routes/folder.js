@@ -96,7 +96,7 @@ exports.get = function(req, res){
     var folder = params.folderId;
 
     for(var i in folder){
-        if(i.indexOf('__')){
+        if(i.indexOf('__') >= -1){
             delete folder[i];
         }
     }
