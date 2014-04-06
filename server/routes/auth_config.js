@@ -13,6 +13,7 @@ var mUser = require('../models/user');
 var mGroup = require('../models/group');
 var mFolder = require('../models/folder');
 var mRes = require('../models/resource');
+var mMessage = require('../models/message');
 
 exports.AUTH_WHITE_LIST = [
     '/api/user/login',
