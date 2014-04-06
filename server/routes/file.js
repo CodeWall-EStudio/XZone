@@ -200,7 +200,7 @@ exports.preview = function(req, res){
     }else{
         switch(resource.type){
             case 2:// 文档
-                var swfFile = path.join(config.FILE_SAVE_ROOT, filePath, '.swf');
+                var swfFile = path.join(config.FILE_SAVE_ROOT, filePath + '.swf');
                 if(!fs.existsSync(swfFile)){
                     console.error('can\'t find ' + swfFile + '! try to convert...');
                     var suffix = path.extname(filePath).slice(1);
