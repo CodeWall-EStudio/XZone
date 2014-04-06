@@ -95,6 +95,12 @@ exports.get = function(req, res){
     var params = req.parameter;
     var folder = params.folderId;
 
+    for(var i in folder){
+        if(i.indexOf('__')){
+            delete folder[i];
+        }
+    }
+
     db.dereference(folder, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, function(err, doc){
         if (err) {
             res.json({

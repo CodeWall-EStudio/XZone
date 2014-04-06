@@ -337,6 +337,12 @@ exports.get = function(req, res){
 
     var loginUser = req.loginUser;
 
+    for(var i in file){
+        if(i.indexOf('__')){
+            delete file[i];
+        }
+    }
+
     db.dereference(file, { resource: ['_id', 'type', 'size'] }, function(err){
 
         res.json({
@@ -883,7 +889,7 @@ exports.search = function(req, res){
     }else if(folder.__role & config.FOLDER_SCHOOL){
         // 学校空间的文件夹
         searchParams.extendQuery = {};
-        if(('status' in searchParams) && (user.__role & config.ROLE_MANAGER)){
+        if(('status' in searchParams) && (loginUser.__role & config.ROLE_MANAGER)){
             // 管理员可以使用 status 参数搜索
             searchParams.extendQuery.status = searchParams.status || 0;
         }else{

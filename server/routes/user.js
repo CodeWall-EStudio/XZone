@@ -52,7 +52,13 @@ exports.gotoLogin = function(req, res){
 exports.get = function(req, res){
 
     var loginUser = req.loginUser;
-    
+
+    for(var i in loginUser){
+        if(i.indexOf('__')){
+            delete loginUser[i];
+        }
+    }
+
     mUser.getUserAllInfo(loginUser, function(err, data){
         if(err){
             res.json({ err: data || ERR.SERVER_ERROR, msg: err});
