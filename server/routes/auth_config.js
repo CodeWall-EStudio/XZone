@@ -100,12 +100,14 @@ exports.RULES = {
     '/api/file/save': {
         verify: function(user, parameter, callback){
             // 保存文件的限制
-            // 只能保存自己收到的文件
+            // 只能保存自己收到的文件, 同时目标文件夹必须是自己的私人文件夹
+            // TODO 暂时只是保存到自己的个人根目录
             var msg = parameter.messageId;
-            var folder = parameter.folderId;
+            // var folder = parameter.folderId;
             if(msg.toUser.oid.toString() !== user._id.toString()){
                 return callback('not auth to save this file', ERR.NOT_AUTH);
             }
+            // verifyFolder(user, folder)
             callback(null);
         }
     },
@@ -144,7 +146,7 @@ exports.RULES = {
                 }
 
                 // 检查这一批文件都是否有 权限访问
-                // TODO 先不处理, 等有问题了再看
+                // FIXME 先不处理, 等有问题了再看
             });
         }
     },
@@ -169,13 +171,13 @@ exports.RULES = {
                 }
 
                 // 检查这一批文件都是否有 权限访问
-                // TODO 先不处理, 等有问题了再看
+                // FIXME 先不处理, 等有问题了再看
             });
         }
     },
     '/api/file/share': {
         verify: function(user, parameter, callback){
-            // TODO 共享的权限判断比较复杂, 先只依赖前端的限制
+            // FIXME 共享的权限判断比较复杂, 先只依赖前端的限制
             callback(null);
         }
     },
@@ -183,14 +185,16 @@ exports.RULES = {
         // 这个接口只是设置删除标志位, 不是彻底删除
         verify: function(user, parameter, callback){
             // 只能删除自己的; 管理员可以删除所有
+            // TODO 缺少删除小组的文件的权限判断
             var files = parameter.fileId;
+            var msg = 'not auth to delete this file, fileId: ';
             var uid = user._id.toString();
             if(user.__role & config.ROLE_MANAGER){
                 return callback(null);
             }
             for(var i = 0; i < files.length; i++){
-                if(files[i].creator.oid !== uid){
-                    return callback('not auth to delete this file, fileId: ' + files[i]._id);
+                if(files[i].creator.oid.toString() !== uid){
+                    return callback(msg + files[i]._id);
                 }
             }
             return callback(null);
@@ -203,7 +207,7 @@ exports.RULES = {
             // 自己创建的文件; 自己所属部门/小组的文件; 部门的公开文件夹; 学校空间的文件; 备课小组的人可以查看备课文件夹
             
             var folder = parameter.folderId;
-            var msg = 'not auth to access file to this folder, folderId: ' + folder._id;
+            // var msg = 'not auth to access file to this folder, folderId: ' + folder._id;
 
             verifyFolder(user, folder, function(err, fld){
                 if(err){
@@ -400,7 +404,7 @@ exports.RULES = {
             var files = parameter.fileId;
             var uid = user._id.toString();
             var msg = 'not auth to delete this file, fileId: ';
-
+            // TODO 支持小组回收站的话这里要改
             for(var i = 0, file; i < files.length; i++){
                 file = files[i];
                 if(file.creator.oid.toString() !== uid){
@@ -415,7 +419,7 @@ exports.RULES = {
             var files = parameter.fileId;
             var uid = user._id.toString();
             var msg = 'not auth to revert this file, fileId: ';
-
+            // TODO 支持小组回收站的话这里要改
             for(var i = 0, file; i < files.length; i++){
                 file = files[i];
                 if(file.creator.oid.toString() !== uid){
@@ -425,12 +429,13 @@ exports.RULES = {
             callback(null);
         }
     },
-    // '/api/recycle/search': {
-    //     verify: function(user, parameter, callback){
-    //         // 该接口不鉴权
-    //         callback(null);
-    //     }
-    // },
+    '/api/recycle/search': {
+        verify: function(user, parameter, callback){
+            // 该接口不鉴权
+            // TODO 支持小组回收站的话这里要改
+            callback(null);
+        }
+    },
 
     // board
     '/api/board/create': {

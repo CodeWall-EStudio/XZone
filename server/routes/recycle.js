@@ -1,7 +1,7 @@
 var EventProxy = require('eventproxy');
 var us = require('underscore');
 
-var config = require('../config');
+// var config = require('../config');
 var ERR = require('../errorcode');
 var mLog = require('../models/log');
 var mFile = require('../models/file');
@@ -11,6 +11,7 @@ exports.delete = function(req, res){
     var params = req.parameter;
 
     var files = params.fileId;
+    var group = params.groupId;
 
     var loginUser = req.loginUser;
 
@@ -20,14 +21,19 @@ exports.delete = function(req, res){
         res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('delete', files.length, function(list){
+    ep.after('delete', files.length, function(){
         res.json({
             err: ERR.SUCCESS
         });
     });
 
+    var options = {
+        groupId: group && group._id,
+        updateUsed: true
+    };
+
     files.forEach(function(file){
-        mFile.delete({ _id: file._id }, ep.group('delete', function(result){
+        mFile.delete({ _id: file._id }, options, ep.group('delete', function(result){
             // 记录该操作
             mLog.create({
                 fromUserId: loginUser._id,
@@ -57,7 +63,7 @@ exports.revert = function(req, res){
 
     var files = params.fileId;
 
-    var loginUser = req.loginUser;
+    // var loginUser = req.loginUser;
 
     var ep = new EventProxy();
 
@@ -65,16 +71,15 @@ exports.revert = function(req, res){
         res.json({ err: ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('revert', files.length, function(list){
+    ep.after('revert', files.length, function(){
         res.json({
             err: ERR.SUCCESS
         });
     });
 
     files.forEach(function(file){
-        mFile.revertDelete({
-            fileId: file._id
-        }, ep.group('revert'));
+
+        mFile.modify({ fileId: file._id }, { del: false }, ep.group('revert'));
     });
 };
 
@@ -82,6 +87,7 @@ exports.revert = function(req, res){
 exports.search = function(req, res){
     var parameter = req.parameter;
     var loginUser = req.loginUser;
+    var group = parameter.groupId;
 
     var searchParams = us.extend({}, parameter);
 
@@ -89,10 +95,16 @@ exports.search = function(req, res){
         del: true
     };
 
-    // 只能搜索自己的回收站
-    searchParams.creator = loginUser._id;
+    if (group) {
 
-    // TODO 小组的回收站要怎么处理
+        // 搜索小组的回收站
+        searchParams.folderId = group.rootFolder.oid;
+    } else {
+
+        // 只能搜索自己的回收站
+        searchParams.creator = loginUser._id;
+    }
+
     mFile.search(searchParams, function(err, total, docs){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});

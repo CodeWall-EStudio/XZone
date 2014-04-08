@@ -60,7 +60,23 @@ exports.update = function(query, doc, callback){
             { $set: doc }, { 'new': true }, callback);
 };
 
+exports.checkUsed = function(user, fileSize, callback){
+    user.used = Number(user.used);
+    user.size = Number(user.size);
+    fileSize = fileSize || 0;
+
+    if (user.size < user.used + fileSize) {
+
+        callback('Ran out of space', ERR.SPACE_FULL);
+    } else {
+
+        callback(null);
+    }
+};
+
 exports.updateUsed = function(userId, count, callback){
+    count = count || 0;
+    
     console.log('>>>updateUsed:', userId, count);
     db.user.findAndModify({ _id: userId }, [],
             { $inc: { used: count } }, { 'new': true }, callback);

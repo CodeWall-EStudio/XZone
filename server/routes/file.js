@@ -275,7 +275,7 @@ exports.save = function(req, res){
         name: msg.name,
         'folder.$id': rootFolderId
     };
-    console.log('>>>file.save getfile ', param);
+    console.log('>>>file.save checkfile ', param);
     // 检查重名
     mFile.getFile(param, function(err, file){
         if(file){
@@ -286,7 +286,14 @@ exports.save = function(req, res){
     });
         
     ep.on('getResource', function(resource){
-        var file = {
+
+        // 暂时只做保存到个人根目录的功能, 如果要前端传来folder, auth_config 需要进行权限判断
+        mUser.checkUsed(loginUser, resource.size, ep.done('checkSpaceUsed'));
+    });
+
+    ep.all('getResource', 'checkSpaceUsed', function(resource){
+
+        var file = { // 这里不用保存 group, 只会是保存到自己的目录
             creator: loginUser._id,
             folderId: rootFolderId,
             name: msg.name,
@@ -297,20 +304,20 @@ exports.save = function(req, res){
         };
 
         mFile.create(file, ep.done('createFile'));
-        if(loginUser.__role & config.ROLE_FOLDER_CREATOR){
-            mUser.updateUsed(loginUser._id, (resource.size || 0), function(){});
-        }
-
+        
+        mUser.updateUsed(loginUser._id, resource.size, function(){});
         mMessage.modify({ _id: msg._id }, { saved: true }, function(){});
     });
 
     ep.on('createFile', function(file){
+
         res.json({
             err: ERR.SUCCESS,
             result: {
                 data: file
             }
         });
+
         mLog.create({
             fromUserId: loginUser._id,
             fromUserName: loginUser.nick,
@@ -335,9 +342,9 @@ exports.get = function(req, res){
     var params = req.parameter;
     var file = params.fileId;
 
-    var loginUser = req.loginUser;
+    // var loginUser = req.loginUser;
 
-    db.dereference(file, { resource: ['_id', 'type', 'size'] }, function(err){
+    db.dereference(file, { resource: ['_id', 'type', 'size'] }, function(/*err*/){
         
         for(var i in file){
             if(i.indexOf('__') === 0){
@@ -432,6 +439,8 @@ function shareToGroup(loginUser, params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
+    //TODO 如果是分享给小组和部门, 要扣掉空间占用
+    //分享给学校的, 则要审核之后才扣
     if(!group){
         mGroup.getGroup({ _id: folder.group.oid }, function(err, gp){
             if(err){
@@ -649,38 +658,57 @@ function copyFile(user, params, callback){
 
     var targetFolder = params.targetFolder;
 
-    var ep = new EventProxy();
+    var groupId = targetFolder.group && targetFolder.group.oid;
 
+    var ep = new EventProxy();
     ep.fail(callback);
 
 
     mFile.getFile({ // 重名检查
         name: file.name,
         'folder.$id': targetFolder._id
-    }, function(err, file){
-        if(file){
-            ep.emit('checkName', false);
-        }else{
-            ep.emit('checkName', true);
+    }, function(err, fl){
+        if(fl){
+
+            return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
         }
+
+        if(groupId){ // 上传到小组的, 检查小组配额
+            mGroup.getGroup({ _id: groupId }, function(err, group){
+                if(err){
+                    return ep.emit('error', err, ERR.SERVER_ERROR);
+                }
+                mGroup.checkUsed(group, file.size, ep.done('checkSpaceUsed'));
+            });
+        }else{ // 检查个人配额
+            
+            mUser.checkUsed(user, file.size, ep.done('checkSpaceUsed'));
+        }
+
     });
 
 
-    ep.on('checkName', function(bool){
-        if(!bool){
-            return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
+    ep.on('checkSpaceUsed', function(){
+
+        if (groupId) {
+
+            mGroup.updateUsed(groupId, file.size, ep.done('updateSpaceUsed'));
+        } else {
+
+            mUser.updateUsed(user._id, file.size, ep.done('updateSpaceUsed'));
         }
+    });
+
+    ep.on('updateSpaceUsed', function(){
+
         // 权限检查没问题
         file.resourceId = file.resource.oid;
 
-        file.groupId = targetFolder.group && targetFolder.group.oid;
+        file.groupId = groupId;
         file.folderId  = targetFolder._id;
         file.creator = user._id;
         
         mFile.create(file, callback);
-        if(user.__role & config.ROLE_FOLDER_CREATOR){
-            mUser.updateUsed(user._id, (file.size || 0), function(){});
-        }
 
         // 记录该操作
         mLog.create({
@@ -694,14 +722,12 @@ function copyFile(user, params, callback){
             operateType: 3,
 
             srcFolderId: file.folder.oid,
-            distFolderId: targetFolder._id
+            distFolderId: targetFolder._id,
             // fromGroupId: folder ? folder.group && folder.group.oid : null
-            // toGroupId: toGroupId
+            toGroupId: groupId
         });
 
     });
-
-
 }
 
 exports.copy = function(req, res){
@@ -745,20 +771,11 @@ function moveFile(user, params, callback){
     mFile.getFile({ // 重名检查
         name: file.name,
         'folder.$id': params.targetId
-    }, function(err, file){
-        if(file){
-            ep.emit('checkName', false);
-        }else{
-            ep.emit('checkName', true);
-        }
-    });
-
-
-    ep.on('checkName', function(bool){
-        if(!bool){
+    }, function(err, fl){
+        if (fl) {
             return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
         }
-
+        // move file 不用检查空间
         var doc = {
             folder: DBRef('folder', targetFolder._id)
         };
@@ -829,7 +846,7 @@ exports.delete = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    ep.after('delete', files.length, function(list){
+    ep.after('delete', files.length, function(){
         res.json({
             err: ERR.SUCCESS
         });
@@ -837,10 +854,10 @@ exports.delete = function(req, res){
     
     files.forEach(function(file){
         // 设置删除标志位
-        // TODO 如果删除的是小组的文件, 就没有回收站了
-        mFile.softDelete({
-            fileId: file._id
-        }, ep.group('delete', function(file){
+        // 如果删除的是小组的文件, 也是直接设置个标志位, 放到回收站
+        mFile.modify({ fileId: file._id }, { del: true },
+                ep.group('delete', function(file){
+
             // 记录该操作
             mLog.create({
                 fromUserId: loginUser._id,

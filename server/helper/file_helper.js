@@ -22,8 +22,8 @@ exports.saveUploadFile = function(params, callback){
     var folder = params.folder;
     var loginUser = params.loginUser;
     var body = params.parameter;
+    var groupId = folder.group && folder.group.oid;
 
-    //1. 先把文件保存到 data 目录
     var uploadFilePath = body.file_path;
     var name = body.file_name;
     var md5 = body.file_md5;
@@ -31,59 +31,68 @@ exports.saveUploadFile = function(params, callback){
     var extname = path.extname(name);
     var suffix = extname && extname.slice(1);
     var filename = md5 + extname;
-    var fileSize = parseInt(body.file_size);
+    var fileSize = Number(body.file_size) || 0;
     var fileType = formatType(contentType, suffix);
 
     var savePath = U.formatDate(new Date(), 'yyyy/MM/dd/hhmm/');
 
     var folderPath = path.resolve(path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, savePath));
-    var filePath = path.join(folderPath, filename);
+    var filepath = path.join(folderPath, filename);
 
-    loginUser.used = Number(loginUser.used);
 
     var ep = new EventProxy();
     ep.fail(callback);
 
-    // 在同一个文件夹下，不允许出现文件名相同且作者相同的文件。
+    // TODO 在同一个文件夹下，不允许出现文件名相同且作者相同的文件。
     // 文件名相同且作者相同时，比较文件MD5。若MD5相同，提示重复文件，终止写操作；
     // 若MD5不同，提示改名后继续操作。
     if(!name){
-        ep.emit('error', 'file name is required', ERR.PARAM_ERROR);
-        return;
+
+        return ep.emit('error', 'file name is required', ERR.PARAM_ERROR);
     }
     var query = {
         name: name,
         'folder.$id': folder._id,
         'creator.$id': loginUser._id
     };
-    // console.log('>>>check file name', query);
+
     mFile.getFile(query, ep.doneLater('getFile'));
 
     ep.on('getFile', function(file){
 
         if(file){
-            ep.emit('error', 'has the same filename', ERR.DUPLICATE);
-            return;
+
+            return ep.emit('error', 'has the same filename', ERR.DUPLICATE);
         }
-        if(loginUser.size < loginUser.used + fileSize){
-            //TODO 如果上传到小组, 还要检查小组的配额
-            ep.emit('error', 'Ran out of space', ERR.SPACE_FULL);
-        }else{
-            // 更新用户size
-            loginUser.used = loginUser.used + fileSize;
-
-            // 修改用户表的 used 
-            mUser.updateUsed(loginUser._id,  (fileSize || 0), ep.done('updateSpaceUsed'));
-
+        if(groupId){ // 上传到小组的, 检查小组配额
+            mGroup.getGroup({ _id: groupId }, function(err, group){
+                if(err){
+                    return ep.emit('error', err, ERR.SERVER_ERROR);
+                }
+                mGroup.checkUsed(group, fileSize, ep.done('updateSpaceUsed'));
+            });
+        }else{ // 检查个人配额
+            
+            mUser.checkUsed(loginUser, fileSize, ep.done('updateSpaceUsed'));
         }
     });
 
     ep.on('updateSpaceUsed', function(){
+
+        if (groupId) { 
+
+            mGroup.updateUsed(groupId, fileSize, function(){});
+        } else {
+
+            mUser.updateUsed(loginUser._id, fileSize, function(){});
+        }
+
         U.mkdirsSync(folderPath);
-        U.moveFile(uploadFilePath, filePath, ep.done('moveFile'));
+        U.moveFile(uploadFilePath, filepath, ep.done('moveFile'));
     });
 
     ep.on('moveFile', function(){
+
         // 添加 resource 记录
         var resource = {
             path: savePath + filename,
@@ -95,7 +104,7 @@ exports.saveUploadFile = function(params, callback){
 
         if(params.createSWFForDoc){
             // 转换文档为 swf
-            convert(filePath, contentType, suffix, function(){
+            convert(filepath, contentType, suffix, function(){
                 mRes.create(resource, ep.done('saveRes'));
             });
         }else{
@@ -112,7 +121,7 @@ exports.saveUploadFile = function(params, callback){
             name: name,
             type: fileType,
             size: fileSize,
-            groupId: folder.group && folder.group.oid,
+            groupId: groupId,
             resourceId: resource._id
         };
         resource.ref = 1;
@@ -140,12 +149,13 @@ exports.saveUploadFile = function(params, callback){
             // srcFolderId: null,
             distFolderId: folder._id.toString(),
 
-            toGroupId: folder.group && folder.group.oid.toString()
+            toGroupId: groupId
         });
 
     });
 
 };
+
 
 function formatType(mimes, ext){
     if (  config.FILE_MIMES['image'].indexOf(mimes) > -1 ) {
@@ -190,16 +200,16 @@ function formatType(mimes, ext){
     }
 }
 
-function convert(filePath, mimes, ext, callback){
-    console.log('>>>convert file: mimes',filePath, mimes, ext);
+function convert(filepath, mimes, ext, callback){
+    console.log('>>>convert file: mimes',filepath, mimes, ext);
     var cmd;
     //doc 文档要生成 swf 格式文件
     if(config.FILE_MIMES['document'].indexOf(mimes) > -1 || config.FILE_SUFFIX['document'].indexOf(ext) > -1){
-        cmd = 'java -jar ' + config.JOD_CONVERTER + ' ' + filePath + ' ' + filePath + '.pdf';
+        cmd = 'java -jar ' + config.JOD_CONVERTER + ' ' + filepath + ' ' + filepath + '.pdf';
 
         process.exec(cmd, function(err, stdout, stderr){
             if(!err){
-                cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
+                cmd = 'pdf2swf ' + filepath + '.pdf -s flashversion=9 -o ' + filepath + '.swf';
                 process.exec(cmd, function(err, stdout, stderr){
                     callback(err);
                     console.error('>>>file convert error: to swf: ', err, stderr, mimes, ext);
@@ -210,7 +220,7 @@ function convert(filePath, mimes, ext, callback){
             }
         });
     }else if(config.FILE_MIMES['pdf'].indexOf(mimes) > -1 || config.FILE_SUFFIX['pdf'].indexOf(ext) > -1){
-        cmd = 'pdf2swf ' + filePath + '.pdf -s flashversion=9 -o ' + filePath + '.swf';
+        cmd = 'pdf2swf ' + filepath + '.pdf -s flashversion=9 -o ' + filepath + '.swf';
         process.exec(cmd, function(err, stdout, stderr){
             callback(err);
             if(err){

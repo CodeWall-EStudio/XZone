@@ -1,5 +1,5 @@
 var EventProxy = require('eventproxy');
-var ObjectID = require('mongodb').ObjectID;
+// var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var us = require('underscore');
 
@@ -27,14 +27,15 @@ exports.create = function(params, callback){
         name: params.name,
         content: params.content || '',
         type: type,
-        parent: params.parentId ? DBRef('group', params.parentId) : null,
-        creator: DBRef('user', params.creator),
+        parent: params.parentId ? new DBRef('group', params.parentId) : null,
+        creator: new DBRef('user', params.creator),
         status: status, // 标示小组审核状态 1 审核中 0 已审核
         pt: Number(params.pt) || 0,
         tag: params.tag || null,
         grade: params.grade || null,
 
-        //TODO 小组配额没有加
+        size: params.size || 0,
+        used: 0,
 
         validateText: null,//审核评语
         validateStatus: status === 0 ? 1 : null, //0 不通过 1 通过
@@ -57,13 +58,31 @@ exports.create = function(params, callback){
 
     ep.all('createGroup', 'createFolder', function(group, folder){
 
-        group.rootFolder = DBRef('folder', folder._id);
+        group.rootFolder = new DBRef('folder', folder._id);
 
         db.group.findAndModify({ _id: group._id }, [],  { $set: {rootFolder: group.rootFolder } },
                     { 'new':true}, callback);
 
     });
     
+};
+
+exports.checkUsed = function(group, fileSize, callback){
+    group.used = Number(group.used);
+    group.size = Number(group.size);
+    if (group.size < group.used + fileSize) {
+
+        callback('Ran out of space', ERR.SPACE_FULL);
+    } else {
+        
+        callback(null);
+    }
+};
+
+exports.updateUsed = function(groupId, count, callback){
+    console.log('>>>updateUsed:', groupId, count);
+    db.group.findAndModify({ _id: groupId }, [],
+            { $inc: { used: count } }, { 'new': true }, callback);
 };
 
 function dereferenceGroup(groupId, ext, callback){

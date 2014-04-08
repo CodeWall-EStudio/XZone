@@ -64,25 +64,35 @@ exports.approveFile = function(req, res){
     var file = params.fileId;
 
     var loginUser = req.loginUser;
-
+    // 这里的文件只有个人提交到学校的
     var validateStatus = Number(params.validateStatus) || 0;
     if(validateStatus === 0){
         // 審核不通過的刪除掉
-        mFile.delete({ _id: file._id }, function(err, doc){
+        // 这里不用更新学校的空间大小, 文件在没有被审核之前, 是不占空间的
+        mFile.delete({ _id: file._id }, { /*updateUsed: true*/ }, function(err/*, doc*/){
             if(err){
                 res.json({ err: ERR.SERVER_ERROR, msg: err});
             }else{
                 res.json({ err: ERR.SUCCESS });
             }
         });
+        return;
+    }
 
-    }else{
+    mGroup.getGroup({ type: 0 }, function(err, school){
+        if(err){
+            return res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }
+
+        //这里应该增加学校的空间使用
+        mGroup.updateUsed(school._id, file.size, function(){});
+
         var doc = {
             status: 0,
             validateText: params.validateText || '',//审核评语
             validateStatus: validateStatus, //0 不通过 1 通过
             validateTime: Date.now(),//审核时间
-            validator: DBRef('user', loginUser._id)
+            validator: new DBRef('user', loginUser._id)
         };
 
         mFile.modify({ _id: file._id }, doc, function(err, doc){
@@ -94,7 +104,7 @@ exports.approveFile = function(req, res){
                 res.json({ err: ERR.SUCCESS });
             }
         });
-    }
+    });
 };
 
 function fetchGroupMembers(group, callback){
@@ -115,7 +125,7 @@ function fetchGroupDetail(group, callback){
         group.list = result;
         if(result && result.length){
             var ep = new EventProxy();
-            ep.after('fetchGroupMembers', result.length, function(list){
+            ep.after('fetchGroupMembers', result.length, function(/*list*/){
                 callback(null, group);
             });
             ep.fail(function(){
@@ -138,7 +148,7 @@ function fetchGroupDetail(group, callback){
  * @return {[type]}     [description]
  */
 exports.listPrepares = function(req, res){
-    var loginUser = req.loginUser;
+    // var loginUser = req.loginUser;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
@@ -152,7 +162,7 @@ exports.listPrepares = function(req, res){
 
     ep.on('findGroupsResult', function(result){
         if(result && result.length){
-            ep.after('fetchGroupDetail', result.length, function(list){
+            ep.after('fetchGroupDetail', result.length, function(/*list*/){
                 ep.emit('fetchGroups', result);
             });
             result.forEach(function(group){
@@ -177,8 +187,8 @@ exports.listPrepares = function(req, res){
  * @return {[type]}     [description]
  */
 exports.listFiles = function(req, res){
-    var loginUser = req.loginUser;
-    var params = req.parameter;
+    // var loginUser = req.loginUser;
+    // var params = req.parameter;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){

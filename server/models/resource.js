@@ -47,16 +47,21 @@ exports.updateRef = function(resId, value, callback){
         if(doc && doc.ref <= 0){ // 引用为0了, 删除文件
             console.log('>>>resource ref=0, delete it: ' + doc._id);
             // 还要删除具体文件
-            // TODO 生成的 PDF 和 SWF 没有删除
-            fs.unlink(path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, doc.path), function(err){
-                if(err){
-                    console.error('>>>delete file: ', err);
-                    // callback(err, null);
-                }
-                
-                db.resource.findAndRemove({ _id: doc._id }, [], callback);
-                
-            });
+            // 还要生成的 PDF 和 SWF 没有删除
+            var filename = path.join(config.FILE_SAVE_ROOT, config.FILE_SAVE_DIR, doc.path);
+            if(fs.existsSync(filename)){
+                fs.unlinkSync(filename);
+                console.log('>>>unlink ' + filename);
+            }
+            if(fs.existsSync(filename + '.pdf')){
+                fs.unlinkSync(filename + '.pdf');
+                console.log('>>>unlink ' + filename + '.pdf');
+            }
+            if(fs.existsSync(filename + '.swf')){
+                fs.unlinkSync(filename + '.swf');
+                console.log('>>>unlink ' + filename + '.swf');
+            }
+            db.resource.findAndRemove({ _id: doc._id }, [], callback);
         }else{
             callback(err, doc);
         }

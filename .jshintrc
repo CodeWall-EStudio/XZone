@@ -1,26 +1,18 @@
 {
-    "asi": false,
-    "bitwise": false,
-    "boss": true,
+    "camelcase": true,
     "curly": true,
-    "debug": false,
     "eqeqeq": true,
-    "eqnull": false,
-    "evil": false,
     "forin": true,
-    "immed": false,
-    "laxbreak": false,
-    "Javascript": false,
-    "newcap": false,
-    "noarg": false,
-    "noempty": false,
-    "nomen": false,
-    "onevar": false,
-    "passfail": false,
-    "plusplus": false,
-    "regexp": false,
-    "undef": false,
+    "indent": 4,
+    "latedef": true,
+    "newcap": true,
+    "unused": true,
+    "trailing": true,
+
+    "boss": true,
+    "expr": true,
     "sub": true,
-    "strict": false,
-    "white": false
+
+    "node": true,
+    "browser": true
 }

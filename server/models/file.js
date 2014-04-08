@@ -1,7 +1,7 @@
-var ObjectID = require('mongodb').ObjectID;
+// var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var EventProxy = require('eventproxy');
-var EventEmitter = require('events').EventEmitter;
+// var EventEmitter = require('events').EventEmitter;
 var us = require('underscore');
 
 var db = require('./db');
@@ -10,10 +10,11 @@ var U = require('../util');
 var mRes = require('./resource');
 var mUser = require('./user');
 var mFolder = require('./folder');
+var mGroup = require('./group');
 
 
 exports.create = function(params, callback){
-    var groupId = params.groupId;
+    // var groupId = params.groupId;
     var folderId = params.folderId;
 
     var status = ('status' in params) ? Number(params.status)  : 1;
@@ -22,10 +23,10 @@ exports.create = function(params, callback){
     }
 
     var doc = {
-        resource: DBRef('resource', params.resourceId),
-        folder: DBRef('folder', folderId),
+        resource: new DBRef('resource', params.resourceId),
+        folder: new DBRef('folder', folderId),
         name: params.name,
-        creator: DBRef('user', params.creator),
+        creator: new DBRef('user', params.creator),
         createTime: Date.now(),
         updateTime: Date.now(),
         type: Number(params.type) || 0,
@@ -63,12 +64,12 @@ exports.create = function(params, callback){
         //         return callback(err);
         //     }
             // 将 resource 的引用计数加一
-            mRes.updateRef(file.resource.oid, 1, function(err, newRes){
-                if(err){
-                    return callback(err);
-                }
-                callback(null, file);
-            });
+        mRes.updateRef(file.resource.oid, 1, function(err){
+            if(err){
+                return callback(err);
+            }
+            callback(null, file);
+        });
 
         // });
     });
@@ -82,7 +83,8 @@ exports.modify = function(query, doc, callback){
             { 'new':true}, callback);
 };
 
-exports.delete = function(query, callback){
+exports.delete = function(query, params, callback){
+    var groupId = params.groupId;
 
     console.log('>>>delete file:', query);
 
@@ -93,14 +95,26 @@ exports.delete = function(query, callback){
 
     ep.on('remove', function(file){
         if(file){
+
             // 将 resource 的引用计数减一
             mRes.updateRef(file.resource.oid, -1, ep.done('updateRef'));
-            if(file.creator){ // 指定了刪除用戶的才需要更新 used
-                // 修改用户表的 used 
-                mUser.updateUsed(file.creator,  -1 * (file.size || 0), ep.done('incUsed'));
-            }else{
+
+            var reduceSize = -1 * (file.size || 0);
+
+            // 是小组的文件就修改小组的 used, 否则才修改 creator的used
+            if (!params.updateUsed || (!groupId && !file.creator)) {
+
                 ep.emitLater('incUsed');
+            } else if (groupId) {
+
+                // 修改小组的 used
+                mGroup.updateUsed(groupId, reduceSize, ep.done('incUsed'));
+            } else if (file.creator) {
+
+                // 修改用户表的 used 
+                mUser.updateUsed(file.creator,  reduceSize, ep.done('incUsed'));
             }
+            
         }else{
             callback(null);
         }
@@ -111,35 +125,25 @@ exports.delete = function(query, callback){
     });
 };
 
-exports.batchDelete = function(query, callback){
+// 删除文件夹的时候, 要区分是个人的目录和小组的目录, 要删除各自的空间大小
+exports.batchDelete = function(query, params, callback){
     
     db.file.find(query, function(err, docs){
         if(err || !docs || !docs.length){
             callback(null, 0);
         }else{
             var proxy = new EventProxy();
-            proxy.after('delete', docs.length, function(list){
+            proxy.after('delete', docs.length, function(){
                 callback(null, docs.length);
             });
             proxy.fail(callback);
             docs.forEach(function(doc){
-                exports.delete(doc, proxy.group('delete'));
+                exports.delete(doc, params, proxy.group('delete'));
             });
         }
     });
 };
 
-exports.softDelete = function(params, callback){
-
-    exports.modify(params, { del: true }, callback);
-
-};
-
-exports.revertDelete = function(params, callback){
-
-
-    exports.modify(params, { del: false }, callback);
-};
 
 exports.getFile = function(query, callback){
     console.log('>>>getFile: ', query);

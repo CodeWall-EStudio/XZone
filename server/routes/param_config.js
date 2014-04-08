@@ -642,12 +642,12 @@ module.exports = {
                 name: 'fileId',
                 type: 'files',
                 required: true
-            }/*,
+            },
             {
                 name: 'groupId',
                 type: 'group'
             }
-*/        ]
+        ]
 
     },
     '/api/recycle/revert': {
@@ -678,10 +678,10 @@ module.exports = {
                 type: 'number',
                 required: true
             },
-            // {
-            //     name: 'groupId',
-            //     type: 'group'
-            // },
+            {
+                name: 'groupId',
+                type: 'group'
+            },
             {
                 name: 'keyword'
             },
