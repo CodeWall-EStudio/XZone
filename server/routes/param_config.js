@@ -661,11 +661,11 @@ module.exports = {
                 name: 'fileId',
                 type: 'files',
                 required: true
-            }/*,
+            },
             {
                 name: 'groupId',
                 type: 'group'
-            }*/
+            }
         ]
 
     },

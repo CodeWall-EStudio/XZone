@@ -439,8 +439,6 @@ function shareToGroup(loginUser, params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
-    //TODO 如果是分享给小组和部门, 要扣掉空间占用
-    //分享给学校的, 则要审核之后才扣
     if(!group){
         mGroup.getGroup({ _id: folder.group.oid }, function(err, gp){
             if(err){
@@ -464,19 +462,20 @@ function shareToGroup(loginUser, params, callback){
         mFile.getFile({ // 重名检查
             name: file.name,
             'folder.$id': folder._id
-        }, function(err, file){
-            if(file){
-                ep.emit('checkName', false);
-            }else{
-                ep.emit('checkName', true);
-            }
-        });
+        }, ep.done('getFile'));
     });
 
-    ep.on('checkName', function(bool){
-        if(!bool){
+    ep.on('getFile', function(fl){
+        if(fl){
             return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
         }
+
+        //如果是分享给小组和部门, 要扣掉空间占用
+        //分享给学校的, 则要审核之后才扣
+        if(group.type === 1 || group.type === 2){
+            mGroup.updateUsed(group._id, file.size, function(){});
+        }
+
 
         // 拷贝 到目标文件夹
         file.resourceId = file.resource.oid;
@@ -780,7 +779,7 @@ function moveFile(user, params, callback){
         }
         // move file 不用检查空间
         var doc = {
-            folder: DBRef('folder', targetFolder._id)
+            folder: new DBRef('folder', targetFolder._id)
         };
 
         mFile.modify({ _id: file._id }, doc, callback);

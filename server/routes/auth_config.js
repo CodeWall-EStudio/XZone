@@ -184,20 +184,33 @@ exports.RULES = {
     '/api/file/delete': {
         // 这个接口只是设置删除标志位, 不是彻底删除
         verify: function(user, parameter, callback){
+
             // 只能删除自己的; 管理员可以删除所有
-            // TODO 缺少删除小组的文件的权限判断
             var files = parameter.fileId;
+            var group = parameter.groupId;
+
             var msg = 'not auth to delete this file, fileId: ';
             var uid = user._id.toString();
             if(user.__role & config.ROLE_MANAGER){
                 return callback(null);
             }
-            for(var i = 0; i < files.length; i++){
-                if(files[i].creator.oid.toString() !== uid){
-                    return callback(msg + files[i]._id);
+            if(group){
+                verifyGroup(user, group, function(err){
+                    if(err || !group.__editable){
+                        return callback(msg + 'MANY', ERR.NOT_AUTH);
+                    }
+
+                    // 这里就不再检查这些文件是否是属于这个group的了
+                    return callback(null);
+                });
+            }else{
+                for(var i = 0; i < files.length; i++){
+                    if(files[i].creator.oid.toString() !== uid){
+                        return callback(msg + files[i]._id);
+                    }
                 }
+                return callback(null);
             }
-            return callback(null);
         }
     },
     '/api/file/search': {
@@ -402,38 +415,71 @@ exports.RULES = {
     '/api/recycle/delete': {
         verify: function(user, parameter, callback){
             var files = parameter.fileId;
+            var group = parameter.groupId;
             var uid = user._id.toString();
             var msg = 'not auth to delete this file, fileId: ';
-            // TODO 支持小组回收站的话这里要改
-            for(var i = 0, file; i < files.length; i++){
-                file = files[i];
-                if(file.creator.oid.toString() !== uid){
-                    return callback(msg + file._id, ERR.NOT_AUTH);
+
+            if(group){
+                verifyGroup(user, group, function(err){
+                    if(err || !group.__editable){
+                        return callback(msg + 'MANY', ERR.NOT_AUTH);
+                    }
+
+                    // 这里就不再检查这些文件是否是属于这个group的了
+                    return callback(null);
+                });
+            }else{
+                for(var i = 0; i < files.length; i++){
+                    if(files[i].creator.oid.toString() !== uid){
+                        return callback(msg + files[i]._id);
+                    }
                 }
+                return callback(null);
             }
-            callback(null);
         }
     },
     '/api/recycle/revert': {
         verify: function(user, parameter, callback){
             var files = parameter.fileId;
+            var group = parameter.groupId;
             var uid = user._id.toString();
             var msg = 'not auth to revert this file, fileId: ';
-            // TODO 支持小组回收站的话这里要改
-            for(var i = 0, file; i < files.length; i++){
-                file = files[i];
-                if(file.creator.oid.toString() !== uid){
-                    return callback(msg + file._id, ERR.NOT_AUTH);
+            
+            if(group){
+                verifyGroup(user, group, function(err){
+                    if(err || !group.__editable){
+                        return callback(msg + 'MANY', ERR.NOT_AUTH);
+                    }
+
+                    // 这里就不再检查这些文件是否是属于这个group的了
+                    return callback(null);
+                });
+            }else{
+                for(var i = 0; i < files.length; i++){
+                    if(files[i].creator.oid.toString() !== uid){
+                        return callback(msg + files[i]._id);
+                    }
                 }
+                return callback(null);
             }
-            callback(null);
         }
     },
     '/api/recycle/search': {
         verify: function(user, parameter, callback){
-            // 该接口不鉴权
-            // TODO 支持小组回收站的话这里要改
-            callback(null);
+
+            var group = parameter.groupId;
+            var msg = 'not auth to search this recycle bin , groupId: ' + group;
+            
+            if(group){ // 搜索小组的回收站需要检查权限
+                verifyGroup(user, group, function(err){
+                    if(err){
+                        return callback(msg, ERR.NOT_AUTH);
+                    }
+                    return callback(null);
+                });
+            }else{
+                return callback(null);
+            }
         }
     },
 
@@ -785,7 +831,6 @@ function verifyGroup(user, group, callback){
             hasAuth = true;
         }
 
-        
         group.__user_role = user.__role;
         if (hasAuth) {
             return callback(null, group);
