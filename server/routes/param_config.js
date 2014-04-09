@@ -106,6 +106,10 @@ module.exports = {
             },
             {
                 name: 'content'
+            },
+            {
+                name: 'isArchive',
+                type: 'boolean'
             }
         ]
     },
@@ -386,7 +390,7 @@ module.exports = {
                 name: 'groupId',
                 type: 'group'
             }
-*/        ]
+*/      ]
     },
     '/api/folder/search': {
         method: 'GET',

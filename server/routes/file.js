@@ -587,6 +587,9 @@ function modifyFile(user, params, callback){
     if(params.content){
         doc.content = params.content;
     }
+    if('isArchive' in params){
+        doc.isArchive = params.isArchive;
+    }
 
     var ep = new EventProxy();
     ep.fail(callback);

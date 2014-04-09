@@ -80,6 +80,16 @@ var checkers = {
         callback(null ,value);
     },
 
+    'boolean': function(value, pcfg, callback){
+        var val = Number(value);
+        if(!isNaN(val)){
+            value = val === 1;
+        }else{
+            value = value === 'true';
+        }
+        callback(null, value);
+    },
+
     'object': function(value, pcfg, callback){
         try{
             value = U.jsonParse(value);

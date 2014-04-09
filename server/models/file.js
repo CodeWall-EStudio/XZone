@@ -36,6 +36,7 @@ exports.create = function(params, callback){
         del: false,//是否删除
         isFav: false, // 是否被自己收藏了
         src: Number(params.src) || 0, // 0 上传 1 分享
+        isArchive: false, // 是否被归档了
 
         status: status, // 审核状态 1 审核中 0 已审核
 
