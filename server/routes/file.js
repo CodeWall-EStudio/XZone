@@ -454,21 +454,19 @@ function shareToGroup(loginUser, params, callback){
                 return callback(err);
             }
             folder = fld;
-            // ep.emit('ready');
-            mFile.getFile({ // 重名检查
-                name: file.name,
-                'folder.$id': folder._id
-            }, ep.done('getFile'));
+            ep.emit('ready');
         });
+    }else{
+        ep.emitLater('ready');
     }
 
-    // ep.on('ready', function(){
+    ep.on('ready', function(){
         
-    //     mFile.getFile({ // 重名检查
-    //         name: file.name,
-    //         'folder.$id': folder._id
-    //     }, ep.done('getFile'));
-    // });
+        mFile.getFile({ // 重名检查
+            name: file.name,
+            'folder.$id': folder._id
+        }, ep.done('getFile'));
+    });
 
     ep.on('getFile', function(fl){
         if(fl){
