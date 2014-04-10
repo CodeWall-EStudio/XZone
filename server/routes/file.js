@@ -439,7 +439,7 @@ function shareToGroup(loginUser, params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
-    if(!group){
+    /*if(!group){
         mGroup.getGroup({ _id: folder.group.oid }, function(err, gp){
             if(err){
                 return callback(err);
@@ -447,23 +447,28 @@ function shareToGroup(loginUser, params, callback){
             group = gp;
             ep.emit('ready');
         });
-    }else if(!folder){
+    }else */
+    if(!folder){
         mFolder.getFolder({ _id: group.rootFolder.oid }, function(err, fld){
             if(err){
                 return callback(err);
             }
             folder = fld;
-            ep.emit('ready');
+            // ep.emit('ready');
+            mFile.getFile({ // 重名检查
+                name: file.name,
+                'folder.$id': folder._id
+            }, ep.done('getFile'));
         });
     }
 
-    ep.on('ready', function(){
+    // ep.on('ready', function(){
         
-        mFile.getFile({ // 重名检查
-            name: file.name,
-            'folder.$id': folder._id
-        }, ep.done('getFile'));
-    });
+    //     mFile.getFile({ // 重名检查
+    //         name: file.name,
+    //         'folder.$id': folder._id
+    //     }, ep.done('getFile'));
+    // });
 
     ep.on('getFile', function(fl){
         if(fl){
@@ -516,11 +521,10 @@ function shareToGroups(loginUser, params, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
-    var ids = groups.length ? groups : folders ;
-    ep.after('shareToGroup', ids.length, function(list){
+    ep.after('shareToGroup', groups.length, function(list){
         callback(null, list);
     });
-    for(var i = 0; i < ids.length; i++){
+    for(var i = 0; i < groups.length; i++){
         shareToGroup(loginUser, {
             file: file,
             group: groups[i],
