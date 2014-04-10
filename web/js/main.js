@@ -27,6 +27,65 @@
         btarget = $('#btnZone'),
         starget = $('#shareBox');
 
+    function showModel(cmd){
+      switch(cmd){
+        case 'my':
+          btarget.show();
+          ftarget.show();
+          starget.hide();
+          mtarget.hide();         
+          break;
+        case 'myprep':
+          btarget.show();
+          ftarget.show();
+          starget.hide();
+          mtarget.hide();         
+          break;
+        case 'group':
+          btarget.show();
+          ftarget.show();
+          starget.hide();
+          mtarget.hide();         
+          break;
+        case 'groupprep':
+          btarget.hide();
+          ftarget.show();
+          starget.hide();
+          mtarget.hide();         
+          break;
+        case 'school':
+          btarget.show();
+          ftarget.show();
+          starget.hide();
+          mtarget.hide();        
+          break;
+        case 'mailbox':
+          btarget.hide();
+          ftarget.hide();
+          starget.hide();
+          mtarget.show();         
+          break;
+        case 'share':
+          btarget.hide();
+          ftarget.hide();
+          starget.show();
+          mtarget.hide();         
+          break;
+        case 'coll':
+          btarget.hide();
+          ftarget.hide();
+          starget.hide();
+          mtarget.show();        
+          break;
+        case 'recy':
+          btarget.hide();
+          ftarget.hide();
+          starget.hide();
+          mtarget.show();        
+          break;
+      }
+    }
+
 
     //路由模块
     var opt = {
@@ -46,11 +105,7 @@
         "fdid=:id" : 'myFile'
       },
       school : function(data){
-        btarget.show();
-        ftarget.show();
-        starget.hide();
-        mtarget.hide();
-
+        showModel('school');
         var gid = data.gid,
             fdid = data.fdid || 0;
         var od = parseInt(data.od) || 0,
@@ -71,10 +126,7 @@
         handerObj.triggerHandler('school:init',d);              
       },
       mailbox : function(data){
-        btarget.hide();
-        ftarget.hide();
-        starget.hide();
-        mtarget.show(); 
+        showModel('mailbox');
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');       
 
@@ -99,10 +151,7 @@
         handerObj.triggerHandler('model:change','mail');
       },
       share : function(data){
-        btarget.hide();
-        ftarget.hide();
-        starget.show();
-        mtarget.hide(); 
+        showModel('share');
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');       
 
@@ -111,10 +160,7 @@
         handerObj.triggerHandler('model:change','share');
       },      
       coll : function(data){
-        btarget.hide();
-        ftarget.hide();
-        starget.hide();
-        mtarget.show();
+        showModel('coll');
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');
 
@@ -137,10 +183,7 @@
         handerObj.triggerHandler('model:change','coll');
       },
       recy : function(data){
-        btarget.hide();
-        ftarget.hide();
-        starget.hide();
-        mtarget.show();
+        showModel('recy');
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');
 
@@ -162,10 +205,8 @@
         handerObj.triggerHandler('model:change','recy');
       },
       group : function(data){
-        btarget.show();
-        ftarget.show();
-        starget.hide();
-        mtarget.hide(); 
+        showModel('group');
+ 
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');
 
@@ -194,11 +235,8 @@
         //handerObj.triggerHandler('upload:param',d);    
       },
       myFile : function(data){
+        showModel('my');
 
-        btarget.show();
-        ftarget.show();
-        starget.hide();
-        mtarget.hide(); 
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');
 
@@ -225,10 +263,7 @@
         //.triggerHandler('upload:param',d);
       },
       groupprep : function(data){
-        btarget.hide();
-        ftarget.show();
-        starget.hide();
-        mtarget.hide(); 
+
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');
         var fdid = data.fdid || 0,
@@ -263,10 +298,8 @@
         handerObj.triggerHandler('model:change','file');           
       },
       myPrep : function(data){
-        btarget.show();
-        ftarget.show();
-        starget.hide();
-        mtarget.hide(); 
+        showModel('myprep');
+
         $('.tool-zone').removeClass('hide');
         fatarget.addClass('hide');
 

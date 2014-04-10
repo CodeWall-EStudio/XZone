@@ -128,10 +128,29 @@ body {
 	outline:none;
 	width:280px;
 }
-
-#searchResult li{
+#groupResult{
+	float:left;
+	width:160px;
+}
+#groupResult li{
 	padding:5px 10px;
 }
-#searchResult .color{
+#groupResult .color{
 	color:#f00;
+}
+#groupFoldResult{
+	float:left;
+}
+.group-fold-result{
+	float:left;
+	height:300px;
+	overflow-y:auto;
+	overflow-x:hidden;
+	clear:both;
+}
+.group-fold-result ul{
+	padding:4px 6px;
+}
+.group-fold-result li{
+	padding:4px 0;
 }

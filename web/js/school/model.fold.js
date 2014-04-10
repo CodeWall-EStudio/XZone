@@ -117,6 +117,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			order = data.order || {},
 			fdid = data.folderId || 0,
 			type = data.type || 0,
+			root = data.root || 0,
 			tplid = data.tplid,
 			target = data.target || 0,
 			root = data.root || 0;
@@ -138,7 +139,11 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				var list = convent(d.result.list);
 				if(target){
 					if(tplid){
-						handerObj.triggerHandler('file:treeload',{list:list,target:target,tplid:tplid});
+						if(type){
+							handerObj.triggerHandler('file:sharefoldload',{list:list,gid:gid,root:root,target:target,tplid:tplid});
+						}else{
+							handerObj.triggerHandler('file:treeload',{list:list,target:target,tplid:tplid});
+						}
 					}else{
 						if(type){
 							handerObj.triggerHandler('fold:titload',{list:list,target:target,root:root});

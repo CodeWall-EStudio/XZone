@@ -144,7 +144,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			$("#fileActZone .movefile").show();
 		}else if(nowGroup){
 			$("#fileActZone .renamefile").hide();
-			$("#fileActZone .delfile").hide();
+			if(!nowSchool){
+				$("#fileActZone .delfile").hide();
+			}
 			$("#fileActZone .movefile").hide();			
 		}
 
@@ -485,6 +487,50 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		view.createPanel();
 	}
 
+	function shareFoldLoad(e,d){
+		var obj = {
+			target : d.target,
+			tplid : d.tplid,
+			data : {
+				list : d.list,
+				gid : d.gid
+			}
+		};
+		if(d.root){
+			obj.handlers =  {
+				'.plus' : {
+					'click' : function(e){
+						var t = $(this),
+							id = t.attr('data-id'),
+							gid = t.attr('data-gid');
+						var p = t.parent('li');
+						if(p.find('ul').length > 0){
+							if(t.hasClass("minus")){
+								t.removeClass('minus');
+								p.find('ul').hide();
+							}else{
+								t.addClass('minus');
+								p.find('ul').show();
+							}
+							return;
+						}
+						t.addClass('minus');
+						var obj = {
+							folderId : id,
+							target : p,
+							groupId : gid,
+							tplid : 'share.fold.li',
+							type : 1
+						};
+						handerObj.triggerHandler('fold:get',obj);
+					}
+				}
+			}
+		}
+		var view = new View(obj);
+		view.appendPanel();
+	}
+
 	function shareLoad(e,d){
 		var selected = [];
 		var view = new View({
@@ -529,7 +575,25 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 							}
 						}
 					}
-				})
+				});
+
+				$('#groupResult input[type=radio]').bind('click',function(){
+					var t = $(this),
+						v = t.val(),
+						fdid = t.attr('data-fd');
+					if(v){
+						var obj = {
+							target : $('#groupFoldResultUl'),
+							tplid : 'share.fold.li',
+							groupId : v,
+							folderId : fdid,
+							type : 1,
+							root : 1
+						}
+						$('#groupFoldResultUl').html('');
+						handerObj.triggerHandler('fold:get',obj);
+					}
+				});
 			},
 			handlers : {		
 				'.btn-share' : {
@@ -539,18 +603,24 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 						for(var i in d.files){
 							fls.push(d.files[i].id);
 						}
+						var gid = $('#groupResult input:checked').val();
+						var fdid = $("#groupFoldResultUl input:checked").val();
+						/*
 						actTarget.find('input:checked').each(function(){
 							li.push($(this).val());
 						});
+						*/
 						var obj = {
-							fileId : fls
+							fileId : fls,
+							toFolderId : [fdid]
 						};
-						if(d.type == 'other'){
-							obj.toUserId = li;
-						}else{
-							obj.toGroupId = li;
-						}
-						if(li.length===0){
+						// if(d.type == 'other'){
+						// 	obj.toUserId = li;
+						// }else{
+							obj.toGroupId = [gid];
+						//}
+						//if(li.length===0){
+						if(!fdid){
 							return;
 						}
 
@@ -932,6 +1002,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 
 	var handlers = {
 		//'order:change' : orderChange,
+		'file:sharefoldload' : shareFoldLoad,
 		'recy:recysuc' : recySuc,	
 		'recy:ref' : recyRef,
 		'recy:del' : recyDel,

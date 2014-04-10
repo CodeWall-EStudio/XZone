@@ -389,7 +389,7 @@ i.ad{
 	height:16px;
 }
 
-.act-fold-list li i,.fold-list li i{
+.act-fold-list li i,.fold-list li i,.group-fold-result i{
 	display:inline-block;
 	position: relative;
 	top:4px;
@@ -397,10 +397,10 @@ i.ad{
 	height:16px;
 	margin-right:4px;
 }
-.act-fold-list li i.plus,.fold-list li i.plus{
+.act-fold-list li i.plus,.fold-list li i.plus,.group-fold-result i.plus{
 	background:url(imgs/jia.png) no-repeat;
 }
-.act-fold-list li i.minus,.fold-list li i.minus{
+.act-fold-list li i.minus,.fold-list li i.minus,.group-fold-result i.minus{
 	background:url(imgs/jian.png) no-repeat;
 }
 .act-fold-list li a{

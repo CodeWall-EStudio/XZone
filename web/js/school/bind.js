@@ -269,7 +269,7 @@ define(['config'],function(config){
     var checkAct = function(){
     	var l = $('.table-files .fclick:checked').length;
     	var n = $('.table-files .fdclick:checked').length;
-
+    	//console.log(nowAuth);
     	// $('#fileList .fdclick:checked').each(function(){
     	// 	$(this).attr('checked',false);
     	// });
@@ -313,7 +313,8 @@ define(['config'],function(config){
     	var n = $('.table-files .fdclick:checked').length;
     	// $('#fileList .fclick:checked').each(function(){
     	// 	$(this).attr('checked',false);
-    	// });   	
+    	// });
+    	console.log(nowAuth);
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');

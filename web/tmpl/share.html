@@ -47,16 +47,18 @@
 							</i>
 						</div>
 						<%if(type!='school'){%>
-							<div>
-								选择要发送的
-							<%if(type=='other'){%>
-								用户
-							<%}else if(type=='group'){%>
-								小组
-							<%}else if(type=='dep'){%>
-								部门						
-							<%}%>
-								<ul id="searchResult">
+							<div id="groupResult">
+								目标小组:
+								<span>
+								<%if(type=='other'){%>
+									用户
+								<%}else if(type=='group'){%>
+									小组
+								<%}else if(type=='dep'){%>
+									部门						
+								<%}%>
+								</span>
+								<ul class="group-result">
 									<%
 										for(var i=0,l=list.length;i<l;i++){
 											var item = list[i];
@@ -67,14 +69,20 @@
 											if(item.isMember && !item.pt){
 												loop++;
 										%>
-										<li class="tag<%+item.id%>"><input type="checkbox" value="<%+item.id%>" /> <%-item.name%></li>
-										<%}%>
+											<li class="tag<%+item.id%>"><input type="radio" name="gn" value="<%+item.id%>" data-fd="<%+item.rootFolder._id%>" /> <%-item.name%></li>
+											<%}%>
 										<%}else{%>
-											<li class="tag<%+item.id%>"><input type="checkbox" value="<%+item.id%>" /> <%-item.name%></li>
+											<li class="tag<%+item.id%>"><input type="radio" name="gn" value="<%+item.id%>" data-fd="<%+item.rootFolder._id%>" /> <%-item.name%></li>
 										<%}%>
 									<%}%>
 								</ul>
 							</div>
+							<div id="groupFoldResult">
+								目标文件夹位置:<span></span>
+								<div id="groupFoldResultUl" class="group-fold-result">
+								</div>
+							</div>
+							<div class="clear"></div>
 						<%}%>
 					</div>
 				</div>
