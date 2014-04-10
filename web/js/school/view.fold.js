@@ -119,6 +119,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			after : function(){
 				target.find('.plus').unbind().bind('click',function(e){
 						var target = $(e.target),
+							load = target.attr('data-load'),
 							id = target.attr('data-id');
 						var p = target.parent('li');
 						if(p.find('ul').length > 0){
@@ -131,6 +132,10 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 							}
 							return;
 						}
+						if(load){
+							return;
+						}
+						target.attr('data-load',1);
 						var obj = {
 							folderId : id,
 							target : p
