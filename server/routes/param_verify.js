@@ -22,7 +22,7 @@ function findOne(coll, value, pcfg, callback){
             return callback(err);
         }
         if(!doc){
-            return callback('can\' find ' + value, ERR.NOT_FOUND);
+            return callback('can\'t find ' + pcfg.name + ': ' + value, ERR.NOT_FOUND);
         }
         callback(null, doc);
     });
