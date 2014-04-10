@@ -488,6 +488,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	}
 
 	function shareFoldLoad(e,d){
+		$('#groupResult input[type=radio]:checked').removeAttr('data-load');
 		var obj = {
 			target : d.target,
 			tplid : d.tplid,
@@ -502,6 +503,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 					'click' : function(e){
 						var t = $(this),
 							id = t.attr('data-id'),
+							load = t.attr('data-load'),
 							gid = t.attr('data-gid');
 						var p = t.parent('li');
 						if(p.find('ul').length > 0){
@@ -514,7 +516,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 							}
 							return;
 						}
-						t.addClass('minus');
+						if(load){
+							return;
+						}
+						t.addClass('minus').attr('data-load',1);
 						var obj = {
 							folderId : id,
 							target : p,
@@ -580,8 +585,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				$('#groupResult input[type=radio]').bind('click',function(){
 					var t = $(this),
 						v = t.val(),
+						load = t.attr('data-load'),
 						fdid = t.attr('data-fd');
-					if(v){
+					if(v && !load){
+						t.attr('data-load',1);
 						var obj = {
 							target : $('#groupFoldResultUl'),
 							tplid : 'share.fold.li',
