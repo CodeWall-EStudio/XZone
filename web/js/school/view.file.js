@@ -611,18 +611,17 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 						});
 						*/
 						var obj = {
-							fileId : fls,
-							toFolderId : [fdid]
+							fileId : fls
 						};
+						if(fdid){
+							obj.toFolderId = [fdid];
+						}
 						// if(d.type == 'other'){
 						// 	obj.toUserId = li;
 						// }else{
 							obj.toGroupId = [gid];
 						//}
 						//if(li.length===0){
-						if(!fdid){
-							return;
-						}
 
 						handerObj.triggerHandler('file:shareto',obj);
 					}

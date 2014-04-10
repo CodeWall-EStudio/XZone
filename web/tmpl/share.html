@@ -1,5 +1,6 @@
 				<%
 					var key;
+					var loop;
 				%>
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -67,12 +68,11 @@
 									%>
 										<%
 											if(item.isMember && !item.pt){
-												loop++;
 										%>
-											<li class="tag<%+item.id%>"><input type="radio" name="gn" value="<%+item.id%>" data-fd="<%+item.rootFolder._id%>" /> <%-item.name%></li>
+											<li class="tag<%+item.id%>"><input type="radio" name="gn" value="<%+item.id%>" data-fd="<%+item.rootFolder.id%>" /> <%-item.name%></li>
 											<%}%>
 										<%}else{%>
-											<li class="tag<%+item.id%>"><input type="radio" name="gn" value="<%+item.id%>" data-fd="<%+item.rootFolder._id%>" /> <%-item.name%></li>
+											<li class="tag<%+item.id%>"><input type="radio" name="gn" value="<%+item.id%>" data-fd="<%+item.rootFolder.id%>" /> <%-item.name%></li>
 										<%}%>
 									<%}%>
 								</ul>
