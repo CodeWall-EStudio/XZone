@@ -5,6 +5,7 @@ var DBRef = require('mongodb').DBRef;
 var us = require('underscore');
 
 var db = require('../models/db');
+var config = require('../config');
 var ERR = require('../errorcode.js');
 var U = require('../util');
 var ParamConfig = require('./param_config');
