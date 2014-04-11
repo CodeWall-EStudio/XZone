@@ -79,7 +79,7 @@ exports.revert = function(req, res){
 
     files.forEach(function(file){
 
-        mFile.modify({ fileId: file._id }, { del: false }, ep.group('revert'));
+        mFile.modify({ _id: file._id }, { del: false }, ep.group('revert'));
     });
 };
 

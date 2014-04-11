@@ -16,6 +16,10 @@ var app = express();
 
 // all environments
 app.set('port', process.env.PORT || config.PORT);
+if(config.DEBUG){
+    app.set('env', 'development');
+    app.use(express.errorHandler());
+}
 
 app.enable('trust proxy');
 
@@ -36,11 +40,6 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, '../web')));
-
-// development only
-if ('development' === app.get('env')) {
-    app.use(express.errorHandler());
-}
 
 // 检查是否登录, 如果没有登录, 跳转到登录页
 app.all('/', routes.checkAuthAndLogin);

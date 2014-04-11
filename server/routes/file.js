@@ -548,7 +548,11 @@ exports.share = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    if((!toGroups && !toUsers) || (!toGroups.length && !toUsers.length) ){
+    if(toUsers && toUsers.length){
+
+    }else if(toGroups && toGroups.length){
+
+    }else{
         ep.emit('error', 'must has a share target', ERR.PARAM_ERROR);
         return;
     }
@@ -859,7 +863,7 @@ exports.delete = function(req, res){
     files.forEach(function(file){
         // 设置删除标志位
         // 如果删除的是小组的文件, 也是直接设置个标志位, 放到回收站
-        mFile.modify({ fileId: file._id }, { del: true },
+        mFile.modify({ _id: file._id }, { del: true },
                 ep.group('delete', function(file){
 
             // 记录该操作
