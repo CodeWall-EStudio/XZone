@@ -54,6 +54,7 @@ exports.FOLDER_GROUP = Math.pow(2, i++);
 exports.FOLDER_DEPARTMENT = Math.pow(2, i++);
 exports.FOLDER_DEPARTMENT_PUBLIC = Math.pow(2, i++);
 exports.FOLDER_DEPARTMENT_PRIVATE = Math.pow(2, i++);
+exports.FOLDER_DEPARTMENT_ROOT = Math.pow(2, i++);
 
 exports.FOLDER_PREPARE = Math.pow(2, i++);
 exports.FOLDER_SCHOOL = Math.pow(2, i++);

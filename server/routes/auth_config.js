@@ -9,6 +9,7 @@ var db = require('../models/db');
 var ERR = require('../errorcode.js');
 var U = require('../util');
 var config = require('../config');
+var Logger = require('../logger');
 var mUser = require('../models/user');
 var mGroup = require('../models/group');
 var mFolder = require('../models/folder');
@@ -303,7 +304,7 @@ exports.RULES = {
             var ep = new EventProxy();
             ep.fail(callback);
 
-            ep.after('verifyDone', folders.length, function(list){
+            ep.after('verifyDone', folders.length, function(){
                 callback(null);
             });
 
@@ -326,9 +327,14 @@ exports.RULES = {
 
             var msg = 'not auth to search this folder, folderId: ' + folder._id;
 
-            verifyFolder(user, folder, function(err, folder){
+            verifyFolder(user, folder, function(err, errCode){
+                Logger.debug('folder/list#verify:', err, folder.__role & config.FOLDER_DEPARTMENT_ROOT);
+                if(folder.__role & config.FOLDER_DEPARTMENT_ROOT){
+                    // 如果这个目录是部门的根目录, 那么也可以列出文件夹, 但是不能搜索文件
+                    return callback(null);
+                }
                 if(err){
-                    return callback(err, folder);
+                    return callback(msg, folder);
                 }
                 callback(null);
             });// verifyFolder
@@ -341,8 +347,12 @@ exports.RULES = {
             var msg = 'not auth to search this folder, folderId: ' + folder._id;
 
             verifyFolder(user, folder, function(err, folder){
+                if(folder.__role & config.FOLDER_DEPARTMENT_ROOT){
+                    // 如果这个目录是部门的根目录, 那么也可以列出文件夹, 但是不能搜索文件
+                    return callback(null);
+                }
                 if(err){
-                    return callback(err, folder);
+                    return callback(msg, folder);
                 }
                 callback(null);
             });// verifyFolder
@@ -715,6 +725,7 @@ function verifyFolder(user, folder, callback){
         return callback(msg, ERR.NOT_AUTH);
     }
 
+    // 获取文件夹所在的小组
     mGroup.getGroup({ _id: folder.group.oid }, function(err, group){
         if(err){
             return callback(err);
@@ -745,6 +756,13 @@ function verifyFolder(user, folder, callback){
             }else{
                 // 部门私有目录
                 folder.__role |= config.FOLDER_DEPARTMENT_PRIVATE;
+
+                if(folder._id.toString() === group.rootFolder.oid.toString()){
+
+                    // 部门的根目录, 在 folder/list 和 folder/search 等需要用到
+                    user.__role |= config.ROLE_VISITOR;
+                    folder.__role |= config.FOLDER_DEPARTMENT_ROOT;
+                }
             }
 
         }else if(group.type === config.GROUP_GROUP) {

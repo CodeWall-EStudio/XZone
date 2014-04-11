@@ -10,6 +10,7 @@ var path = require('path');
 
 var config = require('./config');
 var routes = require('./routes');
+var Logger = require('./logger');
 
 var app = express();
 
@@ -28,7 +29,7 @@ app.use(express.session({
     store: new MongoStore({
         url: config.DB_URI
     }, function () {
-        console.log(">>>db connection open");
+        Logger.info('session db connection open');
     })
 }));
 app.use(express.bodyParser());
@@ -38,7 +39,7 @@ app.use(express.static(path.join(__dirname, '../web')));
 
 // development only
 if ('development' === app.get('env')) {
-  app.use(express.errorHandler());
+    app.use(express.errorHandler());
 }
 
 // 检查是否登录, 如果没有登录, 跳转到登录页
@@ -64,5 +65,5 @@ app.all('/api/*', routes.checkAPI);
 app.all('/api/*', routes.route);
 
 http.createServer(app).listen(app.get('port'), function(){
-    console.log('Express server listening on port ' + app.get('port'));
+    Logger.info('Express server listening on port: ', app.get('port'));
 });
