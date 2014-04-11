@@ -470,7 +470,7 @@ function shareToGroup(loginUser, params, callback){
 
     ep.on('getFile', function(fl){
         if(fl){
-            return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
+            return ep.emit('error', 'file name duplicate, filename: ' + file.name, ERR.DUPLICATE);
         }
 
         //如果是分享给小组和部门, 要扣掉空间占用

@@ -339,6 +339,14 @@ module.exports = {
                 name: 'closeTime',
                 type: 'number',
                 min: 0
+            },
+            {
+                name: 'isOpen',
+                type: 'number'
+            },
+            {
+                name: 'isReadonly',
+                type: 'number'
             }
         ]
     },
