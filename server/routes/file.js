@@ -903,6 +903,16 @@ exports.search = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
+    ep.on('search', function(total, docs){
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                total: total,
+                list: docs
+            }
+        });
+    });
+
     var searchParams = us.extend({}, parameter, {
         folderId: folder._id
     });
@@ -942,21 +952,15 @@ exports.search = function(req, res){
             searchParams.extendQuery = {
                 'creator.$id': { $in: us.uniq(ids) }
             };
-            mFile.search(searchParams, ep.doneLater('search'));
+            ep.emit('paramsReady');
+            mFile.search(searchParams, ep.done('search'));
         });
-    }else{
-        mFile.search(searchParams, ep.doneLater('search'));
+        return;
     }
 
-    ep.on('search', function(total, docs){
-        res.json({
-            err: ERR.SUCCESS,
-            result: {
-                total: total,
-                list: docs
-            }
-        });
-    });
+    mFile.search(searchParams, ep.done('search'));
+    
+
 };
 
 /**
