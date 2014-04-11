@@ -4,7 +4,7 @@
 		for(var i=0,l=list.length;i<l;i++){
 			var item = list[i];
 	%>
-		<li><i <%if(item.children.length>0 || item.users.length>0){%>cmd="next" class="plus"<%}%> data-id="<%+item._id%>"></i><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
+		<li><i <%if(item.children.length>0 || item.users.length>0){%>cmd="next" class="plus"<%}%> data-id="<%+item._id%>"></i><input type="checkbox" class="dep-click" value="<%+item._id%>" <%if(selected){%>checked<%}%> /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
 		
 	<%
 		}
@@ -15,7 +15,7 @@
 		for(var i=0,l=ulist.length;i<l;i++){ 
 			var item = ulist[i];
 	%>
-		<li><input type="checkbox" value="<%+item._id%>" <%if(typeof ml != 'undefined' && $.inArray(item._id,ml)>=0){%>checked<%}%> /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.nick%></a></li>		
+		<li><input type="checkbox" class="user-click userClick<%+item._id%>" value="<%+item._id%>" data-val="<%+item.nick%>" <%if((typeof ml != 'undefined' && $.inArray(item._id,ml)>=0) || selected){%>checked<%}%> /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.nick%></a></li>		
 	<%
 		}
 	}

@@ -69,10 +69,10 @@
 										<%
 											if(item.isMember && !item.pt){
 										%>
-											<li class="tag<%+item.id%>"><input type="radio" name="gn" value="<%+item.id%>" data-fd="<%+item.rootFolder.id%>" /> <%-item.name%></li>
+											<li class="tag<%+item.id%>"><input type="radio" name="gn" value="<%+item.id%>" data-fd="<%+item.rootFolder.id%>" /> <span class="group-name"><%-item.name%></span></li>
 											<%}%>
 										<%}else{%>
-											<li class="tag<%+item.id%>"><input type="radio" name="gn" value="<%+item.id%>" data-fd="<%+item.rootFolder.id%>" /> <%-item.name%></li>
+											<li class="tag<%+item.id%>"><input type="radio" name="gn" value="<%+item.id%>" data-fd="<%+item.rootFolder.id%>" /> <span class="group-name"><%-item.name%></span></li>
 										<%}%>
 									<%}%>
 								</ul>

@@ -27,14 +27,15 @@
 							</i>
 						</div>
 						<div>
-							选择要发送的用户
+							<div class="share-user-list">选择的用户 <span id="shareToUser"></span></div>
+							<div class="share-user-list">目标用户</div>
 							<ul id="searchResult" class="act-fold-list" style="height:400px;overflow-y:auto;">
 								<%
 									for(var i=0,l=list.length;i<l;i++){
 										var item = list[i];
 										if(item.children || item.users){
 								%>
-									<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
+									<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><input type="checkbox" class="dep-click" value="<%+item._id%>" /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
 									<%}%>
 								<%}%>
 							</ul>

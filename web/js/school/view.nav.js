@@ -88,9 +88,11 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 
 
 	function userList(list,target){
+		var selected = target.find('.dep-click:checked').length;
 		var data = {
 			list : list.children,
-			ulist : list.users
+			ulist : list.users,
+			selected : selected
 		}
 		if(nowGroup){
 			data.ml = nowGroup.ml;
@@ -98,29 +100,29 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		var view = new View({
 			target : target,
 			tplid : 'share.user.li',
-			data : data,
-			after : function(){
-				target.find('.plus').unbind().bind('click',function(e){
-						var target = $(e.target),
-							id = target.attr('data-id');
-						var p = target.parent('li');
-						if(p.find('ul').length > 0){
-							var ul = p.find('ul')[0];
-							if(target.hasClass("minus")){
-								target.removeClass('minus');
-								p.find('ul').hide();
-							}else{
-								target.addClass('minus');
-								p.find('ul').show();
-							}
-							return;
-						}else{	
-							target.addClass('minus');
-							var p = target.parent('li');
-							userList(getUList(id,list.children),p);
-						}
-				});
-			}			
+			data : data//,
+			// after : function(){
+			// 	target.find('.plus').unbind().bind('click',function(e){
+			// 			var target = $(e.target),
+			// 				id = target.attr('data-id');
+			// 			var p = target.parent('li');
+			// 			if(p.find('ul').length > 0){
+			// 				var ul = p.find('ul')[0];
+			// 				if(target.hasClass("minus")){
+			// 					target.removeClass('minus');
+			// 					p.find('ul').hide();
+			// 				}else{
+			// 					target.addClass('minus');
+			// 					p.find('ul').show();
+			// 				}
+			// 				return;
+			// 			}else{	
+			// 				target.addClass('minus');
+			// 				var p = target.parent('li');
+			// 				userList(getUList(id,list.children),p);
+			// 			}
+			// 	});
+			// }			
 		});
 
 		view.appendPanel();
@@ -144,8 +146,32 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 			tplid : tplid,
 			after : function(){
 				actWin.modal('show');	
-				actTarget.find('.plus').unbind().bind('click',function(e){
-						var target = $(e.target),
+				// actTarget.find('.plus').unbind().bind('click',function(e){
+				// 		var target = $(e.target),
+				// 			id = target.attr('data-id');
+				// 		var p = target.parent('li');
+				// 		if(p.find('ul').length > 0){
+				// 			var ul = p.find('ul')[0];
+				// 			if(target.hasClass("minus")){
+				// 				target.removeClass('minus');
+				// 				p.find('ul').hide();
+				// 			}else{
+				// 				target.addClass('minus');
+				// 				p.find('ul').show();
+				// 			}
+				// 			return;
+				// 		}else{	
+				// 			target.addClass('minus');
+				// 			var p = target.parent('li');
+				// 			userList(getUList(id,d.list),p);
+				// 		}
+				// });						
+			},			
+			data : data,
+			handlers : {
+				'.plus' : {
+					'click' : function(){
+						var target = $(this),
 							id = target.attr('data-id');
 						var p = target.parent('li');
 						if(p.find('ul').length > 0){
@@ -162,59 +188,32 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 							target.addClass('minus');
 							var p = target.parent('li');
 							userList(getUList(id,d.list),p);
-						}
-				});						
-			},			
-			data : data,
-			handlers : {
-				/*
-				'.act-search-input' : {
-					'focus' : function(e){
-						var target = $(this),
-							def = target.attr('data-def');
-						if(target.val() == def){
-							target.val('');
-						}						
-					},
-					'blur' : function(e){
-						var target = $(this),
-							def = target.attr('data-def');
-						if(target.val() == ''){
-							target.val(def);
-						}							
-					},
-					'keyup' : function(e){
-						if(e.keyCode == 13){
-							actTarget.find('.act-search-btn').click();
 						}						
 					}
 				},
-				'.act-search-btn' : {
+				'.list-link' : {
 					'click' : function(){
-					var target = actTarget.find('.act-search-input'),
-						def = target.attr('data-def'),
-						key = target.val();
-
-						if(key != def){
-							$('#searchResult li').removeClass('color');
-							for(var i=0,l=d.list.length;i<l;i++){
-
-								var item = d.list[i];
-								
-								if(item.nick.indexOf(key) >=0 ){
-									$('.tag'+item.id).addClass('color');
-								}
-							}
-						}
-					}					
+						var t = $(this),
+							p = t.parent('li');
+						p.find('input').click();
+					}
 				},
-				*/
+				'.dep-click' : {
+					'click' : function(){
+						var t = $(this),
+							v = t.val(),
+							p = t.parent('li');
+						p.find('.plus').click();
+						var check = t.prop('checked');
+						p.find('ul input').prop({'checked':check});
+					}
+				},
 				'.btn-post' : {
 					'click' : function(){
 						var name = actTarget.find('.new-group-name').val(),
 							desc = actTarget.find('.new-group-desc').val(),
 							members = [];
-						actTarget.find('input:checked').each(function(){
+						actTarget.find('.user-click:checked').each(function(){
 							members.push($(this).val());
 						});
 						if(name == ''){
@@ -236,8 +235,6 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 						if(d.data){
 							obj.groupId = d.data.id;
 						}
-						console.log(tplid);
-						console.log(obj);
 						if(tplid == 'group.new'){
 							handerObj.triggerHandler('manage.nav:new',obj);
 						}else{

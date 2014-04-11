@@ -1,16 +1,23 @@
 <ul>
-	<%
-	if(list.length > 0){
-		for(var i in list){
-			var item = list[i];
-	%>
-		<li class="list-li fold<%+item.id%>">
-			<i <%if(item.hasChild){%>cmd="next" class="plus"<%}%> data-id="<%+item.id%>" data-gid="<%+gid%>"></i><input type="radio" name="foldname" value="<%+item.id%>" data-gid="<%+gid%>" /><a title="<%+item.name%>" class="list-link" data-id="<%+item.id%>"> <%=item.name%></a>							
-		</li>						
-	<%
-		}
-	}else{
-	%>
-		<li><input type="radio" name="foldname" />根目录</li>
+	<%if(root){%>
+		<ul>
+			<li>
+				<%if(list.length>0){%><i cmd="next" class="minus"></i><%}%><input name="foldname" type="radio" checked value="0" /> <a>根目录</a>
+				<ul>
 	<%}%>
+		<%
+			for(var i in list){
+				var item = list[i];
+		%>
+			<li class="list-li fold<%+item.id%>">
+				<i <%if(item.hasChild){%>cmd="next" class="plus"<%}%> data-id="<%+item.id%>" data-gid="<%+gid%>"></i><input type="radio" name="foldname" value="<%+item.id%>" data-gid="<%+gid%>" /><a title="<%+item.name%>" class="list-link" data-id="<%+item.id%>"> <%=item.name%></a>							
+			</li>						
+		<%
+			}
+		%>
+	<%if(root){%>
+				</ul>
+			</li>
+		</ul>
+	<%}%>	
 </ul>

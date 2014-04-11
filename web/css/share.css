@@ -131,6 +131,7 @@ body {
 #groupResult{
 	float:left;
 	width:160px;
+	padding-top:10px;
 }
 #groupResult li{
 	padding:5px 10px;
@@ -138,10 +139,15 @@ body {
 #groupResult .color{
 	color:#f00;
 }
+#groupResult .group-result{
+	padding-top:10px;
+}
 #groupFoldResult{
 	float:left;
+	padding-top:10px;
 }
 .group-fold-result{
+	padding-top:10px;
 	float:left;
 	height:300px;
 	overflow-y:auto;
@@ -153,4 +159,27 @@ body {
 }
 .group-fold-result li{
 	padding:4px 0;
+}
+.act-fold-list{
+	border: 1px solid #ddd;
+	padding:10px;
+}
+.act-fold-list ul{
+	padding-left:20px;
+}
+.act-fold-list li{
+	padding:5px 0;
+}
+.share-user-list{
+	padding:5px 0;
+}
+.share-user-span{
+	margin-right:12px;
+}
+.share-user-span i{
+	display:inline-block;
+	background:url(imgs/close.png) no-repeat;
+	width:12px;
+	height:12px;
+	cursor:pointer;
 }

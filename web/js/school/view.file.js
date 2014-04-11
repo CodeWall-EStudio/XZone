@@ -11,6 +11,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowUid = 0,
 		nowPrep = 0, //当前是否是备课
 		rootFd = 0,
+		depnum = -1,
 		nowTotal = 0,
 		nowUid = 0,
 		nowGrade = 0,
@@ -74,6 +75,16 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowTotal = 0;
 		nextPage = 0;
 		action = 1;
+
+		if(depnum < 0){
+			var myInfo = Cache.get('myinfo');
+			depnum = myInfo.dep.length;
+			if(!depnum){
+				$("#actDropDown .dep").hide();
+			}else{
+				$("#actDropDown .dep").show();
+			}
+		}
 
 		if(d){
 			nowGid = d.gid || 0;
@@ -180,6 +191,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				ginfo : nowGroup,
 				down : config.cgi.filedown,
 				pr : nowPrep,
+				dep : depnum,
 				school : nowSchool,
 				auth : nowAuth
 			}
@@ -394,13 +406,16 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		return null;
 	}
 
+	//分享的用户列表
 	function userList(list,target){
+		var selected = target.find('.dep-click:checked').length;
 		var view = new View({
 			target : target,
 			tplid : 'share.user.li',
 			data : {
 				list : list.children,
-				ulist : list.users
+				ulist : list.users,
+				selected : selected
 			},
 			after : function(){
 				target.find('.plus').unbind().bind('click',function(e){
@@ -425,8 +440,27 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				});
 			}			
 		});
-
 		view.appendPanel();
+	}
+
+	//添加
+	function addShareUser(obj){
+		//console.log(obj);
+		if($('.shareUser'+obj._id).length==0){
+			var view = new View({
+				target : $('#shareToUser'),
+				tplid : 'share.user.span',
+				data : obj
+			});
+			view.appendPanel();
+		}
+	}
+	//删除
+	function delShareUser(obj){
+		$('.shareUser'+obj._id).remove();
+		$('.userClick'+obj._id).prop({
+			'checked':false
+		});
 	}
 
 	function shareuserLoad(e,d){
@@ -440,8 +474,34 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			},
 			after : function(){
 				$("#actWin").modal('show');
-				actTarget.find('.plus').unbind().bind('click',function(e){
-						var target = $(e.target),
+			},
+			handlers : {
+				'.del-share-user' : {
+					'click' : function(){
+						var t = $(this),
+							id = t.attr('data-id');
+						delShareUser({_id:id});
+					}
+				},
+				'.user-click' : {
+					'click' : function(){
+						var t = $(this),
+							id = t.val(),
+							nick = t.attr('data-val');
+						if(t.prop('checked')){
+							addShareUser({
+								_id : id,
+								nick : nick
+							});
+						}else{
+							delShareUser({_id:id});	
+						}
+
+					}
+				},
+				'.plus' : {
+					'click' : function(){
+						var target = $(this),
 							id = target.attr('data-id');
 						var p = target.parent('li');
 						if(p.find('ul').length > 0){
@@ -458,10 +518,38 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 							target.addClass('minus');
 							var p = target.parent('li');
 							userList(getUList(id,d.list),p);
+						}						
+					}
+				},
+				'.list-link' : {
+					'click' : function(){
+						var t = $(this),
+							p = t.parent('li');
+						p.find('input').click();
+					}
+				},
+				'.dep-click' : {
+					'click' : function(){
+						var t = $(this),
+							v = t.val(),
+							p = t.parent('li');
+						var check = t.prop('checked');
+						p.find('ul input').prop({'checked':check});
+						var list = getUList(v,d.list);
+						if(list.users){
+							var ul = list.users;
+							for(var i=0,l=ul.length;i<l;i++){
+								var item = ul[i];
+								if(check){
+									addShareUser(item);
+								}else{
+									delShareUser(item);
+								}
+							}
 						}
-				});
-			},
-			handlers : {		
+
+					}
+				},
 				'.btn-share' : {
 					'click' : function(){
 						var fls = [];						
@@ -494,11 +582,19 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			tplid : d.tplid,
 			data : {
 				list : d.list,
-				gid : d.gid
+				gid : d.gid,
+				root : d.root
 			}
 		};
 		if(d.root){
 			obj.handlers =  {
+				'.list-link' : {
+					'click' : function(e){
+						var t = $(this);
+						p = t.parent('li');
+						p.find('input').click();
+					}
+				},
 				'.plus' : {
 					'click' : function(e){
 						var t = $(this),
@@ -582,6 +678,12 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 					}
 				});
 
+				$('#groupResult .group-name').bind('click',function(){
+					var t = $(this),
+						p = t.parent('li');
+						p.find('input').click();
+				});
+
 				$('#groupResult input[type=radio]').bind('click',function(){
 					var t = $(this),
 						v = t.val(),
@@ -620,7 +722,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 						var obj = {
 							fileId : fls
 						};
-						if(fdid){
+						if(fdid && fdid.length > 20){
 							obj.toFolderId = [fdid];
 						}
 						// if(d.type == 'other'){

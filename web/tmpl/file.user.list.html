@@ -40,8 +40,12 @@
 								<span><a class="share-file" data-toggle="dropdown" href="#" data-id="1">共享</a>
 								<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 									<li class="no-act"><a class="no-act" cmd="other" data-id="<%+item.id%>" data-name="<%+item.name%>">发送给别人</a></li>
+									
 									<li class="no-act"><a class="no-act" cmd="group" data-id="<%+item.id%>" data-name="<%+item.name%>">到小组空间</a></li>
+									
+									<%if(dep){%>
 									<li class="no-act"><a class="no-act" cmd="dep" data-id="<%+item.id%>" data-name="<%+item.name%>">到部门空间</a></li>
+									<%}%>
 									<li class="no-act"><a class="no-act" cmd="school" data-id="<%+item.id%>" data-name="<%+item.name%>">到学校空间</a></li>		
 								</ul>
 								<%}%>

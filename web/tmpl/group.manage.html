@@ -48,7 +48,7 @@
 										var item = list[i];
 										if(item.children || item.users){
 								%>
-									<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
+									<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><input type="checkbox" class="dep-click" value="<%+item._id%>" /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
 									<%}%>
 								<%}%>
 							</ul>
