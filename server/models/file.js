@@ -7,6 +7,7 @@ var us = require('underscore');
 var db = require('./db');
 var ERR = require('../errorcode');
 var U = require('../util');
+var Logger = require('../logger');
 var mRes = require('./resource');
 var mUser = require('./user');
 var mFolder = require('./folder');
@@ -212,10 +213,11 @@ exports.search = function(params, callback){
         }
 
         db.search('file', query, params, function(err, total, docs){
+            Logger.debug('mfile/search: ',err, total, docs);
             if(err){
                 callback(err);
             }else if(total && docs && !noDef){
-
+                Logger.debug(total, docs, !noDef);
                 var defProps = { resource: ['_id', 'type', 'size'] , creator: ['_id', 'nick']};
                 if(extendDefProps){
                     defProps = us.extend(defProps, extendDefProps);
@@ -228,6 +230,7 @@ exports.search = function(params, callback){
                     }
                 });
             }else{
+                Logger.debug('noDef', noDef);
                 callback(null, total || 0, docs);
             }
         });

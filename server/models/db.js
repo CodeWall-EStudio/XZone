@@ -4,6 +4,7 @@ var us = require('underscore');
 
 var config = require('../config');
 var U = require('../util');
+var Logger = require('../logger');
 
 var ins = null;
 
@@ -17,7 +18,7 @@ exports.open = function(callback){
         if(!err){
             ins = db;
         }else{
-            console.log('DB open error: ', err);
+            Logger.error('DB open error: ', err);
         }
         callback(err, db);
     });
@@ -41,13 +42,14 @@ exports.getCollection = function(name, callback){
 };
 
 exports.dereference = function(doc, keys, callback){
+    Logger.debug('dereference: ', doc, keys);
     exports.open(function(err, db){
         if(err){
             callback(err, null);
         }else{
             var ep = new EventProxy();
             ep.after('deref', U.objectSize(keys), function(list){
-
+                Logger.debug('dereference done: ', doc);
                 callback(null, doc);
             });
             ep.fail(callback);
@@ -101,13 +103,13 @@ exports.search = function(collectionName, query, options, callback){
         order = U.jsonParse(order);
     }
 
-    console.log('>>>search:', collectionName, query, order, page, pageNum);
+    Logger.info('search:', collectionName, query, order, page, pageNum);
     exports.getCollection(collectionName, function(err, collection){
         
         var cursor = collection.find(query);
         var ep = EventProxy.create('total', 'result', function(total, list){
+            Logger.info('search done:', collectionName, query, order, page, pageNum, '\ntotal: ', total);
             callback(null, total || 0, list);
-            console.log('>>>search:', collectionName, query, order, page, pageNum, 'total: ', total);
         });
         ep.fail(callback);
 

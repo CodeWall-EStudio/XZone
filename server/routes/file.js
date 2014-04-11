@@ -933,21 +933,20 @@ exports.search = function(req, res){
     }else if(folder.__role & config.FOLDER_DEPARTMENT_PUBLIC){
         // 公開文件夾下只能看到部门成员和本人上传的文件
         var ids = [loginUser._id];
-        searchParams.extendQuery = {
-            'creator.$id': { $in: ids }
-        };
         mGroup.getGroupMemberIds(folder.group.oid, function(err, docs){
             if(docs && docs.length){
                 docs.forEach(function(doc){
                     ids.push(doc.user.oid);
                 });
             }
-            mFile.search(searchParams, ep.done('search'));
+            searchParams.extendQuery = {
+                'creator.$id': { $in: us.uniq(ids) }
+            };
+            mFile.search(searchParams, ep.doneLater('search'));
         });
-        return;
+    }else{
+        mFile.search(searchParams, ep.doneLater('search'));
     }
-    
-    mFile.search(searchParams, ep.done('search'));
 
     ep.on('search', function(total, docs){
         res.json({
