@@ -10,6 +10,7 @@ var us = require('underscore');
 var db = require('../models/db');
 var config = require('../config');
 var ERR = require('../errorcode');
+var Logger = require('../logger');
 var mFile = require('../models/file');
 var mFolder = require('../models/folder');
 var mRes = require('../models/resource');
@@ -917,6 +918,8 @@ exports.search = function(req, res){
         folderId: folder._id
     });
 
+    Logger.debug('file/search: ', folder);
+
     if(folder.__role & config.FOLDER_PRIVATE){
         // 个人空间搜索, 搜索自己创建的文件
         searchParams.creator = loginUser._id;
@@ -959,7 +962,6 @@ exports.search = function(req, res){
     }
 
     mFile.search(searchParams, ep.done('search'));
-    
 
 };
 
