@@ -1021,3 +1021,51 @@ exports.query = function(req, res){
         });
     });
 };
+
+/**
+ * 统计文件类型和占用量
+ * @param  {[type]} req [description]
+ * @param  {[type]} res [description]
+ * @return {[type]}     [description]
+ */
+exports.statistics = function(req, res){
+    var parameter = req.parameter;
+    var folder = parameter.folderId;
+
+    var searchParams = {
+        folderId: folder._id,
+        recursive: true
+    };
+
+    mFile.search(searchParams, function(err, total, docs){
+        if(err){
+            return res.json({ err: total || ERR.SERVER_ERROR, msg: err});
+        }
+        var totalSize = 0;
+        var list = {};
+        docs.forEach(function(file){
+            totalSize += file.size || 0;
+            var obj = list[file.type];
+            if(!obj){
+                list[file.type] = obj = {
+                    size: 0,
+                    count: 0
+                };
+            }
+            obj.size += file.size || 0;
+            obj.count ++;
+        });
+
+        var result = {
+            totalCount: docs.length,
+            totalSize: totalSize,
+            list: list
+        };
+        res.json({
+            err: ERR.SUCCESS,
+            result: result
+        });
+
+    });
+};
+

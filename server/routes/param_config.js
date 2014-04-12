@@ -260,6 +260,16 @@ module.exports = {
             }
         ]
     },
+    '/api/file/statistics': {
+        method: 'GET',
+        params: [
+            {
+                name: 'folderId',
+                type: 'folder',
+                required: true
+            }
+        ]
+    },
 
     // media
     '/api/media/upload': {
