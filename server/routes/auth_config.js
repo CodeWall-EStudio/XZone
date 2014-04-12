@@ -245,7 +245,23 @@ exports.RULES = {
     //         callback(null);
     //     }
     // },
+    '/api/file/statistics': {
+        verify: function(user, parameter, callback){
+            // 可以统计:
+            // 自己创建的文件; 自己所属部门/小组的文件; 部门的公开文件夹; 学校空间的文件; 备课小组的人可以查看备课文件夹
+            
+            var folder = parameter.folderId;
+            // var msg = 'not auth to access file to this folder, folderId: ' + folder._id;
 
+            verifyFolder(user, folder, function(err, errCode){
+
+                if(err){
+                    return callback(err, errCode);
+                }
+                callback(null);
+            });// verifyFolder
+        }
+    },
     // media
     // '/api/media/upload': {
     // },
