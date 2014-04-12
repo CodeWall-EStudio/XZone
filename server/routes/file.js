@@ -921,6 +921,7 @@ exports.search = function(req, res){
     Logger.debug('file/search: ', folder);
 
     if(folder.__role & config.FOLDER_PRIVATE){
+
         // 个人空间搜索, 搜索自己创建的文件
         searchParams.creator = loginUser._id;
     }else if(folder.__role & config.FOLDER_SCHOOL){
@@ -933,7 +934,11 @@ exports.search = function(req, res){
             // 否则只返回审核通过的文件
             searchParams.extendQuery.validateStatus = 1;
         }
+    }else if(loginUser.__role & config.ROLE_FOLDER_MEMBER){
+
+        // 小组/部门成员
     }else if(folder.__role & config.FOLDER_DEPARTMENT_PRIVATE){
+
         // 非部门公開就不返回內容
         res.json({
             err: ERR.SUCCESS,
@@ -955,7 +960,7 @@ exports.search = function(req, res){
             searchParams.extendQuery = {
                 'creator.$id': { $in: us.uniq(ids) }
             };
-            ep.emit('paramsReady');
+
             mFile.search(searchParams, ep.done('search'));
         });
         return;

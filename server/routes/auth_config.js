@@ -328,7 +328,7 @@ exports.RULES = {
             var msg = 'not auth to search this folder, folderId: ' + folder._id;
 
             verifyFolder(user, folder, function(err, errCode){
-                Logger.debug('folder/list#verify:', err, folder.__role & config.FOLDER_DEPARTMENT_ROOT);
+                Logger.debug('folder/list#verify:', err, 'FOLDER_DEPARTMENT_ROOT: ', folder.__role & config.FOLDER_DEPARTMENT_ROOT);
                 if(folder.__role & config.FOLDER_DEPARTMENT_ROOT){
                     // 如果这个目录是部门的根目录, 那么也可以列出文件夹, 但是不能搜索文件
                     return callback(null);
@@ -799,6 +799,7 @@ function verifyFolder(user, folder, callback){
         }
 
         folder.__user_role = user.__role;
+        group.__user_role = user.__role;
 
         if(hasAuth){
             return callback(null, folder);
