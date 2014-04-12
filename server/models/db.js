@@ -42,14 +42,14 @@ exports.getCollection = function(name, callback){
 };
 
 exports.dereference = function(doc, keys, callback){
-    Logger.debug('dereference: ', doc, keys);
+    Logger.debug('dereference: ', doc._id, keys);
     exports.open(function(err, db){
         if(err){
             callback(err, null);
         }else{
             var ep = new EventProxy();
             ep.after('deref', U.objectSize(keys), function(list){
-                Logger.debug('dereference done: ', doc);
+                Logger.debug('dereference done: ', doc._id);
                 callback(null, doc);
             });
             ep.fail(callback);

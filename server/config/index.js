@@ -1,5 +1,6 @@
 var us = require('underscore');
 var path = require('path');
+var fs = require('fs');
 
 var Logger = require('../logger');
 
@@ -9,15 +10,17 @@ us.extend(exports, require('./filetypes'));
 
 us.extend(exports, require('./constants'));
 
-var appConfig = null;
-// 从上一级目录读取系统的个性配置
+// 从上一级目录(跟 server/ 同级的config.js)读取系统的个性配置
 try{
     var filename = '../../config.js';
-    appConfig = require(filename);
-    Logger.info('load custom config, filename: ' + path.resolve(path.join(__dirname, filename)));
+    var abspath = path.resolve(path.join(__dirname, filename));
+    if(fs.existsSync(abspath)){
+
+        us.extend(exports, require(filename));
+        Logger.info('load custom config, filename: ' + abspath);
+    }else{
+        Logger.info('has\'t assign custom config, use default');
+    }
 }catch(e){
-    Logger.info('has\'t assign custom config, use default');
-}
-if(appConfig){
-    us.extend(exports, appConfig);
+    Logger.error('load custom config error: ', e);
 }
