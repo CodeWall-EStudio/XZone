@@ -40,12 +40,12 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			gname : nowGinfo.name || '',
 			school : nowSchool,
 			filetype : config.filetype,
+			root : rootFd,
 			type : nowType,
 			key : nowKey,
 			fold : obj || 0,
 			fdid : nowFd
-		};		
-
+		};	
 		if(nowPrep == 'my'){
 			tpl = 'prep.tit';
 			data.pr = nowPrep;

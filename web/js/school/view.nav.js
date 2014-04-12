@@ -100,33 +100,32 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		var view = new View({
 			target : target,
 			tplid : 'share.user.li',
-			data : data//,
-			// after : function(){
-			// 	target.find('.plus').unbind().bind('click',function(e){
-			// 			var target = $(e.target),
-			// 				id = target.attr('data-id');
-			// 			var p = target.parent('li');
-			// 			if(p.find('ul').length > 0){
-			// 				var ul = p.find('ul')[0];
-			// 				if(target.hasClass("minus")){
-			// 					target.removeClass('minus');
-			// 					p.find('ul').hide();
-			// 				}else{
-			// 					target.addClass('minus');
-			// 					p.find('ul').show();
-			// 				}
-			// 				return;
-			// 			}else{	
-			// 				target.addClass('minus');
-			// 				var p = target.parent('li');
-			// 				userList(getUList(id,list.children),p);
-			// 			}
-			// 	});
-			// }			
+			data : data//,		
 		});
-
 		view.appendPanel();
 	}		
+
+	//添加
+	function addShareUser(obj){
+		//console.log(obj);
+		if($('.shareUser'+obj._id).length==0){
+			var view = new View({
+				target : $('#groupSelectUser'),
+				tplid : 'share.user.span',
+				data : obj
+			});
+			view.appendPanel();
+		}
+	}
+	//删除
+	function delShareUser(obj){
+		$('.shareUser'+obj._id).remove();
+		$('.userClick'+obj._id).prop({
+			'checked':false
+		}).parents('ul.child').prevAll('.dep-click').prop({
+			'checked':false
+		});
+	}
 
 	function userLoad(e,d){
 		if(!userlist){
@@ -146,29 +145,32 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 			tplid : tplid,
 			after : function(){
 				actWin.modal('show');	
-				// actTarget.find('.plus').unbind().bind('click',function(e){
-				// 		var target = $(e.target),
-				// 			id = target.attr('data-id');
-				// 		var p = target.parent('li');
-				// 		if(p.find('ul').length > 0){
-				// 			var ul = p.find('ul')[0];
-				// 			if(target.hasClass("minus")){
-				// 				target.removeClass('minus');
-				// 				p.find('ul').hide();
-				// 			}else{
-				// 				target.addClass('minus');
-				// 				p.find('ul').show();
-				// 			}
-				// 			return;
-				// 		}else{	
-				// 			target.addClass('minus');
-				// 			var p = target.parent('li');
-				// 			userList(getUList(id,d.list),p);
-				// 		}
-				// });						
 			},			
 			data : data,
 			handlers : {
+				'.del-share-user' : {
+					'click' : function(){
+						var t = $(this),
+							id = t.attr('data-id');
+						delShareUser({_id:id});
+					}
+				},
+				'.user-click' : {
+					'click' : function(){
+						var t = $(this),
+							id = t.val(),
+							nick = t.attr('data-val');
+						if(t.prop('checked')){
+							addShareUser({
+								_id : id,
+								nick : nick
+							});
+						}else{
+							delShareUser({_id:id});	
+						}
+
+					}
+				},
 				'.plus' : {
 					'click' : function(){
 						var target = $(this),
@@ -206,6 +208,18 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 						p.find('.plus').click();
 						var check = t.prop('checked');
 						p.find('ul input').prop({'checked':check});
+						var list = getUList(v,d.list);
+						if(list.users){
+							var ul = list.users;
+							for(var i=0,l=ul.length;i<l;i++){
+								var item = ul[i];
+								if(check){
+									addShareUser(item);
+								}else{
+									delShareUser(item);
+								}
+							}
+						}
 					}
 				},
 				'.btn-post' : {

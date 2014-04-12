@@ -460,6 +460,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		$('.shareUser'+obj._id).remove();
 		$('.userClick'+obj._id).prop({
 			'checked':false
+		}).parents('ul.child').prevAll('.dep-click').prop({
+			'checked':false
 		});
 	}
 

@@ -15,7 +15,7 @@
 		    <a href="#" style="z-index:20">个人文件</a>
 		<%}%>
 	<%}%>
-	<%if(fold){%>
+	<%if(fold && root != fold.id){%>
 		<ul id="topFoldPath" class="dropdown-menu menu tit-menu" role="menu" aria-labelledby="dLabel1">
 
 		</ul>
@@ -43,7 +43,9 @@
 			</ul>
 			</div>						
 		<%}else{%>	
+			<%if(root != fold.id){%>
 			<a data-id="<%=fold.idpath[l-1]%>" class="end" data-target="thisFoldPath" style="z-index:18"><%-fold.name%></a>
+			<%}%>
 		<%}%>
 		<%if(fold.pid){%>	
 		<a class="second" style="z-index:17" class="end" href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>">返回上级</a>

@@ -17,38 +17,38 @@
 				<textarea class="new-group-desc" style="width:400px;height:120px;"><%-group.content%></textarea>
 			</td>
 		</tr>	
-		<!--
-		<tr>
-			<td width="100">成员管理:</td>
-			<td>
-				<div class="share-act-zone">
-					<p><input type="text" value="搜索用户" data-def="搜索用户" class="act-search-input" /><i class="act-search-btn"></i></p>
-				</div>
-			</td>
-		</tr>
-		-->
 		<tr>
 			<td colspan="2">
-				<!--
-					用户列表
-					<ul id="searchResult" class="group-member-list">
-						<%
-							for(var i = 0,l=list.length;i<l;i++){
-								var item = list[i];
-						%>
-							<li class="tag<%+item.id%>"><input type="checkbox" value="<%-item.id%>" <%if($.inArray(item.id,group.ml)>=0 && group.mlist[item.id].auth){%>disabled<%}%> <%if($.inArray(item.id,group.ml)>=0){%>checked<%}%> /> <%-item.nick%></li>
-						<%}%>
-					</ul>
-				-->
 						<div>
-							用户列表
+							<div>已选用户列表:<span id="groupSelectUser">
+								<%
+									for(var i = 0,l=group.members.length;i<l;i++){
+										var item = group.members[i];
+								%>
+								<span class="share-user-span shareUser<%+item._id%>"><%-item.nick%><i class="del-share-user" data-id="<%+item._id%>"></i></span>					
+								<%}%>			
+							</span></div>
+							<div>用户列表</div>							
+
 							<ul id="searchResult" class="act-fold-list" style="height:180px;overflow-y:auto;">
 								<%
 									for(var i=0,l=list.length;i<l;i++){
 										var item = list[i];
 										if(item.children || item.users){
+											var full = 0;
+											if(item.users){
+												var length = 0;
+												for(var m in item.users){
+													if($.inArray(item.users[m]._id,group.ml)>=0){
+														length++;
+													}
+												}
+												if(length == item.users.length){
+													full = 1;
+												}
+											}
 								%>
-									<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><input type="checkbox" class="dep-click" value="<%+item._id%>" /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
+									<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><input type="checkbox" class="dep-click" value="<%+item._id%>" <%if(full){%>checked<%}%> /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
 									<%}%>
 								<%}%>
 							</ul>

@@ -314,7 +314,6 @@ define(['config'],function(config){
     	// $('#fileList .fclick:checked').each(function(){
     	// 	$(this).attr('checked',false);
     	// });
-    	console.log(nowAuth);
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
