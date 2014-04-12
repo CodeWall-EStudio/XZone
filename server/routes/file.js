@@ -1048,6 +1048,7 @@ exports.statistics = function(req, res){
             var obj = list[file.type];
             if(!obj){
                 list[file.type] = obj = {
+                    type: file.type,
                     size: 0,
                     count: 0
                 };
