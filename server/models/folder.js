@@ -219,7 +219,7 @@ exports.search = function(params, callback){
         }else if(total && docs && isDeref){
             db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
                 if(err){
-                    callback(err)
+                    callback(err);
                 }else{
                     callback(null, total || 0, docs);
                 }
@@ -228,4 +228,4 @@ exports.search = function(params, callback){
             callback(null, total || 0, docs);
         }
     });
-}
+};

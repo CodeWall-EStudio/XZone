@@ -223,13 +223,15 @@ exports.RULES = {
             var folder = parameter.folderId;
             // var msg = 'not auth to access file to this folder, folderId: ' + folder._id;
 
-            verifyFolder(user, folder, function(err, fld){
+            verifyFolder(user, folder, function(err, errCode){
+                if((errCode === ERR.NOT_AUTH) &&
+                        (folder.__role & config.FOLDER_DEPARTMENT_PRIVATE)){
+                    
+                    // 部门的私有目录也允许通过, 但是接口里只会返回空数组
+                    return callback(null);
+                }
                 if(err){
-                    if(fld === ERR.NOT_AUTH && (folder.__role & config.FOLDER_DEPARTMENT_PRIVATE)){
-                        // 部门的私有目录也允许通过, 但是接口里只会返回空数组
-                        return callback(null);
-                    }
-                    return callback(err, folder);
+                    return callback(err, errCode);
                 }
                 callback(null);
             });// verifyFolder
@@ -329,12 +331,14 @@ exports.RULES = {
 
             verifyFolder(user, folder, function(err, errCode){
                 Logger.debug('folder/list#verify:', err, 'FOLDER_DEPARTMENT_ROOT: ', folder.__role & config.FOLDER_DEPARTMENT_ROOT);
-                if(folder.__role & config.FOLDER_DEPARTMENT_ROOT){
+                if((errCode === ERR.NOT_AUTH) &&
+                        (folder.__role & config.FOLDER_DEPARTMENT_ROOT)){
+
                     // 如果这个目录是部门的根目录, 那么也可以列出文件夹, 但是不能搜索文件
                     return callback(null);
                 }
                 if(err){
-                    return callback(msg, folder);
+                    return callback(msg, errCode);
                 }
                 callback(null);
             });// verifyFolder
@@ -346,13 +350,15 @@ exports.RULES = {
 
             var msg = 'not auth to search this folder, folderId: ' + folder._id;
 
-            verifyFolder(user, folder, function(err, folder){
-                if(folder.__role & config.FOLDER_DEPARTMENT_ROOT){
+            verifyFolder(user, folder, function(err, errCode){
+                if((errCode === ERR.NOT_AUTH) &&
+                        (folder.__role & config.FOLDER_DEPARTMENT_ROOT)){
+
                     // 如果这个目录是部门的根目录, 那么也可以列出文件夹, 但是不能搜索文件
                     return callback(null);
                 }
                 if(err){
-                    return callback(msg, folder);
+                    return callback(msg, errCode);
                 }
                 callback(null);
             });// verifyFolder
