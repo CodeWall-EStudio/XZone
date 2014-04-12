@@ -213,7 +213,7 @@ exports.search = function(params, callback){
         }
 
         db.search('file', query, params, function(err, total, docs){
-            Logger.debug('mfile/search: ',err, total, docs);
+            Logger.debug('mfile/search: ',err, total);
             if(err){
                 callback(err);
             }else if(total && docs && !noDef){

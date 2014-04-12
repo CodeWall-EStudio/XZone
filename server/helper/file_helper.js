@@ -9,6 +9,7 @@ var archiver = require('archiver');
 var db = require('../models/db');
 var config = require('../config');
 var ERR = require('../errorcode');
+var Logger = require('../logger');
 var mFile = require('../models/file');
 var mFolder = require('../models/folder');
 var mRes = require('../models/resource');
@@ -69,6 +70,7 @@ exports.saveUploadFile = function(params, callback){
                 if(err){
                     return ep.emit('error', err, ERR.SERVER_ERROR);
                 }
+                Logger.debug(group, fileSize);
                 mGroup.checkUsed(group, fileSize, ep.done('updateSpaceUsed'));
             });
         }else{ // 检查个人配额
