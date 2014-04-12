@@ -585,9 +585,14 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			data : {
 				list : d.list,
 				gid : d.gid,
-				root : d.root
+				root : d.root,
+				ismember : true
 			}
 		};
+		var myinfo = Cache.get('myinfo');
+		if(myinfo.dep2key[d.gid]){
+			obj.data.ismember = myinfo.dep2key[d.gid].isMember;
+		}
 		if(d.root){
 			obj.handlers =  {
 				'.list-link' : {

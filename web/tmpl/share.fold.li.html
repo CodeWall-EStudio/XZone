@@ -2,7 +2,17 @@
 	<%if(root){%>
 		<ul>
 			<li>
-				<%if(list.length>0){%><i cmd="next" class="minus"></i><%}%><input name="foldname" type="radio" checked value="0" /> <a>根目录</a>
+				<%if(list.length>0){%><i cmd="next" class="minus"></i><%}%>
+				<%if(ismember){%>
+					<input name="foldname" type="radio" <%if(ismember){%>checked<%}%> value="0" /> <a>根目录</a>				
+				<%}else{%>
+					<%if(list.length>0){%>
+						<input name="foldname" type="radio" value="0" <%if(!ismember){%>disabled<%}%> /> <a>根目录</a>
+					<%}else{%>
+						该部门还没有公开文件夹
+					<%}%>				
+				<%}%>
+
 				<ul>
 	<%}%>
 		<%

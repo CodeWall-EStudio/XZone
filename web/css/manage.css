@@ -34,3 +34,32 @@
 .btn-search{
 	margin-left:12px;
 }
+.maside{
+	position:absolute;
+	width:160px;
+}
+.maside .manage-nav{
+	padding:10px;
+}
+.manage-nav li{
+	line-height:24px;
+	padding:4px 0 4px 12px;
+	border:1px solid #ddd;
+	border-right:0;
+}
+
+.manage-section{
+	float:left;
+	margin-left:180px;
+	border:1px solid #ddd;
+	min-width: 810px;
+	min-height: 600px;
+	height: 100%;
+	width: 100%;	
+}
+.manage-list-zone{
+	height:50%;
+}
+.manage-act-zone{
+	height:50%;
+}
