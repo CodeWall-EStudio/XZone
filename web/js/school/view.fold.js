@@ -76,7 +76,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			data : data,
 			handlers : {
 				'.dr-menu' : {
-					'click' : function(e){
+					'mouseenter' : function(e){
 						var t = $(this);
 							target = t.attr('data-target'),
 							id = t.attr('data-id'),
@@ -92,7 +92,6 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 							}
 							if(mt.attr('loading')){
 								$('.tit-menu').hide();
-								mt.show();
 								//mt.dropdown('toggle');
 							}else{
 								handerObj.triggerHandler('fold:get',obj);
@@ -182,6 +181,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				//d.target.dropdown('toggle');
 				$('.tit-menu').hide();
 				d.target.show();
+				if(d.list.length>0){
+					d.target.removeClass('hide');
+				}
 				d.target.attr('loading',1);
 			}
 		});	
