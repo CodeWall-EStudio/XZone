@@ -201,6 +201,7 @@ exports.download = function(req, res){
 
         mLog.create({
             // fromUserId: loginUser._id,
+            fromUserId: null,
             fromUserName: 'media download',
 
             fileId: file._id,

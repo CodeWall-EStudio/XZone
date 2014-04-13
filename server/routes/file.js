@@ -396,8 +396,10 @@ function shareToUser(loginUser, params, callback){
         // 记录该操作
         mLog.create({
             fromUserId: loginUser._id,
+            fromUserName: loginUser.nick,
 
             toUserId: user._id,
+            touserName: user.nick,
 
             fileId: file._id,
             fileName: file.name,
@@ -628,6 +630,7 @@ function modifyFile(user, params, callback){
         // 记录该操作
         mLog.create({
             fromUserId: user._id,
+            fromUserName: user.nick,
 
             fileId: file._id,
             fileName: oldFileName,
@@ -722,6 +725,7 @@ function copyFile(user, params, callback){
         // 记录该操作
         mLog.create({
             fromUserId: user._id,
+            fromUserName: user.nick,
 
             fileId: file._id,
             fileName: file.name,
@@ -794,6 +798,7 @@ function moveFile(user, params, callback){
         // 记录该操作
         mLog.create({
             fromUserId: user._id,
+            fromUserName: user.nick,
 
             fileId: file._id,
             fileName: file.name,

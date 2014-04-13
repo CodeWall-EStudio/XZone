@@ -235,6 +235,7 @@ function deleteFolder(loginUser, folder, callback){
             fromUserName: loginUser.nick,
 
             folderId: folder._id,
+            folderName: folder.name,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
