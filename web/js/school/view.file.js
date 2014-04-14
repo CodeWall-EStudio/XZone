@@ -1078,6 +1078,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				down : config.cgi.filedown,
 				school : nowSchool,
 				auth : nowAuth,
+				dep : depnum,
 				pr : pr
 			}
 		});

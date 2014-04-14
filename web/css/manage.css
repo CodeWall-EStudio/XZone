@@ -34,32 +34,104 @@
 .btn-search{
 	margin-left:12px;
 }
+.manage-menus{
+	clear:both;	
+	background-color:#fff;
+	height:52px;
+	line-height:32px;
+	padding-left:235px;
+	display:none;
+}
+#maGroup{
+	padding-left:100px;
+}
+#maSchool{
+	padding-left:200px;
+}
+#maSystem{
+	padding-left:300px;
+}
+.manage-nav{
+	padding:10px;
+	display:none;
+}
+
 .maside{
 	position:absolute;
 	width:160px;
 }
+
 .maside .manage-nav{
 	padding:10px;
 }
 .manage-nav li{
 	line-height:24px;
-	padding:4px 0 4px 12px;
-	border:1px solid #ddd;
-	border-right:0;
+	float:left;
+	font-size:14px;
+	padding:4px 12px;
+}
+.manage-nav li a{
+	display:block;
+	width:100%;
+}
+
+.mcontainer{
+	clear:both;
 }
 
 .manage-section{
-	float:left;
-	margin-left:180px;
+	margin:0 10px;
 	border:1px solid #ddd;
 	min-width: 810px;
 	min-height: 600px;
 	height: 100%;
 	width: 100%;	
+	background:#fff;
 }
 .manage-list-zone{
-	height:50%;
+	float:left;
+	width:47%;
+	padding:1%;
 }
 .manage-act-zone{
-	height:50%;
+	float:right;
+	width:47%;
+	padding:1%;
+}
+
+.manage-act-zone dl{
+	padding:20px 0;
+}
+.action-list .action-btn-list{
+	float:left;
+}
+.manage-act-zone dt{
+	line-height:32px;
+	height:32px;
+}
+.manage-act-zone dt h4{
+	font-size:16px;
+	float:left;
+	line-height:32px;
+	height:32px;
+}
+.manage-act-zone dt span{
+	font-size:12px;
+	margin-left:12px;
+	float:left;
+	font-weight:200;
+}
+.manage-act-zone td{
+	padding:4px;
+}
+.action-modify-zone{
+	clear:both;
+}
+
+.action-modify-zone i.close{
+	display:inline-block;
+	width:12px;
+	height:12px;
+	float:none;
+	background:url(imgs/close.png) no-repeat;
 }
