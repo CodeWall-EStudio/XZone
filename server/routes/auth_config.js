@@ -858,6 +858,14 @@ function verifyGroup(user, group, callback){
             // FIXME depart manager 之前没有启用过, 所以这里也不进行判断了
             // 如果要改, 需要改动到 routes/group#modify
 
+            if(group.type === config.GROUP_DEPARTNMENT){
+
+                user.__role |= config.ROLE_DEPARTMENT_MEMBER;
+            }else if(group.type === config.GROUP_GROUP) {
+                
+                user.__role |= config.ROLE_GROUP_MEMBER;
+            }
+            
             if (result.auth & config.AUTH_GROUP_MANAGER) {
 
                 user.__role |= config.ROLE_GROUP_MANAGER;

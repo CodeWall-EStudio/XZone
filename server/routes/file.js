@@ -923,7 +923,7 @@ exports.search = function(req, res){
         folderId: folder._id
     });
 
-    Logger.debug('file/search: ', folder);
+    Logger.debug('file/search: ', folder, 'user role: ', loginUser.__role, 'folder role: ', folder.__role);
 
     if(folder.__role & config.FOLDER_PRIVATE){
 
