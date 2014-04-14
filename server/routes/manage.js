@@ -15,19 +15,21 @@ exports.listGroups = function(req, res){
     var params = req.parameter;
     var loginUser = req.loginUser;
 
-    if(params.status  === 1){
-        params.extendQuery = {
-            status: 1
-        };
+    var query = {};
+
+    if(params.status === 1){
+        query.status = 1;
     }
+    query.type = params.type;
+    params.extendQuery = query;
 
     mGroup.search(params, function(err, total, result){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
-            res.json({ err: ERR.SUCCESS , result: { 
+            res.json({ err: ERR.SUCCESS , result: {
                 total: total || 0,
-                list: result 
+                list: result
             }});
         }
     });
@@ -45,7 +47,7 @@ exports.approveGroup = function(req, res){
         validateText: params.validateText || '',//审核评语
         validateStatus: Number(params.validateStatus) || 0, //0 不通过 1 通过
         validateTime: Date.now(),//审核时间
-        validator: DBRef('user', loginUser._id)
+        validator: new DBRef('user', loginUser._id)
     };
 
     mGroup.modify({ _id: group._id }, doc, function(err, doc){
