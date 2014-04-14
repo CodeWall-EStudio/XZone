@@ -54,6 +54,8 @@ exports.create = function(req, res){
         }
         createParams.creator = loginUser._id;
 
+        createParams.size = createParams.size || config.DEFAULT_USER_SPACE || 0;
+
         mGroup.create(createParams, ep.doneLater('createGroup'));
 
     });

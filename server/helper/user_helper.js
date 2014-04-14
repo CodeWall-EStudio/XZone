@@ -202,7 +202,7 @@ exports.findAndUpdateUserInfo = function(skey, type, callback){
                     nick: nick,
                     name: loginName,
                     auth: 0, // 15 是管理员
-                    size: config.DEFAULT_USER_SPACE,
+                    size: config.DEFAULT_USER_SPACE
                 };
                 if(type === 'qq'){
                     user.from = 'qq';

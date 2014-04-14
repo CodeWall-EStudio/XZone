@@ -942,6 +942,7 @@ exports.search = function(req, res){
     }else if(loginUser.__role & config.ROLE_FOLDER_MEMBER){
 
         // 小组/部门成员
+        Logger.debug('file/search: ROLE_FOLDER_MEMBER');
     }else if(folder.__role & config.FOLDER_DEPARTMENT_PRIVATE){
 
         // 非部门公開就不返回內容
