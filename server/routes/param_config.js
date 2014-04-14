@@ -2,7 +2,7 @@
 
 module.exports = {
     // file 
-    '/api/file': {
+    '/api/file': { // 获取文件信息
         method: 'GET',
         params: [
             {
@@ -12,7 +12,7 @@ module.exports = {
             }
         ]
     },
-    '/api/file/upload': {
+    '/api/file/upload': { // 上传文件
         method: 'POST',
         params: [
             {
@@ -45,7 +45,7 @@ module.exports = {
             }
         ]
     },
-    '/api/file/download': {
+    '/api/file/download': { // 下载文件
         method: 'GET',
         params: [
             {
@@ -55,17 +55,17 @@ module.exports = {
             }
         ]
     },
-    '/api/file/batchDownload': {
+    '/api/file/batchDownload': { // 批量下载
         method: 'POST',
         params: [
             {
-                name: 'fileId',
+                name: 'fileId', // fileId 必须为文件id 的数组
                 type: 'files',
                 required: true
             }
         ]
     },
-    '/api/file/preview': {
+    '/api/file/preview': { // 预览
         method: 'GET',
         params: [
             {
@@ -75,21 +75,17 @@ module.exports = {
             }
         ]
     },
-    '/api/file/save': {
+    '/api/file/save': { // 保存收件箱的文件到自己的目录
         method: 'POST',
         params: [
             {
                 name: 'messageId',
                 type: 'message',
                 required: true
-            }/*,
-            {
-                name: 'folderId',
-                type: 'folder'
-            }*/
+            }
         ]
     },
-    '/api/file/modify': {
+    '/api/file/modify': {// 修改文件
         method: 'POST',
         params: [
             {
@@ -106,14 +102,10 @@ module.exports = {
             },
             {
                 name: 'content'
-            },
-            {
-                name: 'isArchive',
-                type: 'boolean'
             }
         ]
     },
-    '/api/file/copy': {
+    '/api/file/copy': { // 批量复制文件
         method: 'POST',
         params: [
             {
@@ -125,14 +117,10 @@ module.exports = {
                 name: 'targetId',
                 type: 'folder',
                 required: true
-            }/*,
-            {
-                name: 'groupId',
-                type: 'group'
-            }*/
+            }
         ]
     },
-    '/api/file/move': {
+    '/api/file/move': { // 批量移动文件
         method: 'POST',
         params: [
             {
@@ -144,14 +132,10 @@ module.exports = {
                 name: 'targetId',
                 type: 'folder',
                 required: true
-            }/*,
-            {
-                name: 'groupId',
-                type: 'group'
-            }*/
+            }
         ]
     },
-    '/api/file/share': {
+    '/api/file/share': { // 批量共享文件给个人或小组, toUserId和 toGroupId中必须有且只有一个
         method: 'POST',
         params: [
             {
@@ -173,7 +157,7 @@ module.exports = {
             }
         ]
     },
-    '/api/file/delete': {
+    '/api/file/delete': { // 批量删除文件, 该操作不会真正删除文件, 而是放到回收站
         method: 'POST',
         params: [
             {
@@ -182,12 +166,12 @@ module.exports = {
                 required: true
             },
             {
-                name: 'groupId',
+                name: 'groupId', // 删除小组文件时, 需带groupId
                 type: 'group'
             }
         ]
     },
-    '/api/file/search': {
+    '/api/file/search': { // 搜索文件
         method: 'GET',
         params: [
             {
@@ -207,10 +191,6 @@ module.exports = {
                 min: 0,
                 required: true
             },
-            // {
-            //     name: 'groupId',
-            //     type: 'group'
-            // },
             {
                 name: 'keyword'
             },
@@ -220,7 +200,7 @@ module.exports = {
                 type: 'number'
             },
             {
-                name: 'order',
+                name: 'order', // 排序规则如: { createTime: -1 }
                 type: 'object'
             },
             {
@@ -229,7 +209,7 @@ module.exports = {
             }
         ]
     },
-    '/api/file/query': {
+    '/api/file/query': { // 查询所有自己共享出去的文件
         method: 'GET',
         params: [
             {
@@ -260,7 +240,7 @@ module.exports = {
             }
         ]
     },
-    '/api/file/statistics': {
+    '/api/file/statistics': { // 统计指定文件夹下的文件个数, 类型和大小
         method: 'GET',
         params: [
             {
@@ -321,11 +301,7 @@ module.exports = {
                 name: 'folderId',
                 type: 'folder',
                 required: true
-            }/*,
-            {
-                name: 'groupId',
-                type: 'group'
-            }*/
+            }
         ]
     },
     '/api/folder/create': {
@@ -341,10 +317,6 @@ module.exports = {
                 type: 'string',
                 required: true
             },
-            // {
-            //     name: 'groupId',
-            //     type: 'group'
-            // },
             {
                 name: 'closeTime',
                 type: 'number',
@@ -368,10 +340,6 @@ module.exports = {
                 type: 'folder',
                 required: true
             },
-            // {
-            //     name: 'groupId',
-            //     type: 'group'
-            // },
             {
                 name: 'name',
                 type: 'string'
@@ -389,11 +357,7 @@ module.exports = {
                 name: 'folderId',
                 type: 'folders',
                 required: true
-            }/*,
-            {
-                name: 'groupId',
-                type: 'group'
-            }*/
+            }
         ]
     },
     '/api/folder/list': {
@@ -403,12 +367,8 @@ module.exports = {
                 name: 'folderId',
                 type: 'folder',
                 required: true
-            }/*,
-            {
-                name: 'groupId',
-                type: 'group'
             }
-*/      ]
+        ]
     },
     '/api/folder/search': {
         method: 'GET',
@@ -428,10 +388,6 @@ module.exports = {
                 type: 'number',
                 required: true
             },
-            /*{
-                name: 'groupId',
-                type: 'group'
-            },*/
             {
                 name: 'keyword'
             },
@@ -484,10 +440,6 @@ module.exports = {
                 type: 'number',
                 required: true
             },
-            // {
-            //     name: 'groupId',
-            //     type: 'group'
-            // },
             {
                 name: 'keyword'
             },
@@ -513,7 +465,6 @@ module.exports = {
             }
         ]
     },
-
     '/api/group/create': {
         method: 'POST',
         params: [
@@ -569,10 +520,6 @@ module.exports = {
                 name: 'content',
                 type: 'string'
             },
-            // { // 暂不支持改层级
-            //     name: 'parentId',
-            //     type: 'group'
-            // },
             {   name: 'members',
                 type: 'users'
             },
@@ -584,8 +531,7 @@ module.exports = {
     },
     '/api/group/list': {
         method: 'GET',
-        params: [
-        ]
+        params: []
     },
 
     // user
@@ -921,8 +867,4 @@ module.exports = {
         ]
     }
 };
-
-
-
-
 
