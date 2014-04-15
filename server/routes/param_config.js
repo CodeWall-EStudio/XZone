@@ -157,8 +157,7 @@ module.exports = {
             }
         ]
     },
-    '/api/file/delete': { // 批量删除文件, 该操作不会真正删除文件, 而是放到回收站
-        method: 'POST',
+    '/api/file/delete': { // 批量删除文件, 该操作不会真正删除文件, 而是放到回收站 method: 'POST',
         params: [
             {
                 name: 'fileId',
@@ -798,6 +797,10 @@ module.exports = {
             },
             {
                 name: 'status',
+                type: 'number'
+            },
+            {
+                name: 'type',
                 type: 'number'
             }
         ]

@@ -20,7 +20,9 @@ exports.listGroups = function(req, res){
     if(params.status === 1){
         query.status = 1;
     }
-    query.type = params.type;
+    if('type' in params){
+        query.type = params.type;
+    }
     params.extendQuery = query;
 
     mGroup.search(params, function(err, total, result){
