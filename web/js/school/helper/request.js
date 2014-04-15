@@ -1,7 +1,9 @@
 define([], function() {
   'use strict';
 
-  var loop = function() {};
+  var loop = function(d) {
+
+  };
 
   // 打点计时用
   var ReqTime = function(url) {
@@ -64,21 +66,14 @@ define([], function() {
 
     if(!onError || typeof onError != 'function') {
       onError = option.error;
-      if(!onError || typeof onError != 'function') onError = loop;
+      if(!onError || typeof onError != 'function') {
+        onError = function(d,e){
+          if(e == 'timeout'){
+            onSuccess({err:78});
+          }
+        };
+      }
     }
-    //var cacheKey = Cache.getKey(cgi,data);
-
-    //$.extend(data, {uin: uin});
-    // g_tk在query string上
-    // if(method == 'GET') {
-    //   $.extend(data, {g_tk: g_tk});
-    // } else {
-    //   var mark = '?',
-    //     index = cgi.indexOf(mark);
-
-    //   if(~index) mark = '&';
-    //   cgi = cgi + mark + 'g_tk=' + g_tk;
-    // }
 
     data._t = Math.random();
 
@@ -100,12 +95,6 @@ define([], function() {
     };
 
     ajaxOpt.success = function(res) {
-      // var code = res.code,
-      //   type = 1;
-
-      // if('undefined' === typeof code) code = res.ret; // 拉腾讯软件的cgi
-      // if(code) type = 3;
-      
       return onSuccess(res);
     };
 

@@ -18,7 +18,10 @@
 							<a class="fdname<%+item.id%>" href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
 						<%}%>
 
-						<%if(pr != 'group' && !school && (ginfo && ginfo.isMember)){%>
+						<%
+							if(pr != 'group' && !school){
+								if($.isEmptyObject(ginfo)){
+						%>
 						<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
 							<%if(item.mark==''){%>
 								编辑备注
@@ -31,6 +34,20 @@
 							<i class="edit-comp" cmd="editComp" data-type="fold" data-id="<%+item.id%>"></i>
 							<i class="edit-close" data-value="<%+item.mark%>" cmd="editClose"></i>
 						</span>
+						<%}else if(ginfo && ginfo.isMember){%>
+							<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
+								<%if(item.mark==''){%>
+									编辑备注
+								<%}else{%>
+									<%-item.mark%>
+								<%}%>
+							</span>
+							<span class="editmark hide">
+								<input class="name-edit" type="text" maxlength="20" value="<%+item.mark%>" />
+								<i class="edit-comp" cmd="editComp" data-type="fold" data-id="<%+item.id%>"></i>
+								<i class="edit-close" data-value="<%+item.mark%>" cmd="editClose"></i>
+							</span>						
+						<%}%>
 						<%}%>
 					</dt>
 					<dd>
