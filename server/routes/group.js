@@ -5,6 +5,7 @@ var ObjectID = require('mongodb').ObjectID;
 
 var config = require('../config');
 var U = require('../util');
+var Logger = require('../logger');
 var ERR = require('../errorcode');
 var db = require('../models/db');
 var mGroup = require('../models/group');
@@ -145,11 +146,13 @@ function modifyMembers(group, members, managers, callback){
                 auth: auth
             }, ep.group('applyMember'));
 
-            console.log('>>>modify group add member[all]', userId);
+            Logger.debug('>>>modify group add member[all]', userId);
         });
         
     }else{ // >>>>>>>>>>>>>>>> !!!!!!!!!!!!!!!!!!!
         // 这里要对成员做删减改
+        
+        // 这里是结束了
         ep.after('modifyMember', docs.length, function(list){
             if(members.length){// 如果 members 还有数据, 说明有新增用户
                 ep.after('applyMember', members.length, function(list){
@@ -167,13 +170,14 @@ function modifyMembers(group, members, managers, callback){
                         auth: auth
                     }, ep.group('applyMember'));
 
-                    console.log('>>>modify group add member', userId);
+                    Logger.debug('>>>modify group add member', userId);
                 });
             }else{ //没有的话就处理完了
-                ep.emit('modifyMemberSuccess');
+                callback(null);
             }
         });
 
+        // 开始循环
         docs.forEach(function(doc){
             var userId = doc.user.oid.toString();
             var oldAuth = doc.auth;
@@ -183,18 +187,18 @@ function modifyMembers(group, members, managers, callback){
                 //防止创建者被删掉
                 if(creatorId === userId){
                     ep.emit('modifyMember');
-                    console.log('>>>modify group can not remove creator: ', userId);
+                    Logger.debug('>>>modify group can not remove creator: ', userId);
                 }else if(!needModifyManager && oldAuth !== 0){
                     // 没有修改管理员时, 不能删掉管理员
                     ep.emit('modifyMember');
-                    console.log('>>>modify group managers empty, not remove manager', userId);
+                    Logger.debug('>>>modify group managers empty, not remove manager', userId);
                 }else{
                     // 这个用户被删了
                     mGroup.removeUserFromGroup({
                         userId: ObjectID(userId),
                         groupId: groupId
                     }, ep.group('modifyMember'));
-                    console.log('>>>modify group remove member', userId);
+                    Logger.debug('>>>modify group remove member', userId);
                 }
                 
             }else{
@@ -218,7 +222,7 @@ function modifyMembers(group, members, managers, callback){
                 }, ep.group('modifyMember'));
                 // 从 members 里删除
                 members.splice(mIndex, 1);
-                console.log('>>>modify group change member auth', userId, auth);
+                Logger.debug('>>>modify group change member auth', userId, auth);
             }
         });
     }

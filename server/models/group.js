@@ -125,19 +125,19 @@ exports.getGroupByUser = function(userId, callback){
 
 exports.addUserToGroup = function(params, callback){
     var doc = {
-        user: DBRef('user', params.userId),
-        group: DBRef('group', params.groupId),
+        user: new DBRef('user', params.userId),
+        group: new DBRef('group', params.groupId),
         auth: Number(params.auth) || 0
     };
-    db.groupuser.save(doc, function(err, result){
+    db.groupuser.save(doc, function(err){
         callback(err, doc);
     });
 };
 
 exports.removeUserFromGroup = function(params, callback){
     var doc = {
-        user: DBRef('user', params.userId),
-        group: DBRef('group', params.groupId)
+        user: new DBRef('user', params.userId),
+        group: new DBRef('group', params.groupId)
     };
     db.groupuser.remove(doc, function(err, result){
         callback(err, result);
@@ -147,8 +147,8 @@ exports.removeUserFromGroup = function(params, callback){
 
 exports.modifyUserAuth = function(params, callback){
     var query = {
-        user: DBRef('user', params.userId),
-        group: DBRef('group', params.groupId)
+        user: new DBRef('user', params.userId),
+        group: new DBRef('group', params.groupId)
     };
     db.groupuser.update(query, {$set: {auth: Number(params.auth) || 0}}, callback);
 };
