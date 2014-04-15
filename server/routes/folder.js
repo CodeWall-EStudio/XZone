@@ -136,29 +136,6 @@ exports.modify = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-
-    if(params.name){
-        if(params.name === folder.name){
-            // 名字没变过, 就不要改了
-            delete doc.name;
-            delete params.name;
-            ep.emitLater('checkName', true);
-            return;
-        }
-        mFolder.getFolder({
-            name: params.name,
-            'parent.$id': folder.parent._id
-        }, function(err, doc){
-            if(doc){
-                ep.emit('checkName', false);
-            }else{
-                ep.emit('checkName', true);
-            }
-        });
-    }else{
-        ep.emitLater('checkName', true);
-    }
-
     ep.on('checkName', function(result){
         if(!result){
             ep.emit('error', 'has the same name in this folder', ERR.DUPLICATE);
@@ -173,6 +150,7 @@ exports.modify = function(req, res){
                 res.json({ err: ERR.SERVER_ERROR, msg: err});
             }else {
                 res.json({ err: ERR.SUCCESS , result: { data: doc }});
+                
                 // 记录该操作
                 mLog.create({
                     fromUserId: loginUser._id,
@@ -195,6 +173,28 @@ exports.modify = function(req, res){
             }
         });
     });
+
+    if(params.name){
+        if(params.name === folder.name){
+            // 名字没变过, 就不要改了
+            delete doc.name;
+            delete params.name;
+            ep.emitLater('checkName', true);
+            return;
+        }
+        mFolder.getFolder({
+            name: params.name,
+            'parent.$id': folder.parent._id
+        }, function(err, doc){
+            if(doc){
+                ep.emit('checkName', false);
+            }else{
+                ep.emit('checkName', true);
+            }
+        });
+    }else{
+        ep.emitLater('checkName', true);
+    }
 
 };
 
