@@ -26,7 +26,7 @@ exports.saveUploadFile = function(params, callback){
     var groupId = folder.group && folder.group.oid;
 
     var uploadFilePath = body.file_path;
-    var name = body.file_name;
+    var name = body.name || body.file_name;
     var md5 = body.file_md5;
     var contentType = body.file_content_type;
     var extname = path.extname(name);
