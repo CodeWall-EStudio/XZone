@@ -203,30 +203,32 @@ function formatType(mimes, ext){
 }
 
 function convert(filepath, mimes, ext, callback){
-    console.log('>>>convert file: mimes',filepath, mimes, ext);
+    Logger.info('>>>convert file: mimes',filepath, mimes, ext);
     var cmd;
     //doc 文档要生成 swf 格式文件
     if(config.FILE_MIMES['document'].indexOf(mimes) > -1 || config.FILE_SUFFIX['document'].indexOf(ext) > -1){
         cmd = 'java -jar ' + config.JOD_CONVERTER + ' ' + filepath + ' ' + filepath + '.pdf';
-
+        Logger.info('>>>convert file: exec', cmd);
         process.exec(cmd, function(err, stdout, stderr){
             if(!err){
                 cmd = 'pdf2swf ' + filepath + '.pdf -s flashversion=9 -o ' + filepath + '.swf';
+                Logger.info('>>>convert file: exec', cmd);
                 process.exec(cmd, function(err, stdout, stderr){
                     callback(err);
-                    console.error('>>>file convert error: to swf: ', err, stderr, mimes, ext);
+                    Logger.error('>>>file convert error: to swf: ', err, stderr, mimes, ext);
                 });
             }else{
                 callback(err);
-                console.error('>>>file convert error: to pdf', err, stderr, mimes, ext);
+                Logger.error('>>>file convert error: to pdf', err, stderr, mimes, ext);
             }
         });
     }else if(config.FILE_MIMES['pdf'].indexOf(mimes) > -1 || config.FILE_SUFFIX['pdf'].indexOf(ext) > -1){
         cmd = 'pdf2swf ' + filepath + '.pdf -s flashversion=9 -o ' + filepath + '.swf';
+        Logger.info('>>>convert file: exec', cmd);
         process.exec(cmd, function(err, stdout, stderr){
             callback(err);
             if(err){
-                console.error('>>>file convert error: to swf', err, stderr, mimes, ext);
+                Logger.error('>>>file convert error2: to swf', err, stderr, mimes, ext);
             }
         });
 

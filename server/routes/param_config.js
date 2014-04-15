@@ -164,10 +164,6 @@ module.exports = {
                 name: 'fileId',
                 type: 'files',
                 required: true
-            },
-            {
-                name: 'groupId', // 删除小组文件时, 需带groupId
-                type: 'group'
             }
         ]
     },

@@ -72,7 +72,7 @@ exports.download = function(req, res){
     var resource = file.__resource;
 
     var filePath = path.join(config.FILE_SAVE_DIR, resource.path);
-    console.log('redirect to :' + filePath, 'mimes: ' + resource.mimes);
+    Logger.info('redirect to :' + filePath, 'mimes: ' + resource.mimes);
     res.set({
         'Content-Type': resource.mimes,
         'Content-Disposition': 'attachment; filename=' + file.name,
@@ -203,14 +203,14 @@ exports.preview = function(req, res){
             case 2:// 文档
                 var swfFile = path.join(config.FILE_SAVE_ROOT, filePath + '.swf');
                 if(!fs.existsSync(swfFile)){
-                    console.error('can\'t find ' + swfFile + '! try to convert...');
+                    Logger.error('can\'t find ' + swfFile + '! try to convert...');
                     var suffix = path.extname(filePath).slice(1);
                     fileHelper.convertWord(path.join(config.FILE_SAVE_ROOT, filePath), resource.mimes, suffix, function(err){
                         if(err){
                             res.json({ err: ERR.NOT_FOUND, msg: 'can not find this file and convert failure' });
                             return;
                         }
-                        console.log('convert success: ' + filePath);
+                        Logger.info('convert success: ' + filePath);
                         res.set({
                             'Content-Type': 'application/x-shockwave-flash',
                             'X-Accel-Redirect': filePath + '.swf'
@@ -869,6 +869,7 @@ exports.delete = function(req, res){
     files.forEach(function(file){
         // 设置删除标志位
         // 如果删除的是小组的文件, 也是直接设置个标志位, 放到回收站
+        var folder = file.__folder;
         mFile.modify({ _id: file._id }, { del: true },
                 ep.group('delete', function(file){
 
@@ -884,9 +885,9 @@ exports.delete = function(req, res){
                 //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 11: delete(移动到回收站)
                 operateType: 11,
 
-                srcFolderId: file.folder.oid
+                srcFolderId: file.folder.oid,
                 // distFolderId: params.targetId,
-                // fromGroupId: folder ? folder.group && folder.group.oid : null
+                fromGroupId: folder && folder.group && folder.group.oid
                 // toGroupId: toGroupId
             });
             

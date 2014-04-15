@@ -78,7 +78,7 @@ exports.RULES = {
             ep.fail(callback);
 
             var files = parameter.fileId;
-            ep.after('verifyDone', files.length, function(list){
+            ep.after('verifyDone', files.length, function(){
                 callback(null);
             });
 
@@ -186,32 +186,20 @@ exports.RULES = {
         // 这个接口只是设置删除标志位, 不是彻底删除
         verify: function(user, parameter, callback){
 
-            // 只能删除自己的; 管理员可以删除所有
+            // 只能删除自己的; 管理员可以删除所有; 部门和小组管理员可以删除所有
+            
+            var ep = new EventProxy();
+            ep.fail(callback);
+
             var files = parameter.fileId;
-            var group = parameter.groupId;
+            ep.after('verifyDone', files.length, function(){
+                callback(null);
+            });
 
-            var msg = 'not auth to delete this file, fileId: ';
-            var uid = user._id.toString();
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            if(group){
-                verifyGroup(user, group, function(err){
-                    if(err || !group.__editable){
-                        return callback(msg + 'MANY', ERR.NOT_AUTH);
-                    }
+            files.forEach(function(file){
+                verifyDelete(user, file, ep.group('verifyDone'));
+            });
 
-                    // 这里就不再检查这些文件是否是属于这个group的了
-                    return callback(null);
-                });
-            }else{
-                for(var i = 0; i < files.length; i++){
-                    if(files[i].creator.oid.toString() !== uid){
-                        return callback(msg + files[i]._id);
-                    }
-                }
-                return callback(null);
-            }
         }
     },
     '/api/file/search': {
@@ -692,12 +680,74 @@ function verifyDownload(user, file, callback){
             }else{
                 return callback('this file has not validate, fileId: ' + file._id, ERR.NOT_AUTH);
             }
+        }else{
+            hasAuth = true;
         }
+        file.__user_role = user.__role;
+
         if(hasAuth){
             return callback(null);
         }
         return callback(msg, ERR.NOT_AUTH);
     });
+}
+
+/**
+ * 校验文件是否可以删除
+ * @param  {[type]}   user     [description]
+ * @param  {[type]}   file     [description]
+ * @param  {Function} callback [description]
+ * @return {[type]}            [description]
+ */
+function verifyDelete(user, file, callback){
+
+    // 普通用户只能删除自己的; 管理员可以删除所有; 部门和小组管理员可以删除所有
+
+    var msg = 'not auth to delete this file, fileId: ' + file._id;
+    var hasAuth = true;
+
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    if(user._id.toString() === file.creator.oid.toString()){
+
+        // 自己创建的文件
+        user.__role |= config.ROLE_FILE_CREATOR;
+        hasAuth = true;
+
+    }
+
+    mFolder.getFolder({ _id: file.folder.oid }, ep.doneLater('getFolder'));
+
+    ep.on('getFolder', function(folder){
+
+        if(!folder){
+            return callback('no folder contain this file, fileId: ' + file._id, ERR.NOT_FOUND);
+        }
+
+        file.__folder = folder;
+
+        verifyFolder(user, folder, ep.done('verifyFolder'));
+
+    });
+
+    ep.on('verifyFolder', function(folder){
+
+        if(folder.__editable && (user.__role & config.ROLE_FOLDER_MANAGER)){
+
+            // 管理员和小组/部门管理员和文件夹创建者
+            hasAuth = true;
+        }
+        
+        file.__user_role = user.__role;
+
+        if(hasAuth){
+            return callback(null);
+        }
+        return callback(msg, ERR.NOT_AUTH);
+
+    });
+
 }
 
 /**

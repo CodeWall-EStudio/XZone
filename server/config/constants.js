@@ -28,16 +28,16 @@ exports.ROLE_DEPARTMENT_MANAGER = 512;
 // 备课组成员
 exports.ROLE_PREPARE_MEMBER = 1024;
 
-// ROLE_FOLDER_MANAGER === 系统管理员 | 超级管理员 | 小组管理员 | 部门管理员
+// ROLE_FOLDER_MANAGER === 系统管理员 | 超级管理员 | 小组管理员 | 部门管理员 | 文件夹创建者
 exports.ROLE_FOLDER_MANAGER = exports.ROLE_MANAGER
         | exports.ROLE_GROUP_MANAGER
-        | exports.ROLE_DEPARTMENT_MANAGER;
+        | exports.ROLE_DEPARTMENT_MANAGER
+        | exports.ROLE_FOLDER_CREATOR;
 
 exports.ROLE_GROUPS_MANAGER = exports.ROLE_FOLDER_MANAGER;
 
-// ROLE_FOLDER_MEMBER === 管理员们 | 文件夹创建者 | 小组成员 | 部门成员
+// ROLE_FOLDER_MEMBER === 管理员们 | 小组成员 | 部门成员
 exports.ROLE_FOLDER_MEMBER = exports.ROLE_FOLDER_MANAGER
-        | exports.ROLE_FOLDER_CREATOR
         | exports.ROLE_GROUP_MEMBER
         | exports.ROLE_DEPARTMENT_MEMBER;
 
