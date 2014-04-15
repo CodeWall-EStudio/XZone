@@ -173,3 +173,11 @@ exports.parseCallbackData = function(str){
     }
     return null;
 };
+
+exports.removePrivateMethods = function(obj){
+    for(var i in obj){
+        if(i.indexOf('__') === 0){
+            delete obj[i];
+        }
+    }
+};

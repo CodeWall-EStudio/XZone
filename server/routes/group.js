@@ -317,6 +317,7 @@ exports.modify = function(req, res){
     ep.all('modifyGroup', 'modifyMembersSuccess', function(group){
 
         db.dereference(group, { rootFolder: null }, function(){
+            U.removePrivateMethods(group);
             res.json({ err: ERR.SUCCESS , result: { data: group }});
         });
     });

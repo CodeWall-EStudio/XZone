@@ -347,11 +347,7 @@ exports.get = function(req, res){
 
     db.dereference(file, { resource: ['_id', 'type', 'size'] }, function(/*err*/){
         
-        for(var i in file){
-            if(i.indexOf('__') === 0){
-                delete file[i];
-            }
-        }
+        U.removePrivateMethods(file);
         res.json({
             err: ERR.SUCCESS,
             result: {

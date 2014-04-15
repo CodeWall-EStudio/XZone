@@ -103,11 +103,7 @@ exports.get = function(req, res){
             });
 
         } else {
-            for(var i in folder){
-                if(i.indexOf('__') === 0){
-                    delete folder[i];
-                }
-            }
+            U.removePrivateMethods(folder);
             res.json({
                 err: ERR.SUCCESS,
                 result: {

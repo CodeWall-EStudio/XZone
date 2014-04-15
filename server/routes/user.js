@@ -59,11 +59,7 @@ exports.get = function(req, res){
             res.json({ err: data || ERR.SERVER_ERROR, msg: err});
         }else{
             var user = us.extend({}, data.user);
-            for(var i in user){
-                if(i.indexOf('__') === 0){
-                    delete user[i];
-                }
-            }
+            U.removePrivateMethods(user);
             data.user = user;
             res.json({
                 err: ERR.SUCCESS,
