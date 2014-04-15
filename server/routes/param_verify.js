@@ -215,7 +215,7 @@ exports.checkParams = function(req, res, next){
         res.json({ err: errCode || ERR.PARAM_ERROR, msg: error });
     });
 
-    if(cfg.method.indexOf(method) === -1){
+    if(cfg.method && cfg.method.indexOf(method) === -1){
         return res.json({ err: ERR.NOT_SUPPORT, msg: 'not support method [' + method + ']' });
     }
 

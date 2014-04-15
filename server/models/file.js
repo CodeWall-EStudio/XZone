@@ -213,11 +213,11 @@ exports.search = function(params, callback){
         }
 
         db.search('file', query, params, function(err, total, docs){
-            Logger.debug('mfile/search: ',err, total);
+            Logger.debug('mfile/search: ',err, total, noDef);
             if(err){
                 callback(err);
             }else if(total && docs && !noDef){
-                Logger.debug(total, docs, !noDef);
+                // Logger.debug(total, docs, !noDef);
                 var defProps = { resource: ['_id', 'type', 'size'] , creator: ['_id', 'nick']};
                 if(extendDefProps){
                     defProps = us.extend(defProps, extendDefProps);
