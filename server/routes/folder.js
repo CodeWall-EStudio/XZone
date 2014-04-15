@@ -5,6 +5,7 @@ var us = require('underscore');
 
 var config = require('../config');
 var ERR = require('../errorcode');
+var Logger = require('../logger');
 var db = require('../models/db');
 var mFolder = require('../models/folder');
 var mFile = require('../models/file');
@@ -141,7 +142,7 @@ exports.modify = function(req, res){
             // 名字没变过, 就不要改了
             delete doc.name;
             delete params.name;
-            ep.emit('checkName', true);
+            ep.emitLater('checkName', true);
             return;
         }
         mFolder.getFolder({
@@ -155,7 +156,7 @@ exports.modify = function(req, res){
             }
         });
     }else{
-        ep.emit('checkName', true);
+        ep.emitLater('checkName', true);
     }
 
     ep.on('checkName', function(result){
@@ -163,10 +164,11 @@ exports.modify = function(req, res){
             ep.emit('error', 'has the same name in this folder', ERR.DUPLICATE);
             return;
         }
+        Logger.info('folder/modify checkName ok');
         var oldFolderName = folder.name;
         params.folderId = folder._id;
 
-        mFolder.modify(params, doc, function(err, doc){
+        mFolder.modify({ _id: folder._id }, doc, function(err, doc){
             if(err){
                 res.json({ err: ERR.SERVER_ERROR, msg: err});
             }else {

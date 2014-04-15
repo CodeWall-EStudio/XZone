@@ -74,15 +74,9 @@ exports.getFolder = function(query, callback){
 
 };
 
-exports.modify = function(params, doc, callback){
-    var folderId = params.folderId;
-    // var groupId = params.groupId;
-    // var creator = params.creator;
+exports.modify = function(query, doc, callback){
 
     doc.updatetime = Date.now();
-    var query = {
-        _id: folderId
-    };
 
 
     db.folder.findAndModify(query, [], { $set: doc },
