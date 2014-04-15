@@ -143,7 +143,7 @@ exports.modify = function(req, res){
         }
         Logger.info('folder/modify checkName ok');
         var oldFolderName = folder.name;
-        params.folderId = folder._id;
+        // params.folderId = folder._id;
 
         mFolder.modify({ _id: folder._id }, doc, function(err, doc){
             if(err){
