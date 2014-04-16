@@ -493,10 +493,28 @@ module.exports = {
                 type: 'number'
             },
             {
+                name: 'startTime', // 学年开始时间
+                type: 'number'
+            },
+            {
+                name: 'endTime', // 学年结束时间
+                type: 'number'
+            },
+            {
                 name: 'tag'
             },
             {
                 name: 'grade'
+            },
+            {
+                name: 'archivable', // 是否可归档, 创建后不可修改
+                type: 'boolean',
+                'default': false
+            },
+            {
+                name: 'order', // 排序号, 默认 0, 优先排序
+                type: 'number',
+                'default': 0
             }
         ]
     },
@@ -522,6 +540,10 @@ module.exports = {
             {
                 name: 'managers',
                 type: 'users'
+            },
+            {
+                name: 'status', // 状态: 0 已审核, 1 审核中, 2 已归档, 3 已关闭, 4 已删除; 需要 group 管理员以上权限
+                type: 'number'
             }
         ]
     },

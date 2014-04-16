@@ -29,13 +29,22 @@ exports.create = function(params, callback){
         type: type,
         parent: params.parentId ? new DBRef('group', params.parentId) : null,
         creator: new DBRef('user', params.creator),
-        status: status, // 标示小组审核状态 1 审核中 0 已审核
+        
+
         pt: Number(params.pt) || 0,
         tag: params.tag || null,
         grade: params.grade || null,
 
+        startTime: params.startTime || 0,
+        endTime: params.endTime || 0,
+
         size: params.size || 0,
         used: 0,
+
+        status: status, // 状态: 0 已审核, 1 审核中, 2 已归档, 3 已关闭, 4 已删除
+        archivable: params.archivable || false, // 是否可归档
+
+        order: params.order || 0, // 排序号, 搜索时优先排序
 
         validateText: null,//审核评语
         validateStatus: status === 0 ? 1 : null, //0 不通过 1 通过
@@ -87,7 +96,7 @@ exports.updateUsed = function(groupId, count, callback){
 
 function dereferenceGroup(groupId, ext, callback){
     // 只返回审核通过的
-    db.group.findOne({ _id: groupId, validateStatus: 1 }, function(err, doc){
+    db.group.findOne({ _id: groupId, validateStatus: 1, status: { $nin: [3, 4] } }, function(err, doc){
         if(err){
             return callback(err);
         }

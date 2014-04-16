@@ -17,8 +17,8 @@ exports.listGroups = function(req, res){
 
     var query = {};
 
-    if(params.status === 1){
-        query.status = 1;
+    if('status' in params){
+        query.status = params.status;
     }
     if('type' in params){
         query.type = params.type;

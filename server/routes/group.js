@@ -15,8 +15,8 @@ exports.create = function(req, res){
     var loginUser = req.loginUser;
 
     var name = parameter.name;
-    var type = parameter.type;
-    var content = parameter.content;
+    // var type = parameter.type;
+    // var content = parameter.content;
     var parent = parameter.parentId;
     var members = parameter.members || [];
     var managers = parameter.managers || [];
@@ -281,6 +281,10 @@ exports.modify = function(req, res){
         }
         if(content){
             doc.content = content;
+        }
+
+        if('status' in params){
+            doc.status = params.status;
         }
 
         mGroup.modify({ _id: group._id }, doc, ep.done('modifyGroup'));
