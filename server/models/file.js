@@ -191,7 +191,7 @@ exports.search = function(params, callback){
     ep.fail(callback);
     
     if(folderId && (recursive || keyword)){
-        mFolder.search({ folderId: folderId }, ep.doneLater('paramReady'));
+        mFolder.search({ folderId: folderId, recursive: true }, ep.doneLater('paramReady'));
     }else if(folderId){
         ep.emitLater('paramReady', 1, [{ _id: folderId }]);
     }else{

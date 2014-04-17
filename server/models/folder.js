@@ -146,40 +146,42 @@ exports.delete = function(params, callback){
 };
 
 
-exports.list = function(params, callback){
+// 废弃, 用 search 代替 (recursive = false)
+// 
+// exports.list = function(params, callback){
 
-    var folderId = params.folderId;
-    // var groupId = params.groupId || null;
+//     var folderId = params.folderId;
+//     // var groupId = params.groupId || null;
 
-    var isDeref = params.isDeref || false;
-    var extendQuery = params.extendQuery;
-    var query = {
-        'parent.$id': folderId
-    };
-    if(params.creator){
-        query['creator.$id'] = params.creator;
-    }
-    if(extendQuery){
-        query = us.extend(query, extendQuery);
-    }
+//     var isDeref = params.isDeref || false;
+//     var extendQuery = params.extendQuery;
+//     var query = {
+//         'parent.$id': folderId
+//     };
+//     if(params.creator){
+//         query['creator.$id'] = params.creator;
+//     }
+//     if(extendQuery){
+//         query = us.extend(query, extendQuery);
+//     }
 
-    db.search('folder', query, { order: params.order }, function(err, total, docs){
-        if(err){
-            callback(err);
-        }else if(total && docs && isDeref){
-            db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
-                if(err){
-                    callback(err);
-                }else{
-                    callback(null, total || 0, docs);
-                }
-            });
-        }else{
-            callback(null, total || 0, docs);
-        }
-    });
+//     db.search('folder', query, { order: params.order }, function(err, total, docs){
+//         if(err){
+//             callback(err);
+//         }else if(total && docs && isDeref){
+//             db.dereferences(docs, {'creator': ['_id', 'nick']}, function(err, docs){
+//                 if(err){
+//                     callback(err);
+//                 }else{
+//                     callback(null, total || 0, docs);
+//                 }
+//             });
+//         }else{
+//             callback(null, total || 0, docs);
+//         }
+//     });
 
-};
+// };
 
 exports.search = function(params, callback){
 
@@ -188,13 +190,19 @@ exports.search = function(params, callback){
     var creator = params.creator || null;
     var keyword = params.keyword || '';
     var isDeref = params.isDeref || false;
+    var recursive = params.recursive || false;
     var extendQuery = params.extendQuery;
-    var query = {
-        $or: [
+    var query = {};
+
+    if(recursive){
+        query['$or']= [
             { 'parent.$id': folderId },
             { idpath: new RegExp('.*' + folderId + '.*') }
-        ]
-    };
+        ];
+    }else{
+        query['parent.$id'] = folderId;
+    }
+
     if(keyword){
         query['name'] = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
@@ -221,5 +229,24 @@ exports.search = function(params, callback){
         }else{
             callback(null, total || 0, docs);
         }
+    });
+};
+
+exports.statistics = function(folder, callback){
+
+    var searchParams = {
+        folderId: folder._id,
+        recursive: true
+    };
+    
+    exports.search(searchParams, function(err, total/*, docs*/){
+        if(err){
+            return callback(err, total);
+        }
+
+        callback(null, {
+            total: total
+        });
+        
     });
 };

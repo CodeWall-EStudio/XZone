@@ -303,7 +303,7 @@ exports.list = function(req, res){
         };
     }
 
-    mFolder.list(params, ep.done('search'));
+    mFolder.search(params, ep.done('search'));
 
     ep.on('search', function(total, docs){
         res.json({
@@ -330,6 +330,7 @@ exports.search = function(req, res){
 
     params.folderId = folder._id;
     params.isDeref = true;
+    params.recursive = true;
 
     if(folder.__role & config.FOLDER_PRIVATE){
         // 个人空间搜索, 搜索自己创建的文件
@@ -351,5 +352,28 @@ exports.search = function(req, res){
                 list: docs
             }
         });
+    });
+};
+
+/**
+ * 统计文件夹个数
+ * @param  {[type]} req [description]
+ * @param  {[type]} res [description]
+ * @return {[type]}     [description]
+ */
+exports.statistics = function(req, res){
+    var parameter = req.parameter;
+    var folder = parameter.folderId;
+
+    mFolder.statistics(folder, function(err, result){
+
+        if(err){
+            return res.json({ err: result || ERR.SERVER_ERROR, msg: err});
+        }
+        res.json({
+            err: ERR.SUCCESS,
+            result: result
+        });
+
     });
 };

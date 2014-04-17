@@ -397,6 +397,16 @@ module.exports = {
             }
         ]
     },
+    '/api/folder/statistics': { // 统计制定文件夹下面又多少个子文件夹
+        method: 'GET',
+        params: [
+            {
+                name: 'folderId',
+                type: 'folder',
+                required: true
+            }
+        ]
+    },
 
     // fav
     '/api/fav/create': {
