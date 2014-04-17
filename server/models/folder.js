@@ -195,10 +195,11 @@ exports.search = function(params, callback){
     var query = {};
 
     if(recursive){
-        query['$or']= [
+        query['$or'] = [
             { 'parent.$id': folderId },
-            { idpath: new RegExp('.*' + folderId + '.*') }
+            { idpath: new RegExp('.*\\b' + folderId + '\\b.*') }
         ];
+        query['_id'] = { $ne: folderId };
     }else{
         query['parent.$id'] = folderId;
     }
