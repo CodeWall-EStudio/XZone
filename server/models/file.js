@@ -237,3 +237,39 @@ exports.search = function(params, callback){
     });
 };
 
+exports.statistics = function(folderId, callback){
+
+    var searchParams = {
+        folderId: folderId,
+        recursive: true
+    };
+
+    exports.search(searchParams, function(err, total, docs){
+        if(err){
+            return callback(err, total);
+        }
+        var totalSize = 0;
+        var list = {};
+        docs.forEach(function(file){
+            totalSize += file.size || 0;
+            var obj = list[file.type];
+            if(!obj){
+                list[file.type] = obj = {
+                    type: file.type,
+                    size: 0,
+                    count: 0
+                };
+            }
+            obj.size += file.size || 0;
+            obj.count ++;
+        });
+
+        var result = {
+            totalCount: docs.length,
+            totalSize: totalSize,
+            list: list
+        };
+        
+        callback(null, result);
+    });
+};

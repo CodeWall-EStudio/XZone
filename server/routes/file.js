@@ -1035,36 +1035,11 @@ exports.statistics = function(req, res){
     var parameter = req.parameter;
     var folder = parameter.folderId;
 
-    var searchParams = {
-        folderId: folder._id,
-        recursive: true
-    };
+    mFile.statistics(folder._id, function(err, result){
 
-    mFile.search(searchParams, function(err, total, docs){
         if(err){
-            return res.json({ err: total || ERR.SERVER_ERROR, msg: err});
+            return res.json({ err: result || ERR.SERVER_ERROR, msg: err});
         }
-        var totalSize = 0;
-        var list = {};
-        docs.forEach(function(file){
-            totalSize += file.size || 0;
-            var obj = list[file.type];
-            if(!obj){
-                list[file.type] = obj = {
-                    type: file.type,
-                    size: 0,
-                    count: 0
-                };
-            }
-            obj.size += file.size || 0;
-            obj.count ++;
-        });
-
-        var result = {
-            totalCount: docs.length,
-            totalSize: totalSize,
-            list: list
-        };
         res.json({
             err: ERR.SUCCESS,
             result: result

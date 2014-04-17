@@ -9,6 +9,7 @@ var ERR = require('../errorcode');
 var db = require('../models/db');
 var mGroup = require('../models/group');
 var mFile = require('../models/file');
+var mFolder = require('../models/folder');
 var U = require('../util');
 
 exports.listGroups = function(req, res){
@@ -142,7 +143,13 @@ function fetchGroupMembers(group, callback){
             callback(err);
         }else{
             group.members = list;
-            callback(null);
+
+            mFolder.statistics(group.rootFolder.oid, function(err, result){
+                if(!err){
+                    group.folderCount = result.total;
+                }
+                callback(null);
+            });
         }
     });
 

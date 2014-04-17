@@ -232,10 +232,10 @@ exports.search = function(params, callback){
     });
 };
 
-exports.statistics = function(folder, callback){
+exports.statistics = function(folderId, callback){
 
     var searchParams = {
-        folderId: folder._id,
+        folderId: folderId,
         recursive: true
     };
     
