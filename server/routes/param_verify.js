@@ -17,7 +17,7 @@ function findOne(coll, value, pcfg, callback){
     if(value.length !== ObjectIDLength){
         return callback(pcfg.name + '\'s length must be ' + ObjectIDLength);
     }
-    db[coll].findOne({ _id: ObjectID(value) }, function(err, doc){
+    db[coll].findOne({ _id: new ObjectID(value) }, function(err, doc){
         if(err){
             return callback(err);
         }
@@ -153,6 +153,11 @@ var checkers = {
     'users': function(value, pcfg, callback){
 
         findArray('user', value, pcfg, callback);
+    },
+
+    'sizegroup': function(value, pcfg, callback){
+
+        findOne('sizegroup', value, pcfg, callback);
     }
 
 };

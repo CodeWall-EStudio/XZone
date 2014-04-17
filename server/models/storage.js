@@ -1,11 +1,11 @@
-// var ObjectID = require('mongodb').ObjectID;
+var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
-// var EventProxy = require('eventproxy');
-// var us = require('underscore');
+var EventProxy = require('eventproxy');
+var us = require('underscore');
 
-// var db = require('./db');
-// var ERR = require('../errorcode');
-// var U = require('../util');
+var db = require('./db');
+var ERR = require('../errorcode');
+var U = require('../util');
 
 
 exports.save = function(params, callback){

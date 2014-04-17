@@ -176,6 +176,7 @@ exports.addHelper(exports, 'log');
 exports.addHelper(exports, 'department');
 exports.addHelper(exports, 'departuser');
 exports.addHelper(exports, 'storage');
+exports.addHelper(exports, 'sizegroup');
 
 // test code
 // exports.open(function(err, db){
