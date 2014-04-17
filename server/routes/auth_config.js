@@ -618,7 +618,25 @@ exports.RULES = {
                 return callback(null);
             }
         }
+    },
+
+    // '/api/storage': {
+    //     verify: function(user, parameter, callback){
+
+    //         if(user.__role & config.ROLE_MANAGER){
+    //             return callback(null);
+    //         }
+    //     }
+    // },
+    '/api/storage/set': {
+        verify: function(user, parameter, callback){
+
+            if(user.__role & config.ROLE_MANAGER){
+                return callback(null);
+            }
+        }
     }
+
 };
 
 /**

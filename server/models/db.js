@@ -172,6 +172,7 @@ exports.addHelper(exports, 'message');
 exports.addHelper(exports, 'log');
 exports.addHelper(exports, 'department');
 exports.addHelper(exports, 'departuser');
+exports.addHelper(exports, 'storage');
 
 // test code
 // exports.open(function(err, db){

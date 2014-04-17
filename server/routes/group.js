@@ -1,4 +1,4 @@
-var http = require('http');
+
 var EventProxy = require('eventproxy');
 var us = require('underscore');
 var ObjectID = require('mongodb').ObjectID;

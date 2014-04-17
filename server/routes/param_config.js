@@ -897,6 +897,33 @@ module.exports = {
                 type: 'object'
             }
         ]
+    },
+
+    // storage 
+    '/api/storage': { // 通用存储接口
+        method: 'GET',
+        params: [
+            {
+                name: 'key',
+                type: 'string',
+                required: true
+            }
+        ]
+    },
+    '/api/storage/set': { // 限制为系统管理员
+        method: 'POST',
+        params: [
+            {
+                name: 'key',
+                type: 'string',
+                required: true
+            },
+            {
+                name: 'value',
+                type: 'string',
+                required: true
+            }
+        ]
     }
 };
 
