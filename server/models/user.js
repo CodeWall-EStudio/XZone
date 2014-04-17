@@ -49,6 +49,7 @@ exports.getUser = function(query, callback){
 
 
 exports.save = function(user, callback){
+    
     db.user.save(user, function(err, result){
         callback(err, user);
     });

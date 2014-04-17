@@ -40,7 +40,9 @@ exports.create = function(params, callback){
         doc.top = folder.top || doc.parent;
 
         folder.hasChild = true;
-        db.folder.save(folder, function(err){
+        db.folder.findAndModify({ _id: folder._id }, [], { $set: { hasChild: true } },
+                { 'new':true }, function(err){
+
             if(err){
                 console.log('models/folder/create', err);
             }
