@@ -14,13 +14,14 @@ exports.save = function(params, callback){
     var value = params.value;
     var loginUser = params.loginUser;
 
-    db.storage.find({ key: key }, function(err, doc){
+    db.storage.findOne({ key: key }, function(err, doc){
         if(err){
             return callback(err);
         }
         if(!doc){
             doc = {
-                key: key
+                key: key,
+                createTime: Date.now()
             };
         }
         doc.value = value;
@@ -37,5 +38,5 @@ exports.save = function(params, callback){
 
 exports.getConfig = function(query, callback){
 
-    db.storage.find(query, callback);
+    db.storage.findOne(query, callback);
 };
