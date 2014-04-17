@@ -118,7 +118,7 @@ exports.delete = function(params, callback){
     if(folder.hasChild){
 
         var query = {
-            idpath: new RegExp('.*' + folder._id + '.*')
+            idpath: new RegExp('.*\\b' + folder._id + '\\b.*')
         };
 
         db.folder.find(query, ep.done('findAllChild'));

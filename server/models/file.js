@@ -201,7 +201,7 @@ exports.search = function(params, callback){
     ep.on('paramReady', function(total, docs){
         
         if(docs && docs.length){
-            var ids = [];
+            var ids = [ folderId ]; // folder.search 的结果不包含 search 的 folderId 自身
             docs.forEach(function(doc){
                 ids.push(doc._id);
             });
