@@ -59,6 +59,7 @@ exports.dereference = function(doc, keys, callback){
                 if(doc[key]){
                     db.dereference(doc[key], ep.group('deref',
                         (function(key, keepProps){
+
                             return function(data){
                                 if(data && keepProps){
                                     doc[key] = {};
@@ -70,6 +71,7 @@ exports.dereference = function(doc, keys, callback){
                                 }
                                 return null;
                             };
+                            
                         }(key, keys[key]))
                     ));
                 }else{
@@ -154,6 +156,7 @@ exports.addHelper = function(context, collectionName){
         'insert',
         'update',
         'remove',
+        'count',
         'findAndModify',
         'findAndRemove'
     ]);

@@ -26,14 +26,39 @@ exports.listGroups = function(req, res){
     params.extendQuery = query;
 
     mGroup.search(params, function(err, total, result){
+
         if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
-            res.json({ err: ERR.SUCCESS , result: {
-                total: total || 0,
-                list: result
+            return res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }
+
+        if(!total){
+            return res.json({ err: ERR.SUCCESS , result: {
+                total: 0,
+                list: []
             }});
         }
+
+        var ep = new EventProxy();
+
+        ep.after('getMemberCountDone', result.length, function(){
+            res.json({ err: ERR.SUCCESS , result: {
+                total: total,
+                list: result
+            }});
+
+        });
+
+        result.forEach(function(doc){
+
+            mGroup.getGroupMemberCount(doc._id, function(err, count){
+                if(err){
+                    count = 0;
+                }
+                doc.memberCount = count;
+                ep.emit('getMemberCountDone');
+            });
+        });
+
     });
 };
 

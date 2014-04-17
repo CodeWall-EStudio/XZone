@@ -205,6 +205,11 @@ exports.getGroupMemberIds = function(groupId, callback){
     db.groupuser.find({ 'group.$id': groupId}, callback);
 };
 
+exports.getGroupMemberCount = function(groupId, callback){
+
+    db.groupuser.count({ 'group.$id': groupId}, callback);
+};
+
 exports.isGroupMember = function(groupId, userId, callback){
     // console.log('>>>isGroupMember', groupId, userId);
     var query = {
