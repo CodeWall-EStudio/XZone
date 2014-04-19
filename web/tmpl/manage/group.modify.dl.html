@@ -1,0 +1,145 @@
+<%if(type=='group' || type==1){%>
+	<dt>
+		<h4>小组信息</h4>
+	</dt>
+	<dd>
+		<table class="table table-striped table-hover table-list table-files">
+			<tr>
+				<td>名称:</td>
+				<td><input type="text" class="group-name" <%if(name){%>value="<%=name%>"<%}else{%>value=""<%}%>  <%if(typeof id != 'undefined'){%>data-id="<%+id%>"<%}%> /></td>
+			</tr>
+			<tr>
+				<td>类型:</td>
+				<td>
+					<input type="radio" name="gt" value="1" <%if(archivable){%>checked<%}%> />周期小组
+					<input type="radio" name="gt" value="0" <%if(!archivable){%>checked<%}%> />自由小组
+				</td>
+			</tr>
+			<tr>
+				<td>管理员:</td>
+				<td>
+					<div id="groupManageList" class="member-list">
+						<%
+							if(typeof members != 'undefined'){
+						%>
+							<%
+								for(var i in members){
+									var item = members[i];
+									if(item.auth){
+							%>
+								<span class="share-user-span shareUser<%+item.id%>"><%-item.nick%><i class="del-share-user" data-id="<%+item.id%>"></i></span>
+								<%}%>
+							<%}%>
+						<%}%>
+
+					</div>
+					<button class="btn btn-primary btn-set-manage" <%if(name){%>data-modify="1"<%}%>>设置管理员</button>
+				</td>
+			</tr>
+			<tr>
+				<td>成员:</td>
+				<td>
+					<div id="groupMemberList" class="member-list">
+						<%if(typeof members != 'undefined'){%>
+							<%
+								for(var i in members){
+									var item = members[i];
+									if(!item.auth){
+							%>
+								<span class="share-user-span shareUser<%+item.id%>"><%-item.nick%><i class="del-share-user" data-id="<%+item.id%>"></i></span>							
+							<%}%>
+							<%}%>
+						<%}%>						
+					</div>
+					<button class="btn btn-primary btn-set-member" <%if(name){%>data-modify="1"<%}%>>设置成员</button>
+				</td>
+			</tr>
+			<tr>
+				<td>容量:</td>
+				<td>
+					<select>
+						<option>1GB</option>
+						<option>3GB</option>
+						<option>10GB</option>
+						<option>30GB</option>
+					</select>
+				</td>
+			</tr>
+		</table>
+		<div>
+			<button class="btn btn-primary btn-save" <%if(name){%>data-modify="1"<%}%> >保存</button>
+			<button class="btn btn-primary btn-reset">取消</button>
+		</div>
+	</dd>
+<%}else if(type=='dep' || type==2){%>
+		<dt>
+			<h4>部门信息</h4>
+		</dt>
+		<dd>
+			<table class="table table-striped table-hover table-list table-files">
+				<tr>
+					<td>名称:</td>
+					<td><input type="text" class="group-name" <%if(name){%>value="<%=name%>"<%}else{%>value=""<%}%>  <%if(typeof id != 'undefined'){%>data-id="<%+id%>"<%}%> /></td>
+				</tr>
+				<tr>
+					<td>序号:</td>
+					<td><input type="text" class="group-no" <%if(typeof order != 'undefined'){%>value="<%-order%>"<%}%> /></td>
+				</tr>
+				<tr>
+					<td>管理员:</td>
+					<td>
+					<div id="groupManageList" class="member-list">
+						<%
+							if(typeof members != 'undefined'){
+						%>
+							<%
+								for(var i in members){
+									var item = members[i];
+									if(item.auth){
+							%>
+								<span class="share-user-span shareUser<%+item.id%>"><%-item.nick%><i class="del-share-user" data-id="<%+item.id%>"></i></span>
+								<%}%>
+							<%}%>
+						<%}%>
+
+					</div>
+					<button class="btn btn-primary btn-set-manage" <%if(name){%>data-modify="1"<%}%>>设置管理员</button>						
+					</td>
+				</tr>
+				<tr>
+					<td>成员:</td>
+					<td>
+						<div id="groupMemberList" class="member-list">
+							<%if(typeof members != 'undefined'){%>
+								<%
+									for(var i in members){
+										var item = members[i];
+										if(!item.auth){
+								%>
+									<span class="share-user-span shareUser<%+item.id%>"><%-item.nick%><i class="del-share-user" data-id="<%+item.id%>"></i></span>							
+								<%}%>
+								<%}%>
+							<%}%>						
+						</div>
+						<button class="btn btn-primary btn-set-member" <%if(name){%>data-modify="1"<%}%>>设置成员</button>
+					</td>
+				</tr>
+				<tr>
+					<td>容量:</td>
+					<td>
+						<select>
+							<option>1GB</option>
+							<option>3GB</option>
+							<option>10GB</option>
+							<option>30GB</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+			<div>
+				<button class="btn btn-primary btn-save" <%if(name){%>data-modify="1"<%}%> >保存</button>
+				<button class="btn btn-primary btn-reset">取消</button>
+			</div>
+		</dd>
+<%}else if(type=='prep' || type==3){%>
+<%}%>

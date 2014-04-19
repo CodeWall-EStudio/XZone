@@ -1,0 +1,152 @@
+<tr>
+<%
+	if(type=='group'){
+%>							
+	<th class="group-order" data-on="name" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		名称 
+		<%if(on == 'name' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'name' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>
+	</th>
+	<th class="group-order" data-on="memberCount" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		成员 
+		<%if(on == 'memberCount' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'memberCount' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+	<th class="group-order" data-on="archivable" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		类型 
+		<%if(on == 'archivable' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'archivable' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+	<th class="group-order" data-on="grade" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		学期 
+		<%if(on == 'grade' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'grade' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+	<th class="group-order" data-on="status" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		状态 
+		<%if(on == 'status' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'status' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+	<th class="group-order" data-on="size" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		容量 
+		<%if(on == 'size' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'size' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+	<th class="group-order" data-on="used" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		容量 
+		<%if(on == 'used' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'used' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+<%}else if(type=='dep'){%>
+	<th>序号 <i class="ad"></i></th>
+	<th class="group-order" data-on="name" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		名称 
+		<%if(on == 'name' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'name' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>
+	</th>
+	<th class="group-order" data-on="memberCount" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		成员 
+		<%if(on == 'memberCount' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'memberCount' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+	<th class="group-order" data-on="status" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		状态 
+		<%if(on == 'status' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'status' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+	<th class="group-order" data-on="size" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		容量 
+		<%if(on == 'size' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'size' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+	<th class="group-order" data-on="used" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		已使用 
+		<%if(on == 'used' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'used' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+<%}else if(type=='prep'){%>
+	<th class="group-order" data-on="name" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		名称(学期) 
+		<%if(on == 'name' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'name' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>
+	</th>
+	<th>年级 <i class="ad"></i></th>
+	<th>科目 <i class="ad"></i></th>
+	<th>目录 <i class="ad"></i></th>
+	<th class="group-order" data-on="status" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		状态 
+		<%if(on == 'status' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'status' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>
+<%}%>
+</tr>

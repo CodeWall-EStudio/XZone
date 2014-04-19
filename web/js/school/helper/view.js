@@ -94,6 +94,21 @@ define(['helper/util','helper/templateManager'],function($u,$tm){
 
 			this.after.call(this);
 		},
+		replacePanel : function(){
+			this.before.call(this);
+
+			var opts = {
+				html : $u.encodeHTML,
+				attr : $u.encodeAttr
+			};
+			if(this.data){
+				$.extend(this.data,opts);
+				replacePanel(this.target,this.tplid,this.data);
+				//bindHandlers(this.target,this.handlers, this.events);
+			}
+
+			this.after.call(this);
+		},
 		getHtml : function(){
 			return getHtml(this.tplid,this.data);
 		}
@@ -203,7 +218,15 @@ define(['helper/util','helper/templateManager'],function($u,$tm){
 		var template = $tm.get(tplid);
 		var html = $u.template(template,data);	
 		return target.before(html);	
-	}	
+	}
+
+	function replacePanel(target,tplid,data){
+		var template = $tm.get(tplid);
+		var html = $u.template(template,data);	
+		console.log(target);
+		console.log(html);
+		return target.replaceAll(html);	
+	}
 
 	function getHtml(tplid,data){
 		var template = $tm.get(tplid);

@@ -1,0 +1,57 @@
+<%if(type=='group'){%>
+	<%
+		for(var i in g2key){
+			var item = g2key[i];
+	%>
+	<tr data-id="<%+item.id%>" <%if(item.archivable){%>data-arch="<%=item.archivable%>"<%}%> class="group-tr group-tr<%-item.id%>">
+		<td><%-item.name%></td>
+		<td><%-item.memberCount%></td>
+		<td>
+			<%if(item.archivable){%>
+				周期小组
+			<%}else{%>
+				自由小组
+			<%}%>
+		</td>
+		<td>
+			<%if(item.grade){%>
+				<%-item.grade%>
+			<%}else{%>
+				-
+			<%}%>
+		</td>
+		<td class="td-status">
+			<%-item.stname%>
+		</td>
+		<td><%-item.size%></td>
+		<td><%-item.pre%>%</td>
+	</tr>
+	<%}%>
+<%}else if(type=='dep'){%>	
+	<%
+		for(var i in g2key){
+			var item = g2key[i];
+	%>
+	<tr data-id="<%+item.id%>" class="group-tr group-tr<%-item.id%>">
+		<td><%if(item.order){%><%-item.order%><%}%></td>
+		<td><%-item.name%></td>
+		<td><%-item.memberCount%></td>
+		<td class="td-status"><%-item.stname%></td>
+		<td><%-item.size%></td>
+		<td><%-item.pre%>%</td>
+	</tr>
+	<%}%>
+<%}else if(type=='prep'){%>	
+	<%
+		for(var i in g2key){
+			var item = g2key[i];
+	%>
+	<tr data-id="<%+item.id%>" class="group-tr group-tr<%-item.id%>">
+		<td><%-item.name%></td>
+		<td><%-item.grade%></td>
+		<td><%-item.tag%></td>
+		<td><%-item.folderCount%></td>
+		<td><%-item.stname%></td>
+	</tr>
+	<%}%>
+<%}%>

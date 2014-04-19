@@ -86,7 +86,11 @@ define(function() {
 			mappgroup :　CGI_PATH+'manage/approveGroup'+EXT,
 			mpreplist : CGI_PATH+'manage/listPrepares'+EXT,
 			mnewgroup : CGI_PATH+'manage/createGroup'+EXT,
-			mappfile : CGI_PATH+'manage/approveFile'+EXT
+			mappfile : CGI_PATH+'manage/approveFile'+EXT,
+
+			//存储
+			getstorge : CGI_PATH+'storage'+EXT,
+			setstorge : CGI_PATH+'storage/set'+EXT
 
 		},
 		grade : {
@@ -95,7 +99,7 @@ define(function() {
 			3 : '三年级',
 			4 : '四年级',
 			5 : '五年级',
-			6 : '六年级',						
+			6 : '六年级'					
 		},
 		tag : {
 			1 : '语文',
@@ -106,12 +110,13 @@ define(function() {
 			6 : '美术',
 			7 : '科学',
 			8 : '综合实践',
-			9 : '信息技术',
+			9 : '信息技术'
 		},
 		msg : {
 			0 : '操作成功!',
 			77 : '参数不能为空',
 			78 : '对不起，网络超时了，请稍后再试',
+			79 : '已经有同名的项目了',
 			100 : '对不起，您没有这个操作权限!',//后台出错拉!
 			101 : '出错拉',
 			1001 : '您还没有登录!',

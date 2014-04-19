@@ -42,6 +42,15 @@
 	padding-left:235px;
 	display:none;
 }
+.manage-menus a{
+	display:inline-block;
+	padding:4px 20px;
+	width:100px;
+}
+.manage-menus a.selected{
+	background-color:#428bca;
+	color:#fff;
+}
 #maGroup{
 	padding-left:100px;
 }
@@ -49,7 +58,7 @@
 	padding-left:200px;
 }
 #maSystem{
-	padding-left:300px;
+	padding-left:100px;
 }
 .manage-nav{
 	padding:10px;
@@ -134,4 +143,36 @@
 	height:12px;
 	float:none;
 	background:url(imgs/close.png) no-repeat;
+}
+.member-list{
+	padding:10px 0;
+}
+.table-striped > tbody > tr.group-tr-selected > td{
+	background-color:#fdf7f7;
+}
+
+.group-tr-selected td{
+	background-color:#fdf7f7;
+}
+
+.group-order{
+	cursor:pointer;
+}
+.next-group-page,.next-user-page{
+	cursor:pointer;
+	width:100%;
+	padding:10px 0;
+	text-align:center;
+}
+
+.grade-list{
+	padding:10px;
+}
+.grade-list li{
+	padding:4px;
+	line-height:28px;
+	font-size:14px;
+}
+.grade-zone{
+	padding:10px;
 }

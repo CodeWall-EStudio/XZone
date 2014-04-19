@@ -485,7 +485,6 @@ var plupload = {
 	 */
 	cleanName : function(name) {
 		var i, lookup;
-
 		// Replace diacritics
 		lookup = [
 			/[\300-\306]/g, 'A', /[\340-\346]/g, 'a',
@@ -1628,7 +1627,12 @@ plupload.Uploader = function(settings) {
 			 */
 			function resolveFile(file) {
 				var type = o.typeOf(file);
-
+				for(var i in file){
+					if(typeof file[i].name === 'string'){
+						file[i].name = file[i].name.replace(/ /g,'').replace(/　/g,'');	
+					}
+				}
+				
 				// o.File
 				if (file instanceof o.File) { 
 					if (!file.ruid && !file.isDetached()) {

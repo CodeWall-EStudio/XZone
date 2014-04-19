@@ -19,7 +19,7 @@ define([],function(){
 				return template;
 			}
 		}else{
-			template = $('#'+tplid).html();
+			//template = $('#'+tplid).html();
 			if(template){
 				templateList[tplid] = template;
 				return template;
@@ -29,13 +29,11 @@ define([],function(){
 				url: tmplPath+tplid+tmplName,
 				async: false,
 				error : function(data){
-					//Report.monitor(337658);		
 					return false;
 				}
 			}).responseText;
 
 			var endTime = new Date().getTime();
-			//Report.isd(7832,9,2,[0,endTime-startTime]);
 
 			/*
 			if(checkTpl(template)){

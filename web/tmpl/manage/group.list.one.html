@@ -1,0 +1,38 @@
+<%if(type=='group' || type==1){%>
+		<td><%-name%></td>
+		<td><%-memberCount%></td>
+		<td>
+			<%if(archivable){%>
+				周期小组
+			<%}else{%>
+				自由小组
+			<%}%>
+		</td>
+		<td>
+			<%if(grade){%>
+				<%-grade%>
+			<%}else{%>
+				-
+			<%}%>
+		</td>
+		<td>
+			<%-stname%>
+		</td>
+		<td><%-size%></td>
+		<td><%-pre%>%</td>
+<%}else if(type=='dep' || type==2){%>	
+
+		<td><%-order%></td>
+		<td><%-name%></td>
+		<td><%-memberCount%></td>
+		<td><%-stname%></td>
+		<td><%-size%></td>
+		<td><%-pre%>%</td>
+<%}else if(type=='prep'||type==3){%>	
+
+		<td><%-name%></td>
+		<td><%-grade%></td>
+		<td><%-tag%></td>
+		<td><%-folderCount%></td>
+		<td><%-stname%></td>
+<%}%>

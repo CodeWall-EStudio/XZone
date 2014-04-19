@@ -19,7 +19,7 @@ define([],function(){
 				return template;
 			}
 		}else{
-			template = $('#'+tplid).html();
+			//template = $('#'+tplid).html();
 			if(template){
 				templateList[tplid] = template;
 				return template;

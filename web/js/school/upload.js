@@ -56,15 +56,18 @@ define(['config'],function(config){
         silverlight_xap_url : '../../js/lib/moxie.xap'
     };
 
+    // var userAgent = navigator.userAgent; 
+    // if (userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !(userAgent.indexOf("Opera") > -1)){
+    // 	upload_settings.runtimes = 'flash';
+    // } 
     if (!$.support.leadingWhitespace) {
+	//if ($.browser.msie) {    	
     	upload_settings.runtimes = 'flash';
     }
 
     // if (upload_chunk == 1) {
     //     upload_settings.chunk_size = '1mb';
     // }
-
-	//$.pluploadQueue.changeUrl('dddddd');
 
     function paramChange(e,d){
     	var url = config.cgi.upload+'?';

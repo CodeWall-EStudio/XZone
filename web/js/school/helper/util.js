@@ -381,6 +381,20 @@ define(['../config'], function($, config) {
         return getNums(size) + units[unit];    	
     }
 
+    var getStatus = function(status){
+    	// /0 已审核 1 审核中  2 已归档 3 已关闭
+    	switch(status){
+    		case 0:
+    			return '已审核';
+    		case 1:
+    			return '审核中';
+    		case 2:
+    			return '已归档';
+    		case 3:
+    			return '已关闭';
+    	}
+    }
+
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -396,6 +410,7 @@ define(['../config'], function($, config) {
 	util.getParam = getParam;
 	util.getSize = getSize;
 	util.getNums = getNums;
+	util.getStatus = getStatus;
 
 	return util;
 

@@ -1,0 +1,11 @@
+
+				<%
+					for(var i in list){
+						var item = list[i];
+				%>
+					<tr data-id="<%+i%>" class="grade-tr" data-type="<%if(key=='grade'){%>grade<%}else{%>sub<%}%>">
+						<td>
+							<%-item%>
+						</td>
+					</tr>
+				<%}%>
