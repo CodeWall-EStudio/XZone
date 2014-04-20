@@ -87,6 +87,11 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			data : d
 		}		
 
+		if(d.type == 3){
+			var ret = Cache.get('preps');
+			handerObj.triggerHandler('group:loaded',ret);
+			return;
+		}
 		var success = function(d){
 			if(d.err == 0){
 				handerObj.triggerHandler('group:loaded',convent(d));
@@ -201,13 +206,37 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 	}	
 
 
+	function loadPrep(){
+		var opt = {
+			cgi : config.cgi.mlistgroup,
+			data : {
+				type : 3,
+				page : 0,
+				pageNum : 1000
+			}
+		}		
+
+		var success = function(d){
+			if(d.err == 0){
+				var ret = convent(d);
+				handerObj.triggerHandler('cache:set',{key: 'preps',data: ret,type:1})
+				handerObj.triggerHandler('manage:preploaded',ret);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+
+		request.get(opt,success);		
+	}
+
 	var handlers = {
 		'group:list' : getList,
 		'group:loaduser' : loadUser,
 		'group:create' : creatGroup,
 		'group:one' : groupInfo,
 		'group:modify' : groupModify,
-		'group:approve' : appRove
+		'group:approve' : appRove,
+		'group:loadprep' : loadPrep
 	}
 
 	for(var i in handlers){

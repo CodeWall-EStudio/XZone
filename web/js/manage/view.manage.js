@@ -10,7 +10,6 @@ define(['../school/config','../school/cache','../school/helper/view'],function(c
 	var manageHandler = {};
 
 	function getObjlength(obj){
-		console.log(1234);
 		if(!obj){
 			return 0;
 		}

@@ -47,9 +47,19 @@
 			var item = g2key[i];
 	%>
 	<tr data-id="<%+item.id%>" class="group-tr group-tr<%-item.id%>">
-		<td><%-item.name%></td>
-		<td><%-item.grade%></td>
-		<td><%-item.tag%></td>
+		<td>
+			<%
+				if(item.parent){
+					var p = g2key[item.parent.$id];
+			%>
+				<%-p.name%> - <%-item.name%>
+			<%}else{%>
+				<%-item.name%>
+			<%}%>
+			
+		</td>
+		<td><%-glist[item.grade]%></td>
+		<td><%-subject[item.tag]%></td>
 		<td><%-item.folderCount%></td>
 		<td><%-item.stname%></td>
 	</tr>

@@ -23,16 +23,51 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		now2key = {};
 
 	var groupHandler = {
-		//添加小组
-		'.add-group' : {
+		//添加备课
+		'.add-sem' : {
 			'click' : function(){
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
+					after : function(){
+						$('.start-time').pickmeup({
+    						format  : 'Y-m-d',
+    						hide_on_select : true
+						});
+						$('.end-time').pickmeup({
+    						format  : 'Y-m-d',
+    						hide_on_select	: true
+						});						
+					},
 					data : {
 						type : nowType,
-						archivable : 0
+						st : 1,
+						prep : false
 					}
+				});
+				view.createPanel();
+			}
+		},
+		//添加小组
+		'.add-group' : {
+			'click' : function(){
+				var data = {
+					type : nowType,
+					archivable : 0,
+					st : 0
+				}
+				if(nowType == 'prep'){
+					var prep = Cache.get('preps');
+					var grade = Cache.get('grade');
+					var subject = Cache.get('subject');					
+					data.prep = prep.g2key;
+					data.grade = grade;
+					data .subject = subject;
+				}				
+				var view = new View({
+					target : $('#groupModifyZone'),
+					tplid : 'manage/group.modify.dl',
+					data : data
 				});
 				view.createPanel();
 			}
@@ -71,6 +106,9 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				var archivable = $('#modifyZone input[type=radio]:checked').val();
 				var managelist = [],
 					memberlist = [];
+				var st = 0,
+					et = 0;
+
 				$('#groupManageList i').each(function(){
 					managelist.push($(this).attr('data-id'));
 				});
@@ -78,14 +116,48 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					memberlist.push($(this).attr('data-id'));
 				});	
 
-				if(name == ''){
-					alert('你还没有填写分组名');
-					return;
+				var sem = 0;
+				if(nowType == 'prep'){
+					//添加学年
+					if($('.start-time').length){
+						sem = 1;
+						st = $('.start-time').pickmeup('get_date').getTime();
+						et = $('.end-time').pickmeup('get_date').getTime();
+
+						if(st >= et){
+							alert('结束时间不能早于开始时间')
+						}
+						
+						if(name == ''){
+							alert('你还没有填写学年名称');
+							return;
+						}
+
+					//添加科目
+					}else{
+						var pid = $('#prepPrep').val();
+						var gid = $('#gradePrep').val();
+						var sid = $('#subjectPrep').val();
+						name = checkPrep(pid,gid,sid);
+						if(!name){
+							alert('该学年下已有同名备课目录');
+						}
+						if(memberlist.length ==0){
+							alert('你还没选择小组成员');
+							return;
+						}
+					}
+
+				}else{
+					if(name == ''){
+						alert('你还没有填写分组名');
+						return;
+					}
+					if(managelist.length == 0 && memberlist.length ==0){
+						alert('你还没选择成员或者管理员');
+						return;
+					}
 				}
-				if(managelist.length == 0 && memberlist.length ==0){
-					alert('你还没选择成员或者管理员');
-					return;
-				}				
 
 				var obj = {
 					name : name,
@@ -95,12 +167,25 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					members : memberlist,
 					managers : managelist,
 				}
+
 				if(nowType == 'group'){
 					obj.archivable = archivable;
 				}else if(nowType == 'dep'){
 					var order = $('.group-no').val();
 					obj.order = order;
+				}else if(nowType == 'prep'){
+					if(sem){
+						obj.startTime = st;
+						obj.endTime = et;
+					}else{
+						obj.parentId = pid;
+						obj.grade = gid;
+						obj.tag = sid;						
+					}
 				}
+
+				console.log(obj);
+				//return;
 				if(modify){
 					id = $('#modifyZone .group-name').attr('data-id');
 					obj.groupId = id;
@@ -177,6 +262,27 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				}
 			}
 		}
+	}
+
+	//验证备课目录是否已经存在同名的.
+	function checkPrep(pid,gid,sid){
+		var p = Cache.get('preps'),
+			prep = p.g2key,
+			grade = Cache.get('grade'),
+			subject = Cache.get('subject');
+		var item = prep[pid];
+		if(!item){
+			return false;
+		}
+		if(item.grade == gid && item.tag == sid){
+			return false;
+		}
+		if(grade[gid] && subject[sid]){
+			return grade[gid]+subject[sid];
+		}else{
+			return false;
+		}
+		
 	}
 
 
@@ -331,6 +437,11 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		//console.log(d.total);
 		isLoading = false;
 		d.type = nowType;
+		var grade = Cache.get('grade');
+		var subject = Cache.get('subject');		
+
+		d.glist = grade;
+		d.subject = subject;
 		var view = new View({
 			target : $('#tableBody'),
 			tplid : 'manage/group.list',
@@ -542,8 +653,15 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 	}
 
 	function createSuc(e,d){
-		console.log(d);
 		d.type = nowType;
+		if(nowType == 'prep'){
+			//d.g2key = Cache.get('preps').g2key;
+			var tg2key = Cache.get('preps').g2key;
+			$.extend(tg2key,d.g2key);
+			d.g2key = tg2key;
+			d.glist = Cache.get('grade');
+			d.subject = Cache.get('subject');	
+		}
 		var view = new View({
 			target : $('#tableBody'),
 			tplid : 'manage/group.list',
@@ -564,7 +682,6 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 	}
 
 	function appSuc(e,d){
-		console.log(d);
 		if(d.type == 1){
 			$('.group-tr'+d.id+' .td-status').html('已审核');
 		}else{

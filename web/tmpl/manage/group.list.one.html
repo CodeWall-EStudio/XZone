@@ -29,7 +29,17 @@
 		<td><%-size%></td>
 		<td><%-pre%>%</td>
 <%}else if(type=='prep'||type==3){%>	
-
+		<td>
+			<%
+				if(parent){
+					var p = g2key[parent.$id];
+			%>
+				<%-p.name%> - <%-item.name%>
+			<%}else{%>
+				<%-item.name%>
+			<%}%>
+			
+		</td>
 		<td><%-name%></td>
 		<td><%-grade%></td>
 		<td><%-tag%></td>

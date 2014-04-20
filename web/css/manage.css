@@ -176,3 +176,9 @@
 .grade-zone{
 	padding:10px;
 }
+
+.manage-loading{
+	padding:50px;
+	text-align:center;
+	font-size:16px;
+}
