@@ -11,8 +11,22 @@
 			<tr>
 				<td>类型:</td>
 				<td>
-					<input type="radio" name="gt" value="1" <%if(archivable){%>checked<%}%> />周期小组
-					<input type="radio" name="gt" value="0" <%if(!archivable){%>checked<%}%> />自由小组
+					<input class="group-check" type="radio" name="gt" value="1" <%if(name){%>disabled<%}%> <%if(archivable){%>checked<%}%> />周期小组
+					<input class="group-check" type="radio" name="gt" value="0" <%if(name){%>disabled<%}%> <%if(!archivable){%>checked<%}%> />自由小组
+					<div class="group-prep-span <%if(typeof grade == 'undefined'){%>hide<%}%>">
+						<select class="group-prep">
+							<%
+								for(var i in prep){
+									var item = prep[i];
+									if(!item.parent){
+							%>
+							<option value="<%+item.id%>" <%if(typeof grade !='undefined' && grade == item.id){%>selected<%}%>><%-item.name%></option>
+							<%
+									}
+								}
+							%>
+						</select>
+					</div>
 				</td>
 			</tr>
 			<tr>

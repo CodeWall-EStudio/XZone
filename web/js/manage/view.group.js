@@ -23,6 +23,41 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		now2key = {};
 
 	var groupHandler = {
+		//搜索
+		'.group-search-key' : {
+			'focus' : function(){
+				var t = $(this),
+					v = t.val(),
+					def = t.attr('data-def');
+				if(v == def){
+					t.val('');
+				}
+			},
+			'blur' : function(){
+				var t = $(this),
+					v = t.val(),
+					def = t.attr('data-def');
+				if(v == ''){
+					t.val(def);
+				}
+			}
+		},
+		'.group-search-btn' : {
+			'click' : function(){
+				var v = $('.group-search-key').val(),
+					def = $('.group-search-key').attr('data-def');
+				if(v != '' && v != def){
+					nowKey = v;
+					reloadGroup();
+					var obj = {
+						keyword : v,
+						type : types[nowType],
+						page : 0
+					}
+					getGroup(obj);
+				}
+			}
+		},
 		//添加备课
 		'.add-sem' : {
 			'click' : function(){
@@ -48,6 +83,17 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				view.createPanel();
 			}
 		},
+		'.group-check' : {
+			'click' : function(){
+				var t = $(this),
+					v = t.val();
+				if(v){
+					$('.group-prep-span').removeClass('hide');
+				}else{
+					$('.group-prep-span').addClass('hide');
+				}
+			}
+		},
 		//添加小组
 		'.add-group' : {
 			'click' : function(){
@@ -63,7 +109,10 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					data.prep = prep.g2key;
 					data.grade = grade;
 					data .subject = subject;
-				}				
+				}else if(nowType == 'group'){
+					var prep = Cache.get('preps');
+					data.prep = prep.g2key;
+				}
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
@@ -170,6 +219,9 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 
 				if(nowType == 'group'){
 					obj.archivable = archivable;
+					if(archivable){
+						obj.grade = $('.group-prep').val();
+					}
 				}else if(nowType == 'dep'){
 					var order = $('.group-no').val();
 					obj.order = order;
@@ -183,8 +235,6 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 						obj.tag = sid;						
 					}
 				}
-
-				console.log(obj);
 				//return;
 				if(modify){
 					id = $('#modifyZone .group-name').attr('data-id');
@@ -306,6 +356,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 
 	function init(type){
 		nowPage = 0;
+		nowKey = '';
 		var obj = {
 			target : $('#groupMa'),
 			tplid : 'manage/group',
@@ -380,6 +431,10 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		}
 	}
 
+	function resetKey(){
+		nowKey = '';
+	}
+
 	//重新加载
 	function reloadGroup(){
 		var objTit = {
@@ -387,7 +442,8 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 			data : {
 				type : nowType,
 				od : nowOd,
-				on : nowOn
+				on : nowOn,
+				keyword : nowKey
 			}
 		}		
 		objTit.target = $('#tableTit');
@@ -406,13 +462,16 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		isLoading = false;
 		d.archivable = nowArch;
 		nowGroup = d;
+		if(nowType == 'group'){
+			d.prep = Cache.get('preps').g2key;
+		}
 		var view = new View({
 			target : $('#groupModifyZone'),
 			tplid : 'manage/group.modify.dl',
 			data : d		
 		});
 		view.createPanel();
-		console.log(d.status);
+
 		if(d.status == 1){
 			$('.group-action-btn button').removeClass('active').prop({
 				'disabled' : false
@@ -437,11 +496,14 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		//console.log(d.total);
 		isLoading = false;
 		d.type = nowType;
+		var prep = Cache.get('preps').g2key;
 		var grade = Cache.get('grade');
 		var subject = Cache.get('subject');		
 
 		d.glist = grade;
 		d.subject = subject;
+		d.prep = prep;
+
 		var view = new View({
 			target : $('#tableBody'),
 			tplid : 'manage/group.list',
@@ -654,6 +716,9 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 
 	function createSuc(e,d){
 		d.type = nowType;
+		
+		var target = $('<tr data-id="'+d.id+'" class="group-tr group-tr'+d.id+'"></tr>');
+
 		if(nowType == 'prep'){
 			//d.g2key = Cache.get('preps').g2key;
 			var tg2key = Cache.get('preps').g2key;
@@ -661,17 +726,32 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 			d.g2key = tg2key;
 			d.glist = Cache.get('grade');
 			d.subject = Cache.get('subject');	
+		}else if(nowType == 'group'){
+			var tg2key = Cache.get('preps').g2key;
+			d.prep = tg2key;
 		}
 		var view = new View({
-			target : $('#tableBody'),
-			tplid : 'manage/group.list',
+			target : target,
+			tplid : 'manage/group.list.one',
 			data : d
 		});
-		view.appendPanel();		
+		// view.createPanel();		
+		// $('#tableBody').append(target);
 	}
 
 	function modifySuc(e,d){
+		if(nowType == 'prep'){
+			var tg2key = Cache.get('preps').g2key;
+			$.extend(tg2key,d.g2key);
+			d.g2key = tg2key;
+			d.glist = Cache.get('grade');
+			d.subject = Cache.get('subject');	
+		}else if(nowType == 'group'){
+			var tg2key = Cache.get('preps').g2key;
+			d.prep = tg2key;
+		}		
 		var id = d.id;
+		console.log(d);
 		var view = new View({
 			target : $('.group-tr'+id),
 			tplid : 'manage/group.list.one',

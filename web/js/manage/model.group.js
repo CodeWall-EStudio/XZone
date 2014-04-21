@@ -114,9 +114,9 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		var success = function(d){
 			if(d.err == 0){
 				var obj = conventGroup(d.result.data);
-				var g2obj = {};
-				g2obj[obj.id] = obj;
-				handerObj.triggerHandler('group:createsuc',{list:[obj],g2key : g2obj});
+				// var g2obj = {};
+				// g2obj[obj.id] = obj;
+				handerObj.triggerHandler('group:createsuc',obj);
 			}
 			handerObj.triggerHandler('msg:error',d.err);
 		}

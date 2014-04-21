@@ -10,7 +10,7 @@
 		</td>
 		<td>
 			<%if(grade){%>
-				<%-grade%>
+				<%-prep[grade].name%>
 			<%}else{%>
 				-
 			<%}%>
@@ -34,14 +34,14 @@
 				if(parent){
 					var p = g2key[parent.$id];
 			%>
-				<%-p.name%> - <%-item.name%>
+				<%-p.name%> - <%-name%>
 			<%}else{%>
-				<%-item.name%>
+				<%-name%>
 			<%}%>
 			
 		</td>
 		<td><%-name%></td>
-		<td><%-grade%></td>
+		<td>1234<%-grade%></td>
 		<td><%-tag%></td>
 		<td><%-folderCount%></td>
 		<td><%-stname%></td>
