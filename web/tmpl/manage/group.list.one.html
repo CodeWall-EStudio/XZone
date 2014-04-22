@@ -1,5 +1,5 @@
 <%if(type=='group' || type==1){%>
-		<td><%-name%></td>
+		<td><a href="/#gid=<%-id%>" target="_blank"><%-name%></a></td>
 		<td><%-memberCount%></td>
 		<td>
 			<%if(archivable){%>
@@ -23,7 +23,7 @@
 <%}else if(type=='dep' || type==2){%>	
 
 		<td><%-order%></td>
-		<td><%-name%></td>
+		<td><a href="/#gid=<%-id%>" target="_blank"><%-name%></a></td>
 		<td><%-memberCount%></td>
 		<td><%-stname%></td>
 		<td><%-size%></td>
@@ -34,7 +34,7 @@
 				if(parent){
 					var p = g2key[parent.$id];
 			%>
-				<%-p.name%> - <%-name%>
+				<a href="/#groupprep=1&pid=<%-p.id%>&gid=<%-id%>&fdid=<%-rootFolder.$id%>" target="_blank"><%-p.name%> - <%-name%></a>
 			<%}else{%>
 				<%-name%>
 			<%}%>

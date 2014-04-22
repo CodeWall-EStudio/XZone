@@ -337,10 +337,20 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 
 
 	function bind(){
-		$('#groupTable').on('click','.group-tr',function(){
+		$('#groupTable').on('click','.group-tr',function(e){
 			var t = $(this),
 				id = t.attr('data-id');
 				arch = t.attr('data-arch');
+			var t1 = $(e.target),
+				fid = t1.attr('data-fid');
+			//显示统计
+			if(fid){
+				if(!isLoading){
+					handerObj.triggerHandler('group:folderstatus',fid);
+				}
+				return;
+			}
+
 			$('#groupTable .group-tr').removeClass('group-tr-selected');
 			t.addClass('group-tr-selected');
 			if(id){
@@ -714,6 +724,55 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		view.createPanel();		
 	}
 
+	function statusLoad(e,d){
+		isLoading = false;
+		//console.log(d);
+		var view = new View({
+			target : $("#groupModifyZone"),
+			tplid : 'manage/status',
+			data : d,
+			after : function(){
+				if(!d.totalCount){
+					return;
+				}
+				var list = [];
+				var filetype = config.filetype;
+				for(var i in d.list){
+					var item = d.list[i];
+					list.push([filetype[item.type],item.size,item.count]);
+				}
+				
+				var plot2 = jQuery.jqplot ('preImg', [list],{
+					seriesDefaults: {
+						renderer: jQuery.jqplot.PieRenderer, 
+						rendererOptions: {
+							padding: 20, 
+							// Turn off filling of slices.
+							fill: true,
+							showDataLabels: true, 
+							// Add a margin to seperate the slices.
+							sliceMargin: 4, 
+							// stroke the slices with a little thicker line.
+							lineWidth: 5
+							}
+						}, 
+						legend: { 
+							show:true, 
+							location: 'e' 
+						},
+						cursor : {
+							show: true,              //是否显示光标  
+							showTooltip: true,      // 是否显示提示信息栏  
+							followMouse: false,
+							tooltipAxesGroups : list						
+						}
+					}
+				);				
+			}
+		});
+		view.createPanel();
+	}
+
 	function createSuc(e,d){
 		d.type = nowType;
 		
@@ -775,7 +834,8 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		'group:userloaded' : userLoaded,
 		'group:modifysuc' : modifySuc,
 		'group:groupinfosuc' : groupInfo,
-		'group:appsuc' : appSuc
+		'group:appsuc' : appSuc,
+		'group:statusload' : statusLoad
 	}
 
 	for(var i in handlers){

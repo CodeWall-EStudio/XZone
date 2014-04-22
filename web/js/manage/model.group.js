@@ -229,6 +229,25 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		request.get(opt,success);		
 	}
 
+	function folderStatus(e,d){
+		var opt = {
+			cgi : config.cgi.filestatus,
+			data : {
+				folderId : d
+			}
+		}	
+		var success = function(d){
+			if(d.err == 0){
+				d.result.size = util.getSize(d.result.totalSize);
+				handerObj.triggerHandler('group:statusload',d.result);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+
+		request.get(opt,success);			
+	}
+
 	var handlers = {
 		'group:list' : getList,
 		'group:loaduser' : loadUser,
@@ -236,7 +255,8 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		'group:one' : groupInfo,
 		'group:modify' : groupModify,
 		'group:approve' : appRove,
-		'group:loadprep' : loadPrep
+		'group:loadprep' : loadPrep,
+		'group:folderstatus' : folderStatus
 	}
 
 	for(var i in handlers){

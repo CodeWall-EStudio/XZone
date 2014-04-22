@@ -41,6 +41,7 @@ define(function() {
 			filesave : CGI_PATH+'file/save'+EXT,
 			filereview : CGI_PATH+'file/preview'+EXT,	
 			filequery : CGI_PATH+'file/query'+EXT,//order page pageNum type 1 查询我分享给小组的  groupid
+			filestatus : CGI_PATH+'file/statistics'+EXT,
 			//batchDownload
 
 
@@ -51,6 +52,7 @@ define(function() {
 			foldlist : CGI_PATH+'folder/list'+EXT,
 			foldsearch : CGI_PATH+'folder/search'+EXT,
 			folddel : CGI_PATH+'folder/delete'+EXT,
+
 
 			//文件收藏
 			favcreate : CGI_PATH+'fav/create'+EXT,

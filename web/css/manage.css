@@ -136,6 +136,9 @@
 .action-modify-zone{
 	clear:both;
 }
+.action-modify-zone table{
+	margin-bottom:10px;
+}
 
 .action-modify-zone i.close{
 	display:inline-block;
@@ -181,4 +184,24 @@
 	padding:50px;
 	text-align:center;
 	font-size:16px;
+}
+
+.td-pre{
+	color:#428bca;
+	cursor:pointer;
+}
+
+tr.jqplot-table-legend{
+	padding:4px;
+}
+td.jqplot-table-legend {
+	padding:4px;
+}
+
+.file-status-zone{
+	padding:20px 0;
+}
+.file-status-tit{
+	font-size:14px;
+	padding:10px;
 }

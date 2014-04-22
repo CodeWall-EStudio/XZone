@@ -4,7 +4,7 @@
 			var item = g2key[i];
 	%>
 	<tr data-id="<%+item.id%>" <%if(item.archivable){%>data-arch="<%=item.archivable%>"<%}%> class="group-tr group-tr<%-item.id%>">
-		<td><%-item.name%></td>
+		<td><a href="/#gid=<%-item.id%>" target="_blank"><%-item.name%></a></td>
 		<td><%-item.memberCount%></td>
 		<td>
 			<%if(item.archivable){%>
@@ -24,7 +24,7 @@
 			<%-item.stname%>
 		</td>
 		<td><%-item.size%></td>
-		<td><%-item.pre%>%</td>
+		<td class="td-pre" data-fid="<%-item.rootFolder.$id%>" title="查看文件统计"><%-item.pre%>%</td>
 	</tr>
 	<%}%>
 <%}else if(type=='dep'){%>	
@@ -34,11 +34,11 @@
 	%>
 	<tr data-id="<%+item.id%>" class="group-tr group-tr<%-item.id%>">
 		<td><%if(item.order){%><%-item.order%><%}%></td>
-		<td><%-item.name%></td>
+		<td><a href="/#gid=<%-item.id%>" target="_blank"><%-item.name%></a></td>
 		<td><%-item.memberCount%></td>
 		<td class="td-status"><%-item.stname%></td>
 		<td><%-item.size%></td>
-		<td><%-item.pre%>%</td>
+		<td class="td-pre" data-fid="<%-item.rootFolder.$id%>" title="查看文件统计"><%-item.pre%>%</td>
 	</tr>
 	<%}%>
 <%}else if(type=='prep'){%>	
@@ -52,7 +52,7 @@
 				if(item.parent){
 					var p = g2key[item.parent.$id];
 			%>
-				<%-p.name%> - <%-item.name%>
+				<a href="/#groupprep=1&pid=<%-p.id%>&gid=<%-item.id%>&fdid=<%-item.rootFolder.$id%>" target="_blank"><%-p.name%> - <%-item.name%></a>
 			<%}else{%>
 				<%-item.name%>
 			<%}%>
@@ -61,7 +61,7 @@
 		<td><%-glist[item.grade]%></td>
 		<td><%-subject[item.tag]%></td>
 		<td><%-item.folderCount%></td>
-		<td><%-item.stname%></td>
+		<td class="td-pre" data-fid="<%-item.rootFolder.$id%>" title="查看文件统计"><%-item.stname%></td>
 	</tr>
 	<%}%>
 <%}%>
