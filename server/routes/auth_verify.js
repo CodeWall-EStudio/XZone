@@ -7,6 +7,7 @@ var us = require('underscore');
 var db = require('../models/db');
 var ERR = require('../errorcode.js');
 var U = require('../util');
+var Logger = require('../logger');
 var config = require('../config');
 var AuthConfig = require('./auth_config');
 var mUser = require('../models/user');
@@ -32,19 +33,22 @@ exports.checkAuth = function(req, res, next){
     var loginUid;
     if(!req.session || !skey || !(loginUid = req.session[skey])){
         res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
+        Logger.info('[checkAuth] not login', 'path: ', path, ', method: ', method);
         return;
     }
     req.loginUid = loginUid;
 
     // 这里改成每次请求都从数据库读取用户信息, 为了数据的一致性, 只能牺牲下性能
-    mUser.getUser({ _id: ObjectID(loginUid) }, function(err, user){
+    mUser.getUser({ _id: new ObjectID(loginUid) }, function(err, user){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: 'verify user error' });
-        }if(user){
+            Logger.error('[checkAuth] verify user error: ', user, ':', err, 'path: ', path, ', method: ', method);
+        }else if(user){
             req.loginUser = user;
             next();
         }else{
-            res.json({ err: ERR.NOT_LOGIN, msg: 'verify user error' });
+            res.json({ err: ERR.NOT_LOGIN, msg: 'verify user error, con\'t find user in db' });
+            Logger.info('[checkAuth] verify user error, con\'t find user in db', 'path: ', path, ', method: ', method);
         }
     });
     
@@ -68,6 +72,7 @@ exports.checkAuthAndLogin = function(req, res, next){
     var loginUid;
     if(!req.session || !skey || !(loginUid = req.session[skey])){
         routeUser.gotoLogin(req, res);
+        Logger.info('[checkAuthAndLogin] goto login', 'path: ', path, ', method: ', method);
         return;
     }
     req.loginUid = loginUid;
@@ -80,17 +85,21 @@ exports.checkAuthAndLogin = function(req, res, next){
  */
 exports.checkAPI = function(req, res, next){
     var path = req.redirectPath || req.path;
+    var method = req.method;
     var loginUser = req.loginUser;
     var parameter = req.parameter;
 
     if (AuthConfig.AUTH_WHITE_LIST.indexOf(path) >= 0) {
+        Logger.info('[checkAPI] white list skip', 'path: ', path, ', method: ', method);
         return next();
     }
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
+
+        Logger.info('[checkAPI]', errCode, ':', err, 'path: ', path, ', method: ', method);
         if(errCode === ERR.NOT_FOUND && config.DOWNLOAD_APIS.indexOf(path) > -1){
-            console.error(err, errCode);
+
             //NOTE: 下载接口, 如果找不到文件, 直接跳 404 页面
             return res.redirect(config.NOT_FOUND_PAGE);
         }

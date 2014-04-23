@@ -2,6 +2,7 @@ var us = require('underscore');
 
 var ERR = require('../errorcode');
 var config = require('../config');
+var Logger = require('../logger');
 
 us.extend(exports, require('./param_verify'));
 
@@ -24,7 +25,7 @@ function getRouter(path, method){
             }
         }
     }catch(e){
-        console.error('getRouter(', path, method, ') Error: ', e.message);
+        Logger.error('getRouter(', path, method, ') Error: ', e.message);
     }
     return null;
 }
@@ -37,6 +38,7 @@ exports.route = function(req, res, next){
     if (router) {
 
         router(req, res, next);
+        Logger.debug('route to ', path);
     } else {
         next();
     }
@@ -57,6 +59,7 @@ exports.setXHR2Headers = function(req, res, next){
     if (method === 'OPTIONS') {
 
         res.send(200);
+        Logger.info('[setXHR2Headers]', 'origin: ', origin, 'method: ', method);
     } else {
         next();
     }
@@ -66,7 +69,10 @@ exports.mediaUpload = function(req, res, next){
 
     var type = req.param('media', 0);
 
+    Logger.debug('[mediaUpload]', 'type: ', type);
+
     if (type === 1) {
+
         req.redirectPath = MEDIA_UPLOAD_CGI;
     }
     next();
@@ -85,6 +91,7 @@ exports.mediaDownload = function(req, res, next){
     var url = MEDIA_DOWNLOAD_CGI + '?fileId=' + fileId + '&skey=' + skey;
     res.redirect(url);
 
+    Logger.debug('[mediaDownload]', 'skey: ', skey, 'fileId: ', fileId);
 };
 
 

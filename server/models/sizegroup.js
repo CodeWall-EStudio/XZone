@@ -45,6 +45,10 @@ exports.modify = function(query, doc, callback){
 };
 
 
+exports.delete = function(){
+    
+};
+
 exports.search = function(query, callback){
 
     db.sizegroup.find(query, callback);

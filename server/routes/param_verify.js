@@ -8,6 +8,7 @@ var db = require('../models/db');
 var config = require('../config');
 var ERR = require('../errorcode.js');
 var U = require('../util');
+var Logger = require('../logger');
 var ParamConfig = require('./param_config');
 
 var ObjectIDLength = 24;
@@ -211,16 +212,20 @@ exports.checkParams = function(req, res, next){
     var cfgParams = cfg.params || [];
     
     var ep = new EventProxy();
-    ep.fail(function(error, errCode){
+    ep.fail(function(err, errCode){
+
+        Logger.info('[checkParams]', errCode, ':', err, 'path: ', path, ', method: ', method);
         if(errCode === ERR.NOT_FOUND && config.DOWNLOAD_APIS.indexOf(path) > -1){
-            console.error(err, errCode);
+
             // NOTE: 下载接口, 如果找不到文件, 直接跳 404 页面
             return res.redirect(config.NOT_FOUND_PAGE, 404);
         }
-        res.json({ err: errCode || ERR.PARAM_ERROR, msg: error });
+        res.json({ err: errCode || ERR.PARAM_ERROR, msg: err });
     });
 
     if(cfg.method && cfg.method.indexOf(method) === -1){
+
+        Logger.info('[checkParams] not support method', 'path: ', path, ', method: ', method);
         return res.json({ err: ERR.NOT_SUPPORT, msg: 'not support method [' + method + ']' });
     }
 
