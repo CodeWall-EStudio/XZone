@@ -74,6 +74,7 @@ exports.mediaUpload = function(req, res, next){
     if (type === 1) {
 
         req.redirectPath = MEDIA_UPLOAD_CGI;
+        Logger.debug('[mediaUpload]', 'req.redirectPath: ', req.redirectPath);
     }
     next();
 };
