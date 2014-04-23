@@ -282,8 +282,8 @@ module.exports = {
         method: 'GET',
         params: [
             {
-                name: 'file',
-                type: 'fileId',
+                name: 'fileId',
+                type: 'file',
                 required: true
             }
         ]

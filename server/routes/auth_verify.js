@@ -28,6 +28,7 @@ exports.checkAuth = function(req, res, next){
     req.skey = skey;
 
     if (AuthConfig.AUTH_WHITE_LIST.indexOf(path) >= 0) {
+        Logger.info('[checkAuth] white list skip', 'path: ', path, ', method: ', method);
         return next();
     }
     var loginUid;

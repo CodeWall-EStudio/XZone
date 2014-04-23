@@ -67,7 +67,7 @@ exports.setXHR2Headers = function(req, res, next){
 
 exports.mediaUpload = function(req, res, next){
 
-    var type = req.param('media', 0);
+    var type = Number(req.param('media', 0));
 
     Logger.debug('[mediaUpload]', 'type: ', type);
 
