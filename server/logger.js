@@ -12,8 +12,8 @@ exports.info = function(){
 exports.debug = function(){
     if(config.DEBUG){
         var args = slice.call(arguments);
-        args.unshift('[debug]<<<');
-        args.push('>>>');
+        args.unshift('----\n[debug]>>>>');
+        args.push('\n<<<<\n----');
         console.log.apply(console, args);
     }
 };
