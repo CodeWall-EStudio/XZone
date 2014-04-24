@@ -94,6 +94,7 @@
         'mycoll=:id' : 'coll',
         'myshare' : 'share',
         'myrecy=:id' : 'recy',
+        'recy=:id' : 'recy',
         "gid=:id" : 'group',
         'groupprep=:id' : 'groupprep',
         "gid=:id&fdid=:fdid" : 'group',
@@ -190,6 +191,7 @@
         var od = parseInt(data.od) || 0,
             on = data.ordername || 0,
             type = data.type || 0,
+            gid = data.gid || 0,
             key = data.key || 0;   
         var d = {
           type : type
@@ -197,6 +199,9 @@
         if(Math.abs(od)){
           d.order = [on,od];
         } 
+        if(gid){
+          d.gid = gid;
+        }
         if(key){
           d.key = key;
         }

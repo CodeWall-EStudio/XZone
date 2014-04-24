@@ -85,13 +85,56 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 		view.createPanel();
 	}
 
+	function showAside(d){
+
+		if(!myGroups){
+			myInfo = Cache.get('myinfo'),
+			myGroups = myInfo.group2key;
+		}
+		nowGroup = myGroups[d.id];
+
+		var data = {
+			gid : d.id,
+			fdid : d.rootFolder.id,
+			info : d
+		}
+		if(!nowData){
+			nowData = {};
+		}
+		nowData.info = d;
+		if((nowFd == 0 || !nowFd) && d.rootFolder){
+			nowData.fdid = d.rootFolder.id || d.rootFolder.$id;
+		}
+		nowData.rootfdid = d.rootFolder.id || d.rootFolder.$id;
+
+		$('#aside .aside-divs').hide();	
+		
+		groupAsideTarget.show();
+		groupAside();
+
+		if(!d.pt){
+			handerObj.triggerHandler('group:board',{
+				groupId : d.id,
+				pageNum : 10,
+				order : '{crateTime:-1}',
+				page : 0,
+				type : 1
+			});
+		}			
+	}
+
 	function info(e,d){
 		var data = {
 			gid : nowGid,
 			fdid : nowFd,
 			info : d
 		}
+		if(d.recy){
+			showAside(d);
+			return;
+		}
 		nowData.info = d;
+
 		if((nowFd == 0 || !nowFd) && d.rootFolder){
 			nowData.fdid = d.rootFolder.id || d.rootFolder.$id;
 		}

@@ -735,11 +735,13 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				if(!d.totalCount){
 					return;
 				}
-				var list = [];
+				var list = [],
+					clist = [];
 				var filetype = config.filetype;
 				for(var i in d.list){
 					var item = d.list[i];
 					list.push([filetype[item.type],item.size,item.count]);
+					clist.push([filetype[item.type],item.count]);
 				}
 				
 				var plot2 = jQuery.jqplot ('preImg', [list],{
@@ -764,10 +766,54 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 							show: true,              //是否显示光标  
 							showTooltip: true,      // 是否显示提示信息栏  
 							followMouse: false,
-							tooltipAxesGroups : list						
 						}
 					}
-				);				
+				);
+
+				var plot3 = jQuery.jqplot ('preImg1', [clist],{
+					seriesDefaults: {
+						renderer: jQuery.jqplot.PieRenderer, 
+						rendererOptions: {
+							padding: 20, 
+							// Turn off filling of slices.
+							fill: true,
+							showDataLabels: true, 
+							// Add a margin to seperate the slices.
+							sliceMargin: 4, 
+							// stroke the slices with a little thicker line.
+							lineWidth: 5
+							}
+						}, 
+						legend: { 
+							show:true, 
+							location: 'e' 
+						},
+						cursor : {
+							show: true,              //是否显示光标  
+							showTooltip: true,      // 是否显示提示信息栏  
+							followMouse: false,
+						}
+					}
+				);	
+				$('#preImg1').hide();
+			},
+			handlers : {
+				'.status-size' : {
+					'click' : function(){
+						$(this).addClass('selected');
+						$('.status-count').removeClass('selected');
+						$('.preimg-zone').hide();
+						$('#preImg').show();
+					}
+				},
+				'.status-count' : {
+					'click' : function(){
+						$(this).addClass('selected');
+						$('.status-size').removeClass('selected');
+						$('.preimg-zone').hide();
+						$('#preImg1').show();
+					}
+				},				
 			}
 		});
 		view.createPanel();

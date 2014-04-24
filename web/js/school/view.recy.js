@@ -4,6 +4,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 
 	var nextPage = 0,
 		action = 0,
+		nowGid = 0,
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
 		nowType = 0,
@@ -28,7 +29,6 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 
 	function init(e,d){
 		var myInfo = Cache.get('myinfo');
-
 		action = 1;
 		tmpTarget.html('');
 		crTit();
@@ -37,6 +37,9 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 
 		if(d.order){
 			nowOrder = d.order;
+		}
+		if(d.gid){
+			nowGid = d.gid;
 		}
 		nowType = d.type;
 		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
@@ -49,18 +52,30 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 				order : nowOds,
 				name : 'myrecy',
 				cate : 2,
-				type : nowType
-			}			
+				type : nowType			
+			}	
 		});
 		view.createPanel();
 
-		handerObj.triggerHandler('recy:serach',{
+		var obj = {
 			keyword : nowKey,
 			page:nextPage,
 			type : nowType,
 			pageNum : config.pagenum,
 			order : nowOds
-		});			
+		}
+		if(nowGid){
+			obj.groupId = nowGid;
+
+			handerObj.triggerHandler('group:info',{
+				gid : nowGid,
+				type : 'group',
+				recy : true
+			});
+		}
+
+
+		handerObj.triggerHandler('recy:serach',obj);			
 	}
 
 	function load(e,d){
@@ -105,13 +120,17 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 		if(!action || !nextPage){
 			return;
 		}
-		handerObj.triggerHandler('recy:serach',{
+		var obj = {
 			keyword : nowKey,
 			page:nextPage,
 			type:nowType,
 			pageNum : config.pagenum,
 			order : nowOds
-		});			
+		};
+		if(nowGid){
+			obj.groupId = nowGid
+		}
+		handerObj.triggerHandler('recy:serach',obj);			
 	}
 
 	var handlers = {

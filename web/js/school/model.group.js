@@ -78,10 +78,12 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 
 	function groupInfo(e,d){
 		var deftype = 'group';
-		var gid,type = 0;
+		var gid,type = 0,
+			recy = false;
 		if(typeof d == 'object'){
 			gid = d.gid;
 			type = d.type;
+			recy = d.recy;
 		}else{
 			gid = d;
 			type = deftype;
@@ -96,6 +98,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}
 		var success = function(d){
 			if(d.err == 0){
+				d.result.data.recy = recy;
 				d.result.data.id = d.result.data._id;
 				d.result.data.ml = conventMembers(d.result.data.members);
 				d.result.data.mlist = convent2Members(d.result.data.members);
