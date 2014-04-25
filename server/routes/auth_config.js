@@ -103,7 +103,7 @@ exports.RULES = {
 
                 var uid = user._id.toString();
                 if(message.toUser.oid.toString() !== uid && message.fromUser.oid.toString() !== uid){
-                    return callback('not auth to save this file', ERR.NOT_AUTH);
+                    return callback('not auth to preview this file', ERR.NOT_AUTH);
                 }
                 mRes.getResource({ _id: message.resource.oid }, function(err, resource){
                     if(err){

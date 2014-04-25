@@ -13,14 +13,14 @@ exports.debug = function(){
     if(config.DEBUG){
         var args = slice.call(arguments);
         args.unshift('----\n[debug]>>>>');
-        args.push('\n<<<<\n----');
+        args.push('\n<<<<');
         console.log.apply(console, args);
     }
 };
 
 exports.error = function(){
     var args = slice.call(arguments);
-    args.unshift('>>>\n>', new Date(),'\n');
+    args.unshift('>>>\n[error]', new Date(),'\n');
     args.push('\n<<<');
     console.error.apply(console, args);
 };

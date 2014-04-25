@@ -96,6 +96,8 @@ exports.search = function(req, res){
         del: true
     };
 
+    delete searchParams.groupId;
+    
     if (group) {
 
         // 搜索小组的回收站

@@ -46,13 +46,6 @@ exports.create = function(params, callback){
         validateTime: null,//审核时间
         validator: null
     };
-    // if(groupId){
-        // doc.group = DBRef('group', ObjectID(groupId));
-        // doc.fromGroup = params.fromGroup ? DBRef('group', ObjectID(params.fromGroup)) : doc.group;
-    // }
-    // if(params.fromGroup){
-
-    // }
 
     db.file.insert(doc, function(err, result){
         if(err){
@@ -181,9 +174,7 @@ exports.search = function(params, callback){
     if(creator){
         query['creator.$id'] = creator;
     }
-    if(groupId){
-        query['group.$id'] = groupId;
-    }
+
     if(hasType){
         query['type'] = type;
     }
