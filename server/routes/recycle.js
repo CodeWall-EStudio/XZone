@@ -97,11 +97,12 @@ exports.search = function(req, res){
     };
 
     delete searchParams.groupId;
-    
+
     if (group) {
 
         // 搜索小组的回收站
         searchParams.folderId = group.rootFolder.oid;
+        searchParams.recursive = true;
     } else {
 
         // 只能搜索自己的回收站

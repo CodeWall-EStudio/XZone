@@ -148,9 +148,7 @@ exports.getFile = function(query, callback){
 
 exports.search = function(params, callback){
     var folderId = params.folderId;
-
-    var groupId = params.groupId || null;
-
+    
     var creator = params.creator || null;
 
     var keyword = params.keyword || '';
