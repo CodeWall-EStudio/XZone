@@ -216,4 +216,58 @@ exports.mergeOldData = function(req, res){
     });
 };
 
+exports.fixUserRootFolder = function(req, res){
+    var user = req.loginUser;
 
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+        return ep.emit('error', 'no auth');
+    }
+    var result = [];
+    db.user.find({}, function(err, docs){
+        if(docs && docs.length){
+
+            docs.forEach(function(user){
+                if(user.rootFolder && typeof user.rootFolder.oid === 'string'){
+                    user.rootFolder = new DBRef('folder', new ObjectID(user.rootFolder.oid));
+                    db.user.save(user, function(){
+                        
+                    });
+                    result.push(user.nick);
+                }
+            });
+        }
+        res.json({ err: ERR.SUCCESS, total: result.length, result: result });
+    });
+};
+
+exports.fixSaveFileFolder = function(req, res){
+    var user = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+        return ep.emit('error', 'no auth');
+    }
+    var result = [];
+    db.file.find({}, function(err, docs){
+        if(docs && docs.length){
+
+            docs.forEach(function(file){
+                if(typeof file.folder.oid === 'string'){
+                    file.folder = new DBRef('folder', new ObjectID(file.folder.oid));
+                    db.file.save(file, function(){
+                        
+                    });
+                    result.push([file._id, file.name]);
+                }
+            });
+        }
+        res.json({ err: ERR.SUCCESS, total: result.length, result: result });
+    });
+};

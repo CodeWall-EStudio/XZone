@@ -265,7 +265,11 @@ exports.save = function(req, res){
     var loginUser = req.loginUser;
 
     var msg = params.messageId;
-    var rootFolderId = params.folderId || loginUser.rootFolder.oid;
+    var rootFolderId = loginUser.rootFolder.oid;
+
+    if(params.folderId){
+        rootFolderId = params.folderId._id;
+    }
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
@@ -276,11 +280,11 @@ exports.save = function(req, res){
         name: msg.name,
         'folder.$id': rootFolderId
     };
-    console.log('>>>file.save checkfile ', param);
+    console.log('>>>file.save check file', param);
     // 检查重名
     mFile.getFile(param, function(err, file){
         if(file){
-            ep.emit('error', 'has the same fileName', ERR.DUPLICATE);
+            ep.emit('error', 'has the same filename', ERR.DUPLICATE);
             return;
         }
         mRes.getResource({ _id: msg.resource.oid }, ep.done('getResource'));

@@ -34,7 +34,7 @@ exports.create = function(params, callback){
             if(err){
                 return callback(err);
             }
-            user.rootFolder = DBRef('folder', folder._id);
+            user.rootFolder = new DBRef('folder', folder._id);
             db.user.save(user, function(err, result){
                 callback(err, user);
             });
