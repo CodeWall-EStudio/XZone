@@ -84,6 +84,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 		}else{
 			nextPage = 0;
 		}
+		console.log(d);
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'mail.list',

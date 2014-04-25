@@ -8,6 +8,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			var item = data[i];
 			list.push({
 				id : item._id,
+				rid : item.resource._id,
 				tname : item.toUser.nick,
 				fname : item.fromUser.nick,
 				fid : item.fid,

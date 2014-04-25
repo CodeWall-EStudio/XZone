@@ -20,9 +20,10 @@
     function convent(data){
       var obj = {};
       obj.fid = data.resource._id;
-      obj.type = data.resource.type;
+      obj.type = data.resource.type || data.type;
       obj.name = data.name;
       obj.id = data._id;
+      obj.mail = mail;
       return obj;
     }
 
@@ -33,9 +34,13 @@
         tplid : 'review',
         after : function(){
           if(data.type == 2){
+              var purl = encodeURIComponent(config.cgi.filereview+'?fileId='+data.id);
+              if(mail){
+                purl = encodeURIComponent(config.cgi.filereview+'?messageId='+data.id)
+              }
               $('#documentViewer').FlexPaperViewer(
                 { config : {
-                    SWFFile : encodeURIComponent(config.cgi.filereview+'?fileId='+data.id),
+                    SWFFile : purl,
                     jsDirectory : '/js/lib/flex/',
                     Scale : 0.8,
                     ZoomTransition : 'easeOut',
@@ -122,17 +127,29 @@
     }
 
     function getFile(id){
+      var obj = {}
+          url = config.cgi.fileinfo;
+      if(mail){
+        obj.messageId = id;
+        url = config.cgi.msgone;
+      }else{
+        obj.fileId = id;
+      }
       var opt = {
-        cgi : config.cgi.fileinfo,
-        data : {
-          fileId : id
-        }
+        cgi : url,
+        data : obj
       }
       var success = function(d){
         if(d.err == 0){
           var finfo = convent(d.result.data);
           if(finfo.type == 8){
-            $.get(config.cgi.filereview,{fileId:id},function(d){
+            var to = {};
+            if(mail){
+              to.messageId = id;
+            }else{
+              to.fileId = id;
+            }
+            $.get(config.cgi.filereview,to,function(d){
               finfo.text = d;
               render(finfo);
             },'text');
@@ -150,6 +167,7 @@
 
 
     var id = util.getParam('id');
+    var mail = util.getParam('mail');
     getFile(id);
    
   });

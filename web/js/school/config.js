@@ -74,6 +74,7 @@ define(function() {
 			groupverlist : CGI_PATH+'group/verify/list'+EXT,
 
 			//消息
+			msgone : CGI_PATH+'message'+EXT,
 			msgcreate : CGI_PATH+'message/create'+EXT,
 			msgsearch : CGI_PATH+'message/search'+EXT,
 

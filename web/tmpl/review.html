@@ -1,5 +1,5 @@
 <%if(data.type == 1){%>
-	<img id="reviewImg" src="/api/file/preview?fileId=<%+data.id%>" onload="change(this)" align="absmiddle" />
+	<img id="reviewImg" src="/api/file/preview?<%if(data.mail){%>messageId=<%+data.id%><%}else{%>fileId=<%+data.id%><%}%>" onload="change(this)" align="absmiddle" />
 		<div class="file-reivew-act">
 			<dl>
 				<dt>文件名:<%-data.name%></dt>
@@ -20,9 +20,9 @@
 	  <video id="example_video_1" class="video-js vjs-default-skin" controls preload="none" width="640" height="264"
 	      poster="http://video-js.zencoder.com/oceans-clip.png"
 	      data-setup="{}">
-	    <source src="<%+url%>?fileId=<%+data.id%>" type='video/mp4' />
-	    <source src="<%+url%>?fileId=<%+data.id%>" type='video/webm' />
-	    <source src="<%+url%>?fileId=<%+data.id%>" type='video/ogg' />
+	    <source src="<%+url%>?<%if(data.mail){%>messageId=<%+data.id%><%}else{%>fileId=<%+data.id%><%}%>" type='video/mp4' />
+	    <source src="<%+url%>?<%if(data.mail){%>messageId=<%+data.id%><%}else{%>fileId=<%+data.id%><%}%>" type='video/webm' />
+	    <source src="<%+url%>?<%if(data.mail){%>messageId=<%+data.id%><%}else{%>fileId=<%+data.id%><%}%>" type='video/ogg' />
 	    <track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
 	    <track kind="subtitles" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
 	  </video>
