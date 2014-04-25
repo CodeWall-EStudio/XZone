@@ -102,14 +102,19 @@ exports.RULES = {
         verify: function(user, parameter, callback){
             // 保存文件的限制
             // 只能保存自己收到的文件, 同时目标文件夹必须是自己的私人文件夹
-            // TODO 暂时只是保存到自己的个人根目录
+            // 默认保存到自己的个人根目录
             var msg = parameter.messageId;
-            // var folder = parameter.folderId;
+            var folder = parameter.folderId;
+
             if(msg.toUser.oid.toString() !== user._id.toString()){
                 return callback('not auth to save this file', ERR.NOT_AUTH);
             }
-            // verifyFolder(user, folder)
-            callback(null);
+            if(folder){
+                
+                verifyFolder(user, folder, callback);
+            }else{
+                callback(null);
+            }
         }
     },
     '/api/file/modify': {

@@ -82,6 +82,10 @@ module.exports = {
                 name: 'messageId',
                 type: 'message',
                 required: true
+            },
+            {
+                name: 'folderId', // 如果指定了这个值, 就保存到对应的目录
+                type: 'folder'
             }
         ]
     },

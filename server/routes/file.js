@@ -265,7 +265,7 @@ exports.save = function(req, res){
     var loginUser = req.loginUser;
 
     var msg = params.messageId;
-    var rootFolderId = loginUser.rootFolder.oid;
+    var rootFolderId = params.folderId || loginUser.rootFolder.oid;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
