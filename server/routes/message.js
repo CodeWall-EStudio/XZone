@@ -44,3 +44,14 @@ exports.search = function(req, res){
     });
 };
 
+exports.get = function(req, res){
+    var message = req.parameter.messageId;
+
+    res.json({
+        err: ERR.SUCCESS,
+        result: {
+            data: message
+        }
+    });
+};
+

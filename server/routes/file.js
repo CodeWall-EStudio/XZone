@@ -176,11 +176,18 @@ exports.preview = function(req, res){
     var parameter = req.parameter;
 
     var file = parameter.fileId;
+    var message = parameter.messageId;
     var loginUser = req.loginUser;
 
-    var resource = file.__resource,
+    var resource, folder;
+    if(file){
+        resource = file.__resource;
         folder = file.__folder;
-
+    }
+    if(message){
+        resource = message.__resource;
+    }
+        
     //1. 图片, 直接给url
     //2. 文档, 给出swf url
     //3. txt, 给出 text的文本内容
@@ -200,62 +207,68 @@ exports.preview = function(req, res){
 
     }else{
         switch(resource.type){
-            case 2:// 文档
-                var swfFile = path.join(config.FILE_SAVE_ROOT, filePath + '.swf');
-                if(!fs.existsSync(swfFile)){
-                    Logger.error('can\'t find ' + swfFile + '! try to convert...');
-                    var suffix = path.extname(filePath).slice(1);
-                    fileHelper.convertWord(path.join(config.FILE_SAVE_ROOT, filePath), resource.mimes, suffix, function(err){
-                        if(err){
-                            res.json({ err: ERR.NOT_FOUND, msg: 'can not find this file and convert failure' });
-                            return;
-                        }
-                        Logger.info('convert success: ' + filePath);
-                        res.set({
-                            'Content-Type': 'application/x-shockwave-flash',
-                            'X-Accel-Redirect': filePath + '.swf'
-                        });
-                        res.send();
-                    });
-                }else{
+        case 2:// 文档
+            var swfFile = path.join(config.FILE_SAVE_ROOT, filePath + '.swf');
+            if(!fs.existsSync(swfFile)){
+                Logger.error('can\'t find ' + swfFile + '! try to convert...');
+                var suffix = path.extname(filePath).slice(1);
+                fileHelper.convertWord(path.join(config.FILE_SAVE_ROOT, filePath), resource.mimes, suffix, function(err){
+                    if(err){
+                        res.json({ err: ERR.NOT_FOUND, msg: 'can not find this file and convert failure' });
+                        return;
+                    }
+                    Logger.info('convert success: ' + filePath);
                     res.set({
                         'Content-Type': 'application/x-shockwave-flash',
                         'X-Accel-Redirect': filePath + '.swf'
                     });
                     res.send();
-                }
-                break;
-            case 1://image
-            case 3://audio
-            case 4://video
-            case 5://stream
-
+                });
+            }else{
                 res.set({
-                    'Content-Type': resource.type,
-                    'X-Accel-Redirect': filePath
+                    'Content-Type': 'application/x-shockwave-flash',
+                    'X-Accel-Redirect': filePath + '.swf'
                 });
                 res.send();
-                break;
-            default:
-                res.json({ err: ERR.NOT_SUPPORT, msg: 'not support mimes' });
+            }
+            break;
+        case 1://image
+        case 3://audio
+        case 4://video
+        case 5://stream
+
+            res.set({
+                'Content-Type': resource.type,
+                'X-Accel-Redirect': filePath
+            });
+            res.send();
+            break;
+        default:
+            res.json({ err: ERR.NOT_SUPPORT, msg: 'not support mimes' });
         }
     }// else
-    mLog.create({
+
+    var obj = {
         fromUserId: loginUser._id,
         fromUserName: loginUser.nick,
 
-        fileId: file._id,
-        fileName: file.name,
+        resourceId: resource._id,
 
         //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
         //6: delete 7: 预览 8: 保存
         operateType: 7,
 
-        srcFolderId: file.folder.oid,
+        
         // distFolderId: folderId,
         fromGroupId: folder ? folder.group && folder.group.oid : null
         // toGroupId: saveFolder.group || saveFolder.group.oid
-    });
+    };
+    if(file){
+        obj.fileId = file._id;
+        obj.fileName = file.name;
+        obj.srcFolderId = file.folder.oid;
+    }
+    mLog.create(obj);
 
 };
 

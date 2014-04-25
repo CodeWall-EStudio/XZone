@@ -94,8 +94,32 @@ exports.RULES = {
             // 自己创建的文件; 自己所在部门/小组的文件; 自己收件箱的文件; 别的部门的公开文件夹的文件; 学校空间的文件
 
             var file = parameter.fileId;
+            var message = parameter.messageId;
 
-            verifyDownload(user, file, callback);
+            if(file){ // 普通文件预览
+
+                verifyDownload(user, file, callback);
+            }else if(message){ // 对收件箱/发件箱的文件预览
+
+                var uid = user._id.toString();
+                if(message.toUser.oid.toString() !== uid && message.fromUser.oid.toString() !== uid){
+                    return callback('not auth to save this file', ERR.NOT_AUTH);
+                }
+                mRes.getResource({ _id: message.resource.oid }, function(err, resource){
+                    if(err){
+                        return callback(err);
+                    }
+                    if(!resource){
+                        return callback('the resource has been deleted', ERR.NOT_FOUND);
+                    }
+                    message.__resource = resource;
+                    callback(null);
+                    
+                });
+            }else {
+
+                return callback('need fileId or messageId', ERR.PARAM_ERROR);
+            }
         }
     },
     '/api/file/save': {
@@ -103,10 +127,10 @@ exports.RULES = {
             // 保存文件的限制
             // 只能保存自己收到的文件, 同时目标文件夹必须是自己的私人文件夹
             // 默认保存到自己的个人根目录
-            var msg = parameter.messageId;
+            var message = parameter.messageId;
             var folder = parameter.folderId;
 
-            if(msg.toUser.oid.toString() !== user._id.toString()){
+            if(message.toUser.oid.toString() !== user._id.toString()){
                 return callback('not auth to save this file', ERR.NOT_AUTH);
             }
             if(folder){

@@ -70,8 +70,11 @@ module.exports = {
         params: [
             {
                 name: 'fileId',
-                type: 'file',
-                required: true
+                type: 'file'
+            },
+            {
+                name: 'messageId',
+                type: 'message'
             }
         ]
     },
@@ -781,6 +784,16 @@ module.exports = {
     },
 
     // message 
+    '/api/message': {
+        method: 'GET',
+        params: [
+            {
+                name: 'messageId',
+                type: 'message',
+                required: true
+            }
+        ]
+    },
     '/api/message/search': {
         method: 'GET',
         params: [
