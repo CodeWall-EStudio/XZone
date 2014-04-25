@@ -472,8 +472,12 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		isLoading = false;
 		d.archivable = nowArch;
 		nowGroup = d;
-		if(nowType == 'group'){
+		//if(nowType == 'group'){
 			d.prep = Cache.get('preps').g2key;
+		//}
+		if(nowType == 'prep'){
+			d.subject = Cache.get('subject');;
+			d.grade = Cache.get('grade');
 		}
 		var view = new View({
 			target : $('#groupModifyZone'),

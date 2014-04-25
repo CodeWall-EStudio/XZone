@@ -36,6 +36,7 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		data.stname = util.getStatus(data.status);
 		data.osize = data.size;
 		data.oused = data.used;
+		data.st = data.startTime;
 		//容错	
 		if(!data.archivable){
 			data.archivable = 0;
@@ -155,6 +156,7 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		var success = function(d){
 			if(d.err == 0){
 				d.result.data.id = d.result.data._id;
+				d.result.data.st = d.result.data.startTime || 0;
 				d.result.data.mlist = conventMembers(d.result.data.members);
 				d.result.data.members = convent2Members(d.result.data.members);
 				handerObj.triggerHandler('group:groupinfosuc',d.result.data);
