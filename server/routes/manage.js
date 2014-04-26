@@ -26,6 +26,8 @@ exports.listGroups = function(req, res){
     }
     params.extendQuery = query;
 
+    params.isDeref = true;
+
     mGroup.search(params, function(err, total, result){
 
         if(err){

@@ -123,7 +123,7 @@ exports.getGroupByUser = function(userId, callback){
         });
 
         proxy.fail(function(err){
-            callback('get user groups error.');
+            callback('get user groups error: ' + err);
         });
         docs.forEach(function(doc){
 
@@ -260,13 +260,29 @@ exports.getGroup = function(query, callback){
 
 
 exports.search = function(params, callback){
+    var isDeref = params.isDeref || false;
+
     var extendQuery = params.extendQuery || {};
 
     var query = { };
 
     query = us.extend(query, extendQuery);
 
-    db.search('group', query, params, callback);
+    db.search('group', query, params, function(err, total, docs){
+        if(err){
+            callback(err);
+        }else if(total && docs && isDeref){
+            db.dereferences(docs, {'creator': ['_id', 'nick'], 'sizegroup': null }, function(err, docs){
+                if(err){
+                    callback(err);
+                }else{
+                    callback(null, total, docs);
+                }
+            });
+        }else{
+            callback(null, total, docs);
+        }
+    });
 
 };
 
