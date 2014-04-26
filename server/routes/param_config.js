@@ -38,10 +38,6 @@ module.exports = {
             },
             {
                 name: 'file_size'
-            },
-            {
-                name: 'media',
-                type: 'number'
             }
         ]
     },
@@ -939,6 +935,87 @@ module.exports = {
                 name: 'value',
                 type: 'string',
                 required: true
+            }
+        ]
+    },
+
+    // sizegroup 空间组相关
+    '/api/sizegroup/create': { // 添加空间组
+        method: 'POST',
+        params: [
+            {
+                name: 'name',
+                type: 'string',
+                required: true
+            },
+            {
+                name: 'type',// 0 个人, 1 小组
+                type: 'number',
+                min: 0,
+                required: true
+            },
+            {
+                name: 'size',
+                type: 'number',
+                min: 0,
+                required: true
+            },
+            {
+                name: 'isDefault',
+                type: 'boolean'
+            }
+        ]
+    },
+    '/api/sizegroup/modify': {
+        method: 'POST',
+        params: [
+            {
+                name: 'sizegroupId',
+                type: 'sizegroup',
+                required: true
+            },
+            {
+                name: 'size',
+                type: 'number'
+            },
+            {
+                name: 'name',
+                type: 'string'
+            },
+            {
+                name: 'isDefault',
+                type: 'boolean'
+            }
+        ]
+    },
+    '/api/sizegroup/delete': { // 如果有人在用, 就不能删除; 不能删除默认空间组
+        method: 'POST',
+        params: [
+            {
+                name: 'sizegroupId',
+                type: 'sizegroup',
+                required: true
+            }
+        ]
+    },
+    '/api/sizegroup/search': {
+        method: 'GET',
+        params: [
+            {
+                name: 'keyword', // 搜索 name 字段, 可选
+                type: 'string'
+            },
+            {
+                name: 'page',
+                type: 'number'
+            },
+            {
+                name: 'pageNum',
+                type: 'number'
+            },
+            {
+                name: 'order',
+                type: 'object'
             }
         ]
     }

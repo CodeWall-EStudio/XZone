@@ -11,6 +11,7 @@ var group = require('../models/group');
 var U = require('../util');
 var userHelper = require('../helper/user_helper');
 var mUser = require('../models/user');
+var mSizegroup = require('../models/sizegroup');
 
 
 function createDepart(parent, dep, callback){
@@ -269,5 +270,90 @@ exports.fixSaveFileFolder = function(req, res){
             });
         }
         res.json({ err: ERR.SUCCESS, total: result.length, result: result });
+    });
+};
+
+exports.fixRootFolderTypeError = function(req, res){
+    var user = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+        return ep.emit('error', 'no auth');
+    }
+    var result = [];
+    db.folder.find({}, function(err, docs){
+        if(docs && docs.length){
+
+            docs.forEach(function(folder){
+                var isModify = false;
+                if(typeof folder.parent.oid === 'string'){
+                    isModify = true;
+                    folder.parent = new DBRef('folder', new ObjectID(folder.parent.oid));
+                }
+                if(typeof folder.top.oid === 'string'){
+                    isModify = true;
+                    folder.top = new DBRef('folder', new ObjectID(folder.top.oid));
+                }
+                if(isModify){
+                    db.folder.save(folder, function(){
+                        
+                    });
+                    result.push([folder._id, folder.name]);
+                }
+            });
+        }
+        res.json({ err: ERR.SUCCESS, total: result.length, result: result });
+    });
+};
+exports.initSizegroup = function(req, res){
+    var user = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+        return ep.emit('error', 'no auth');
+    }
+    // 创建个人默认空间组
+    var doc = {
+        name: 'user_default',
+        type: 0,
+        size: config.DEFAULT_USER_SPACE,
+        isDefault: true,
+        updateUserId: user._id
+    };
+
+    mSizegroup.create(doc, function(err, doc){
+        db.user.update({}, {$set: { size: doc.size, sizegroup: new DBRef('sizegroup', doc._id) }},
+                { multi: true }, ep.done('next'));
+    });
+
+    // 创建小组默认空间组
+    var doc2 = {
+        name: 'group_default',
+        type: 1,
+        size: config.DEFAULT_USER_SPACE,
+        isDefault: true,
+        updateUserId: user._id
+    };
+    ep.on('next', function(){
+        
+        mSizegroup.create(doc2, function(err, doc){
+            db.group.update({}, {$set: { size: doc.size, sizegroup: new DBRef('sizegroup', doc._id) }},
+                    { multi: true }, ep.done('done'));
+        });
+    });
+
+    ep.on('done', function(){
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                list: [doc, doc2]
+            }
+        });
     });
 };
