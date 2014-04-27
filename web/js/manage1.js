@@ -10,7 +10,8 @@
   require(['config','../school/helper/router','../school/helper/util','view.group','view.user','view.manage','model.manage','msg','model.group'], function(config,router,util,group,user,manage,mModel) {
 
     var handerObj = $(Schhandler);
-
+    var prepload = false;
+    var sgload = false;
     
     if(!util.getCookie('skey')){
       window.location = config.cgi.gotologin;
@@ -20,11 +21,23 @@
 
 
     handerObj.bind('manage:preploaded',function(e,d){
-      $('.manage-loading').remove();
-      init();
+      prepload = true;
+      if(sgload && prepload){
+        $('.manage-loading').remove();
+        init();
+      }
     });
 
+    handerObj.bind('manage:slistload',function(e,d){
+      sgload = true;
+      if(sgload && prepload){
+        $('.manage-loading').remove();
+        init();
+      }
+    });    
+
     handerObj.triggerHandler('group:loadprep');
+    handerObj.triggerHandler('manage:sgrouplist');
 
     mModel.getKey('grade');
     mModel.getKey('subject');

@@ -61,6 +61,8 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		//添加备课
 		'.add-sem' : {
 			'click' : function(){
+				var slist = Cache.get('sizegroup');
+				d.sglist = slist;
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
@@ -77,7 +79,8 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					data : {
 						type : nowType,
 						st : 1,
-						prep : false
+						prep : false,
+						sglist : slist
 					}
 				});
 				view.createPanel();
@@ -102,6 +105,9 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					archivable : 0,
 					st : 0
 				}
+				var slist = Cache.get('sizegroup');
+				data.sglist = slist;
+				data.sizegroup = false;				
 				if(nowType == 'prep'){
 					var prep = Cache.get('preps');
 					var grade = Cache.get('grade');
@@ -153,6 +159,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				var modify = $(this).attr('data-modify');
 				var name = $('#modifyZone .group-name').val();
 				var archivable = $('#modifyZone input[type=radio]:checked').val();
+				var sgid = $('.group-size-group').val();
 				var managelist = [],
 					memberlist = [];
 				var st = 0,
@@ -222,9 +229,11 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					if(archivable){
 						obj.grade = $('.group-prep').val();
 					}
+					obj.sizegroupId = sgid;
 				}else if(nowType == 'dep'){
 					var order = $('.group-no').val();
 					obj.order = order;
+					obj.sizegroupId = sgid;
 				}else if(nowType == 'prep'){
 					if(sem){
 						obj.startTime = st;
@@ -479,6 +488,8 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 			d.subject = Cache.get('subject');;
 			d.grade = Cache.get('grade');
 		}
+		var slist = Cache.get('sizegroup');
+		d.sglist = slist;
 		var view = new View({
 			target : $('#groupModifyZone'),
 			tplid : 'manage/group.modify.dl',
