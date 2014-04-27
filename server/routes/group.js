@@ -21,6 +21,7 @@ exports.create = function(req, res){
     var parent = parameter.parentId;
     var members = parameter.members || [];
     var managers = parameter.managers || [];
+    var sizegroup = parameter.sizegroupId;
 
     var createParams = us.extend({}, parameter);
 
@@ -40,8 +41,14 @@ exports.create = function(req, res){
     }
     mGroup.getGroup(nameQuery, ep.doneLater('getGroup'));
 
-    // 如果没有传 size , 就用默认的 size
-    mSizegroup.getSizegroup({ type: 1, isDefault: true }, ep.done('getSizegroup'));
+    if(sizegroup){
+
+        ep.emitLater('getSizegroup', sizegroup);
+    }else{
+
+        // 如果没有传 size , 就用默认的 size
+        mSizegroup.getSizegroup({ type: 1, isDefault: true }, ep.done('getSizegroup'));
+    }
 
     ep.all('getGroup', 'getSizegroup', function(group, sizegroup){
         if(group){
@@ -245,6 +252,7 @@ exports.modify = function(req, res){
     var content = params.content;
     var members = params.members;
     var managers = params.managers;
+    var sizegroup = params.sizegroupId;
 
     var parentId = group.parent && group.parent.oid;
 
@@ -293,6 +301,11 @@ exports.modify = function(req, res){
 
         if('status' in params){
             doc.status = params.status;
+        }
+
+        if(sizegroup){
+            doc.sizegroupId = sizegroup._id;
+            doc.size = sizegroup.size;
         }
 
         mGroup.modify({ _id: group._id }, doc, ep.done('modifyGroup'));
