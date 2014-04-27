@@ -966,7 +966,7 @@ module.exports = {
             }
         ]
     },
-    '/api/sizegroup/modify': {
+    '/api/sizegroup/modify': { // 修改后会同步到所有用到这个sizegroup 的用户
         method: 'POST',
         params: [
             {

@@ -289,11 +289,11 @@ exports.fixRootFolderTypeError = function(req, res){
 
             docs.forEach(function(folder){
                 var isModify = false;
-                if(typeof folder.parent.oid === 'string'){
+                if(folder.parent && typeof folder.parent.oid === 'string'){
                     isModify = true;
                     folder.parent = new DBRef('folder', new ObjectID(folder.parent.oid));
                 }
-                if(typeof folder.top.oid === 'string'){
+                if(folder.top && typeof folder.top.oid === 'string'){
                     isModify = true;
                     folder.top = new DBRef('folder', new ObjectID(folder.top.oid));
                 }
