@@ -25,7 +25,7 @@ function getRouter(path, method){
             }
         }
     }catch(e){
-        Logger.error('getRouter(', path, method, ') Error: ', e.message);
+        Logger.error('getRouter(', path, method, ') Error: ', e.message, '\n', e.stack);
     }
     return null;
 }

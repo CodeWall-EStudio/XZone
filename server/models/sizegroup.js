@@ -31,7 +31,7 @@ exports.create = function(params, callback){
         if(err){
             return callback(err);
         }
-        callback(err, doc);
+        callback(null, doc);
     });
 };
 
@@ -68,7 +68,7 @@ exports.modify = function(query, doc, callback){
             
             if(doc.size){
                 ep.after('updateSize', 2, function(){
-                    callback(result);
+                    callback(null, result);
                 });
 
                 db.user.update({ 'sizegroup.$id': result._id }, { $set: { size: doc.size } },
@@ -77,7 +77,7 @@ exports.modify = function(query, doc, callback){
                 db.group.update({ 'sizegroup.$id': result._id }, { $set: { size: doc.size } },
                         { multi: true }, ep.group('updateSize'));
             }else{
-                callback(result);
+                callback(null, result);
             }
         });
     });
