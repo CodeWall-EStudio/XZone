@@ -3,7 +3,7 @@ var DBRef = require('mongodb').DBRef;
 var EventProxy = require('eventproxy');
 var us = require('underscore');
 
-var db = require('./db');
+var db = require('../db');
 var ERR = require('../errorcode');
 var U = require('../util');
 var mSizegroup = require('../models/sizegroup');
