@@ -2,8 +2,8 @@ define(['../school/config','../school/cache','../school/helper/view'],function(c
 	var handerObj = $(Schhandler);
 
 
-	function init(){
-
+	function init(type){
+		console.log(type);
 	}
 
 	return {

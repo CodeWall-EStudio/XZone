@@ -1,0 +1,82 @@
+<div id="sizeManage" class="manage-tabs manage-grade-tab">
+	<div class="manage-list-zone">
+		<div class="grade-zone">
+		<table class="table table-striped table-hover table-list ">
+			<tr>
+				<th class="title">名称</th>
+				<th class="title">类型</th>
+				<th class="title">大小</th>
+			</tr>
+			<tbody class="grade-list-grade" id="sizeGroupList">
+			<%if(list){%>
+				<%
+					for(var i in list){
+						var item = list[i];
+				%>
+				<tr data-id="<%+item.id%>" class="size-group size-group<%+item.id%>">
+					<td><%-item.name%></td>
+					<td>
+						<%if(item.type){%>
+							小组类型
+						<%}else{%>
+							个人类型
+						<%}%>
+					</td>
+					<td><%-item.nsize%></td>
+				</tr>
+				<%}%>
+			<%}else{%>
+				<tr>
+					<td collspan="3">目前还没有空间组<button class="btn btn-success add-grade">添加空间组</button></td>
+				</tr>
+			<%}%>
+			</tbody>
+		</table>
+	</div>
+</div>
+<div class="manage-act-zone">
+		<div class="action-btn-list">
+			<button class="btn btn-primary add-size-group">添加空间组</button>
+			<button class="btn btn-primary del-size-group" disabled>删除空间组</button>
+		</div>
+		<dl id="addSize" class='hide'>
+			<dt>
+				<h4>空间组</h4>
+			</dt>
+			<dd>
+				<table class="table table-striped table-hover table-list table-files">
+					<tr>
+						<td width="120">分组名:</td>
+						<td>
+							<input type="text" value="" id="sizeGroupName" />
+						</td>
+					</tr>					
+					<tr>
+						<td width="120">类型</td>
+						<td>
+							<input type="radio" value="0" name="stype" checked />个人 <input type="radio" value="1" name="stype" />小组 
+							<div><input type="checkbox" id="defSizeGroup" /> 默认空间</div>
+						</td>
+					</tr>
+					<tr>
+						<td width="120">大小</td>
+						<td>
+							<input type="text" value="" class="size-group-val"  />
+							<select class="size-type">
+								<option value="1">K</option>
+								<option value="2">M</option>
+								<option value="3">G</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<button class="btn btn-primary btn-save-size" >保存</button>
+							<button class="btn btn-primary btn-reset">取消</button>							
+						</td>
+					</tr>
+				</table>
+			</dd>
+		</dl>								
+</div>

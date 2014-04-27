@@ -1,6 +1,7 @@
 define(['../school/config','../school/cache','../school/helper/view'],function(config,Cache,View){
 	var handerObj = $(Schhandler);
 	var isInit = {}, //初始化
+		nowSizeGroupId = 0,
 		isListBind = false, //已经绑定
 		isLoading = false,//正在加载
 		nowPage = 0,
@@ -28,8 +29,6 @@ define(['../school/config','../school/cache','../school/helper/view'],function(c
 		if(isInit['grade']){
 			$('#gradeMange').show();
 		}else{
-
-
 			var view = new View({
 				target : $('#manageMa'),
 				tplid : 'manage/grade',
@@ -146,6 +145,153 @@ define(['../school/config','../school/cache','../school/helper/view'],function(c
 		}
 	}
 
+	function resetSize(){
+		$('#sizeGroupName').val('');
+		$('#defSizeGroup').prop({'checked':false});
+		$('input[name=stype]').eq(0).prop({'checked':true});
+		$('.size-group-val').val('');
+		$('.size-type').val(1);		
+	}
+
+	function sizeInit(){
+		$('.manage-tabs').hide();	
+		var grade = Cache.get('grade');
+		var subject = Cache.get('subject');
+
+		if(isInit['size']){
+			$('#gradeMange').show();
+		}else{		
+			var view = new View({
+				target : $('#manageMa'),
+				tplid : 'manage/size',
+				after : function(){
+					isInit.size = true;
+					var list = Cache.get('sizegroup');
+					if(list){
+						handerObj.triggerHandler('manage:slistload',{
+							list : list	
+						})
+					}else{
+						isLoading = true;
+						handerObj.triggerHandler('manage:sgrouplist');
+					}
+				},
+				data : {
+					list : false
+				},
+				handlers : {
+					'.add-size-group' : {
+						'click' : function(e){
+							nowSizeGroupId = 0;
+							$('.del-size-group').prop({'disabled':true});
+							$("#addSize").removeClass('hide').removeAttr('data-modify').removeAttr('data-id');
+							resetSize();
+						}
+					},
+					'.del-size-group' : {
+						'click' : function(e){
+							if(nowSizeGroupId){
+								if(!isLoading){
+									isLoading = true;
+									handerObj.triggerHandler("manage:delsgroup",{
+										sizegroupId : nowSizeGroupId
+									})
+								}
+							}
+						}
+					},
+					'.btn-save-size' : {
+						'click' : function(e){
+							var modify = $(this).attr('data-modify');
+							if(modify){
+								id = $(this).attr('data-id');
+							}
+							var name = $.trim($('#sizeGroupName').val());
+							var type = $('input[name=stype]:checked').val();
+							var size = $('.size-group-val').val();
+							var st = parseInt($('.size-type').val());
+							var def = false;
+							if($('#defSizeGroup:checked')){
+								def = true;
+							}
+							switch(st){
+								case 1:
+									size = size * 1024;
+									break;
+								case 2:
+									size = size * 1024 * 1024;
+									break;
+								case 3:
+									size = size * 1024 * 1024 * 1024;
+									break;
+							}
+							if(name != '' && st){
+
+							}else{
+								alert('分组名和空间大小必填!');
+							}
+							var obj = {
+								name : name,
+								type : type,
+								size : size,
+								isDefault : def
+							}
+							if(modify){
+								obj.sizegroupId = id;
+							}
+							if(!isLoading){
+								isLoading = true;
+								if(modify){
+									handerObj.triggerHandler('manage:modifysgroup',obj);
+								}else{
+									handerObj.triggerHandler('manage:addsgroup',obj);
+								}
+							}
+						}
+					},
+					'.size-group' : {
+						'click' : function(e){
+							$('.del-size-group').prop({'disabled':false});
+							$('.size-group').removeClass('group-tr-selected');
+							$(this).addClass('group-tr-selected');
+							var id = $(this).attr('data-id');
+							nowSizeGroupId = id;
+							var list = Cache.get('sizegroup');
+
+							var obj = list[id];
+							if(obj){
+								$('#sizeGroupName').val(obj.name);
+								if(obj.type == 0){
+									$('input[name=stype]').eq(0).prop({'checked':true});
+								}else{
+									$('input[name=stype]').eq(1).prop({'checked':true});
+								}
+								if(obj.isDefault){
+									$('#defSizeGroup').prop({
+										'checked':true
+									});
+								}
+								if(obj.size/1024<1024){
+									$('.size-group-val').val(obj.size/1024);
+									$('.size-type').val(1);
+								}else if(obj.size/(1024*1024)<1024){
+									$('.size-group-val').val(obj.size/(1024*1024));
+									$('.size-type').val(2);
+								}else{
+									$('.size-group-val').val(obj.size/(1024*1024*1024));
+									$('.size-type').val(3);
+								}
+								$('#addSize').removeClass('hide');
+								$('.btn-save-size').attr('data-modify',1).attr('data-id',obj.id);
+							}
+						}
+					}
+ 				}
+			});
+			view.appendPanel();
+		}
+	};
+
 	function init(type){
 		$('#manageMa').removeClass('hide');
 		switch(type){
@@ -157,13 +303,61 @@ define(['../school/config','../school/cache','../school/helper/view'],function(c
 				gradeInit();
 				break;
 			case 'size':
+				sizeInit();
 				break;								
 			case 'manage':
 				break;					
 		}
+	}
+
+	//空间组加载完成
+	function sizeLoad(e,d){
+		isLoading = false;
+		if(d){
+			var view = new View({
+				target : $('#sizeGroupList'),
+				tplid : 'manage/size.list',
+				data : d
+			});
+			view.createPanel();
+		}
+	}
+
+	//添加
+	function addSizeGroup(e,d){
+		isLoading = false;
+		if(d){
+			var view = new View({
+				target : $('#sizeGroupList'),
+				tplid : 'manage/size.list',
+				data : {
+					list : [d]
+				}
+			});
+			view.appendPanel();
+		}		
+	}
+
+	//修改
+	function modifySizeGroup(e,d){
+		isLoading = false;
+		var view = new View({
+			target : $('.size-group'+d.id),
+			tplid : 'manage/size.list.one',
+			data : d
+		});
+		view.createPanel();
+	}
+
+	function delSizeGroup(e,d){
+		isLoading = false;
+		resizeSize();
+		$("#addSize").addClass('hide');
+		$('.size-group'+d).remove();
 
 	}
 
+	//设置年级成功
 	function setSuc(e,d){
 		var obj = {
 			tplid : 'manage/grade.list',
@@ -191,7 +385,11 @@ define(['../school/config','../school/cache','../school/helper/view'],function(c
 	}
 
 	var handlers = {
-		'manage:setsuc' : setSuc
+		'manage:setsuc' : setSuc,
+		'manage:slistload' : sizeLoad,
+		'manage:sizegroupadded' : addSizeGroup,
+		'manage:sizegroupmodifyed' : modifySizeGroup,
+		'manage:sizegroupdeled' : delSizeGroup
 	}
 
 	for(var i in handlers){

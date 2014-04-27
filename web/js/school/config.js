@@ -78,6 +78,12 @@ define(function() {
 			msgcreate : CGI_PATH+'message/create'+EXT,
 			msgsearch : CGI_PATH+'message/search'+EXT,
 
+			//空间组
+			addsgroup : CGI_PATH+'sizegroup/create'+EXT,
+			modifysgroup : CGI_PATH+'sizegroup/modify'+EXT,
+			delsgroup : CGI_PATH+'sizegroup/delete'+EXT,
+			sgrouplist : CGI_PATH+'sizegroup/search'+EXT,
+
 			//留言板
 			boardcreate : CGI_PATH+'board/create'+EXT,
 			boardlist : CGI_PATH+'board/search'+EXT,

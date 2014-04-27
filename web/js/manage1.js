@@ -57,6 +57,7 @@
                 break;
               case 'user':
               case 'userdep':
+                user.init(cmd);
                 break;
               case 'data':
               case 'log':
