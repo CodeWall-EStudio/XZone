@@ -9,6 +9,7 @@ var config = require('../config');
 var U = require('../util');
 var db = require('../models/db');
 var mUser = require('../models/user');
+var mSizegroup = require('../models/sizegroup');
 
 exports.getUserInfo = function(skey, callback){
 
@@ -160,9 +161,12 @@ exports.findAndUpdateUserInfo = function(skey, type, callback){
             }
         });
     }
-    
+
+    // 如果没有传 size , 就用默认的 size
+    mSizegroup.getSizegroup({ type: 1, isDefault: true }, ep.done('getSizegroup'));
+
     // 查询 user 数据库, 更新资料
-    ep.on('getUserInfoSuccess', function(userInfo){
+    ep.all('getUserInfoSuccess', 'getSizegroup', function(userInfo, sizegroup){
 
         var openid = userInfo.openid; // 这个 uid 是sso或者 QQ openid 的id
         var loginName = userInfo.loginName;
@@ -190,6 +194,10 @@ exports.findAndUpdateUserInfo = function(skey, type, callback){
                             auth: 0, // 15 是管理员
                             size: config.DEFAULT_USER_SPACE,
                         };
+                        if(sizegroup){
+                            user.sizegroupId = sizegroup._id;
+                            user.size = sizegroup.size;
+                        }
                         if(type === 'qq'){
                             user.from = 'qq';
                         }
@@ -204,6 +212,10 @@ exports.findAndUpdateUserInfo = function(skey, type, callback){
                     auth: 0, // 15 是管理员
                     size: config.DEFAULT_USER_SPACE
                 };
+                if(sizegroup){
+                    user.sizegroupId = sizegroup._id;
+                    user.size = sizegroup.size;
+                }
                 if(type === 'qq'){
                     user.from = 'qq';
                 }

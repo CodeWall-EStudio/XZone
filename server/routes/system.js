@@ -318,42 +318,52 @@ exports.initSizegroup = function(req, res){
     if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
         return ep.emit('error', 'no auth');
     }
-    // 创建个人默认空间组
-    var doc = {
-        name: 'user_default',
-        type: 0,
-        size: config.DEFAULT_USER_SPACE,
-        isDefault: true,
-        updateUserId: user._id
-    };
 
-    mSizegroup.create(doc, function(err, doc){
-        db.user.update({}, {$set: { size: doc.size, sizegroup: new DBRef('sizegroup', doc._id) }},
-                { multi: true }, ep.done('next'));
-    });
+    db.sizegroup.findOne({ }, function(err, doc){
+        if(doc){
+            return ep.emit('error', 'has init.');
+        }
 
-    // 创建小组默认空间组
-    var doc2 = {
-        name: 'group_default',
-        type: 1,
-        size: config.DEFAULT_USER_SPACE,
-        isDefault: true,
-        updateUserId: user._id
-    };
-    ep.on('next', function(){
-        
-        mSizegroup.create(doc2, function(err, doc){
-            db.group.update({}, {$set: { size: doc.size, sizegroup: new DBRef('sizegroup', doc._id) }},
-                    { multi: true }, ep.done('done'));
+        // 创建个人默认空间组
+        doc = {
+            name: 'user_default',
+            type: 0,
+            size: config.DEFAULT_USER_SPACE,
+            isDefault: true,
+            updateUserId: user._id
+        };
+
+        mSizegroup.create(doc, function(err, doc){
+            db.user.update({}, {$set: { size: doc.size, sizegroup: new DBRef('sizegroup', doc._id) }},
+                    { multi: true }, ep.done('next'));
         });
+
+        // 创建小组默认空间组
+        var doc2 = {
+            name: 'group_default',
+            type: 1,
+            size: config.DEFAULT_USER_SPACE,
+            isDefault: true,
+            updateUserId: user._id
+        };
+        ep.on('next', function(){
+            
+            mSizegroup.create(doc2, function(err, doc){
+                db.group.update({}, {$set: { size: doc.size, sizegroup: new DBRef('sizegroup', doc._id) }},
+                        { multi: true }, ep.done('done'));
+            });
+        });
+
+        ep.on('done', function(){
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    list: [doc, doc2]
+                }
+            });
+        });
+
     });
 
-    ep.on('done', function(){
-        res.json({
-            err: ERR.SUCCESS,
-            result: {
-                list: [doc, doc2]
-            }
-        });
-    });
+    
 };

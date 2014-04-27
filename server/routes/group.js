@@ -9,6 +9,7 @@ var Logger = require('../logger');
 var ERR = require('../errorcode');
 var db = require('../models/db');
 var mGroup = require('../models/group');
+var mSizegroup = require('../models/sizegroup');
 
 exports.create = function(req, res){
     var parameter = req.parameter;
@@ -39,11 +40,18 @@ exports.create = function(req, res){
     }
     mGroup.getGroup(nameQuery, ep.doneLater('getGroup'));
 
-    ep.on('getGroup', function(group){
+    // 如果没有传 size , 就用默认的 size
+    mSizegroup.getSizegroup({ type: 1, isDefault: true }, ep.done('getSizegroup'));
+
+    ep.all('getGroup', 'getSizegroup', function(group, sizegroup){
         if(group){
             return ep.emit('error', 'name duplicate', ERR.DUPLICATE);
         }
-
+        Logger.debug('create group use default sizegroup: ', sizegroup);
+        if(sizegroup){
+            createParams.sizegroupId = sizegroup._id;
+            createParams.size = sizegroup.size;
+        }
         if(loginUser.__role & config.ROLE_MANAGER){
             createParams.status = 0; // 管理员以上创建小组不用审核
         }else{

@@ -86,6 +86,10 @@ exports.modify = function(query, doc, callback){
 
 };
 
+exports.getSizegroup = function(query, callback){
+
+    db.sizegroup.findOne(query, callback);
+};
 
 exports.delete = function(query, callback){
 

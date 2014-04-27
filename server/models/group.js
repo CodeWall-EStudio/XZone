@@ -38,7 +38,8 @@ exports.create = function(params, callback){
         startTime: params.startTime || 0,
         endTime: params.endTime || 0,
 
-        size: params.size || 0,
+        sizegroup: params.sizegroupId ? new DBRef('sizegroup', params.sizegroupId) : null,
+        size: params.size || config.DEFAULT_USER_SPACE,
         used: 0,
 
         status: status, // 状态: 0 已审核, 1 审核中, 2 已归档, 3 已关闭, 4 已删除
