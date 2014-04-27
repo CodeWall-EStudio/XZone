@@ -42,6 +42,9 @@ exports.listGroups = function(req, res){
         }
 
         var ep = new EventProxy();
+        ep.fail(function(err, errCode){
+            return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+        });
 
         ep.after('getMemberCountDone', result.length, function(){
             res.json({ err: ERR.SUCCESS , result: {
@@ -53,13 +56,10 @@ exports.listGroups = function(req, res){
 
         result.forEach(function(doc){
 
-            mGroup.getGroupMemberCount(doc._id, function(err, count){
-                if(err){
-                    count = 0;
-                }
+            mGroup.getGroupMemberCount(doc._id, ep.group('getMemberCountDone', function(count){
                 doc.memberCount = count;
-                ep.emit('getMemberCountDone');
-            });
+                return count;
+            }));
         });
 
     });

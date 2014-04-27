@@ -225,12 +225,13 @@ exports.checkParams = function(req, res, next){
 
     if(cfg.method && cfg.method.indexOf(method) === -1){
 
-        Logger.info('[checkParams] not support method', 'path: ', path, ', method: ', method);
+        Logger.info('[checkParams] not support method.', 'path: ', path, ', method: ', method);
         return res.json({ err: ERR.NOT_SUPPORT, msg: 'not support method [' + method + ']' });
     }
 
     ep.after('verifyParamDone', cfgParams.length, function(){
         next();
+        Logger.debug('[checkParams] verifyParamDone.', 'path: ', path, ', method: ', method);
     });
 
     cfgParams.forEach(function(pcfg){

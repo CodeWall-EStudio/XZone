@@ -30,13 +30,13 @@ exports.checkAuth = function(req, res, next){
     Logger.debug('[checkAuth]', 'req.redirectPath: ', req.redirectPath);
     
     if (AuthConfig.AUTH_WHITE_LIST.indexOf(path) >= 0) {
-        Logger.info('[checkAuth] white list skip', 'path: ', path, ', method: ', method);
+        Logger.info('[checkAuth] white list skip.', 'path: ', path, ', method: ', method);
         return next();
     }
     var loginUid;
     if(!req.session || !skey || !(loginUid = req.session[skey])){
         res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
-        Logger.info('[checkAuth] not login', 'path: ', path, ', method: ', method);
+        Logger.info('[checkAuth] not login.', 'path: ', path, ', method: ', method);
         return;
     }
     req.loginUid = loginUid;
@@ -48,6 +48,7 @@ exports.checkAuth = function(req, res, next){
             Logger.error('[checkAuth] verify user error: ', user, ':', err, 'path: ', path, ', method: ', method);
         }else if(user){
             req.loginUser = user;
+            // Logger.debug('[checkAuth] get loginUser.', user);
             next();
         }else{
             res.json({ err: ERR.NOT_LOGIN, msg: 'verify user error, con\'t find user in db' });
@@ -123,6 +124,7 @@ exports.checkAPI = function(req, res, next){
     ep.on('checkAPIAuthDone', function(){
         // 权限没有问题, 如果有问题, 就抛出 error 事件
         next();
+        Logger.debug('[checkAPI] checkAPIAuthDone.', 'path: ', path, ', method: ', method);
     });
 };
 

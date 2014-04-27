@@ -483,6 +483,10 @@ module.exports = {
                 required: true
             },
             {
+                name: 'sizegroupId', // 指定所属的空间组
+                type: 'sizegroup'
+            },
+            {
                 name: 'type',
                 type: 'number'
             },
@@ -538,6 +542,10 @@ module.exports = {
                 name: 'groupId',
                 type: 'group',
                 required: true
+            },
+            {
+                name: 'sizegroupId', // 指定所属的空间组
+                type: 'sizegroup'
             },
             {
                 name: 'name',

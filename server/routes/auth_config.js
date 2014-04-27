@@ -610,8 +610,10 @@ exports.RULES = {
         verify: function(user, parameter, callback){
 
             if(user.__role & config.ROLE_MANAGER){
+
                 return callback(null);
             }
+            return callback('no auth');
         }
     },
     '/api/manage/approveGroup': {
@@ -620,6 +622,7 @@ exports.RULES = {
             if(user.__role & config.ROLE_MANAGER){
                 return callback(null);
             }
+            return callback('no auth');
         }
 
     },
@@ -630,6 +633,7 @@ exports.RULES = {
                     (user.__role & config.ROLE_PREPARE_MEMBER)){
                 return callback(null);
             }
+            return callback('no auth');
         }
     },
     '/api/manage/approveFile': {
@@ -638,6 +642,7 @@ exports.RULES = {
             if(user.__role & config.ROLE_MANAGER){
                 return callback(null);
             }
+            return callback('no auth');
         }
     },
     '/api/manage/listFiles': {
@@ -646,6 +651,7 @@ exports.RULES = {
             if(user.__role & config.ROLE_MANAGER){
                 return callback(null);
             }
+            return callback('no auth');
         }
     },
 
@@ -655,6 +661,7 @@ exports.RULES = {
     //         if(user.__role & config.ROLE_MANAGER){
     //             return callback(null);
     //         }
+    //         return callback('no auth');
     //     }
     // },
     '/api/storage/set': {
@@ -663,6 +670,7 @@ exports.RULES = {
             if(user.__role & config.ROLE_MANAGER){
                 return callback(null);
             }
+            return callback('no auth');
         }
     }
 
