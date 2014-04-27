@@ -50,7 +50,7 @@ exports.modify = function(req, res){
         doc.isDefault = params.isDefault;
     }
 
-    mSizegroup.modify({ _id: sizegroup._id }, doc, function(err, result){
+    mSizegroup.modify({ _id: sizegroup._id, type: sizegroup.type }, doc, function(err, result){
         if(err){
             return res.json({ err: result || ERR.SERVER_ERROR, msg: err});
         }

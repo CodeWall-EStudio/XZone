@@ -163,7 +163,7 @@ exports.findAndUpdateUserInfo = function(skey, type, callback){
     }
 
     // 如果没有传 size , 就用默认的 size
-    mSizegroup.getSizegroup({ type: 1, isDefault: true }, ep.done('getSizegroup'));
+    mSizegroup.getSizegroup({ type: 0, isDefault: true }, ep.done('getSizegroup'));
 
     // 查询 user 数据库, 更新资料
     ep.all('getUserInfoSuccess', 'getSizegroup', function(userInfo, sizegroup){

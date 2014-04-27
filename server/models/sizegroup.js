@@ -10,6 +10,9 @@ var U = require('../util');
 
 exports.create = function(params, callback){
 
+    var ep = new EventProxy();
+    ep.fail(callback);
+
     var updateUserId = params.updateUserId;
 
     var name = params.name;
@@ -17,21 +20,34 @@ exports.create = function(params, callback){
     var size = params.size || 0; // 配置的空间大小
     var isDefault = 'isDefault' in params ? params.isDefault : false;
 
-    var doc = {
-        name: name,
-        type: type,
-        size: size,
-        createTime: Date.now(),
-        updateTime: Date.now(),
-        isDefault: isDefault,
-        updateUser: new DBRef('user', updateUserId)
-    };
+    if(isDefault){
+        db.sizegroup.findOne({ type: type, isDefault: true }, function(err, doc){
+            if(doc){
+                return ep.emit('error', 'already has a default sizegroup with type ' + type);
+            }
+            ep.emit('ready');
+        });
+    }else{
+        ep.emitLater('ready');
+    }
 
-    db.sizegroup.save(doc, function(err){
-        if(err){
-            return callback(err);
-        }
-        callback(null, doc);
+    ep.on('ready', function(){
+        var doc = {
+            name: name,
+            type: type,
+            size: size,
+            createTime: Date.now(),
+            updateTime: Date.now(),
+            isDefault: isDefault,
+            updateUser: new DBRef('user', updateUserId)
+        };
+
+        db.sizegroup.save(doc, function(err){
+            if(err){
+                return callback(err);
+            }
+            callback(null, doc);
+        });
     });
 };
 
@@ -46,7 +62,7 @@ exports.modify = function(query, doc, callback){
     // 如果修改了 isDefault 值, 要把原来的default 去掉
 
     if(doc.isDefault){
-        db.sizegroup.update({ isDefault: true }, { $set: { isDefault: false }}, {multi: true},
+        db.sizegroup.update({ isDefault: true, type: query.type }, { $set: { isDefault: false }}, {multi: true},
                 function(err){
 
             if(err){
