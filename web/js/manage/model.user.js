@@ -1,0 +1,78 @@
+define(['../school/config','../school/helper/request','../school/helper/util','../school/cache'],function(config,request,util,Cache){
+	var handerObj = $(Schhandler);
+
+	function convent(obj){
+		var list = {};
+		for(var i in obj){
+			var item = obj[i];
+			item.id = item._id;
+			item.pre = util.getNums(item.used/item.size)*100;
+			if(item.size){
+				item.size = util.getSize(item.size);
+			}else{
+				item.size = 0;
+			}
+			if(item.used){
+				item.used = util.getSize(item.used);
+			}else{
+				item.used = 0;
+			}
+			item.osize = item.size;
+			item.oused = item.used;	
+			list[item.id] = item;
+			//list.push(item);
+		}
+		return list;
+	}
+
+	function userSearch(e,d){
+		var opt = {
+			cgi : config.cgi.usersearch,
+			data : d
+		}
+
+		var success = function(d){
+			if(d.err == 0){
+				var list = convent(d.result.list);
+				var total = d.result.total;
+				handerObj.triggerHandler('user:listload',{
+					list : list,
+					total : total
+				});
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);			
+	}
+
+	function userModify(e,d){
+		var opt = {
+			cgi : config.cgi.usermodify,
+			data : d
+		}
+		var success = function(d){
+			if(d.err == 0){
+				
+				// var list = convent(d.result);
+				// handerObj.triggerHandler('user:modifysuc',{
+				// 	list : list,
+				// 	total : total
+				// });
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.post(opt,success);			
+	}
+
+	var handlers = {
+		'user:search' : userSearch,
+		'user:modify' : userModify
+	}
+
+	for(var i in handlers){
+		handerObj.bind(i,handlers[i]);
+	}
+
+});

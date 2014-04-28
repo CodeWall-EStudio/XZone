@@ -1,0 +1,18 @@
+<%
+	for(var i in list){
+		var item = list[i];
+%>
+	<tr class="tr-user tr-user<%-item.id%>" data-id="<%-item.id%>">
+		<td><%-item.nick%></td>
+		<td><%-item.name%></td>
+		<td>
+			<%if(item.status){%>
+				被关闭
+			<%}else{%>
+				正常
+			<%}%>
+		</td>
+		<td><%-item.size%></td>
+		<td><%-item.pre%>%</td>
+	</tr>
+<%}%>

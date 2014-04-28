@@ -640,6 +640,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	}
 
 	function shareLoad(e,d){
+		
 		var selected = [];
 		var view = new View({
 			target : actTarget,
@@ -720,6 +721,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 							fls.push(d.files[i].id);
 						}
 						var gid = $('#groupResult input:checked').val();
+						if(d.type == 'school'){
+							info = Cache.get('myinfo');
+							gid = info.school.id;
+						}
+						
 						var fdid = $("#groupFoldResultUl input:checked").val();
 						/*
 						actTarget.find('input:checked').each(function(){

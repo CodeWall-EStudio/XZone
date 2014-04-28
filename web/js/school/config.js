@@ -97,6 +97,14 @@ define(function() {
 			mnewgroup : CGI_PATH+'manage/createGroup'+EXT,
 			mappfile : CGI_PATH+'manage/approveFile'+EXT,
 
+			//用户 
+			usersearch : CGI_PATH+'user/search'+EXT,
+			usermodify : CGI_PATH+'user/modifyUser'+EXT,
+
+			//日志
+			logsearch : CGI_PATH+'log/search'+EXT,
+			
+
 			//存储
 			getstorge : CGI_PATH+'storage'+EXT,
 			setstorge : CGI_PATH+'storage/set'+EXT
