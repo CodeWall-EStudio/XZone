@@ -949,6 +949,10 @@ module.exports = {
             {
                 name: 'sizegroupId',
                 type: 'sizegroup'
+            },
+            {
+                name: 'status',
+                type: 'number'
             }
         ]
     },

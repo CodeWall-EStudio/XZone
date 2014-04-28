@@ -47,9 +47,18 @@ exports.checkAuth = function(req, res, next){
             res.json({ err: ERR.SERVER_ERROR, msg: 'verify user error' });
             Logger.error('[checkAuth] verify user error: ', user, ':', err, 'path: ', path, ', method: ', method);
         }else if(user){
-            req.loginUser = user;
+
             // Logger.debug('[checkAuth] get loginUser.', user);
-            next();
+            req.loginUser = user;
+            if(user.status === 1){
+
+                // status = 1 的用户是被关闭的, 不允许调用
+                res.json({ err: ERR.FORBIDDEN, msg: 'this user has close, can\'t access the api' });
+
+            }else{
+                next();
+            }
+            
         }else{
             res.json({ err: ERR.NOT_LOGIN, msg: 'verify user error, con\'t find user in db' });
             Logger.info('[checkAuth] verify user error, con\'t find user in db', 'path: ', path, ', method: ', method);

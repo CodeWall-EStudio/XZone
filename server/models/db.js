@@ -48,7 +48,7 @@ exports.dereference = function(doc, keys, callback){
             callback(err, null);
         }else{
             var ep = new EventProxy();
-            ep.after('deref', U.objectSize(keys), function(list){
+            ep.after('deref', U.objectSize(keys), function(/*list*/){
                 Logger.debug('dereference done: ', doc._id);
                 callback(null, doc);
             });
@@ -85,7 +85,7 @@ exports.dereference = function(doc, keys, callback){
 exports.dereferences = function(docs, keys, callback){
     var ep = new EventProxy();
 
-    ep.after('deref', docs.length, function(list){
+    ep.after('deref', docs.length, function(/*list*/){
         callback(null, docs);
     });
 
@@ -178,24 +178,3 @@ exports.addHelper(exports, 'departuser');
 exports.addHelper(exports, 'storage');
 exports.addHelper(exports, 'sizegroup');
 
-// test code
-// exports.open(function(err, db){
-//     if(!err){
-//         var collection = db.collection('test_insert');
-//         collection.insert({a:2}, function(err, docs) {
-
-//           collection.count(function(err, count) {
-//             console.log(count);
-//           });
-
-//           // Locate all the entries using find
-//           collection.find().toArray(function(err, results) {
-//             console.dir(results);
-//             // Let's close the db
-//             db.close();
-//           });
-//         });
-//     }else{
-//         console.log(err);
-//     }
-// })

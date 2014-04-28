@@ -270,6 +270,9 @@ exports.modifyUser = function(req, res){
         doc.sizegroup = new DBRef('sizegroup', sizegroup._id);
         doc.size = sizegroup.size;
     }
+    if ('status' in params) {
+        doc.status = params.status;
+    }
 
     mUser.update({ _id: user._id }, doc, function(err, result){
         if(err){
