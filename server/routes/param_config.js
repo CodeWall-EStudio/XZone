@@ -938,6 +938,20 @@ module.exports = {
             }
         ]
     },
+    '/api/manage/modifyUser': {
+        method: 'POST',
+        params: [
+            {
+                name: 'userId',
+                type: 'user',
+                required: true
+            },
+            {
+                name: 'sizegroupId',
+                type: 'sizegroup'
+            }
+        ]
+    },
 
     // storage 
     '/api/storage': { // 通用存储接口

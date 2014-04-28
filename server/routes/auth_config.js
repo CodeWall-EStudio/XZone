@@ -599,13 +599,13 @@ exports.RULES = {
     },
 
     // message 
-    '/api/message/search': {
+    // '/api/message/search': {
         
-    },
+    // },
 
 
     // manage
-    '/api/manage/listGroups': {
+    '/api/manage/*': { // 所有 manage 下面的接口都需要管理员才可以操作
 
         verify: function(user, parameter, callback){
 
@@ -629,7 +629,7 @@ exports.RULES = {
     '/api/manage/listPrepares': {
         verify: function(user, parameter, callback){
 
-            if((user.__role & config.ROLE_MANAGER) || 
+            if((user.__role & config.ROLE_MANAGER) ||
                     (user.__role & config.ROLE_PREPARE_MEMBER)){
                 return callback(null);
             }
@@ -646,6 +646,15 @@ exports.RULES = {
         }
     },
     '/api/manage/listFiles': {
+        verify: function(user, parameter, callback){
+
+            if(user.__role & config.ROLE_MANAGER){
+                return callback(null);
+            }
+            return callback('no auth');
+        }
+    },
+    '/api/manage/modifyUser': {
         verify: function(user, parameter, callback){
 
             if(user.__role & config.ROLE_MANAGER){

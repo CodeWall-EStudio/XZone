@@ -10,6 +10,7 @@ var db = require('../models/db');
 var mGroup = require('../models/group');
 var mFile = require('../models/file');
 var mFolder = require('../models/folder');
+var mUser = require('../models/user');
 var U = require('../util');
 
 exports.listGroups = function(req, res){
@@ -258,3 +259,26 @@ exports.listFiles = function(req, res){
     });
 };
 
+exports.modifyUser = function(req, res){
+
+    var params = req.parameter;
+
+    var sizegroup = params.sizegroupId;
+    var user = params.userId;
+    var doc = {};
+    if(sizegroup){
+        doc.sizegroup = new DBRef('sizegroup', sizegroup._id);
+        doc.size = sizegroup.size;
+    }
+
+    mUser.update({ _id: user._id }, doc, function(err, result){
+        if(err){
+            return res.json({ err: result || ERR.SERVER_ERROR, msg: err});
+        }
+        res.json({
+            err: ERR.SUCCESS
+        });
+
+    });
+
+};
