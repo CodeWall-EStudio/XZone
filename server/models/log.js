@@ -1,7 +1,6 @@
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var EventProxy = require('eventproxy');
-var EventEmitter = require('events').EventEmitter;
 var us = require('underscore');
 
 var db = require('./db');
@@ -56,7 +55,28 @@ exports.create = function(params, callback){
 
 };
 
-exports.search = function(){
+exports.search = function(params, callback){
     
+    var query = {};
+    if(params.startTime){
+        query.operateTime = { $gte: params.startTime };
+    }
+    if(params.endTime){
+        if(!query.operateTime){
+            query.operateTime = {};
+        }
+        query.operateTime['$lte'] = params.endTime;
+    }
+
+    if(!params.order){
+        params.order = { operateTime: -1 };
+    }
+
+    if(params.type){
+        query.operateType = params.type;
+    }
+
+    db.search('log', query, params, callback);
+
 };
 

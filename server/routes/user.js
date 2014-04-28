@@ -38,8 +38,8 @@ exports.gotoLogin = function(req, res){
         var state = Date.now();
         req.session[state] = 'qq';
         url = oauth.getAuthorizeUrl({
-            response_type: 'code',
-            redirect_uri: config.QQ_CONNECT_CALLBACK,
+            'response_type': 'code',
+            'redirect_uri': config.QQ_CONNECT_CALLBACK,
             state: state
         });
     }else{
