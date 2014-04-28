@@ -39,7 +39,7 @@ app.use(express.session({
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
-app.use(express.static(path.join(__dirname, '../web')));
+app.use(express.static(path.join(__dirname, '../web'), {maxAge: 7 * 24 * 60 * 60 * 1000}));
 
 // 检查是否登录, 如果没有登录, 跳转到登录页
 app.all('/', routes.checkAuthAndLogin);
