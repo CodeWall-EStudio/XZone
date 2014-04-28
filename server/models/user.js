@@ -277,7 +277,11 @@ exports.search = function(params, callback){
     var query = {};
 
     if(keyword){
-        query['nick'] = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
+        var reg = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
+        query['$or'] = [
+            { 'nick': reg },
+            { 'name': reg }
+        ];
     }
 
     query = us.extend(query, extendQuery);
