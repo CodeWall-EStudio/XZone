@@ -43,6 +43,7 @@ app.use(express.static(path.join(__dirname, '../web')));
 
 // 检查是否登录, 如果没有登录, 跳转到登录页
 app.all('/', routes.checkAuthAndLogin);
+app.all('/index.html', routes.checkAuthAndLogin);
 
 // 设置跨域请求头
 app.all('/', routes.setXHR2Headers);
