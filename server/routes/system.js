@@ -308,6 +308,61 @@ exports.fixRootFolderTypeError = function(req, res){
         res.json({ err: ERR.SUCCESS, total: result.length, result: result });
     });
 };
+
+function fixMediaFolderParent(doc, result, callback){
+    if(doc.parent){
+        return callback(null);
+    }
+    // 先找到新媒体的目录
+    db.folder.findOne({ 'creator.$id': doc.creator.oid, 'name': '新媒体资源' }, function(err, media){
+        if(!media){
+            return callback(null);
+        }
+        // 在新媒体下面随便找一个目录
+        db.folder.findOne({ 'parent.$id': media._id }, function(err, activity){
+            if(!activity){
+                return callback(null);
+            }
+            var paths = activity.idpath.split(',');
+            paths[paths.length - 1] = doc.idpath;
+            db.folder.update({ _id: doc._id }, { $set: {
+                parent: activity.parent,
+                top: activity.top,
+                idpath: paths.join(',')
+            }}, function(err){
+                if(!err){
+                    result.push(doc);
+                }
+                callback(err);
+            });
+        });
+    });
+}
+
+exports.fixMediaFolderMissBug = function(req, res){
+    var user = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+        return ep.emit('error', 'no auth');
+    }
+    var result = [];
+    db.folder.find({name: /[\w]{16,}/, parent: null}, function(err, docs){
+        if(!docs){
+            return res.json({ err: ERR.SUCCESS, result: result });
+        }
+        ep.after('fixDone', docs.length, function(){
+            res.json({ err: ERR.SUCCESS, result: result });
+        });
+        docs.forEach(function(doc){
+            fixMediaFolderParent(doc, result, ep.group('fixDone'));
+        });
+    });
+};
+
 exports.initSizegroup = function(req, res){
     var user = req.loginUser;
 

@@ -17,6 +17,7 @@ exports.create = function(params, callback){
         nick: params.nick || '',
         name: params.name || '',
         auth: 0,
+        status: 0,
 
         sizegroup: params.sizegroupId ? new DBRef('sizegroup', params.sizegroupId) : null,
         size: params.size || config.DEFAULT_USER_SPACE,

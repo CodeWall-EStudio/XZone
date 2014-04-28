@@ -366,6 +366,18 @@ module.exports = {
                 name: 'folderId',
                 type: 'folder',
                 required: true
+            },
+            {
+                name: 'page',
+                type: 'number'
+            },
+            {
+                name: 'pageNum',
+                type: 'number'
+            },
+            {
+                name: 'order',
+                type: 'object'
             }
         ]
     },
@@ -620,6 +632,13 @@ module.exports = {
         params: [
         ]
     },
+    // '/api/user/modify': { // 只能修改自己的
+    //     method: 'POST',
+    //     params: [
+    //         // TODO
+    //     ]
+
+    // },
     '/api/user/search': {
         method: 'GET',
         params: [

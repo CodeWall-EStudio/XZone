@@ -44,7 +44,7 @@ function getFolder(params, callback){
                 name: params.name,
                 deletable: false,
                 creator: params.creator,
-                folderId: params.parentId
+                folder: params.parentId
             }, callback);
         }
     });
@@ -78,10 +78,15 @@ exports.upload = function(req, res){
     ep.on('getUserInfoSuccess', function(user){
         loginUser = user;
         // TODO 这里应该有个 session 保存起来, 不要每次都去请求服务器
+        mFolder.getFolder({ _id: user.rootFolder.oid }, ep.done('getRootFolder'));
+
+    });
+
+    ep.on('getRootFolder', function(rootFolder){
         getFolder({
             name: '新媒体资源',
             creator: loginUser._id,
-            parentId: user.rootFolder.oid
+            parent: rootFolder
         }, ep.done('getMediaFolderSucc'));
 
     });
@@ -90,7 +95,7 @@ exports.upload = function(req, res){
         getFolder({
             name: activityId + '',
             creator: loginUser._id,
-            parentId: mediaFolder._id
+            parent: mediaFolder
         }, ep.done('getActFolderSucc'));
     });
     
