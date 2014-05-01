@@ -12,6 +12,7 @@ var mFile = require('../models/file');
 var mFolder = require('../models/folder');
 var mUser = require('../models/user');
 var U = require('../util');
+var Logger = require('../logger');
 
 exports.listGroups = function(req, res){
     var params = req.parameter;
@@ -284,4 +285,79 @@ exports.modifyUser = function(req, res){
 
     });
 
+};
+
+/**
+ * 统计系统所有文件和小组的数量
+ * @param  {[type]} req [description]
+ * @param  {[type]} res [description]
+ * @return {[type]}     [description]
+ */
+exports.statistics = function(req, res){
+    var parameter = req.parameter;
+    
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
+    });
+
+    var result = {
+        
+    };
+
+    // 所有用户
+    db.user.count({}, function(err, num){
+        if(err){ Logger.error('[manage.statistics]', err); }
+        result.totalUser = num || 0;
+        ep.emit('totalUser');
+    });
+
+    db.group.count({ type: 1 }, function(err, num){
+        if(err){ Logger.error('[manage.statistics]', err); }
+        result.totalGroup = num || 0;
+        ep.emit('totalGroup');
+    });
+
+    db.group.count({ type: 2 }, function(err, num){
+        if(err){ Logger.error('[manage.statistics]', err); }
+        result.totalDepartment = num || 0;
+        ep.emit('totalDepartment');
+    });
+
+    db.folder.count({}, function(err, num){
+        if(err){ Logger.error('[manage.statistics]', err); }
+        result.totalFolder = num || 0;
+        ep.emit('totalFolder');
+    });
+
+    db.file.find({}, function(err, docs){
+        var totalSize = 0;
+        var list = {};
+        docs.forEach(function(file){
+            totalSize += file.size || 0;
+            var obj = list[file.type];
+            if(!obj){
+                list[file.type] = obj = {
+                    type: file.type,
+                    size: 0,
+                    count: 0
+                };
+            }
+            obj.size += file.size || 0;
+            obj.count ++;
+        });
+
+        result.totalFile = docs.length;
+        result.totalSize = totalSize;
+        result.fileStatistics = list;
+
+        ep.emit('totalFile');
+    });
+
+    ep.all('totalUser', 'totalGroup', 'totalDepartment', 'totalFile', 'totalFolder', function(){
+        res.json({
+            err: ERR.SUCCESS,
+            result: result
+        });
+    });
 };

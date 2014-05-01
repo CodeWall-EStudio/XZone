@@ -174,30 +174,35 @@ function verifyParam(value, pcfg, parameter, callback){
     if(!valueHasSet && pcfg.required){
         return callback(pcfg.name + ' is required');
     }
-    if(valueHasSet){
-        var type = pcfg.type || 'string';
-        var checkMethod = checkers[type];
-        checkMethod(value, pcfg, function(err, newValue){
-            if(err){
-                return callback(err, newValue);
-            }
-            if(pcfg.required){
-                if(typeof newValue === 'undefined'){
-                    return callback(pcfg.name + '\'s value is null');
-                }
-                if(us.isArray(newValue) && !newValue.length){
-                    return callback(pcfg.name + '\'s length is 0');
-                }
-            }
-            // if(newValue){
-            //     newValue.__type = type;
-            // }
-            parameter[pcfg.name] = newValue;
-            callback();
-        });
-    }else{
-        callback();
+    if(!valueHasSet){
+        return callback();
     }
+
+    var type = pcfg.type || 'string';
+    var checkMethod = checkers[type];
+    if(!checkMethod){
+        Logger.error('[verifyParam] can\'t find checkMethod of type "', type, '" ');
+        return callback();
+    }
+
+    checkMethod(value, pcfg, function(err, newValue){
+        if(err){
+            return callback(err, newValue);
+        }
+        if(pcfg.required){
+            if(typeof newValue === 'undefined'){
+                return callback(pcfg.name + '\'s value is null');
+            }
+            if(us.isArray(newValue) && !newValue.length){
+                return callback(pcfg.name + '\'s length is 0');
+            }
+        }
+        // if(newValue){
+        //     newValue.__type = type;
+        // }
+        parameter[pcfg.name] = newValue;
+        callback();
+    });
 }
 
 /**

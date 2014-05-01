@@ -4,7 +4,7 @@ var slice = Array.prototype.slice;
 
 exports.info = function(){
     var args = slice.call(arguments);
-    args.unshift('>>>');
+    args.unshift('>>>', new Date(), '\n');
     args.push('<<<');
     console.info.apply(console, args);
 };
@@ -12,7 +12,7 @@ exports.info = function(){
 exports.debug = function(){
     if(config.DEBUG){
         var args = slice.call(arguments);
-        args.unshift('----\n[debug]>>>>');
+        args.unshift('----\n[debug]>>>>', new Date(),'\n');
         args.push('\n<<<<');
         console.log.apply(console, args);
     }
