@@ -158,7 +158,7 @@ var checkers = {
 
     'user': function(value, pcfg, callback){
 
-        findArray('user', value, pcfg, callback);
+        findOne('user', value, pcfg, callback);
     },
 
     'sizegroup': function(value, pcfg, callback){
