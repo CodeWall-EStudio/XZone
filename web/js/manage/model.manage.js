@@ -159,7 +159,6 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			data : d
 		}		
 		var success = function(data){
-			console.log(data.result.list);
 			if(data.err==0){
 				handerObj.triggerHandler('manage:logload', data.result);
 			}else{
@@ -169,13 +168,37 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		request.get(opt,success);		
 	}
 
+	function conventStatic(obj){
+		obj.allsize = util.getSize(obj.totalSize);
+		for(var i in obj.fileStatistics){
+			obj.fileStatistics[i].nsize = util.getSize(obj.fileStatistics[i].size); 
+		}
+		return obj;
+	}
+
+	function allStatic(e,d){
+		var opt = {
+			cgi : config.cgi.mstatic,
+			data : d
+		}		
+		var success = function(data){
+			if(data.err==0){
+				handerObj.triggerHandler('manage:staticload', conventStatic(data.result));
+			}else{
+				handerObj.triggerHandler('msg:error',data.err);
+			}
+		}
+		request.get(opt,success);		
+	}	
+
 	var handlers = {
 		'manage:setkey' : setKey,
 		'manage:sgrouplist' : sGroup,
 		'manage:addsgroup' : addSizeGroup,
 		'manage:modifysgroup' : modifySizeGroup,
 		'manage:delsgroup' : delSizeGroup,
-		'manage:log' : Log
+		'manage:log' : Log,
+		'manage:allstatic' : allStatic
 	}
 
 	for(var i in handlers){

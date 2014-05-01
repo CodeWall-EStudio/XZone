@@ -80,7 +80,9 @@
                 manage.init(cmd);
                 break;
             }
-      });      
+      });   
+
+      manage.init('data');
     }
 
 

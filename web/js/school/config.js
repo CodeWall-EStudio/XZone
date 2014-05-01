@@ -96,6 +96,7 @@ define(function() {
 			mpreplist : CGI_PATH+'manage/listPrepares'+EXT,
 			mnewgroup : CGI_PATH+'manage/createGroup'+EXT,
 			mappfile : CGI_PATH+'manage/approveFile'+EXT,
+			mstatic : CGI_PATH+'manage/statistics'+EXT,
 
 			//用户 
 			usersearch : CGI_PATH+'user/search'+EXT,

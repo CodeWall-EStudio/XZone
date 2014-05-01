@@ -216,3 +216,22 @@ td.jqplot-table-legend {
 .status-nav-list li.selected h4{
 	font-weight:600;
 }
+
+.data-tab{
+	padding:20px 10px;
+}
+.data-tab h3{
+	font-size:20px;
+	font-weight:600;
+	margin-bottom:12px;
+}
+.data-tab h4{
+	font-size:16px;
+	font-weight:600;
+	margin-bottom:12px;
+}
+.data-tab li{
+	padding:10px 0;
+	line-height:200%;
+	font-size:14px;
+}

@@ -346,10 +346,88 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		}		
 	}
 
+
+	function dataInit(){
+		if(isInit.data){
+
+		}else{
+			isLoading = true;
+			handerObj.triggerHandler('manage:allstatic');
+		}
+	}
+
+	function allStatic(e,d){
+		isLoading = false;
+		console.log(d);
+		d.filetype = config.filetype;
+		var view = new View({
+			target : $('#manageMa'),
+			tplid : 'manage/data',
+			data : d,
+			after : function(){
+				var list = [],
+					clist = [];
+				var filetype = config.filetype;
+				for(var i in d.fileStatistics){
+					var item = d.fileStatistics[i];
+					list.push([filetype[item.type],item.size,item.count]);
+					clist.push([filetype[item.type],item.count]);
+				}	
+				var plot2 = jQuery.jqplot ('allFilePre', [list],{
+					seriesDefaults: {
+						renderer: jQuery.jqplot.PieRenderer, 
+						rendererOptions: {
+							padding: 20, 
+							fill: true,
+							showDataLabels: true, 
+							sliceMargin: 4, 
+							lineWidth: 5
+							}
+						}, 
+						legend: { 
+							show:true, 
+							location: 'e' 
+						},
+						cursor : {
+							show: true,              //是否显示光标  
+							showTooltip: true,      // 是否显示提示信息栏  
+							followMouse: false,
+						}
+					}
+				);
+
+				var plot3 = jQuery.jqplot ('allFilePre1', [clist],{
+					seriesDefaults: {
+						renderer: jQuery.jqplot.PieRenderer, 
+						rendererOptions: {
+							padding: 20, 
+							fill: true,
+							showDataLabels: true, 
+							sliceMargin: 4, 
+							lineWidth: 5
+							}
+						}, 
+						legend: { 
+							show:true, 
+							location: 'e' 
+						},
+						cursor : {
+							show: true,              //是否显示光标  
+							showTooltip: true,      // 是否显示提示信息栏  
+							followMouse: false,
+						}
+					}
+				);									
+			}
+		});
+		view.appendPanel();
+	}
+
 	function init(type){
 		$('#manageMa').removeClass('hide');
 		switch(type){
 			case 'data':
+				dataInit();
 				break;
 			case 'log':
 				logInit();
@@ -445,7 +523,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		'manage:sizegroupadded' : addSizeGroup,
 		'manage:sizegroupmodifyed' : modifySizeGroup,
 		'manage:sizegroupdeled' : delSizeGroup,
-		'manage:logload' : logLoad
+		'manage:logload' : logLoad,
+		'manage:staticload' : allStatic
 	}
 
 	for(var i in handlers){
