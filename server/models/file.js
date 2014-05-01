@@ -178,22 +178,28 @@ exports.search = function(params, callback){
     }
     var ep = new EventProxy();
     ep.fail(callback);
+
+    var ids = [];
     
     if(folderId && (recursive || keyword)){
+        ids.push(folderId);
         mFolder.search({ folderId: folderId, recursive: true }, ep.doneLater('paramReady'));
     }else if(folderId){
-        ep.emitLater('paramReady', 1, [{ _id: folderId }]);
+        ids.push(folderId);
+        ep.emitLater('paramReady');
     }else{
         ep.emitLater('paramReady');
     }
 
     ep.on('paramReady', function(total, docs){
-        
         if(docs && docs.length){
-            var ids = [ folderId ]; // folder.search 的结果不包含 search 的 folderId 自身
+
+            // folder.search 的结果不包含 search 的 folderId 自身
             docs.forEach(function(doc){
                 ids.push(doc._id);
             });
+        }
+        if(ids.length){
             query['folder.$id'] = { $in: ids };
         }
 
@@ -230,7 +236,8 @@ exports.statistics = function(folderId, callback){
 
     var searchParams = {
         folderId: folderId,
-        recursive: true
+        recursive: true,
+        noDef: true
     };
 
     exports.search(searchParams, function(err, total, docs){
