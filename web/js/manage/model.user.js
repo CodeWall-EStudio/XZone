@@ -85,10 +85,32 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		request.get(opt,success);			
 	}	
 
+	//读组织树
+	function loadUser(e,d){
+		var departments = Cache.get('departments');
+		if(departments){
+			handerObj.triggerHandler('user:depsload',{ list :departments});
+			return;
+		}
+		var opt = {
+			cgi : config.cgi.departments //userlist
+		}		
+		var success = function(data){
+			if(data.err == 0){
+				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list,type:1});
+				handerObj.triggerHandler('user:depsload',{ list :data.result.list});
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);		
+	}	
+
 	var handlers = {
 		'user:search' : userSearch,
 		'user:modify' : userModify,
-		'user:folderstatus' : folderStatus
+		'user:folderstatus' : folderStatus,
+		'user:deps' : loadUser
 	}
 
 	for(var i in handlers){

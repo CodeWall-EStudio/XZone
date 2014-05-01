@@ -276,18 +276,123 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 		view.createPanel();		
 	}
 
+	//部门树
+	function depsInit(){
+		if(isInit.deps){
+			$('#deptreeMa').removeClass('hide');
+		}else{
+			handerObj.triggerHandler('user:deps');
+		}		
+	}
+
+	//用户选择处理
+	function getUList(id,list){
+		for(var i = 0,l=list.length;i<l;i++){
+			var item = list[i];
+			if(item._id == id){
+				return item;
+			}
+			if(item.children){
+				var ret = getUList(id,item.children);
+				if(ret){
+					return ret;
+				}
+			}
+		}
+		return null;
+	}		
+
+	//用户列表
+	function getuserList(list,target){
+
+		var selected = target.find('.dep-click:checked').length;
+		var view = new View({
+			target : target,
+			tplid : 'manage/deps.user.li',
+			data : {
+				list : list.children,
+				ulist : list.users,
+				selected : selected
+			},
+			after : function(){
+				target.find('.plus').unbind().bind('click',function(e){
+						var target = $(e.target),
+							id = target.attr('data-id');
+						var p = target.parent('li');
+						if(p.find('ul').length > 0){
+							var ul = p.find('ul')[0];
+							if(target.hasClass("minus")){
+								target.removeClass('minus');
+								p.find('ul').hide();
+							}else{
+								target.addClass('minus');
+								p.find('ul').show();
+							}
+							return;
+						}else{	
+							target.addClass('minus');
+							var p = target.parent('li');
+							getuserList(getUList(id,list.children),p);
+						}
+				});
+			}			
+		});
+		view.appendPanel();
+	}	
+
+	function depsLoad(e,d){
+		console.log(d);
+		var view = new View({
+			target : $('#deptreeMa'),
+			tplid : 'manage/deps',
+			after : function(){
+				$('#deptreeMa').removeClass('hide');
+				isInit.deps = true;
+			},
+			data : {
+				list : d.list
+			},
+			handlers : {
+				'.plus' : {
+					'click' : function(){
+						var target = $(this),
+							id = target.attr('data-id');
+						var p = target.parent('li');
+						if(p.find('ul').length > 0){
+							var ul = p.find('ul')[0];
+							if(target.hasClass("minus")){
+								target.removeClass('minus');
+								p.find('ul').hide();
+							}else{
+								target.addClass('minus');
+								p.find('ul').show();
+							}
+							return;
+						}else{	
+							target.addClass('minus');
+							var p = target.parent('li');
+							getuserList(getUList(id,d.list),p);
+						}						
+					}
+				}				
+			}
+		});
+		view.appendPanel();
+	}
+
 	function init(type){
 		
 		if(type == 'user'){
 			userInit();	
 		}else{
-			//depsInit();
+			depsInit();
 		}	
 	}
 
 	var handlers = {
 		'user:listload' : userLoad,
-		'user:statusload' : statusLoad
+		'user:statusload' : statusLoad,
+		'user:depsload' : depsLoad
 	}
 
 	for(var i in handlers){
