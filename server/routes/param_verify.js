@@ -175,7 +175,6 @@ function verifyParam(value, pcfg, parameter, callback){
         return callback(pcfg.name + ' is required');
     }
     if(valueHasSet){
-		console.log(pcfg);
         var type = pcfg.type || 'string';
         var checkMethod = checkers[type];
         checkMethod(value, pcfg, function(err, newValue){

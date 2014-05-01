@@ -310,7 +310,15 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				handlers : {
 					'.next-log-page' : {
 						'click' : function(){
-
+							//console.log(1234);
+							var t = $(this),
+								next = t.attr('data-next');
+							if(next){
+								handerObj.triggerHandler('manage:log',{
+									page : nowPage,
+									pageNum : pageNum
+								});
+							}							
 						}
 					}
 				}
