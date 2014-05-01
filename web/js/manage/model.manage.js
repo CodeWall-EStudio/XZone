@@ -144,16 +144,6 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			if(data.err==0){
 				var list = Cache.get('sizegroup');
 				delete list[d.sizegroupId];
-				// var obj = convertSizeOne(data.result.data);
-				// for(var i in list){
-				// 	var item = list[i];
-				// 	if(item.id = obj.id){
-				// 		list[i] = obj;
-				// 		break;
-				// 	}
-				// }
-				// //更新缓存
-				// //list.push(obj);
 				handerObj.triggerHandler('cache:set',{key: 'sizegroup' ,data: list,type:1});
 				handerObj.triggerHandler('manage:sizegroupdeled', d.sizegroupId);
 			}else{

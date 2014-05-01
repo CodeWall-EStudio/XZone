@@ -104,6 +104,12 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 							}							
 						}
 					},
+					'.user-data' : {
+						'click' : function(){
+							var id = $(this).attr('data-id');
+							handerObj.triggerHandler('user:folderstatus',id);
+						}
+					},
 					'.user-search-key' : {
 						'focus' : function(){
 							var t = $(this),
@@ -123,7 +129,10 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 						}
 					},	
 					'.tr-user' : {
-						'click' : function(){
+						'click' : function(e){
+							if($(e.target).hasClass('user-data')){
+								return;
+							}
 							$('.btn-user-colse').prop({'disabled':false});
 							nowUin = $(this).attr('data-id');
 							$('.tr-user').removeClass('group-tr-selected');
@@ -172,17 +181,114 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 		}
 	}
 
+	function statusLoad(e,d){
+		console.log(d);
+		isLoading = false;
+		//console.log(d);
+		var view = new View({
+			target : $("#userModifyBlock"),
+			tplid : 'manage/status.user',
+			data : d,
+			after : function(){
+				if(!d.totalCount){
+					return;
+				}
+				var list = [],
+					clist = [];
+				var filetype = config.filetype;
+				for(var i in d.list){
+					var item = d.list[i];
+					list.push([filetype[item.type],item.size,item.count]);
+					clist.push([filetype[item.type],item.count]);
+				}
+				
+				var plot2 = jQuery.jqplot ('userPreImg', [list],{
+					seriesDefaults: {
+						renderer: jQuery.jqplot.PieRenderer, 
+						rendererOptions: {
+							padding: 20, 
+							// Turn off filling of slices.
+							fill: true,
+							showDataLabels: true, 
+							// Add a margin to seperate the slices.
+							sliceMargin: 4, 
+							// stroke the slices with a little thicker line.
+							lineWidth: 5
+							}
+						}, 
+						legend: { 
+							show:true, 
+							location: 'e' 
+						},
+						cursor : {
+							show: true,              //是否显示光标  
+							showTooltip: true,      // 是否显示提示信息栏  
+							followMouse: false,
+						}
+					}
+				);
+
+				var plot3 = jQuery.jqplot ('userPreImg1', [clist],{
+					seriesDefaults: {
+						renderer: jQuery.jqplot.PieRenderer, 
+						rendererOptions: {
+							padding: 20, 
+							// Turn off filling of slices.
+							fill: true,
+							showDataLabels: true, 
+							// Add a margin to seperate the slices.
+							sliceMargin: 4, 
+							// stroke the slices with a little thicker line.
+							lineWidth: 5
+							}
+						}, 
+						legend: { 
+							show:true, 
+							location: 'e' 
+						},
+						cursor : {
+							show: true,              //是否显示光标  
+							showTooltip: true,      // 是否显示提示信息栏  
+							followMouse: false,
+						}
+					}
+				);	
+				$('#userPreImg1').hide();
+			},
+			handlers : {
+				'.status-size' : {
+					'click' : function(){
+						$(this).addClass('selected');
+						$('.status-count').removeClass('selected');
+						$('.preimg-zone').hide();
+						$('#userPreImg').show();
+					}
+				},
+				'.status-count' : {
+					'click' : function(){
+						$(this).addClass('selected');
+						$('.status-size').removeClass('selected');
+						$('.preimg-zone').hide();
+						$('#userPreImg1').show();
+					}
+				},				
+			}
+		});
+		view.createPanel();		
+	}
+
 	function init(type){
 		
 		if(type == 'user'){
 			userInit();	
 		}else{
-			depsInit();
+			//depsInit();
 		}	
 	}
 
 	var handlers = {
-		'user:listload' : userLoad
+		'user:listload' : userLoad,
+		'user:statusload' : statusLoad
 	}
 
 	for(var i in handlers){

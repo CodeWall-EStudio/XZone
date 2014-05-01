@@ -293,6 +293,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	};
 
 	function logInit(){
+		$('.manage-tabs').hide();
 		if(isInit['log']){
 			$('#logManage').show();
 		}else{
@@ -301,7 +302,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				tplid : 'manage/log',
 				after : function(){
 					isInit.log = true;
-					console.log(1233456);
 					handerObj.triggerHandler('manage:log',{
 						page : 0,
 						pageNum : pageNum
@@ -310,7 +310,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				handlers : {
 					'.next-log-page' : {
 						'click' : function(){
-							
+
 						}
 					}
 				}

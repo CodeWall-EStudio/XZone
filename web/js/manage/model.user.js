@@ -66,9 +66,29 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		request.post(opt,success);			
 	}
 
+	function folderStatus(e,d){
+		var opt = {
+			cgi : config.cgi.filestatus,
+			data : {
+				folderId : d
+			}
+		}	
+		var success = function(d){
+			if(d.err == 0){
+				d.result.size = util.getSize(d.result.totalSize);
+				handerObj.triggerHandler('user:statusload',d.result);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+
+		request.get(opt,success);			
+	}	
+
 	var handlers = {
 		'user:search' : userSearch,
-		'user:modify' : userModify
+		'user:modify' : userModify,
+		'user:folderstatus' : folderStatus
 	}
 
 	for(var i in handlers){

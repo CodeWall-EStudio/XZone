@@ -156,6 +156,11 @@ var checkers = {
         findArray('user', value, pcfg, callback);
     },
 
+    'user': function(value, pcfg, callback){
+
+        findArray('user', value, pcfg, callback);
+    },
+
     'sizegroup': function(value, pcfg, callback){
 
         findOne('sizegroup', value, pcfg, callback);
@@ -170,6 +175,7 @@ function verifyParam(value, pcfg, parameter, callback){
         return callback(pcfg.name + ' is required');
     }
     if(valueHasSet){
+		console.log(pcfg);
         var type = pcfg.type || 'string';
         var checkMethod = checkers[type];
         checkMethod(value, pcfg, function(err, newValue){

@@ -3,7 +3,7 @@
 		var item = list[i];
 %>
 	<tr class="tr-user tr-user<%-item.id%>" data-id="<%-item.id%>">
-		<td><%-item.nick%></td>
+		<td><a class="user-data" data-id="<%-item.rootFolder.$id%>"><%-item.nick%></a></td>
 		<td><%-item.name%></td>
 		<td>
 			<%if(item.status){%>
