@@ -341,7 +341,6 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 	}	
 
 	function depsLoad(e,d){
-		console.log(d);
 		var view = new View({
 			target : $('#deptreeMa'),
 			tplid : 'manage/deps',
@@ -354,12 +353,13 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 			},
 			handlers : {
 				'.plus' : {
-					'click' : function(){
+					'click' : function(e){
 						var target = $(this),
 							id = target.attr('data-id');
 						var p = target.parent('li');
 						if(p.find('ul').length > 0){
-							var ul = p.find('ul')[0];
+							//var ul = p.find('ul')[0];
+							//console.log(target.attr('class'),target.hasClass("minus"));
 							if(target.hasClass("minus")){
 								target.removeClass('minus');
 								p.find('ul').hide();
