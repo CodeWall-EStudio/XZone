@@ -99,75 +99,27 @@ var checkers = {
         }catch(e){
             callback(pcfg.name + ' must be an object');
         }
-    },
-
-    'file': function(value, pcfg, callback){
-
-        findOne('file', value, pcfg, callback);
-    },
-
-    'folder': function(value, pcfg, callback){
-
-        findOne('folder', value, pcfg, callback);
-    },
-
-    'fav': function(value, pcfg, callback){
-
-        findOne('fav', value, pcfg, callback);
-    },
-
-    'group': function(value, pcfg, callback){
-
-        findOne('group', value, pcfg, callback);
-    },
-
-    'message': function(value, pcfg, callback){
-
-        findOne('message', value, pcfg, callback);
-    },
-
-    'board': function(value, pcfg, callback){
-
-        findOne('board', value, pcfg, callback);
-    },
-
-    'files': function(value, pcfg, callback){
-
-        findArray('file', value, pcfg, callback);
-    },
-
-    'folders': function(value, pcfg, callback){
-
-        findArray('folder', value, pcfg, callback);
-    },
-
-    'favs': function(value, pcfg, callback){
-
-        findArray('fav', value, pcfg, callback);
-    },
-
-    'groups': function(value, pcfg, callback){
-
-        findArray('group', value, pcfg, callback);
-    },
-
-    'users': function(value, pcfg, callback){
-
-        findArray('user', value, pcfg, callback);
-    },
-
-    'user': function(value, pcfg, callback){
-
-        findOne('user', value, pcfg, callback);
-    },
-
-    'sizegroup': function(value, pcfg, callback){
-
-        findOne('sizegroup', value, pcfg, callback);
     }
-
 };
 
+
+function getChecker(type){
+    var checkMethod = checkers[type];
+    if(!checkMethod){
+
+        if(/\[\w+\]/.test(type)){
+            type = type.substring(1, type.length - 1);
+            checkMethod = function(value, pcfg, callback){
+                findArray(type, value, pcfg, callback);
+            };
+        } else {
+            checkMethod = function(value, pcfg, callback){
+                findOne(type, value, pcfg, callback);
+            };
+        }
+    }
+    return checkMethod;
+}
 
 function verifyParam(value, pcfg, parameter, callback){
     var valueHasSet = typeof value !== 'undefined';
@@ -179,7 +131,7 @@ function verifyParam(value, pcfg, parameter, callback){
     }
 
     var type = pcfg.type || 'string';
-    var checkMethod = checkers[type];
+    var checkMethod = getChecker(type);
     if(!checkMethod){
         Logger.error('[verifyParam] can\'t find checkMethod of type "', type, '" ');
         return callback();

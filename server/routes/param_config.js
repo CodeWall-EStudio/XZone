@@ -56,7 +56,7 @@ module.exports = {
         params: [
             {
                 name: 'fileId', // fileId 必须为文件id 的数组
-                type: 'files',
+                type: '[file]',
                 required: true
             }
         ]
@@ -113,7 +113,7 @@ module.exports = {
         params: [
             {
                 name: 'fileId',
-                type: 'files',
+                type: '[file]',
                 required: true
             },
             {
@@ -128,7 +128,7 @@ module.exports = {
         params: [
             {
                 name: 'fileId',
-                type: 'files',
+                type: '[file]',
                 required: true
             },
             {
@@ -143,20 +143,20 @@ module.exports = {
         params: [
             {
                 name: 'fileId',
-                type: 'files',
+                type: '[file]',
                 required: true
             },
             {
                 name: 'toUserId',
-                type: 'users'
+                type: '[user]'
             },
             {
                 name: 'toGroupId',
-                type: 'groups'
+                type: '[group]'
             },
             {
                 name: 'toFolderId',
-                type: 'folders'
+                type: '[folder]'
             }
         ]
     },
@@ -165,7 +165,7 @@ module.exports = {
         params: [
             {
                 name: 'fileId',
-                type: 'files',
+                type: '[file]',
                 required: true
             }
         ]
@@ -354,7 +354,7 @@ module.exports = {
         params: [
             {
                 name: 'folderId',
-                type: 'folders',
+                type: '[folder]',
                 required: true
             }
         ]
@@ -429,7 +429,7 @@ module.exports = {
         params: [
             {
                 name: 'fileId',
-                type: 'files',
+                type: '[file]',
                 required: true
             },
             {
@@ -443,7 +443,7 @@ module.exports = {
         params: [
             {
                 name: 'fileId',
-                type: 'files',
+                type: '[file]',
                 required: true
             }
         ]
@@ -511,11 +511,11 @@ module.exports = {
                 type: 'group'
             },
             {   name: 'members',
-                type: 'users'
+                type: '[user]'
             },
             {
                 name: 'managers',
-                type: 'users'
+                type: '[user]'
             },
             {
                 name: 'pt',
@@ -568,11 +568,11 @@ module.exports = {
                 type: 'string'
             },
             {   name: 'members',
-                type: 'users'
+                type: '[user]'
             },
             {
                 name: 'managers',
-                type: 'users'
+                type: '[user]'
             },
             {
                 name: 'status', // 状态: 0 已审核, 1 审核中, 2 已归档, 3 已关闭, 4 已删除; 需要 group 管理员以上权限
@@ -666,7 +666,7 @@ module.exports = {
         params: [
             {
                 name: 'fileId',
-                type: 'files',
+                type: '[file]',
                 required: true
             },
             {
@@ -681,7 +681,7 @@ module.exports = {
         params: [
             {
                 name: 'fileId',
-                type: 'files',
+                type: '[file]',
                 required: true
             },
             {
