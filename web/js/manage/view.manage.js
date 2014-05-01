@@ -1,4 +1,4 @@
-define(['../school/config','../school/cache','../school/helper/view'],function(config,Cache,View){
+define(['../school/config','../school/cache','../school/helper/view','../school/helper/util'],function(config,Cache,View,Util){
 	var handerObj = $(Schhandler);
 	var isInit = {}, //初始化
 		nowSizeGroupId = 0,
@@ -292,12 +292,59 @@ define(['../school/config','../school/cache','../school/helper/view'],function(c
 		}
 	};
 
+	function logInit(){
+		if(isInit['log']){
+			$('#logManage').show();
+		}else{
+			var view = new View({
+				target : $('#manageMa'),
+				tplid : 'manage/log',
+				after : function(){
+					isInit.log = true;
+					console.log(1233456);
+					handerObj.triggerHandler('manage:log',{
+						page : 0,
+						pageNum : pageNum
+					});
+				},
+				handlers : {
+					'.next-log-page' : {
+						'click' : function(){
+							
+						}
+					}
+				}
+			});
+			view.appendPanel();		
+		}
+	}
+
+	function logLoad(e,d){
+		var view = new View({
+			target : $('#logList'),
+			tplid : 'manage/log.list',
+			data : {
+				list : d.list,
+				logType : Util.logType,
+				time : Util.time
+			}
+		});
+		view.appendPanel();
+		if($('#logList tr').length < d.total){
+			nowPage++;
+			$('.next-log-page').attr('data-next',1);
+		}else{
+			$('.next-log-page').removeAttr('data-next').text('已经全部加载完了');
+		}		
+	}
+
 	function init(type){
 		$('#manageMa').removeClass('hide');
 		switch(type){
 			case 'data':
 				break;
 			case 'log':
+				logInit();
 				break;
 			case 'grade':
 				gradeInit();
@@ -389,7 +436,8 @@ define(['../school/config','../school/cache','../school/helper/view'],function(c
 		'manage:slistload' : sizeLoad,
 		'manage:sizegroupadded' : addSizeGroup,
 		'manage:sizegroupmodifyed' : modifySizeGroup,
-		'manage:sizegroupdeled' : delSizeGroup
+		'manage:sizegroupdeled' : delSizeGroup,
+		'manage:logload' : logLoad
 	}
 
 	for(var i in handlers){

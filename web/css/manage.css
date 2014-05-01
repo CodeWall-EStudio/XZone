@@ -161,7 +161,7 @@
 .group-order{
 	cursor:pointer;
 }
-.next-group-page,.next-user-page{
+.next-group-page,.next-user-page,.next-log-page{
 	cursor:pointer;
 	width:100%;
 	padding:10px 0;

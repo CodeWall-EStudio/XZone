@@ -392,6 +392,41 @@ define(['../config'], function($, config) {
     			return '已归档';
     		case 3:
     			return '已关闭';
+    		case 4:
+    			return '已删除';    			
+    	}
+    }
+
+    var showLogType = function(type){
+        //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+        //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+        //11: delete(移动到回收站) 12: 创建文件夹    	
+    	switch(type){
+    		case 1:
+    			return '上传';
+    		case 2:
+    			return '下载';
+    		case 3:
+    			return '复制';
+    		case 4:
+    			return '移动';
+    		case 5:
+    			return '修改';
+    		case 6:
+    			return '删除';
+    		case 7:
+    			return '预览';
+    		case 8:
+    			return '保存';
+    		case 9:
+    			return '分享给用户';
+    		case 10:
+    			return '分享给小组';
+    		case 11:
+    			return '移动到回收站';
+    		case 12:
+    			return '创建文件夹';
+
     	}
     }
 
@@ -411,6 +446,7 @@ define(['../config'], function($, config) {
 	util.getSize = getSize;
 	util.getNums = getNums;
 	util.getStatus = getStatus;
+	util.logType = showLogType;
 
 	return util;
 

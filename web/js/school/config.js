@@ -99,7 +99,7 @@ define(function() {
 
 			//用户 
 			usersearch : CGI_PATH+'user/search'+EXT,
-			usermodify : CGI_PATH+'user/modifyUser'+EXT,
+			usermodify : CGI_PATH+'manage/modifyUser'+EXT,
 
 			//日志
 			logsearch : CGI_PATH+'log/search'+EXT,

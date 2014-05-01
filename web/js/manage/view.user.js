@@ -64,6 +64,15 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 
 	function userModifySuc(e,d){
 		$('.btn-user-colse').prop({'disabled':true});
+		$.extend(userList[d.id],d);
+		var view = new View({
+			target : $('#tr-user'+d.id),
+			tplid : 'manage/search.user.list.one',
+			data : {
+				item : d
+			}
+		});
+		view.createPanel();
 	}
 
 	//用户列表初始化
@@ -115,7 +124,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 					},	
 					'.tr-user' : {
 						'click' : function(){
-							$('.btn-user-colse').prop({'disabled':true});
+							$('.btn-user-colse').prop({'disabled':false});
 							nowUin = $(this).attr('data-id');
 							$('.tr-user').removeClass('group-tr-selected');
 							$(this).addClass('group-tr-selected');

@@ -62,7 +62,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		'.add-sem' : {
 			'click' : function(){
 				var slist = Cache.get('sizegroup');
-				d.sglist = slist;
+				//d.sglist = slist;
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
@@ -130,7 +130,13 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		//删除小组
 		'.del-group' : {
 			'click' : function(){
-				console.log('del');
+				// console.log(nowGroup);
+				// console.log('del');
+				var obj = {
+					groupId : nowGroup.id,
+					status : 4
+				}
+				handerObj.triggerHandler('group:modify',obj);
 			}
 		},
 		//审核通过
@@ -160,6 +166,8 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				var name = $('#modifyZone .group-name').val();
 				var archivable = $('#modifyZone input[type=radio]:checked').val();
 				var sgid = $('.group-size-group').val();
+				var status = $('.group-status').val();
+
 				var managelist = [],
 					memberlist = [];
 				var st = 0,
@@ -171,6 +179,12 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				$('#groupMemberList i').each(function(){
 					memberlist.push($(this).attr('data-id'));
 				});	
+
+				var close = 0;
+				if($('.group-status:checked').length){
+					close = 1;
+				};
+
 
 				var sem = 0;
 				if(nowType == 'prep'){
@@ -224,6 +238,8 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					managers : managelist,
 				}
 
+
+
 				if(nowType == 'group'){
 					obj.archivable = archivable;
 					if(archivable){
@@ -248,6 +264,11 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				if(modify){
 					id = $('#modifyZone .group-name').attr('data-id');
 					obj.groupId = id;
+					if(close){
+						obj.status = 3;
+					}else{
+						obj.status = 0;
+					}
 					handerObj.triggerHandler('group:modify',obj);	
 				}else{
 					handerObj.triggerHandler('group:create',obj);	
@@ -516,7 +537,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 
 	//小组列表加载完成
 	function groupLoad(e,d){
-		//console.log(d);
+		console.log(d);
 		//status : 0 已审核 1 审核中  2 已归档 3 已关闭
 		//console.log(d.total);
 		isLoading = false;
@@ -871,14 +892,13 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 			d.prep = tg2key;
 		}		
 		var id = d.id;
-		console.log(d);
+
 		var view = new View({
 			target : $('.group-tr'+id),
 			tplid : 'manage/group.list.one',
 			data : d
 		})
 		view.createPanel();
-
 	}
 
 	function appSuc(e,d){

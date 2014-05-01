@@ -163,12 +163,29 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		request.post(opt,success);
 	}		
 
+	function Log(e,d){
+		var opt = {
+			cgi : config.cgi.logsearch,
+			data : d
+		}		
+		var success = function(data){
+			console.log(data.result.list);
+			if(data.err==0){
+				handerObj.triggerHandler('manage:logload', data.result);
+			}else{
+				handerObj.triggerHandler('msg:error',data.err);
+			}
+		}
+		request.get(opt,success);		
+	}
+
 	var handlers = {
 		'manage:setkey' : setKey,
 		'manage:sgrouplist' : sGroup,
 		'manage:addsgroup' : addSizeGroup,
 		'manage:modifysgroup' : modifySizeGroup,
 		'manage:delsgroup' : delSizeGroup,
+		'manage:log' : Log
 	}
 
 	for(var i in handlers){
