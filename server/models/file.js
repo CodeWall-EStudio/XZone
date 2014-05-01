@@ -165,6 +165,10 @@ exports.search = function(params, callback){
         del: false // 默认只能搜索未删除的文件
     };
 
+    if(params.searchAll){
+        delete query.del;
+    }
+
     if(keyword){
         query['name'] = new RegExp('.*' + U.encodeRegexp(keyword) + '.*');
     }
@@ -237,7 +241,8 @@ exports.statistics = function(folderId, callback){
     var searchParams = {
         folderId: folderId,
         recursive: true,
-        noDef: true
+        noDef: true,
+        searchAll: true
     };
 
     exports.search(searchParams, function(err, total, docs){
