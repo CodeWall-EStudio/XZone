@@ -1091,11 +1091,11 @@ module.exports = {
 			//加上来源用户和来源小组 一次只需要用一个
             {
                 name: 'fromUserId',
-                type: '[user]'
+                type: 'user'
             },
             {
                 name: 'fromGroupId',
-                type: '[group]'
+                type: 'group'
             },
             {
                 //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
