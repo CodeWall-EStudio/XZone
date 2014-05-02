@@ -76,6 +76,13 @@ exports.search = function(params, callback){
         query.operateType = params.type;
     }
 
+	if(params.fromUserId){
+		query.fromUserId = params.fromUserId;
+	}
+	if(params.fromGroupId){
+		query.fromGroupId = params.fromGroupId;
+	}
+
     db.search('log', query, params, callback);
 
 };
