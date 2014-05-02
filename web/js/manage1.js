@@ -12,13 +12,11 @@
     var handerObj = $(Schhandler);
     var prepload = false;
     var sgload = false;
-    
+   
     if(!util.getCookie('skey')){
       window.location = config.cgi.gotologin;
       return;
     }
-
-
 
     handerObj.bind('manage:preploaded',function(e,d){
       prepload = true;
@@ -34,10 +32,20 @@
         $('.manage-loading').remove();
         init();
       }
-    });    
+    }); 
 
-    handerObj.triggerHandler('group:loadprep');
-    handerObj.triggerHandler('manage:sgrouplist');
+    handerObj.bind('manage:userLoaded',function(e,d){
+      if(d.auth == 15){
+          handerObj.triggerHandler('group:loadprep');
+          handerObj.triggerHandler('manage:sgrouplist');  
+          $('#userInfo').html(d.nick+' <a href="/">返回</a>');
+      }else{
+        window.location = '/';
+      }
+    });
+
+    handerObj.triggerHandler('manage:userinfo');
+
 
     mModel.getKey('grade');
     mModel.getKey('subject');
@@ -83,6 +91,19 @@
       });   
 
       manage.init('data');
+      // var opt = {
+      //   cgi : config.cgi.getinfo,
+      //   data : {}
+      // }
+
+      // var success = function(d){
+      //   if(d.err == 0){
+      //     console.log(d.result);
+      //   }else{
+      //     handerObj.triggerHandler('msg:error',d.err);
+      //   }
+      // }
+      // request.get(opt,success);      
     }
 
 

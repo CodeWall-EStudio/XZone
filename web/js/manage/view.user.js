@@ -143,7 +143,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 					'.btn-user-colse' : {
 						'click' : function(){
 							var obj = {
-								userId : [nowUin],
+								userId : nowUin,
 								status : 1
 							}
 							handerObj.triggerHandler('user:modify',obj);
@@ -153,7 +153,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 						'click' : function(){
 							var sizeid = $('.user-size-group').val();
 							var obj = {
-								userId : [nowUin],
+								userId : nowUin,
 								sizegroupId : sizeid
 							}
 							handerObj.triggerHandler('user:modify',obj);

@@ -235,3 +235,6 @@ td.jqplot-table-legend {
 	line-height:200%;
 	font-size:14px;
 }
+table.jqplot-table-legend{
+	border:none;
+}

@@ -159,7 +159,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		var subject = Cache.get('subject');
 
 		if(isInit['size']){
-			$('#gradeMange').show();
+			$('#sizeManage').show();
 		}else{		
 			var view = new View({
 				target : $('#manageMa'),
@@ -211,7 +211,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							var size = $('.size-group-val').val();
 							var st = parseInt($('.size-type').val());
 							var def = false;
-							if($('#defSizeGroup:checked')){
+							if($('#defSizeGroup:checked').length){
 								def = true;
 							}
 							switch(st){
@@ -224,6 +224,9 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 								case 3:
 									size = size * 1024 * 1024 * 1024;
 									break;
+								case 4:
+									size = size * 1024 * 1024 * 1024 * 1024;
+									break;									
 							}
 							if(name != '' && st){
 
@@ -348,8 +351,9 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 
 
 	function dataInit(){
+		$('.manage-tabs').hide();
 		if(isInit.data){
-
+			$('#allStatusBlock').show();
 		}else{
 			isLoading = true;
 			handerObj.triggerHandler('manage:allstatic');
@@ -358,7 +362,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 
 	function allStatic(e,d){
 		isLoading = false;
-		console.log(d);
+		isInit.data = true;
 		d.filetype = config.filetype;
 		var view = new View({
 			target : $('#manageMa'),
