@@ -257,12 +257,14 @@ exports.getGroup = function(query, callback){
 
     // console.log('>>>getGroup, groupId', groupId, typeof groupId);
     db.group.findOne(query, function(err, group){
-        if(err){
-            return callback(err);
-        }
 
-        // 处理归档逻辑
-        exports.archiveCheck(group, callback);
+        if(group){
+
+            // 处理归档逻辑
+            exports.archiveCheck(group, callback);
+        }else{
+            callback(err, group);
+        }
     });
 };
 
