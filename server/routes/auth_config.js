@@ -46,6 +46,9 @@ exports.RULES = {
                 if(err){
                     return callback(err, folder);
                 }
+                if(folder.__archived){
+                    return callback('can\'t upload file to an archived folder', ERR.UNMODIFABLE);
+                }
                 if(!folder.__writable){
                     // 么有权限写该文件夹
                     return callback(msg, ERR.NOT_AUTH);
@@ -135,7 +138,16 @@ exports.RULES = {
             }
             if(folder){
                 
-                verifyFolder(user, folder, callback);
+                // 这里可以不用检验是否归档了, 现在这里传的是自己目录下的文件
+                verifyFolder(user, folder, function(err, folder){
+                    if(err){
+                        return callback(err, folder);
+                    }
+                    if(!folder.__writable){
+                        return callback('not auth to save file to this folder, folderId: ' + folder._id, ERR.NOT_AUTH);
+                    }
+                    callback(null);
+                });
             }else{
                 callback(null);
             }
@@ -145,14 +157,30 @@ exports.RULES = {
         verify: function(user, parameter, callback){
             // 修改文件的限制
             // 普通人只能修改自己创建的; 管理员可以修改所有
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
+            // if(user.__role & config.ROLE_MANAGER){
+            //     return callback(null);
+            // }
             var file = parameter.fileId;
-            if(file.creator.oid.toString() === user._id.toString()){
-                return callback(null);
-            }
-            callback('not auth to modify this file', ERR.NOT_AUTH);
+            mFolder.getFolder({ _id: file.folder.oid }, function(err, folder){
+                if(err){
+                    return callback(err, folder);
+                }
+
+                verifyFolder(folder, function(err, folder){
+                    if(folder.__archived){
+                        return callback('can\'t modify an archived file', ERR.UNMODIFABLE);
+                    }
+                    if(!folder.__editable){
+                        return callback('not auth to modify this file', ERR.NOT_AUTH);
+                    }
+                    return callback(null);
+                });
+
+            });
+            // if(file.creator.oid.toString() === user._id.toString()){
+            //     return callback(null);
+            // }
+            // callback('not auth to modify this file', ERR.NOT_AUTH);
         }
     },
     '/api/file/copy': {
@@ -169,6 +197,9 @@ exports.RULES = {
             // 检查是否有目标目录的权限
             verifyFolder(user, folder, ep.doneLater('verifyTargetFolder'));
             ep.on('verifyTargetFolder', function(folder){
+                if(folder.__archived){
+                    return callback('can\'t copy file to an archived folder', ERR.UNMODIFABLE);
+                }
                 if(folder.__writable){
                     callback(null);
                 }else{
@@ -194,6 +225,9 @@ exports.RULES = {
             // 检查是否有目标目录的权限
             verifyFolder(user, folder, ep.doneLater('verifyTargetFolder'));
             ep.on('verifyTargetFolder', function(){
+                if(folder.__archived){
+                    return callback('can\'t move file to an archived folder', ERR.UNMODIFABLE);
+                }
                 if(folder.__writable){
                     callback(null);
                 }else{
@@ -797,6 +831,10 @@ function verifyDelete(user, file, callback){
 
     ep.on('verifyFolder', function(folder){
 
+        if(folder.__archived){
+            return callback('can\'t delete an archived file', ERR.UNMODIFABLE);
+        }
+
         if(folder.__editable && (user.__role & config.ROLE_FOLDER_MANAGER)){
 
             // 管理员和小组/部门管理员和文件夹创建者
@@ -937,6 +975,13 @@ function verifyFolder(user, folder, callback){
         folder.__user_role = user.__role;
         group.__user_role = user.__role;
 
+        if (group.__archived){
+            // 已经归档的小组, 不能上传/修改/删除, 只能查看
+            folder.__writable = false;
+            folder.__editable = false;
+            folder.__archived = true;
+        }
+
         if(hasAuth){
             return callback(null, folder);
         }
@@ -957,6 +1002,12 @@ function verifyGroup(user, group, callback){
 
     var msg = 'not auth to access this group, groupId: ' + group._id;
     var hasAuth = false;
+
+    if (group.status === 2){
+        // 已经归档的小组, 不能上传/修改/删除, 只能查看
+        group.__archived = true;
+    }
+
     if (user.__role & config.ROLE_MANAGER) {
 
         group.__editable = true;
