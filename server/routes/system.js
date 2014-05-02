@@ -1,4 +1,6 @@
 var http = require('http');
+var fs = require('fs');
+var path = require('path');
 var EventProxy = require('eventproxy');
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
@@ -8,11 +10,13 @@ var config = require('../config');
 var ERR = require('../errorcode');
 var db = require('../models/db');
 var group = require('../models/group');
-var U = require('../util');
+var Util = require('../util');
 var userHelper = require('../helper/user_helper');
+var fileHelper = require('../helper/file_helper');
 var mUser = require('../models/user');
 var mSizegroup = require('../models/sizegroup');
 
+var FileTool = require('../file_tool');
 
 function createDepart(parent, dep, callback){
     var ep = new EventProxy();
@@ -128,7 +132,7 @@ exports.initDeparts = function(req, res){
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
-    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+    if(!Util.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
         return ep.emit('error', 'no auth');
     }
 
@@ -175,7 +179,7 @@ exports.mergeOldData = function(req, res){
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
-    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+    if(!Util.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
         return ep.emit('error', 'no auth');
     }
 
@@ -224,7 +228,7 @@ exports.fixUserRootFolder = function(req, res){
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
-    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+    if(!Util.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
         return ep.emit('error', 'no auth');
     }
     var result = [];
@@ -252,7 +256,7 @@ exports.fixSaveFileFolder = function(req, res){
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
-    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+    if(!Util.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
         return ep.emit('error', 'no auth');
     }
     var result = [];
@@ -280,7 +284,7 @@ exports.fixRootFolderTypeError = function(req, res){
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
-    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+    if(!Util.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
         return ep.emit('error', 'no auth');
     }
     var result = [];
@@ -346,7 +350,7 @@ exports.fixMediaFolderMissBug = function(req, res){
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
-    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+    if(!Util.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
         return ep.emit('error', 'no auth');
     }
     var result = [];
@@ -370,7 +374,7 @@ exports.initSizegroup = function(req, res){
     ep.fail(function(err, errCode){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
-    if(!U.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+    if(!Util.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
         return ep.emit('error', 'no auth');
     }
 
@@ -421,4 +425,64 @@ exports.initSizegroup = function(req, res){
     });
 
     
+};
+
+exports.importPictures = function(req, res){
+    var user = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    if(!Util.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+        return ep.emit('error', 'no auth');
+    }
+    var dir = req.param('dir'); // '/Users/azrael/Desktop/Test/img/';
+    if(!dir){
+        return ep.emit('error', 'need import dir');
+    }
+
+    db.group.findOne({ type: 0 }, function(err, school){
+        if(!school){
+            return ep.emit('error', 'not find a school');
+        }
+        db.folder.findOne({ _id: school.rootFolder.oid }, ep.done('getFolder'));
+    });
+
+
+    var files = FileTool.listFilesSync(dir, 'jpg,jpeg', true);
+    var pics = [];
+
+    files.forEach(function(uri){
+        var body = {};
+        body['file_path'] = path.join(dir, uri);
+        body['file_name'] = path.basename(uri);
+
+        body['file_content_type'] = 'image/jpeg';
+
+        var content = fs.readFileSync(body['file_path']);
+        body['file_size'] = content.length;
+        body['file_md5'] = Util.md5(content.toString()).toUpperCase();
+
+        pics.push(body);
+    });
+
+    ep.emitLater('getPictures', pics);
+
+    ep.all('getFolder', 'getPictures', function(folder, pics){
+
+        ep.after('saveFileSuccess', pics.length, function(result){
+            res.json({ err: ERR.SUCCESS, result: { count: pics.length, pics: pics/*, result: result*/ } });
+        });
+
+        pics.forEach(function(pic){
+            fileHelper.saveUploadFile({
+                folder: folder,
+                loginUser: user,
+                parameter: pic
+            }, ep.done('saveFileSuccess'));
+        });
+
+    });
+
 };
