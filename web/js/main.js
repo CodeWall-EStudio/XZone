@@ -7,7 +7,7 @@
     }    
   });
 
-  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','bind','upload','msg'], function(config,router,util,nav) {
+  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','bind','upload','msg'], function(config,router,util,nav) {
 
     var handerObj = $(Schhandler);
 
@@ -23,6 +23,9 @@
 
     var ftarget = $('#fileList'),
         fatarget = $('#fileActZone'),
+        sctarget = $('#searchZone'),
+        ltarget = $('#logBlock'),
+        sttarget = $('#sectionTit'),
         mtarget = $('#boxList'),
         btarget = $('#btnZone'),
         starget = $('#shareBox');
@@ -30,58 +33,94 @@
     function showModel(cmd){
       switch(cmd){
         case 'my':
+          sttarget.show();
           btarget.show();
           ftarget.show();
           starget.hide();
-          mtarget.hide();         
+          mtarget.hide(); 
+          ltarget.hide();
+          sctarget.show();        
           break;
         case 'myprep':
+          sttarget.show();
+          sctarget.show();
+          ltarget.hide();
           btarget.show();
           ftarget.show();
           starget.hide();
           mtarget.hide();         
           break;
         case 'group':
+          sttarget.show();
+          sctarget.show();
+          ltarget.hide();
           btarget.show();
           ftarget.show();
           starget.hide();
           mtarget.hide();         
           break;
         case 'groupprep':
+          sttarget.show();
+          sctarget.show();
+          ltarget.hide();
           btarget.hide();
           ftarget.show();
           starget.hide();
           mtarget.hide();         
           break;
         case 'school':
+          sttarget.show();
+          sctarget.show();
+          ltarget.hide();
           btarget.show();
           ftarget.show();
           starget.hide();
           mtarget.hide();        
           break;
         case 'mailbox':
+          sttarget.show();
+          sctarget.show();
+          ltarget.hide();
           btarget.hide();
           ftarget.hide();
           starget.hide();
-          mtarget.show();         
+          mtarget.show(); 
+          break;        
+        case 'log':
+          sttarget.hide();
+          sctarget.hide();
+          btarget.hide();
+          ftarget.hide();
+          starget.hide();
+          mtarget.hide(); 
+          ltarget.show();        
           break;
         case 'share':
+          sttarget.show();
+          sctarget.show();
           btarget.hide();
           ftarget.hide();
           starget.show();
-          mtarget.hide();         
+          mtarget.hide();  
+          ltarget.hide();      
           break;
         case 'coll':
+          sttarget.show();
+          sctarget.show();
           btarget.hide();
           ftarget.hide();
           starget.hide();
           mtarget.show();        
+          ltarget.hide();
           break;
         case 'recy':
+          sttarget.show();
+          sctarget.show();
           btarget.hide();
           ftarget.hide();
           starget.hide();
-          mtarget.show();        
+          mtarget.show();  
+          ltarget.hide();      
           break;
       }
     }
@@ -100,6 +139,7 @@
         "gid=:id&fdid=:fdid" : 'group',
         "myprep=:1" : 'myPrep', //备课
         "school=:1" : 'school',
+        "mylog=:1" : 'log',
         "my" : 'myFile',     //个人文件
         "key=:id" : 'myFile',     //个人文件
         "" : 'myFile', // 无hash的情况，首页
@@ -301,6 +341,13 @@
         //handerObj.triggerHandler('group:init',d);  
         handerObj.triggerHandler('bind:school',0);   
         handerObj.triggerHandler('model:change','file');           
+      },
+      log : function(data){
+        showModel('log');
+        var d = {
+          gid: data.gid || 0
+        }
+        handerObj.triggerHandler('log:init',d);
       },
       myPrep : function(data){
         showModel('myprep');

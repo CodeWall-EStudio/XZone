@@ -1,0 +1,46 @@
+<%
+	for(var i in list){
+		var item = list[i];
+%>
+	<tr>
+		<td>
+			<%-logType(item.operateType)%>
+		</td>
+		<td>
+			<% if(item.operateType == 1){%>			
+				<%-item.fromUserName%> 上传了文件 <%-item.fileName%>
+			<%}else if(item.operateType ==2 ){%>
+				<%-item.fromUserName%> 下载了文件 <%-item.fileName%>
+			<%}else if(item.operateType ==3 ){%>
+			<%}else if(item.operateType ==4 ){%>
+				<%-item.fromUserName%> 把文件 <%-item.fileName%> 从文件夹 <%-item.srcFolderId%> 移动到 <%-item.distFolderId%>
+			<%}else if(item.operateType ==5 ){%>
+				<%-item.fromUserName%> 修改了文件夹 <%-item.folderName%>
+			<%}else if(item.operateType ==6 ){%>
+				<%-item.fromUserName%> 删除了
+				<%if(item.folderId){%>
+					文件夹 <%-item.folderName%>
+				<%}else if(item.fileId){%>
+					文件 <%-item.fileName%>
+				<%}%>
+			<%}else if(item.operateType ==7 ){%>
+				<%-item.fromUserName%> 
+				<%if(item.srcFolderId){%>
+					 在文件夹 <%-item.srcFolderId%>中
+				<%}%>
+				预览了文件 <%-item.fileName%>
+			<%}else if(item.operateType ==8 ){%>
+				<%-item.fromUserName%> 保存了文件 <%-item.fileName%>
+			<%}else if(item.operateType ==9 ){%>
+				<%-item.fromUserName%> 共享了文件 <%-item.fileName%> <!--给 <%-item.toUserName%>-->
+			<%}else if(item.operateType ==10 ){%>
+				<%-item.fromUserName%> 共享了文件 <%-item.fileName%> <!-- 给 <%-item.toGroupName%>-->
+			<%}else if(item.operateType ==11 ){%>
+				<%-item.fromUserName%> 把文件 <%-item.fileName%> 移动到回收站
+			<%}else if(item.operateType ==12 ){%>
+				<%-item.fromUserName%> 创建了文件夹 <%-item.folderName%>
+			<%}%>
+		</td>
+		<td><%-time(item.operateTime)%></td>
+	</tr>
+<%}%>

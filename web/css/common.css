@@ -727,3 +727,6 @@ input[type='checkbox'] {
 .section-tit .fold-list-link .tit-menu a:hover{
 	color:#000;
 }
+#logBlock{
+	min-height:400px;
+}
