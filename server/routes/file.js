@@ -934,7 +934,8 @@ exports.search = function(req, res){
     });
 
     var searchParams = us.extend({}, parameter, {
-        folderId: folder._id
+        folderId: folder._id,
+        isDeref: true
     });
 
     Logger.debug('file/search: ', folder._id, 'user role: ', loginUser.__role, 'folder role: ', folder.__role);
@@ -1007,6 +1008,8 @@ exports.query = function(req, res){
     });
 
     var searchParams = us.extend({}, parameter);
+    searchParams.isDeref = true;
+
     var group = parameter.groupId;
 
     if(cate === 1){

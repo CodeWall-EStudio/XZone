@@ -209,7 +209,7 @@ function deleteFolder(loginUser, folder, callback){
 
     //检查是否有不属于自己的文件, 有就不能删
     var searchParams = {
-        noDef: true,
+
         recursive: true,
         folderId: folder._id,
         extendQuery: {

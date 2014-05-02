@@ -97,14 +97,16 @@ exports.updateUsed = function(groupId, count, callback){
 
 function dereferenceGroup(groupId, ext, callback){
     // 只返回审核通过的
-    db.group.findOne({ _id: groupId, validateStatus: 1, status: { $nin: [3, 4] } }, function(err, doc){
+    exports.getGroup({ _id: groupId, validateStatus: 1, status: { $nin: [3, 4] } }, function(err, doc){
         if(err){
             return callback(err);
         }
         if(doc){
             db.dereference(doc, { 'creator': ['nick', '_id'], 'parent': null, 'rootFolder': null }, function(err, result){
                 doc.auth = ext.auth;
-                callback(err, doc);
+                // 处理归档逻辑
+                exports.archiveCheck(doc, callback);
+
             });
         }else{
             callback(null, null);
@@ -127,7 +129,6 @@ exports.getGroupByUser = function(userId, callback){
             callback('get user groups error: ' + err);
         });
         docs.forEach(function(doc){
-
             dereferenceGroup(doc.group.oid, doc, proxy.group('getGroup'));
         });
     });
@@ -230,9 +231,7 @@ exports.isPrepareMember = function(userId, callback){
     // console.log('>>>isPrepareMember', userId);
 
     // 获取备课小组
-    db.group.findOne({
-        pt: 1
-    }, function(err, group){
+    exports.getGroup({ pt: 1 }, function(err, group){
         if(!group){
             console.log('>>>isPrepareMember, no pt=1 group');
             callback('can not find prepare group');
@@ -254,11 +253,30 @@ exports.modify = function(query, doc, callback){
 };
 
 exports.getGroup = function(query, callback){
-    // console.log('>>>getGroup, groupId', groupId, typeof groupId);
-    db.group.findOne(query, callback);
 
+    // console.log('>>>getGroup, groupId', groupId, typeof groupId);
+    db.group.findOne(query, function(err, group){
+        if(err){
+            return callback(err);
+        }
+
+        // 处理归档逻辑
+        exports.archiveCheck(group, callback);
+    });
 };
 
+exports.archiveCheck = function(group, callback){
+    var now = Date.now();
+    if(group.archivable || group.type === 3){ // 备课组
+        if( group.status !== 2 && group.startTime && group.endTime && (now < group.startTime || now > group.endTime) ){
+            // 超过归档时间, 设置为归档, 不能上传/创建文件夹/复制/移动/删除, 只能看
+            group.status = 2; // 2 为归档
+            exports.modify({ _id: group._id }, { status: group.status }, callback);
+            return;
+        }
+    }
+    return callback(null, group);
+};
 
 exports.search = function(params, callback){
     var isDeref = params.isDeref || false;

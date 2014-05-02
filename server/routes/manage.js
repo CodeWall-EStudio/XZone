@@ -160,25 +160,27 @@ function fetchGroupMembers(group, callback){
 }
 
 function fetchGroupDetail(group, callback){
-
-    db.group.find({ 'parent.$id': group._id }, function(err, result){
-        group.list = result;
-        if(result && result.length){
-            var ep = new EventProxy();
-            ep.after('fetchGroupMembers', result.length, function(/*list*/){
+    // 处理归档逻辑
+    mGroup.archiveCheck(group, function(err, group){
+        
+        db.group.find({ 'parent.$id': group._id }, function(err, result){
+            group.list = result;
+            if(result && result.length){
+                var ep = new EventProxy();
+                ep.after('fetchGroupMembers', result.length, function(/*list*/){
+                    callback(null, group);
+                });
+                ep.fail(function(){
+                    callback(null, group);
+                });
+                result.forEach(function(doc){
+                    fetchGroupMembers(doc, ep.group('fetchGroupMembers'));
+                });
+            }else{
                 callback(null, group);
-            });
-            ep.fail(function(){
-                callback(null, group);
-            });
-            result.forEach(function(doc){
-                fetchGroupMembers(doc, ep.group('fetchGroupMembers'));
-            });
-        }else{
-            callback(null, group);
-        }
+            }
+        });
     });
-
 }
 
 /**
@@ -246,7 +248,7 @@ exports.listFiles = function(req, res){
             status: 1
         };
 
-        mFile.search({ extendQuery: query }, ep.done('search'));
+        mFile.search({ extendQuery: query, isDeref: true }, ep.done('search'));
 
     });
     ep.on('search', function(total, docs){

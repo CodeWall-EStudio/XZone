@@ -29,7 +29,7 @@ app.use(express.cookieParser());
 
 app.use(express.session({
     secret: config.COOKIE_SECRET,
-    cookie: { maxAge: 2 * 60 * 60 * 1000 }, // 2 hour
+    cookie: { maxAge:  config.COOKIE_TIME, httpOnly: true }, // 2 hour
     store: new MongoStore({
         url: config.DB_URI
     }, function () {
@@ -39,7 +39,7 @@ app.use(express.session({
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
-app.use(express.static(path.join(__dirname, '../web'), {maxAge: 7 * 24 * 60 * 60 * 1000}));
+app.use(express.static(path.join(__dirname, '../web'), { maxAge: config.STATIC_FILE_EXPIRES }));
 
 // 检查是否登录, 如果没有登录, 跳转到登录页
 app.all('/', routes.checkAuthAndLogin);

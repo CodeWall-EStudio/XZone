@@ -159,7 +159,8 @@ exports.search = function(params, callback){
     var extendQuery = params.extendQuery;
     var extendDefProps = params.extendDefProps;
     var recursive = params.recursive;
-    var noDef = params.noDef;
+
+    var isDeref = params.isDeref || false;
 
     var query = {
         del: false // 默认只能搜索未删除的文件
@@ -212,10 +213,10 @@ exports.search = function(params, callback){
         }
 
         db.search('file', query, params, function(err, total, docs){
-            Logger.debug('mfile/search: ',err, total, noDef);
+            Logger.debug('mfile/search: ',err, total, isDeref);
             if(err){
                 callback(err);
-            }else if(total && docs && !noDef){
+            }else if(total && docs && isDeref){
                 // Logger.debug(total, docs, !noDef);
                 var defProps = { resource: ['_id', 'type', 'size'] , creator: ['_id', 'nick']};
                 if(extendDefProps){
@@ -229,7 +230,7 @@ exports.search = function(params, callback){
                     }
                 });
             }else{
-                Logger.debug('noDef', noDef);
+
                 callback(null, total || 0, docs);
             }
         });
@@ -241,7 +242,6 @@ exports.statistics = function(folderId, callback){
     var searchParams = {
         folderId: folderId,
         recursive: true,
-        noDef: true,
         searchAll: true
     };
 

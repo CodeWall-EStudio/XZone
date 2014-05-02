@@ -129,6 +129,7 @@ exports.delete = function(query, callback){
             if(doc){
                 return callback(msg + 'user: ' + (doc.nick || doc.name), ERR.UNDELETABLE);
             }
+            // 不涉及 group 的逻辑, 可以直接用 group.findOne, 否则要用 getGroup 方法获取
             db.group.findOne({ 'sizegroup.$id': result._id }, function(err, doc){
                 if(doc){
                     return callback(msg + 'group: ' + doc.name, ERR.UNDELETABLE);
