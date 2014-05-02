@@ -21,7 +21,7 @@ exports.debug = function(){
 
 exports.error = function(){
     var args = slice.call(arguments);
-    args.unshift('[error]>>>', Util.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss'),'\n');
+    args.unshift('{error}>>>', Util.formatDate(new Date(), 'yyyy-MM-dd hh:mm:ss'),'\n');
     args.push('\n<<<\n');
     console.error.apply(console, args);
 };

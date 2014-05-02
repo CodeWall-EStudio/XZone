@@ -510,6 +510,7 @@ function shareToGroup(loginUser, params, callback){
         // 记录该操作
         mLog.create({
             fromUserId: loginUser._id,
+            fromUserName: loginUser.nick,
 
             fileId: file._id,
             fileName: file.name,
