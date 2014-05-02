@@ -243,7 +243,11 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				if(nowType == 'group'){
 					obj.archivable = archivable;
 					if(archivable){
+						var preps = Cache.get('preps'),
+							prepobj = preps.g2key;
 						obj.grade = $('.group-prep').val();
+						obj.startTime = prepobj[obj.grade].startTime;
+						obj.endTime = prepobj[obj.grade].endTime;
 					}
 					obj.sizegroupId = sgid;
 				}else if(nowType == 'dep'){
@@ -260,7 +264,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 						obj.tag = sid;						
 					}
 				}
-				//return;
+
 				if(modify){
 					id = $('#modifyZone .group-name').attr('data-id');
 					obj.groupId = id;
