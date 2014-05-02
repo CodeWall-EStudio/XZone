@@ -1,4 +1,6 @@
-<%if(type=='group' || type==1){%>
+<%
+	if(type=='group' || type==1){
+%>
 	<dt>
 		<h4>小组信息</h4>
 	</dt>
@@ -81,7 +83,8 @@
 					</select>
 				</td>
 			</tr>
-			<%if(status && status != 2 && status != 4){%>
+			<%
+			if(typeof status !='undefined' && status != 2 && status != 4){%>
 			<tr>
 				<td>状态:</td>
 				<td>
@@ -161,7 +164,7 @@
 						</select>
 					</td>
 				</tr>
-				<%if(status && status != 2 && status != 4){%>
+				<%if(typeof status !='undefined' && status != 2 && status != 4){%>
 				<tr>
 					<td>状态:</td>
 					<td>
@@ -202,7 +205,7 @@
 						<input type="text" class="end-time"  />
 					</td>
 				</tr>								
-				<%if(status && status != 2 && status != 4){%>
+				<%if(typeof status !='undefined' && status != 2 && status != 4){%>
 				<tr>
 					<td>状态:</td>
 					<td>
@@ -304,7 +307,7 @@
 						<button class="btn btn-primary btn-set-member" <%if(name){%>data-modify="1"<%}%>>设置成员</button>
 					</td>
 				</tr>
-				<%if(status && status != 2 && status != 4){%>
+				<%if(typeof status !='undefined' && status != 2 && status != 4){%>
 				<tr>
 					<td>状态:</td>
 					<td>
