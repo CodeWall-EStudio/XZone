@@ -4,6 +4,7 @@ var DBRef = require('mongodb').DBRef;
 var us = require('underscore');
 
 var ERR = require('../errorcode');
+var Logger = require('../logger');
 var db = require('./db');
 var mFolder = require('./folder');
 
@@ -267,10 +268,13 @@ exports.getGroup = function(query, callback){
 
 exports.archiveCheck = function(group, callback){
     var now = Date.now();
+    // Logger.debug('[archiveCheck]', group.archivable, group.type);
     if(group.archivable || group.type === 3){ // 备课组
+        Logger.debug(now, group.startTime, group.endTime);
         if( group.status !== 2 && group.startTime && group.endTime && (now < group.startTime || now > group.endTime) ){
             // 超过归档时间, 设置为归档, 不能上传/创建文件夹/复制/移动/删除, 只能看
             group.status = 2; // 2 为归档
+            Logger.info('[archiveCheck] update archived group, groupId: ', group._id, ', name: ', group.name );
             exports.modify({ _id: group._id }, { status: group.status }, callback);
             return;
         }

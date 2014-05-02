@@ -337,6 +337,9 @@ exports.RULES = {
                 if(err){
                     return callback(err, folder);
                 }
+                if(folder.__archived){
+                    return callback('can\'t create folder in an archived folder', ERR.UNMODIFABLE);
+                }
                 if(folder.__writable){
                     return callback(null);
                 }
@@ -355,6 +358,9 @@ exports.RULES = {
                 if(err){
                     return callback(err, folder);
                 }
+                if(folder.__archived){
+                    return callback('can\'t modify an archived folder', ERR.UNMODIFABLE);
+                }
                 if(folder.__editable){
                     // 部门公开文件夹是可上传文件的, 但是普通游客不可修改
                     return callback(null);
@@ -369,6 +375,7 @@ exports.RULES = {
             var folders = parameter.folderId;
 
             var msg = 'not auth to delete this folder, folderId: ';
+            var msg2 = 'can\'t delete an archived folder, folderId: ';
 
             var ep = new EventProxy();
             ep.fail(callback);
@@ -379,7 +386,9 @@ exports.RULES = {
 
             folders.forEach(function(folder){
                 verifyFolder(user, folder, ep.group('verifyDone', function(folder){
-                    if(folder.__writable && (folder.__user_role & config.ROLE_FOLDER_MANAGER)){
+                    if(folder.__archived){
+                        ep.emit('error', msg2 + folder._id, ERR.UNMODIFABLE);
+                    }else if(folder.__writable && (folder.__user_role & config.ROLE_FOLDER_MANAGER)){
                         // 只有文件夹的管理员才能删
                         
                     }else{

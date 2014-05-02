@@ -105,14 +105,16 @@ var checkers = {
 
 function getChecker(type){
     var checkMethod = checkers[type];
-    if(!checkMethod && (type in db)){ // 验证 db 的数据值
-
+    if(!checkMethod){
+         // 验证 db 的数据值
         if(/\[\w+\]/.test(type)){
             type = type.substring(1, type.length - 1);
-            checkMethod = function(value, pcfg, callback){
-                findArray(type, value, pcfg, callback);
-            };
-        } else {
+            if(type in db){
+                checkMethod = function(value, pcfg, callback){
+                    findArray(type, value, pcfg, callback);
+                };
+            }
+        } else if(type in db){
             checkMethod = function(value, pcfg, callback){
                 findOne(type, value, pcfg, callback);
             };
