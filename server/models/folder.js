@@ -7,6 +7,7 @@ var us = require('underscore');
 var db = require('./db');
 var ERR = require('../errorcode');
 var U = require('../util');
+var Logger = require('../logger');
 var mFile = require('./file');
 
 exports.create = function(params, callback){
@@ -44,7 +45,7 @@ exports.create = function(params, callback){
                 { 'new':true }, function(err){
 
             if(err){
-                console.log('models/folder/create', err);
+                Logger.error('models/folder/create', err);
             }
         });
     }else{
@@ -63,7 +64,7 @@ exports.create = function(params, callback){
 
         db.folder.save(result, function(err){
             if(err){
-                console.log('models/folder/create', err);
+                Logger.error('models/folder/create', err);
             }
         });
         callback(err, result);
@@ -88,7 +89,7 @@ exports.modify = function(query, doc, callback){
 function deleteFolderAndFiles(folder, callback){
     db.folder.remove({ _id: folder._id }, function(err){
         if(err){
-            console.log('>>>folder.delete [folder]', err);
+            Logger.error('>>>folder.delete [folder]', err);
             callback(err);
             return;
         }
@@ -100,7 +101,7 @@ function deleteFolderAndFiles(folder, callback){
         mFile.batchDelete({ 'folder.$id': folder._id }, options, function(err, count){
                     
             if(err){
-                console.log('>>>folder.delete [file]', err);
+                Logger.error('>>>folder.delete [file]', err);
                 callback(err);
                 return;
             }

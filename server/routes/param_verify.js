@@ -105,7 +105,7 @@ var checkers = {
 
 function getChecker(type){
     var checkMethod = checkers[type];
-    if(!checkMethod){
+    if(!checkMethod && (type in db)){ // 验证 db 的数据值
 
         if(/\[\w+\]/.test(type)){
             type = type.substring(1, type.length - 1);

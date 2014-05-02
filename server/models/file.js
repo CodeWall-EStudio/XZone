@@ -81,7 +81,7 @@ exports.modify = function(query, doc, callback){
 exports.delete = function(query, params, callback){
     var groupId = params.groupId;
 
-    console.log('>>>delete file:', query);
+    Logger.info('delete file:', query);
 
     var ep = new EventProxy();
     ep.fail(callback);
@@ -141,7 +141,7 @@ exports.batchDelete = function(query, params, callback){
 
 
 exports.getFile = function(query, callback){
-    console.log('>>>getFile: ', query);
+
     db.file.findOne(query, callback);
 
 };
