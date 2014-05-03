@@ -14,51 +14,64 @@ var mUser = require('../models/user');
 var U = require('../util');
 var Logger = require('../logger');
 
-exports.listGroups = function(req, res){
+exports.listGroups = function(req, res) {
     var params = req.parameter;
     var loginUser = req.loginUser;
 
     var query = {};
 
-    if('status' in params){
+    if ('status' in params) {
         query.status = params.status;
     }
-    if('type' in params){
+    if ('type' in params) {
         query.type = params.type;
     }
+
     params.extendQuery = query;
 
     params.isDeref = true;
 
-    mGroup.search(params, function(err, total, result){
+    mGroup.search(params, function(err, total, result) {
 
-        if(err){
-            return res.json({ err: ERR.SERVER_ERROR, msg: err});
+        if (err) {
+            return res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
         }
 
-        if(!total){
-            return res.json({ err: ERR.SUCCESS , result: {
-                total: 0,
-                list: []
-            }});
+        if (!total) {
+            return res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    total: 0,
+                    list: []
+                }
+            });
         }
 
         var ep = new EventProxy();
-        ep.fail(function(err, errCode){
-            return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+        ep.fail(function(err, errCode) {
+            return res.json({
+                err: errCode || ERR.SERVER_ERROR,
+                msg: err
+            });
         });
 
-        ep.after('getMemberCountDone', result.length, function(){
-            res.json({ err: ERR.SUCCESS , result: {
-                total: total,
-                list: result
-            }});
+        ep.after('getMemberCountDone', result.length, function() {
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    total: total,
+                    list: result
+                }
+            });
 
         });
 
-        result.forEach(function(doc){
+        result.forEach(function(doc) {
 
-            mGroup.getGroupMemberCount(doc._id, ep.group('getMemberCountDone', function(count){
+            mGroup.getGroupMemberCount(doc._id, ep.group('getMemberCountDone', function(count) {
                 doc.memberCount = count;
                 return count;
             }));
@@ -67,89 +80,121 @@ exports.listGroups = function(req, res){
     });
 };
 
-exports.approveGroup = function(req, res){
+exports.approveGroup = function(req, res) {
     var params = req.parameter;
     var group = params.groupId;
 
     var loginUser = req.loginUser;
 
-    
+
     var doc = {
         status: 0,
-        validateText: params.validateText || '',//审核评语
+        validateText: params.validateText || '', //审核评语
         validateStatus: Number(params.validateStatus) || 0, //0 不通过 1 通过
-        validateTime: Date.now(),//审核时间
+        validateTime: Date.now(), //审核时间
         validator: new DBRef('user', loginUser._id)
     };
 
-    mGroup.modify({ _id: group._id }, doc, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else if(!doc){
-            res.json({ err: ERR.NOT_FOUND, msg: 'no such group'});
-        }else{
-            res.json({ err: ERR.SUCCESS });
+    mGroup.modify({
+        _id: group._id
+    }, doc, function(err, doc) {
+        if (err) {
+            res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
+        } else if (!doc) {
+            res.json({
+                err: ERR.NOT_FOUND,
+                msg: 'no such group'
+            });
+        } else {
+            res.json({
+                err: ERR.SUCCESS
+            });
         }
     });
 };
 
-exports.approveFile = function(req, res){
+exports.approveFile = function(req, res) {
     var params = req.parameter;
     var file = params.fileId;
 
     var loginUser = req.loginUser;
     // 这里的文件只有个人提交到学校的
     var validateStatus = Number(params.validateStatus) || 0;
-    if(validateStatus === 0){
+    if (validateStatus === 0) {
         // 審核不通過的刪除掉
         // 这里不用更新学校的空间大小, 文件在没有被审核之前, 是不占空间的
-        mFile.delete({ _id: file._id }, { /*updateUsed: true*/ }, function(err/*, doc*/){
-            if(err){
-                res.json({ err: ERR.SERVER_ERROR, msg: err});
-            }else{
-                res.json({ err: ERR.SUCCESS });
+        mFile.delete({
+            _id: file._id
+        }, { /*updateUsed: true*/ }, function(err /*, doc*/ ) {
+            if (err) {
+                res.json({
+                    err: ERR.SERVER_ERROR,
+                    msg: err
+                });
+            } else {
+                res.json({
+                    err: ERR.SUCCESS
+                });
             }
         });
         return;
     }
 
-    mGroup.getGroup({ type: 0 }, function(err, school){
-        if(err){
-            return res.json({ err: ERR.SERVER_ERROR, msg: err});
+    mGroup.getGroup({
+        type: 0
+    }, function(err, school) {
+        if (err) {
+            return res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
         }
 
         //这里应该增加学校的空间使用
-        mGroup.updateUsed(school._id, file.size, function(){});
+        mGroup.updateUsed(school._id, file.size, function() {});
 
         var doc = {
             status: 0,
-            validateText: params.validateText || '',//审核评语
+            validateText: params.validateText || '', //审核评语
             validateStatus: validateStatus, //0 不通过 1 通过
-            validateTime: Date.now(),//审核时间
+            validateTime: Date.now(), //审核时间
             validator: new DBRef('user', loginUser._id)
         };
 
-        mFile.modify({ _id: file._id }, doc, function(err, doc){
-            if(err){
-                res.json({ err: ERR.SERVER_ERROR, msg: err});
-            }else if(!doc){
-                res.json({ err: ERR.NOT_FOUND, msg: 'no such group'});
-            }else{
-                res.json({ err: ERR.SUCCESS });
+        mFile.modify({
+            _id: file._id
+        }, doc, function(err, doc) {
+            if (err) {
+                res.json({
+                    err: ERR.SERVER_ERROR,
+                    msg: err
+                });
+            } else if (!doc) {
+                res.json({
+                    err: ERR.NOT_FOUND,
+                    msg: 'no such group'
+                });
+            } else {
+                res.json({
+                    err: ERR.SUCCESS
+                });
             }
         });
     });
 };
 
-function fetchGroupMembers(group, callback){
-    mGroup.getGroupMembers(group._id, true, function(err, list){
-        if(err){
+function fetchGroupMembers(group, callback) {
+    mGroup.getGroupMembers(group._id, true, function(err, list) {
+        if (err) {
             callback(err);
-        }else{
+        } else {
             group.members = list;
 
-            mFolder.statistics(group.rootFolder.oid, function(err, result){
-                if(!err){
+            mFolder.statistics(group.rootFolder.oid, function(err, result) {
+                if (!err) {
                     group.folderCount = result.total;
                 }
                 callback(null);
@@ -159,24 +204,26 @@ function fetchGroupMembers(group, callback){
 
 }
 
-function fetchGroupDetail(group, callback){
+function fetchGroupDetail(group, callback) {
     // 处理归档逻辑
-    mGroup.archiveCheck(group, function(err, group){
-        
-        db.group.find({ 'parent.$id': group._id }, function(err, result){
+    mGroup.archiveCheck(group, function(err, group) {
+
+        db.group.find({
+            'parent.$id': group._id
+        }, function(err, result) {
             group.list = result;
-            if(result && result.length){
+            if (result && result.length) {
                 var ep = new EventProxy();
-                ep.after('fetchGroupMembers', result.length, function(/*list*/){
+                ep.after('fetchGroupMembers', result.length, function( /*list*/ ) {
                     callback(null, group);
                 });
-                ep.fail(function(){
+                ep.fail(function() {
                     callback(null, group);
                 });
-                result.forEach(function(doc){
+                result.forEach(function(doc) {
                     fetchGroupMembers(doc, ep.group('fetchGroupMembers'));
                 });
-            }else{
+            } else {
                 callback(null, group);
             }
         });
@@ -189,36 +236,47 @@ function fetchGroupDetail(group, callback){
  * @param  {[type]} res [description]
  * @return {[type]}     [description]
  */
-exports.listPrepares = function(req, res){
+exports.listPrepares = function(req, res) {
     // var loginUser = req.loginUser;
+    var parameter = req.parameter;
+    var fetchChild = parameter.fetchChild || false;
 
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
 
     db.group.find({
-        type: 3, // type=3 是备课小组
+        type: 3, // type=3 是备课学年
         parent: null
-    }, ep.done('findGroupsResult'));
+    }, function(result) {
+        if (result && result.length) {
+            if (fetchChild) {
+                ep.after('fetchGroupDetail', result.length, function( /*list*/ ) {
+                    ep.emit('fetchGroups', result);
+                });
+                result.forEach(function(group) {
+                    fetchGroupDetail(group, ep.done('fetchGroupDetail'));
+                });
 
-    ep.on('findGroupsResult', function(result){
-        if(result && result.length){
-            ep.after('fetchGroupDetail', result.length, function(/*list*/){
+            } else {
                 ep.emit('fetchGroups', result);
-            });
-            result.forEach(function(group){
-                fetchGroupDetail(group, ep.done('fetchGroupDetail'));
-            });
-        }else{
+            }
+        } else {
             ep.emit('fetchGroups', []);
         }
     });
 
-    ep.on('fetchGroups', function(list){
-        res.json({ err: ERR.SUCCESS , result: {
-            list: list
-        }});
+    ep.on('fetchGroups', function(list) {
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                list: list
+            }
+        });
     });
 };
 
@@ -228,19 +286,24 @@ exports.listPrepares = function(req, res){
  * @param  {[type]} res [description]
  * @return {[type]}     [description]
  */
-exports.listFiles = function(req, res){
+exports.listFiles = function(req, res) {
     // var loginUser = req.loginUser;
     // var params = req.parameter;
 
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
-    
-    mGroup.getGroup({ type: 0 }, ep.doneLater('getSchoolDone'));
 
-    ep.on('getSchoolDone', function(school){
-        if(!school){
+    mGroup.getGroup({
+        type: 0
+    }, ep.doneLater('getSchoolDone'));
+
+    ep.on('getSchoolDone', function(school) {
+        if (!school) {
             return ep.emit('error', 'system error: no school');
         }
         var query = {
@@ -248,10 +311,13 @@ exports.listFiles = function(req, res){
             status: 1
         };
 
-        mFile.search({ extendQuery: query, isDeref: true }, ep.done('search'));
+        mFile.search({
+            extendQuery: query,
+            isDeref: true
+        }, ep.done('search'));
 
     });
-    ep.on('search', function(total, docs){
+    ep.on('search', function(total, docs) {
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -262,14 +328,14 @@ exports.listFiles = function(req, res){
     });
 };
 
-exports.modifyUser = function(req, res){
+exports.modifyUser = function(req, res) {
 
     var params = req.parameter;
 
     var sizegroup = params.sizegroupId;
     var user = params.userId;
     var doc = {};
-    if(sizegroup){
+    if (sizegroup) {
         doc.sizegroup = new DBRef('sizegroup', sizegroup._id);
         doc.size = sizegroup.size;
     }
@@ -277,9 +343,14 @@ exports.modifyUser = function(req, res){
         doc.status = params.status;
     }
 
-    mUser.update({ _id: user._id }, doc, function(err, result){
-        if(err){
-            return res.json({ err: result || ERR.SERVER_ERROR, msg: err});
+    mUser.update({
+        _id: user._id
+    }, doc, function(err, result) {
+        if (err) {
+            return res.json({
+                err: result || ERR.SERVER_ERROR,
+                msg: err
+            });
         }
         res.json({
             err: ERR.SUCCESS
@@ -295,50 +366,63 @@ exports.modifyUser = function(req, res){
  * @param  {[type]} res [description]
  * @return {[type]}     [description]
  */
-exports.statistics = function(req, res){
-    var parameter = req.parameter;
-    
+exports.statistics = function(req, res) {
+    // var parameter = req.parameter;
+
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
 
-    var result = {
-        
-    };
+    var result = {};
 
     // 所有用户
-    db.user.count({}, function(err, num){
-        if(err){ Logger.error('[manage.statistics]', err); }
+    db.user.count({}, function(err, num) {
+        if (err) {
+            Logger.error('[manage.statistics]', err);
+        }
         result.totalUser = num || 0;
         ep.emit('totalUser');
     });
 
-    db.group.count({ type: 1 }, function(err, num){
-        if(err){ Logger.error('[manage.statistics]', err); }
+    db.group.count({
+        type: 1
+    }, function(err, num) {
+        if (err) {
+            Logger.error('[manage.statistics]', err);
+        }
         result.totalGroup = num || 0;
         ep.emit('totalGroup');
     });
 
-    db.group.count({ type: 2 }, function(err, num){
-        if(err){ Logger.error('[manage.statistics]', err); }
+    db.group.count({
+        type: 2
+    }, function(err, num) {
+        if (err) {
+            Logger.error('[manage.statistics]', err);
+        }
         result.totalDepartment = num || 0;
         ep.emit('totalDepartment');
     });
 
-    db.folder.count({}, function(err, num){
-        if(err){ Logger.error('[manage.statistics]', err); }
+    db.folder.count({}, function(err, num) {
+        if (err) {
+            Logger.error('[manage.statistics]', err);
+        }
         result.totalFolder = num || 0;
         ep.emit('totalFolder');
     });
 
-    db.file.find({}, function(err, docs){
+    db.file.find({}, function(err, docs) {
         var totalSize = 0;
         var list = {};
-        docs.forEach(function(file){
+        docs.forEach(function(file) {
             totalSize += file.size || 0;
             var obj = list[file.type];
-            if(!obj){
+            if (!obj) {
                 list[file.type] = obj = {
                     type: file.type,
                     size: 0,
@@ -346,7 +430,7 @@ exports.statistics = function(req, res){
                 };
             }
             obj.size += file.size || 0;
-            obj.count ++;
+            obj.count++;
         });
 
         result.totalFile = docs.length;
@@ -356,7 +440,7 @@ exports.statistics = function(req, res){
         ep.emit('totalFile');
     });
 
-    ep.all('totalUser', 'totalGroup', 'totalDepartment', 'totalFile', 'totalFolder', function(){
+    ep.all('totalUser', 'totalGroup', 'totalDepartment', 'totalFile', 'totalFolder', function() {
         res.json({
             err: ERR.SUCCESS,
             result: result

@@ -74,7 +74,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		}
 		var opt = {
 			cgi : config.cgi.mpreplist,
-			data : {}
+			data : {
+				fetchChild: true
+			}
 		}	
 		var success = function(d){
 			if(d.err == 0){

@@ -898,7 +898,13 @@ module.exports = {
         ]
     },
     '/api/manage/listPrepares': {
-        method: 'GET'
+        method: 'GET',
+        params: [
+            {
+                name: 'fetchChild', // 为 true 则返回每个学年下的课程和年纪
+                type: 'boolean'
+            }
+        ]
     },
     '/api/manage/approveFile': {
         method: 'POST',
