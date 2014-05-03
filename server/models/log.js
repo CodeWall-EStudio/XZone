@@ -73,7 +73,7 @@ exports.search = function(params, callback){
     }
 
     if(params.type){
-        query.operateType = params.type;
+        query.operateType = { $in: params.type };
     }
 
 	if(params.fromUserId){

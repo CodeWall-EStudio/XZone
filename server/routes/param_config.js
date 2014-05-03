@@ -1102,7 +1102,7 @@ module.exports = {
                 //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
                 //11: delete(移动到回收站) 12: 创建文件夹
                 name: 'type',
-                type: 'number'
+                type: '[number]'
             }
         ]
     }
