@@ -51,7 +51,7 @@
 		<td>
 			<%
 				if(item.parent){
-					var p = g2key[item.parent.$id];
+					var p = prep[item.parent.$id];
 			%>
 				<a href="/#groupprep=1&pid=<%-p.id%>&gid=<%-item.id%>&fdid=<%-item.rootFolder.$id%>" target="_blank"><%-p.name%> - <%-item.name%></a>
 			<%}else{%>

@@ -128,6 +128,18 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				view.createPanel();
 			}
 		},
+		//删除备课
+		'.del-prep' : {
+			'click' : function(){
+				// console.log(nowGroup);
+				// console.log('del');
+				var obj = {
+					groupId : nowGroup.id,
+					status : 4
+				}
+				handerObj.triggerHandler('group:modify',obj);
+			}
+		},		
 		//删除小组
 		'.del-group' : {
 			'click' : function(){
@@ -433,10 +445,17 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 						type : types[type]
 					}
 					if(nowType == 'pschool'){
-						pageNum = 0;
+						obj.parent = false;
+					}else if(nowType == 'prep'){
+						obj.parent = true;
 					}
-					isLoading = true;					
-					handerObj.triggerHandler('group:list',obj);
+					isLoading = true;	
+					if(type=='pschool' || type=='prep'){
+						handerObj.triggerHandler('group:plist',obj);
+					}else{
+						handerObj.triggerHandler('group:list',obj);	
+					}
+					
 				}
 
 
@@ -474,8 +493,14 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		if(!isLoading){
 			obj.pageNum = pageNum;
 			obj.type = types[nowType];
-			isLoading = true;			
-			handerObj.triggerHandler('group:list',obj);
+			isLoading = true;	
+			if(nowType == 'prep'){
+				obj.parent = true;
+				handerObj.triggerHandler('group:plist',obj);
+			}else{
+				handerObj.triggerHandler('group:list',obj);	
+			}
+			
 		}
 	}
 
@@ -539,7 +564,10 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 			});						
 			$('.group-action-btn button.del-group').removeClass('active').prop({
 				'disabled' : false
-			});			
+			});
+			$('.group-action-btn button.del-prep').removeClass('active').prop({
+				'disabled' : false
+			});						
 		}
 	}
 

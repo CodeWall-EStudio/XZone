@@ -88,7 +88,31 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			data : d
 		}		
 
-		if(d.type == 3){
+		// if(d.type == 3){
+		// 	var ret = Cache.get('preps');
+		// 	handerObj.triggerHandler('group:loaded',ret);
+		// 	return;
+		// }
+		var success = function(d){
+			if(d.err == 0){
+				handerObj.triggerHandler('group:loaded',convent(d));
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+
+		request.get(opt,success);
+	}
+
+	//拉小组列表
+	function getPlist(e,d){
+		d.type = 3;
+		var opt = {
+			cgi : config.cgi.mlistgroup,
+			data : d
+		}		
+
+		if(!d.parent){
 			var ret = Cache.get('preps');
 			handerObj.triggerHandler('group:loaded',ret);
 			return;
@@ -102,7 +126,31 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		}
 
 		request.get(opt,success);
-	}
+	}	
+
+	function loadPrep(){
+		var opt = {
+			cgi : config.cgi.mlistgroup,
+			data : {
+				page : 0,
+				pageNum : 0,
+				type : 3,
+				parent : false
+			}
+		}		
+
+		var success = function(d){
+			if(d.err == 0){
+				var ret = convent(d);
+				handerObj.triggerHandler('cache:set',{key: 'preps',data: ret,type:1})
+				handerObj.triggerHandler('manage:preploaded',ret);
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+
+		request.get(opt,success);		
+	}	
 
 	//创建小组
 	function creatGroup(e,d){
@@ -207,30 +255,6 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		request.post(opt,success);
 	}	
 
-
-	function loadPrep(){
-		var opt = {
-			cgi : config.cgi.mlistgroup,
-			data : {
-				type : 3,
-				page : 0,
-				pageNum : 1000
-			}
-		}		
-
-		var success = function(d){
-			if(d.err == 0){
-				var ret = convent(d);
-				handerObj.triggerHandler('cache:set',{key: 'preps',data: ret,type:1})
-				handerObj.triggerHandler('manage:preploaded',ret);
-			}else{
-				handerObj.triggerHandler('msg:error',d.err);
-			}
-		}
-
-		request.get(opt,success);		
-	}
-
 	function folderStatus(e,d){
 		var opt = {
 			cgi : config.cgi.filestatus,
@@ -252,6 +276,7 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 
 	var handlers = {
 		'group:list' : getList,
+		'group:plist' : getPlist,
 		'group:loaduser' : loadUser,
 		'group:create' : creatGroup,
 		'group:one' : groupInfo,
