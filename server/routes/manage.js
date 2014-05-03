@@ -27,6 +27,14 @@ exports.listGroups = function(req, res) {
         query.type = params.type;
     }
 
+    if ('parent' in params) {
+        if (params.parent) {
+            query.parent = { $exists: true };
+        } else {
+            query.parent = null;
+        }
+    }
+
     params.extendQuery = query;
 
     params.isDeref = true;
