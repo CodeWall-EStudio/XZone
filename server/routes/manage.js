@@ -29,7 +29,7 @@ exports.listGroups = function(req, res) {
 
     if ('parent' in params) {
         if (params.parent) {
-            query.parent = { $exists: true };
+            query.parent = { $ne: null };
         } else {
             query.parent = null;
         }
