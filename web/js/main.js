@@ -7,7 +7,7 @@
     }    
   });
 
-  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','bind','upload','msg'], function(config,router,util,nav) {
+  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','bind','upload','msg'], function(config,router,util,nav) {
 
     var handerObj = $(Schhandler);
 
@@ -26,6 +26,7 @@
         sctarget = $('#searchZone'),
         ltarget = $('#logBlock'),
         sttarget = $('#sectionTit'),
+        dtarget = $('#dataBlock'),
         mtarget = $('#boxList'),
         btarget = $('#btnZone'),
         starget = $('#shareBox');
@@ -39,6 +40,7 @@
           starget.hide();
           mtarget.hide(); 
           ltarget.hide();
+          dtarget.hide();
           sctarget.show();        
           break;
         case 'myprep':
@@ -48,6 +50,7 @@
           btarget.show();
           ftarget.show();
           starget.hide();
+          dtarget.hide();
           mtarget.hide();         
           break;
         case 'group':
@@ -57,6 +60,7 @@
           btarget.show();
           ftarget.show();
           starget.hide();
+          dtarget.hide();
           mtarget.hide();         
           break;
         case 'groupprep':
@@ -66,6 +70,7 @@
           btarget.hide();
           ftarget.show();
           starget.hide();
+          dtarget.hide();
           mtarget.hide();         
           break;
         case 'school':
@@ -75,6 +80,7 @@
           btarget.show();
           ftarget.show();
           starget.hide();
+          dtarget.hide();
           mtarget.hide();        
           break;
         case 'mailbox':
@@ -84,6 +90,7 @@
           btarget.hide();
           ftarget.hide();
           starget.hide();
+          dtarget.hide();
           mtarget.show(); 
           break;        
         case 'log':
@@ -93,6 +100,7 @@
           ftarget.hide();
           starget.hide();
           mtarget.hide(); 
+          dtarget.hide();
           ltarget.show();        
           break;
         case 'share':
@@ -101,7 +109,8 @@
           btarget.hide();
           ftarget.hide();
           starget.show();
-          mtarget.hide();  
+          mtarget.hide(); 
+          dtarget.hide(); 
           ltarget.hide();      
           break;
         case 'coll':
@@ -110,7 +119,8 @@
           btarget.hide();
           ftarget.hide();
           starget.hide();
-          mtarget.show();        
+          mtarget.show(); 
+          dtarget.hide();       
           ltarget.hide();
           break;
         case 'recy':
@@ -119,8 +129,19 @@
           btarget.hide();
           ftarget.hide();
           starget.hide();
-          mtarget.show();  
+          mtarget.show(); 
+          dtarget.hide(); 
           ltarget.hide();      
+          break;
+        case 'data':
+          sttarget.hide();
+          sctarget.hide();
+          btarget.hide();
+          ftarget.hide();
+          starget.hide();
+          mtarget.hide(); 
+          dtarget.show();
+          ltarget.hide();          
           break;
       }
     }
@@ -140,6 +161,7 @@
         "myprep=:1" : 'myPrep', //备课
         "school=:1" : 'school',
         "mylog=:1" : 'log',
+        "data=:1" : 'data',
         "my" : 'myFile',     //个人文件
         "key=:id" : 'myFile',     //个人文件
         "" : 'myFile', // 无hash的情况，首页
@@ -348,6 +370,13 @@
           gid: data.gid || 0
         }
         handerObj.triggerHandler('log:init',d);
+      },
+      data : function(data){
+        showModel('data');
+        var d = {
+          fdid: data.fdid || 0
+        }
+        handerObj.triggerHandler('data:init',d);
       },
       myPrep : function(data){
         showModel('myprep');

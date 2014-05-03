@@ -104,12 +104,28 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			}
 		}
 		request.get(opt,success);		
-	}	
+	}
+
+	//读目录
+	function getFolder(e,d){
+		console.log(d);
+		var opt = {
+			cgi : config.cgi.foldlist,
+			data : {
+				folderId : d
+			}
+		}
+		var success = function(data){
+			handerObj.triggerHandler('user:foldload',data.result);
+		}
+		request.get(opt,success);
+	}
 
 	var handlers = {
 		'user:search' : userSearch,
 		'user:modify' : userModify,
 		'user:folderstatus' : folderStatus,
+		'user:getfolder' : getFolder,
 		'user:deps' : loadUser
 	}
 

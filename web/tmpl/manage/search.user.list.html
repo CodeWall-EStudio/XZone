@@ -3,7 +3,7 @@
 		var item = list[i];
 %>
 	<tr class="tr-user tr-user<%-item.id%>" data-id="<%-item.id%>">
-		<td><a class="user-data" data-id="<%-item.rootFolder.$id%>"><%-item.nick%></a></td>
+		<td><a class="user-fold" data-id="<%-item.rootFolder.$id%>"><%-item.nick%></a></td>
 		<td><%-item.name%></td>
 		<td>
 			<%if(item.status){%>
@@ -13,6 +13,6 @@
 			<%}%>
 		</td>
 		<td><%-item.size%></td>
-		<td><%-item.pre%>%</td>
+		<td><a class="user-data" data-id="<%-item.rootFolder.$id%>"><%-item.pre%>%</a></td>
 	</tr>
 <%}%>

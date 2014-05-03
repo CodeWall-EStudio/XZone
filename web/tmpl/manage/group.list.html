@@ -45,6 +45,7 @@
 	<%
 		for(var i in g2key){
 			var item = g2key[i];
+			if(item.parent){
 	%>
 	<tr data-id="<%+item.id%>" class="group-tr group-tr<%-item.id%>">
 		<td>
@@ -63,5 +64,32 @@
 		<td class="td-pre" data-fid="<%-item.rootFolder.$id%>" title="查看文件统计"><%-item.folderCount%></td>
 		<td><%-item.stname%></td>
 	</tr>
-	<%}%>
+	<%
+		}
+	}
+	%>
+<%}else if(type=='pschool'){%>	
+	<%
+		for(var i in g2key){
+			var item = g2key[i];
+			if(!item.parent){
+	%>
+	<tr data-id="<%+item.id%>" class="group-tr group-tr<%-item.id%>">
+		<td>
+			<%
+				if(item.parent){
+					var p = g2key[item.parent.$id];
+			%>
+				<a href="/#groupprep=1&pid=<%-p.id%>&gid=<%-item.id%>&fdid=<%-item.rootFolder.$id%>" target="_blank"><%-p.name%> - <%-item.name%></a>
+			<%}else{%>
+				<%-item.name%>
+			<%}%>
+			
+		</td>
+		<td><%-glist[item.grade]%></td>
+		<td><%-subject[item.tag]%></td>
+		<td class="td-pre" data-fid="<%-item.rootFolder.$id%>" title="查看文件统计"><%-item.folderCount%></td>
+		<td><%-item.stname%></td>
+	</tr>
+	<%}}%>
 <%}%>

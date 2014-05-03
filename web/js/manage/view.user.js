@@ -104,6 +104,12 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 							}							
 						}
 					},
+					'.user-fold' : {
+						'click' : function(){
+							var id = $(this).attr('data-id');
+							handerObj.triggerHandler('user:getfolder',id);
+						}
+					},
 					'.user-data' : {
 						'click' : function(){
 							var id = $(this).attr('data-id');
@@ -130,7 +136,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 					},	
 					'.tr-user' : {
 						'click' : function(e){
-							if($(e.target).hasClass('user-data')){
+							if($(e.target).hasClass('user-data') || $(e.target).hasClass('user-fold')){
 								return;
 							}
 							$('.btn-user-colse').prop({'disabled':false});
@@ -315,26 +321,26 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 				selected : selected
 			},
 			after : function(){
-				target.find('.plus').unbind().bind('click',function(e){
-						var target = $(e.target),
-							id = target.attr('data-id');
-						var p = target.parent('li');
-						if(p.find('ul').length > 0){
-							var ul = p.find('ul')[0];
-							if(target.hasClass("minus")){
-								target.removeClass('minus');
-								p.find('ul').hide();
-							}else{
-								target.addClass('minus');
-								p.find('ul').show();
-							}
-							return;
-						}else{	
-							target.addClass('minus');
-							var p = target.parent('li');
-							getuserList(getUList(id,list.children),p);
-						}
-				});
+				// target.find('.plus').unbind().bind('click',function(e){
+				// 		var target = $(e.target),
+				// 			id = target.attr('data-id');
+				// 		var p = target.parent('li');
+				// 		if(p.find('ul').length > 0){
+				// 			var ul = p.find('ul')[0];
+				// 			if(target.hasClass("minus")){
+				// 				target.removeClass('minus');
+				// 				p.find('ul').hide();
+				// 			}else{
+				// 				target.addClass('minus');
+				// 				p.find('ul').show();
+				// 			}
+				// 			return;
+				// 		}else{	
+				// 			target.addClass('minus');
+				// 			var p = target.parent('li');
+				// 			getuserList(getUList(id,list.children),p);
+				// 		}
+				// });
 			}			
 		});
 		view.appendPanel();
@@ -380,6 +386,15 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 		view.appendPanel();
 	}
 
+	function foldLoad(e,d){
+		var view = new View({
+			target : $('#userModifyBlock'),
+			tplid : 'manage/user.fold',
+			data : d
+		});
+		view.createPanel();
+	}
+
 	function init(type){
 		
 		if(type == 'user'){
@@ -392,7 +407,8 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 	var handlers = {
 		'user:listload' : userLoad,
 		'user:statusload' : statusLoad,
-		'user:depsload' : depsLoad
+		'user:depsload' : depsLoad,
+		'user:foldload' : foldLoad
 	}
 
 	for(var i in handlers){

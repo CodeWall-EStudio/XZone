@@ -74,12 +74,14 @@
               case 'group':
               case 'dep':
               case 'prep':
+              case 'pschool':
                 group.init(cmd);
                 break;
               case 'user':
               case 'userdep':
                 user.init(cmd);
                 break;
+
               case 'data':
               case 'log':
               case 'manage':

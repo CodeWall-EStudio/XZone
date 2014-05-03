@@ -1,0 +1,19 @@
+	<table class="table table-striped table-hover table-list table-files" width="100%">
+		<tr>
+			<th>文件类型</th>
+			<th>文件大小</th>
+			<th>文件数量</th>
+		</tr>
+		<% 
+			for(var i in fileStatistics){
+				var item = fileStatistics[i];
+		%>
+		<tr>
+			<td>
+				<%-filetype[item.type]%>
+			</td>
+			<td><%-getSize(item.size)%></td>
+			<td><%-item.count%></td>
+		</tr>
+		<%}%>
+	</table>

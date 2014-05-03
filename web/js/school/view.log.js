@@ -38,14 +38,23 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 	function init(e,d){
 		nowPage = 0;
 		myInfo = Cache.get('myinfo');
-		if(d.gid){
-		}
-		$('#logList').html('');
 		var obj = {
 			page : 0,
-			pageNum : pageNum,
-			fromUserId : myInfo.id
+			pageNum : pageNum
+		}	
+		if(d.gid){
+			var gid = d.gid;
+			obj.fromGroupId = gid;
+			if(!myInfo.auth == 15){
+				if((myInfo.group2key[gid] && !myInfo.group2key[gid].auth) && (myInfo.dep2key[gid] && !myInfo.dep2key[gid].auth)){
+					obj.fromUserId = myInfo.id;
+				}			
+			}
+		}else{
+			obj.fromUserId = myInfo.id;
 		}
+		$('#logList').html('');
+
 		loadLog(obj);
 		if(!isInit){
 			$('.next-log-page').bind('click',function(){

@@ -17,7 +17,8 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 	var types = {
 		'group' : 1,
 		'dep' : 2,
-		'prep' : 3
+		'prep' : 3,
+		'pschool' : 3
 	}
 	var nowList = [],
 		now2key = {};
@@ -108,7 +109,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				var slist = Cache.get('sizegroup');
 				data.sglist = slist;
 				data.sizegroup = false;				
-				if(nowType == 'prep'){
+				if(nowType == 'prep' || nowType == 'pschool'){
 					var prep = Cache.get('preps');
 					var grade = Cache.get('grade');
 					var subject = Cache.get('subject');					
@@ -431,6 +432,9 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 						pageNum : pageNum,
 						type : types[type]
 					}
+					if(nowType == 'pschool'){
+						pageNum = 0;
+					}
 					isLoading = true;					
 					handerObj.triggerHandler('group:list',obj);
 				}
@@ -509,7 +513,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		//if(nowType == 'group'){
 			d.prep = Cache.get('preps').g2key;
 		//}
-		if(nowType == 'prep'){
+		if(nowType == 'prep' || nowType == 'pschool'){
 			d.subject = Cache.get('subject');;
 			d.grade = Cache.get('grade');
 		}
@@ -541,7 +545,6 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 
 	//小组列表加载完成
 	function groupLoad(e,d){
-		console.log(d);
 		//status : 0 已审核 1 审核中  2 已归档 3 已关闭
 		//console.log(d.total);
 		isLoading = false;
@@ -560,6 +563,10 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 			data : d
 		});
 		view.appendPanel();
+		if(nowType == 'pschool'){
+			$('.next-group-page').removeAttr('data-next').text('已经全部加载完了');
+			return;	
+		}
 		if($('#tableBody tr').length < d.total){
 			nowPage++;
 			$('.next-group-page').attr('data-next',1);
