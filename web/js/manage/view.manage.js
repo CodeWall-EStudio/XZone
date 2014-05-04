@@ -360,7 +360,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							st = $('.log-start-time').pickmeup('get_date').getTime();
 							et = $('.log-end-time').pickmeup('get_date').getTime();
 							var type = parseInt($('#logType').attr('data-type'));
-							console.log(nowDate,st,et,$('#logType').attr('data-type'));
 							if(st == nowDate){
 								st = 0;
 							}

@@ -730,3 +730,7 @@ input[type='checkbox'] {
 #logBlock{
 	min-height:400px;
 }
+#dataBlock h3{
+	padding:4px 12px;
+	font-size:16px;
+}

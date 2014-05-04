@@ -3,6 +3,11 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 		pageNum = config.pagenum,
 		isInit = false;
 		nowPage = 0,
+		nowDate = new Date().getTime(),
+		nowGid = 0,
+		logType = 0,
+		logSt = 0,
+		logEt = 0,
 		myInfo = null;
 
 	function loadLog(obj){
@@ -38,12 +43,14 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 	function init(e,d){
 		nowPage = 0;
 		myInfo = Cache.get('myinfo');
+		$('#logType').attr('data-type',0).text('全部');
 		var obj = {
 			page : 0,
 			pageNum : pageNum
 		}	
 		if(d.gid){
 			var gid = d.gid;
+			nowGid = gid;
 			obj.fromGroupId = gid;
 			if(!myInfo.auth == 15){
 				if((myInfo.group2key[gid] && !myInfo.group2key[gid].auth) && (myInfo.dep2key[gid] && !myInfo.dep2key[gid].auth)){
@@ -51,21 +58,98 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 				}			
 			}
 		}else{
+			nowGid = 0;
 			obj.fromUserId = myInfo.id;
 		}
 		$('#logList').html('');
 
 		loadLog(obj);
 		if(!isInit){
+			$('#logBlock .dropdown-menu li').bind('click',function(){
+				$('#logType').attr('data-type',$(this).attr('data-type')).text($(this).text());
+			});
+			
+			$('.btn-log-search').bind('click',function(){
+				st = $('.log-start-time').pickmeup('get_date').getTime();
+				et = $('.log-end-time').pickmeup('get_date').getTime();
+				var type = parseInt($('#logType').attr('data-type'));
+				if(st == nowDate){
+					st = 0;
+				}
+				if(et == nowDate){
+					et = 0;
+				}							
+				if(st > et){
+					alert('开始时间不能小于结束时间!');
+					return;
+				}
+				if(st && st == et){
+					alert('开始时间不能小于结束时间!');
+					return;								
+				}
+				if(type || st || et){
+					$('#logList').html('');
+					$('.next-log-page').removeAttr('data-next');
+					var obj = {
+						page : 0,
+						pageNum : pageNum									
+					};
+					if(type){
+						obj.type = [type];
+						logType = type;
+					}
+					if(st){
+						obj.startTime = st;
+						logSt = st;
+					}
+					if(et){
+						obj.endTime = et;
+						logEt = et;
+					}
+					if(nowGid){
+						obj.fromeGroupId = nowGid;
+					}else{
+						obj.fromUserId = myInfo.id;
+					}
+					loadLog(obj);
+				}else{
+					return;
+				}
+			});
+
+			$('.log-start-time').pickmeup({
+				format  : 'Y-m-d',
+				date : nowDate,
+				hide_on_select : true
+			});
+
+			$('.log-end-time').pickmeup({
+				format  : 'Y-m-d',
+				date : nowDate,
+				hide_on_select	: true
+			});				
 			$('.next-log-page').bind('click',function(){
 				var t = $(this),
 					next = t.attr('data-next');
 				if(next){
 					var obj = {
 						page : next,
-						pageNum : pageNum,
-						fromUserId : myInfo.id
+						pageNum : pageNum
 					}	
+					if(logType){
+						obj.type = [logType];
+					}
+					if(logSt){
+						obj.startTime = logSt;
+					}
+					if(logEt){
+						obj.endTime = logEt;
+					}					
+					if(nowGid){
+						obj.fromeGroupId = nowGid;
+					}else{
+						obj.fromUserId = myInfo.id;
+					}					
 					loadLog(obj);				
 					// handerObj.triggerHandler('manage:log',{
 					// 	page : nowPage,
