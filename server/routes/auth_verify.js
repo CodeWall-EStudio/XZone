@@ -36,7 +36,7 @@ exports.checkAuth = function(req, res, next){
     var loginUid;
     if(!req.session || !skey || !(loginUid = req.session[skey])){
         res.json({err: ERR.NOT_LOGIN, msg: 'not login'});
-        Logger.info('[checkAuth] not login.', 'path: ', path, ', method: ', method);
+        Logger.info('[checkAuth] not login.', 'path: ', path, ', method: ', method, ', skey: ', skey);
         return;
     }
     req.loginUid = loginUid;

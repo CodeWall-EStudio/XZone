@@ -46,7 +46,7 @@ app.all('/', routes.checkAuthAndLogin);
 app.all('/index.html', routes.checkAuthAndLogin);
 
 // 设置跨域请求头
-app.all('/', routes.setXHR2Headers);
+app.all('/*', routes.setXHR2Headers);
 
 // 适配多媒体的上传下载
 app.all('/api/file/upload', routes.mediaUpload);
