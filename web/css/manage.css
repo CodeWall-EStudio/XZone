@@ -238,3 +238,19 @@ td.jqplot-table-legend {
 table.jqplot-table-legend{
 	border:none;
 }
+.log-tit{
+	height:30px;
+	line-height:30px;
+}
+.log-tit div.lv{
+	float:left;
+	position:relative;
+	padding:4px 10px;
+}
+.log-tit .dropdown-menu{
+	padding:10px;
+	color:#428bca;
+}
+.log-tit .dropdown-menu li{
+	cursor:pointer;
+}

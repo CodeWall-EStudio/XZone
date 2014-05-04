@@ -5,7 +5,11 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		isListBind = false, //已经绑定
 		isLoading = false,//正在加载
 		nowPage = 0,
+		nowDate = new Date().getTime(),
 		pageNum = config.pagenum,
+		logType = 0,
+		logSt = 0,
+		logEt = 0,
 		nowTYpe = null;
 
 	var manageHandler = {};
@@ -305,6 +309,18 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				tplid : 'manage/log',
 				after : function(){
 					isInit.log = true;
+					$('.log-start-time').pickmeup({
+						format  : 'Y-m-d',
+						date : nowDate,
+						hide_on_select : true
+					});
+
+					$('.log-end-time').pickmeup({
+						format  : 'Y-m-d',
+						date : nowDate,
+						hide_on_select	: true
+					});	
+
 					handerObj.triggerHandler('manage:log',{
 						page : 0,
 						pageNum : pageNum
@@ -317,11 +333,72 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							var t = $(this),
 								next = t.attr('data-next');
 							if(next){
-								handerObj.triggerHandler('manage:log',{
+								var obj = {
 									page : nowPage,
 									pageNum : pageNum
-								});
+								}; 
+								if(logType){
+									obj.type = [logType];
+								}
+								if(logSt){
+									obj.startTime = logSt;
+								}
+								if(logEt){
+									obj.endTime = logEt;
+								}								
+								handerObj.triggerHandler('manage:log',obj);
 							}							
+						}
+					},
+					'.dropdown-menu li' : {
+						'click' : function(){
+							$('#logType').attr('data-type',$(this).attr('data-type')).text($(this).text());
+						}
+					},
+					'.btn-log-search' : {
+						'click' : function(){
+							st = $('.log-start-time').pickmeup('get_date').getTime();
+							et = $('.log-end-time').pickmeup('get_date').getTime();
+							var type = parseInt($('#logType').attr('data-type'));
+							console.log(nowDate,st,et,$('#logType').attr('data-type'));
+							if(st == nowDate){
+								st = 0;
+							}
+							if(et == nowDate){
+								et = 0;
+							}							
+							if(st > et){
+								alert('开始时间不能小于结束时间!');
+								return;
+							}
+							if(st && st == et){
+								alert('开始时间不能小于结束时间!');
+								return;								
+							}
+							if(type || st || et){
+								$('#logList').html('');
+								$('.next-log-page').removeAttr('data-next');
+								var obj = {
+									page : 0,
+									pageNum : pageNum									
+								};
+								if(type){
+									obj.type = [type];
+									logType = type;
+								}
+								if(st){
+									obj.startTime = st;
+									logSt = st;
+								}
+								if(et){
+									obj.endTime = et;
+									logEt = et;
+								}
+								handerObj.triggerHandler('manage:log',obj);																
+							}else{
+								return;
+							}
+
 						}
 					}
 				}
