@@ -81,6 +81,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 							target = t.attr('data-target'),
 							id = t.attr('data-id'),
 							mt = $('#'+target);
+						//console.log(12345);
+						console.log(mt.attr('loading'));
 						//if(!mt.attr('data-loaded')){
 							var obj = {
 								folderId : id,
@@ -92,6 +94,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 							}
 							if(mt.attr('loading')){
 								$('.tit-menu').hide();
+								mt.show();
 								//mt.dropdown('toggle');
 							}else{
 								handerObj.triggerHandler('fold:get',obj);
