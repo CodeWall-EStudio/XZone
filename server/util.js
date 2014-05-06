@@ -1,11 +1,13 @@
 var fs = require('fs');
 var path = require('path');
-var util = require('util');
+
 var http = require('http');
 var https = require('https');
-var querystring = require('querystring');
+
 var url = require('url');
 var crypto = require('crypto');
+
+var us = require('underscore');
 
 exports.calculate = function(arr) {
     var result = 0;
@@ -216,3 +218,48 @@ exports.md5 = function(text) {
     return crypto.createHash('md5').update(text).digest('hex');
 };
 
+
+exports.forEach = function(array, onEach, onDone){
+
+    var keys = null;
+    if(!us.isArray(array)){
+
+        if(us.isObject(array)){
+
+            keys = [];
+            for(var i in array){
+
+                if(array.hasOwnProperty(i) && i !== 'length'){
+
+                    keys.push(i);
+                }
+            }
+        }else{
+
+            throw new Error('not an array or a object');
+        }
+    }
+    var index = -1, count = (keys || array).length;
+    var next = function() {
+
+        if(++index >= count){
+
+            onDone && onDone(count);
+            return;
+        }
+        var key = keys ? keys[index] : index;
+        onEach && onEach(array[key], key, next);
+    };
+    next();
+}
+
+
+exports.startsWith = function(str, start){
+    var index = str.indexOf(start);
+    return index === 0;
+}
+
+exports.endsWith = function(str, end){
+    var index = str.lastIndexOf(end);
+    return index !== -1 && index + end.length === str.length;
+}

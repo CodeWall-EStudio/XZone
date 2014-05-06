@@ -14,6 +14,7 @@ var Util = require('../util');
 var userHelper = require('../helper/user_helper');
 var fileHelper = require('../helper/file_helper');
 var mUser = require('../models/user');
+var mFolder = require('../models/folder');
 var mSizegroup = require('../models/sizegroup');
 
 var FileTool = require('../file_tool');
@@ -427,6 +428,41 @@ exports.initSizegroup = function(req, res){
     
 };
 
+
+function getSaveFolder(parent, uri, callback){
+    console.log('getSaveFolder: ', uri);
+    var index = uri.indexOf('/');
+    if(index === -1){
+        return callback(null, parent, true);
+    }
+    var dirname = uri.substring(0, index);
+    var restname = uri.substring(index + 1);
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    db.folder.findOne({ name: dirname, 'parent.$id': parent._id }, function(err, doc){
+        if(err){
+            return callback(err);
+        }
+        if(!doc){
+            mFolder.create({
+                creator: parent.creator.oid,
+                name: dirname,
+                groupId: parent.group.oid,
+                folder: parent
+            }, ep.done('folderDone'));
+        }else{
+            console.log('folder ' + dirname + ' exists');
+            ep.emit('folderDone', doc);
+        }
+    });
+
+    ep.on('folderDone', function(folder){
+        getSaveFolder(folder, restname, callback);
+    });
+
+}
+
 exports.importPictures = function(req, res){
     var user = req.loginUser;
 
@@ -446,43 +482,103 @@ exports.importPictures = function(req, res){
         if(!school){
             return ep.emit('error', 'not find a school');
         }
-        db.folder.findOne({ _id: school.rootFolder.oid }, ep.done('getFolder'));
-    });
+        db.folder.findOne({ _id: school.rootFolder.oid }, function(err, sf){
 
+            var importFolderName = '导入的文件';
 
-    var files = FileTool.listFilesSync(dir, 'jpg,jpeg', true);
-    var pics = [];
+            db.folder.findOne({ name: importFolderName, 'parent.$id': sf._id }, function(err, folder){
+                if(folder){
+                    console.log('already has ' + importFolderName);
+                    ep.emit('createFolder', folder);
+                }else{
+                    mFolder.create({
+                        creator: user._id,
+                        name: importFolderName,
+                        groupId: school._id,
+                        folder: sf
+                    }, ep.done('createFolder'));
+                }
+            });
 
-    files.forEach(function(uri){
-        var body = {};
-        body['file_path'] = path.join(dir, uri);
-        body['file_name'] = path.basename(uri);
-
-        body['file_content_type'] = 'image/jpeg';
-
-        var content = fs.readFileSync(body['file_path']);
-        body['file_size'] = content.length;
-        body['file_md5'] = Util.md5(content.toString()).toUpperCase();
-
-        pics.push(body);
-    });
-
-    ep.emitLater('getPictures', pics);
-
-    ep.all('getFolder', 'getPictures', function(folder, pics){
-
-        ep.after('saveFileSuccess', pics.length, function(result){
-            res.json({ err: ERR.SUCCESS, result: { count: pics.length, pics: pics/*, result: result*/ } });
         });
-
-        pics.forEach(function(pic){
-            fileHelper.saveUploadFile({
-                folder: folder,
-                loginUser: user,
-                parameter: pic
-            }, ep.done('saveFileSuccess'));
-        });
-
     });
+
+    var files = FileTool.listFilesSync(dir, false, true);
+
+    // ep.after('saveFileSuccess', files.length, function(files){
+    //     res.json({ err: ERR.SUCCESS, result: { count: files.length, files: files} });
+    // });
+
+    ep.on('createFolder', function(folder){
+
+        var result = [];
+        Util.forEach(files, function(uri, i, next){
+
+            if(Util.endsWith(uri, 'Thumbs.db') || Util.endsWith(uri, '.DS_Store')){
+                return next();
+            }
+            var body = {};
+            body['file_path'] = path.join(dir, uri);
+            body['file_name'] = path.basename(uri);
+            var ext = path.extname(uri);
+
+            if(ext){
+                ext = ext.substring(1).toLowerCase();
+                body['file_content_type'] = config.EXT_TO_CONTENTTYPE[ext] || 'text/plain';
+            }else{
+                body['file_content_type'] = 'text/plain';
+            }
+
+            var content = fs.readFileSync(body['file_path']);
+            body['file_size'] = content.length;
+            body['file_md5'] = Util.md5(content.toString());
+
+            getSaveFolder(folder, uri, function(err, folder){
+                fileHelper.saveUploadFile({
+                    folder: folder,
+                    loginUser: user,
+                    parameter: body
+                }, function(err, file){
+                    if(err){
+                        return ep.emit('error', err, file);
+                    }
+                    result.push(file);
+                    next();
+                });
+            });
+        }, function(){
+            console.log('-------------------------   importPictures  done ----------------------');
+            res.json({ err: ERR.SUCCESS, result: { count: result.length, files: result} });
+        });
+    });
+
+
+};
+
+exports.fixPictureFolderError = function(req, res){
+    var user = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    if(!Util.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+        return ep.emit('error', 'no auth');
+    }
+
+    var ids = [ObjectID("5368da65f7f0f9887716dffa"),ObjectID("5368da66f7f0f9887716e01c"),ObjectID("5368da74f7f0f9887716e1a9"),ObjectID("5368da74f7f0f9887716e1b0"),ObjectID("5368da77f7f0f9887716e21a"),ObjectID("5368da7af7f0f9887716e2c0"),ObjectID("5368da7bf7f0f9887716e2d3"),ObjectID("5368da7cf7f0f9887716e2fb"),ObjectID("5368da80f7f0f9887716e34a"),ObjectID("5368da83f7f0f9887716e3bd"),ObjectID("5368da86f7f0f9887716e415"),ObjectID("5368da86f7f0f9887716e428"),ObjectID("5368da94f7f0f9887716e5fd"),ObjectID("5368da99f7f0f9887716e69d"),ObjectID("5368da9bf7f0f9887716e6e9"),ObjectID("5368da9ff7f0f9887716e765"),ObjectID("5368daa2f7f0f9887716e79c"),ObjectID("5368daa8f7f0f9887716e83c"),ObjectID("5368dab1f7f0f9887716e93c"),ObjectID("5368dab2f7f0f9887716e970"),ObjectID("5368dab8f7f0f9887716ea25"),ObjectID("5368dab8f7f0f9887716ea35"),ObjectID("5368dabaf7f0f9887716ea6c"),ObjectID("5368daccf7f0f9887716ec68"),ObjectID("5368dc9ef7f0f9887717215b"),ObjectID("5368dca2f7f0f988771721d0"),ObjectID("5368dd98f7f0f98877173b0d"),ObjectID("5368dda0f7f0f98877173be6"),ObjectID("5368dda8f7f0f98877173c63"),ObjectID("5368ddaaf7f0f98877173caf"),ObjectID("5368ddabf7f0f98877173ce3"),ObjectID("5368ddb9f7f0f98877173e5e"),ObjectID("5368ddbbf7f0f98877173e77"),ObjectID("5368ddc1f7f0f98877173f17"),ObjectID("5368ddc5f7f0f98877173f8d"),ObjectID("5368dde1f7f0f988771742d0"),ObjectID("5368dde2f7f0f988771742f2"),ObjectID("5368dde4f7f0f98877174329"),ObjectID("5368ddeaf7f0f988771743d5"),ObjectID("5368ddecf7f0f98877174406"),ObjectID("5368ddf0f7f0f98877174461"),ObjectID("5368de0ff7f0f98877174925"),ObjectID("5368de23f7f0f98877174b07"),ObjectID("5368de24f7f0f98877174b1d"),ObjectID("5368de2df7f0f98877174c4a"),ObjectID("5368de38f7f0f98877174d74"),ObjectID("5368de39f7f0f98877174d87"),ObjectID("5368de3ff7f0f98877174e2a"),ObjectID("5368de44f7f0f98877174eb3"),ObjectID("5368de5cf7f0f98877175130"),ObjectID("5368de8bf7f0f988771755b8"),ObjectID("5368de8ff7f0f988771755d1")];
+
+    var parentId = new ObjectID('5368e1c5f7f0f988771755e7');
+
+    ids.forEach(function(id){
+        db.folder.update({_id: id}, {$set: {
+            'parent.$id': parentId,
+            idpath: '5325c25998f4316c2177c46d,5368da64f7f0f9887716dff6,5368e1c5f7f0f988771755e7,' + id.toString()
+        }}, function(){
+            
+        });
+    });
+
+    res.json({ err: ERR.SUCCESS });
 
 };

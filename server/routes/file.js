@@ -293,11 +293,11 @@ exports.save = function(req, res){
         name: msg.name,
         'folder.$id': rootFolderId
     };
-    console.log('>>>file.save check file', param);
+    Logger.debug('>>>file.save check file', param);
     // 检查重名
     mFile.getFile(param, function(err, file){
         if(file){
-            ep.emit('error', 'has the same filename', ERR.DUPLICATE);
+            ep.emit('error', 'has the same filename: ' + msg.name, ERR.DUPLICATE);
             return;
         }
         mRes.getResource({ _id: msg.resource.oid }, ep.done('getResource'));
@@ -634,7 +634,7 @@ function modifyFile(user, params, callback){
 
     ep.on('checkName', function(result){
         if(!result){
-            ep.emit('error', 'has the same fileName in this folder', ERR.DUPLICATE);
+            ep.emit('error', 'has the same filename: ' + params.name + ' in this folder', ERR.DUPLICATE);
             return;
         }
         var oldFileName = file.name;

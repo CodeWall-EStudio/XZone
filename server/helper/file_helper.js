@@ -63,7 +63,7 @@ exports.saveUploadFile = function(params, callback) {
 
         if (file) {
 
-            return ep.emit('error', 'has the same filename', ERR.DUPLICATE);
+            return ep.emit('error', 'has the same filename: ' + name, ERR.DUPLICATE);
         }
         if (groupId) { // 上传到小组的, 检查小组配额
             mGroup.getGroup({
