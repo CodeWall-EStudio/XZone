@@ -29,9 +29,11 @@
 							<input type="text" name="key" value="搜索学年" data-def="搜索学年" class="search-key group-search-key" />
 						<%}%>
 						
+						<%if(type !== 'school'){%>
 						<input type="hidden" class="fid" name="fid" value="" />
 						<input type="hidden" class="gid" name="gid" value="" />
 						<button type="button" class="search-btn group-search-btn"></button>
+						<%}%>
 					</div>
 				</div>
 				<div class="action-modify-zone" id="groupModifyZone">

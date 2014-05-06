@@ -269,22 +269,17 @@ define(['config'],function(config){
     var checkAct = function(){
     	var l = $('.table-files .fclick:checked').length;
     	var n = $('.table-files .fdclick:checked').length;
-    	//console.log(nowAuth);
-    	// $('#fileList .fdclick:checked').each(function(){
-    	// 	$(this).attr('checked',false);
-    	// });
 
 		if(n == 0){
 			if(!nowSchool){
 		    	$('#fileActZone .sharefile').show();
 		    	$('#fileActZone .copyfile').show(); 
-		    	 
 	    	}else if(nowAuth){
 		    	$('#fileActZone .movefile').show(); 
 	    	}
 	    	$('#fileActZone .downfile').show();
-	    	$('#fileActZone .collfile').show();    		
-	    	   	
+	    	$('#fileActZone .collfile').show();
+	    	$('#fileActZone .renamefile').show();
 	    }
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
@@ -327,7 +322,7 @@ define(['config'],function(config){
 	    	}else{
 				if(!nowSchool){
 			    	$('#fileActZone .sharefile').show();
-			    	 $('#fileActZone .copyfile').show(); 
+			    	$('#fileActZone .copyfile').show(); 
 		    	}else if(nowAuth){
 		    		$('#fileActZone .movefile').show();  
 		    	}

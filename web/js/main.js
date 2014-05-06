@@ -254,6 +254,7 @@
             on = data.ordername || 0,
             type = data.type || 0,
             gid = data.gid || 0,
+            school = data.school || 0,
             key = data.key || 0;   
         var d = {
           type : type
@@ -263,6 +264,9 @@
         } 
         if(gid){
           d.gid = gid;
+        }
+        if(school){
+          d.school = school;
         }
         if(key){
           d.key = key;

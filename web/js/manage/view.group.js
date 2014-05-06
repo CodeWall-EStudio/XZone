@@ -18,6 +18,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		'group' : 1,
 		'dep' : 2,
 		'prep' : 3,
+		'school' : 0,
 		'pschool' : 3
 	}
 	var nowList = [],

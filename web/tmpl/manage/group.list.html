@@ -41,6 +41,20 @@
 		<td class="td-pre" data-fid="<%-item.rootFolder.$id%>" title="查看文件统计"><%-item.pre%>%</td>
 	</tr>
 	<%}%>
+<%}else if(type=='school'){%>	
+	<%
+		for(var i in g2key){
+			var item = g2key[i];
+	%>
+	<tr data-id="<%+item.id%>" class="group-tr group-tr<%-item.id%>">
+		<td><%if(item.order){%><%-item.order%><%}%></td>
+		<td><a href="/#school=1" target="_blank"><%-item.name%></a></td>
+		<td><%-item.memberCount%></td>
+		<td class="td-status"><%-item.stname%></td>
+		<td><%-item.size%></td>
+		<td class="td-pre" data-fid="<%-item.rootFolder.$id%>" title="查看文件统计"><%-item.pre%>%</td>
+	</tr>
+	<%}%>	
 <%}else if(type=='prep'){%>	
 	<%
 		for(var i in g2key){

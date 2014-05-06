@@ -74,6 +74,7 @@
               case 'group':
               case 'dep':
               case 'prep':
+              case 'school':
               case 'pschool':
                 group.init(cmd);
                 break;

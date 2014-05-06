@@ -26,6 +26,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 
 		$("#fileActZone .sharefile").hide();
 		$("#fileActZone .copyfile").hide();
+
 		if(myinfo.auth < 15){
 			$('#btnZone').hide();
 			$("#fileActZone").addClass('hide');
@@ -64,9 +65,14 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 								d.auth = 0;
 							}
 							d.school = 1;
-							
+							if(cmd==='recy'){
+								//#recy=1&gid=<%+id%>
+								//handerObj.triggerHandler('recy:init',d);	
+								window.location.hash = '#recy=1&gid='+d.gid+'&school=1';
+							}else{
+								handerObj.triggerHandler('fold:init',d);	
+							}
 					        //handerObj.triggerHandler('file:init',d);
-					        handerObj.triggerHandler('fold:init',d);
 						}
 
 					}

@@ -8,6 +8,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
 		nowType = 0,
+		nowSchool = 0,
 		nowKey = '';	
 
 	var tmpTarget = $('#boxTableList'),
@@ -41,6 +42,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 		if(d.gid){
 			nowGid = d.gid;
 		}
+		nowSchool = d.school || 0;
 		nowType = d.type;
 		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		nowKey = d.key || '';
@@ -64,7 +66,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 			pageNum : config.pagenum,
 			order : nowOds
 		}
-		if(nowGid){
+		if(nowGid && !nowSchool){
 			obj.groupId = nowGid;
 
 			handerObj.triggerHandler('group:info',{
@@ -73,7 +75,6 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 				recy : true
 			});
 		}
-
 
 		handerObj.triggerHandler('recy:serach',obj);			
 	}
