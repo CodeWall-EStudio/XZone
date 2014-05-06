@@ -253,3 +253,13 @@ exports.forEach = function(array, onEach, onDone){
     next();
 }
 
+
+exports.startsWith = function(str, start){
+    var index = str.indexOf(start);
+    return index === 0;
+}
+
+exports.endsWith = function(str, end){
+    var index = str.lastIndexOf(end);
+    return index !== -1 && index + end.length === str.length;
+}

@@ -513,6 +513,10 @@ exports.importPictures = function(req, res){
 
         var result = [];
         Util.forEach(files, function(uri, i, next){
+
+            if(Util.endsWith(uri, 'Thumbs.db') || Util.endsWith(uri, '.DS_Store')){
+                return next();
+            }
             var body = {};
             body['file_path'] = path.join(dir, uri);
             body['file_name'] = path.basename(uri);
