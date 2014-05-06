@@ -734,3 +734,7 @@ input[type='checkbox'] {
 	padding:4px 12px;
 	font-size:16px;
 }
+strong.bold{
+	font-size:16px;
+	font-weight:bold;
+}

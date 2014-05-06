@@ -67,6 +67,21 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 		if(!isInit){
 			$('#logBlock .dropdown-menu li').bind('click',function(){
 				$('#logType').attr('data-type',$(this).attr('data-type')).text($(this).text());
+					var obj = {
+						page : 0,
+						pageNum : pageNum
+					};		
+					if(parseInt($(this).attr('data-type'))){
+						obj.type = [$(this).attr('data-type')]
+					}
+					$('#logList').html('');
+					$('.next-log-page').removeAttr('data-next');
+					if(nowGid){
+						obj.fromeGroupId = nowGid;
+					}else{
+						obj.fromUserId = myInfo.id;
+					}
+					loadLog(obj);									
 			});
 			
 			$('.btn-log-search').bind('click',function(){
