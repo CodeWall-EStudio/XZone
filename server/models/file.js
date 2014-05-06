@@ -133,7 +133,7 @@ exports.batchDelete = function(query, params, callback){
             });
             proxy.fail(callback);
             docs.forEach(function(doc){
-                exports.delete(doc, params, proxy.group('delete'));
+                exports.delete({ _id: doc._id }, params, proxy.group('delete'));
             });
         }
     });

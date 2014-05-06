@@ -14,6 +14,7 @@ var Util = require('../util');
 var userHelper = require('../helper/user_helper');
 var fileHelper = require('../helper/file_helper');
 var mUser = require('../models/user');
+var mFolder = require('../models/folder');
 var mSizegroup = require('../models/sizegroup');
 
 var FileTool = require('../file_tool');
@@ -427,6 +428,41 @@ exports.initSizegroup = function(req, res){
     
 };
 
+
+function getSaveFolder(parent, uri, callback){
+    console.log('getSaveFolder: ', uri);
+    var index = uri.indexOf('/');
+    if(index === -1){
+        return callback(null, parent, true);
+    }
+    var dirname = uri.substring(0, index);
+    var restname = uri.substring(index + 1);
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    db.folder.findOne({ name: dirname, 'parent.$id': parent._id }, function(err, doc){
+        if(err){
+            return callback(err);
+        }
+        if(!doc){
+            mFolder.create({
+                creator: parent.creator.oid,
+                name: dirname,
+                groupId: parent.group.oid,
+                folder: parent
+            }, ep.done('folderDone'));
+        }else{
+            console.log('folder ' + dirname + ' exists');
+            ep.emit('folderDone', doc);
+        }
+    });
+
+    ep.on('folderDone', function(folder){
+        getSaveFolder(folder, restname, callback);
+    });
+
+}
+
 exports.importPictures = function(req, res){
     var user = req.loginUser;
 
@@ -446,43 +482,68 @@ exports.importPictures = function(req, res){
         if(!school){
             return ep.emit('error', 'not find a school');
         }
-        db.folder.findOne({ _id: school.rootFolder.oid }, ep.done('getFolder'));
-    });
+        db.folder.findOne({ _id: school.rootFolder.oid }, function(err, sf){
 
+            db.folder.findOne({ name: '导入的目录', 'parent.$id': sf._id }, function(err, folder){
+                if(folder){
+                    console.log('already has 导入的目录');
+                    ep.emit('createFolder', folder);
+                }else{
+                    mFolder.create({
+                        creator: user._id,
+                        name: '导入的目录',
+                        groupId: school._id,
+                        folder: sf
+                    }, ep.done('createFolder'));
+                }
+            });
 
-    var files = FileTool.listFilesSync(dir, 'jpg,jpeg', true);
-    var pics = [];
-
-    files.forEach(function(uri){
-        var body = {};
-        body['file_path'] = path.join(dir, uri);
-        body['file_name'] = path.basename(uri);
-
-        body['file_content_type'] = 'image/jpeg';
-
-        var content = fs.readFileSync(body['file_path']);
-        body['file_size'] = content.length;
-        body['file_md5'] = Util.md5(content.toString()).toUpperCase();
-
-        pics.push(body);
-    });
-
-    ep.emitLater('getPictures', pics);
-
-    ep.all('getFolder', 'getPictures', function(folder, pics){
-
-        ep.after('saveFileSuccess', pics.length, function(result){
-            res.json({ err: ERR.SUCCESS, result: { count: pics.length, pics: pics/*, result: result*/ } });
         });
-
-        pics.forEach(function(pic){
-            fileHelper.saveUploadFile({
-                folder: folder,
-                loginUser: user,
-                parameter: pic
-            }, ep.done('saveFileSuccess'));
-        });
-
     });
+
+    var files = FileTool.listFilesSync(dir, false, true);
+
+    // ep.after('saveFileSuccess', files.length, function(files){
+    //     res.json({ err: ERR.SUCCESS, result: { count: files.length, files: files} });
+    // });
+
+    ep.on('createFolder', function(folder){
+
+        var result = [];
+        Util.forEach(files, function(uri, i, next){
+            var body = {};
+            body['file_path'] = path.join(dir, uri);
+            body['file_name'] = path.basename(uri);
+            var ext = path.extname(uri);
+
+            if(ext){
+                ext = ext.substring(1).toLowerCase();
+                body['file_content_type'] = config.EXT_TO_CONTENTTYPE[ext] || 'text/plain';
+            }else{
+                body['file_content_type'] = 'text/plain';
+            }
+
+            var content = fs.readFileSync(body['file_path']);
+            body['file_size'] = content.length;
+            body['file_md5'] = Util.md5(content.toString());
+
+            getSaveFolder(folder, uri, function(err, folder){
+                fileHelper.saveUploadFile({
+                    folder: folder,
+                    loginUser: user,
+                    parameter: body
+                }, function(err, file){
+                    if(err){
+                        return ep.emit('error', err, file);
+                    }
+                    result.push(file);
+                    next();
+                });
+            });
+        }, function(){
+            res.json({ err: ERR.SUCCESS, result: { count: result.length, files: result} });
+        });
+    });
+
 
 };
