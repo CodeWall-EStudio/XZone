@@ -484,14 +484,16 @@ exports.importPictures = function(req, res){
         }
         db.folder.findOne({ _id: school.rootFolder.oid }, function(err, sf){
 
-            db.folder.findOne({ name: '导入的目录', 'parent.$id': sf._id }, function(err, folder){
+            var importFolderName = '导入的文件';
+
+            db.folder.findOne({ name: importFolderName, 'parent.$id': sf._id }, function(err, folder){
                 if(folder){
-                    console.log('already has 导入的目录');
+                    console.log('already has ' + importFolderName);
                     ep.emit('createFolder', folder);
                 }else{
                     mFolder.create({
                         creator: user._id,
-                        name: '导入的目录',
+                        name: importFolderName,
                         groupId: school._id,
                         folder: sf
                     }, ep.done('createFolder'));
@@ -541,9 +543,38 @@ exports.importPictures = function(req, res){
                 });
             });
         }, function(){
+            console.log('-------------------------   importPictures  done ----------------------');
             res.json({ err: ERR.SUCCESS, result: { count: result.length, files: result} });
         });
     });
 
+
+};
+
+exports.fixPictureFolderError = function(req, res){
+    var user = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+    if(!Util.hasRight(user.auth, config.AUTH_SYS_MANAGER)){
+        return ep.emit('error', 'no auth');
+    }
+
+    var ids = [ObjectID("5368da65f7f0f9887716dffa"),ObjectID("5368da66f7f0f9887716e01c"),ObjectID("5368da74f7f0f9887716e1a9"),ObjectID("5368da74f7f0f9887716e1b0"),ObjectID("5368da77f7f0f9887716e21a"),ObjectID("5368da7af7f0f9887716e2c0"),ObjectID("5368da7bf7f0f9887716e2d3"),ObjectID("5368da7cf7f0f9887716e2fb"),ObjectID("5368da80f7f0f9887716e34a"),ObjectID("5368da83f7f0f9887716e3bd"),ObjectID("5368da86f7f0f9887716e415"),ObjectID("5368da86f7f0f9887716e428"),ObjectID("5368da94f7f0f9887716e5fd"),ObjectID("5368da99f7f0f9887716e69d"),ObjectID("5368da9bf7f0f9887716e6e9"),ObjectID("5368da9ff7f0f9887716e765"),ObjectID("5368daa2f7f0f9887716e79c"),ObjectID("5368daa8f7f0f9887716e83c"),ObjectID("5368dab1f7f0f9887716e93c"),ObjectID("5368dab2f7f0f9887716e970"),ObjectID("5368dab8f7f0f9887716ea25"),ObjectID("5368dab8f7f0f9887716ea35"),ObjectID("5368dabaf7f0f9887716ea6c"),ObjectID("5368daccf7f0f9887716ec68"),ObjectID("5368dc9ef7f0f9887717215b"),ObjectID("5368dca2f7f0f988771721d0"),ObjectID("5368dd98f7f0f98877173b0d"),ObjectID("5368dda0f7f0f98877173be6"),ObjectID("5368dda8f7f0f98877173c63"),ObjectID("5368ddaaf7f0f98877173caf"),ObjectID("5368ddabf7f0f98877173ce3"),ObjectID("5368ddb9f7f0f98877173e5e"),ObjectID("5368ddbbf7f0f98877173e77"),ObjectID("5368ddc1f7f0f98877173f17"),ObjectID("5368ddc5f7f0f98877173f8d"),ObjectID("5368dde1f7f0f988771742d0"),ObjectID("5368dde2f7f0f988771742f2"),ObjectID("5368dde4f7f0f98877174329"),ObjectID("5368ddeaf7f0f988771743d5"),ObjectID("5368ddecf7f0f98877174406"),ObjectID("5368ddf0f7f0f98877174461"),ObjectID("5368de0ff7f0f98877174925"),ObjectID("5368de23f7f0f98877174b07"),ObjectID("5368de24f7f0f98877174b1d"),ObjectID("5368de2df7f0f98877174c4a"),ObjectID("5368de38f7f0f98877174d74"),ObjectID("5368de39f7f0f98877174d87"),ObjectID("5368de3ff7f0f98877174e2a"),ObjectID("5368de44f7f0f98877174eb3"),ObjectID("5368de5cf7f0f98877175130"),ObjectID("5368de8bf7f0f988771755b8"),ObjectID("5368de8ff7f0f988771755d1")];
+
+    var parentId = new ObjectID('5368e1c5f7f0f988771755e7');
+
+    ids.forEach(function(id){
+        db.folder.update({_id: id}, {$set: {
+            'parent.$id': parentId,
+            idpath: '5325c25998f4316c2177c46d,5368da64f7f0f9887716dff6,5368e1c5f7f0f988771755e7,' + id.toString()
+        }}, function(){
+            
+        });
+    });
+
+    res.json({ err: ERR.SUCCESS });
 
 };
