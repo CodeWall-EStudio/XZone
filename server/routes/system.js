@@ -538,7 +538,8 @@ exports.importPictures = function(req, res){
                 fileHelper.saveUploadFile({
                     folder: folder,
                     loginUser: user,
-                    parameter: body
+                    parameter: body,
+                    createSWFForDoc: true
                 }, function(err, file){
                     if(err){
                         return ep.emit('error', err, file);
