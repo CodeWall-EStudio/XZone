@@ -477,6 +477,7 @@ exports.importPictures = function(req, res){
     if(!dir){
         return ep.emit('error', 'need import dir');
     }
+    var time = Date.now();
 
     db.group.findOne({ type: 0 }, function(err, school){
         if(!school){
@@ -547,8 +548,8 @@ exports.importPictures = function(req, res){
                 });
             });
         }, function(){
-            console.log('-------------------------   importPictures  done ----------------------');
-            res.json({ err: ERR.SUCCESS, result: { count: result.length, files: result} });
+            console.log('-------------------------   importPictures  done, time use: ', Date.now() - time ,' ----------------------');
+            res.json({ err: ERR.SUCCESS, result: { count: result.length, time: Date.now() - time } });
         });
     });
 
