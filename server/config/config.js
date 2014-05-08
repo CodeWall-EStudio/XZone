@@ -1,5 +1,5 @@
 // debug 模式, 会输出一些调试用的 log
-exports.DEBUG = true;
+exports.DEBUG = false;
 
 // ==== 服务器相关的配置 ====================================================
 // 服务器运行的端口
@@ -23,6 +23,9 @@ exports.FILE_ZIP_DIR = '/data/zip/';
 exports.JOD_CONVERTER = '/var/run/jodconverter/lib/jodconverter-core-3.0-beta-4.jar';
 
 // ==== 应用自身相关的配置 ====================================================
+
+// 应用运行的域名
+exports.APP_DOMAIN = 'http://xzone.codewalle.com';
 
 // cookie 的加密key
 exports.COOKIE_SECRET= 'xzone_HeMHFxTAMPAjlRVH_secret';
@@ -56,7 +59,7 @@ exports.AUTH_TYPE = 'sso';// auto, sso, qq
 exports.CAS_BASE_URL = 'http://dand.71xiaoxue.com:80/sso.web';
 
 // 这里要改为对应域名
-exports.CAS_SERVICE = 'http://xzone.codewalle.com/api/user/loginSuccess';
+exports.CAS_SERVICE = exports.APP_DOMAIN + '/api/user/loginSuccess';
 
 // 获取用户详细资料的CGI
 exports.CAS_USER_INFO_CGI = 'http://mapp.71xiaoxue.com/components/getUserInfo.htm';
@@ -78,7 +81,7 @@ exports.QQ_CONNECT_AUTH_PATH = '/oauth2.0/authorize';
 
 exports.QQ_CONNECT_TOKEN_PATH = '/oauth2.0/token';
 
-exports.QQ_CONNECT_CALLBACK = 'http://xzone.codewalle.com/api/user/loginSuccessWithQQ';
+exports.QQ_CONNECT_CALLBACK = exports.APP_DOMAIN + '/api/user/loginSuccessWithQQ';
 
 exports.QQ_CONNECT_OPENID_PATH = '/oauth2.0/me';
 
