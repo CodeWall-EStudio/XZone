@@ -65,6 +65,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 			tplid : 'coll.list',
 			data : {
 				list : d.list,
+				page : nextPage,
 				filetype : config.filetype
 			}
 		});

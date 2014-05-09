@@ -440,6 +440,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		isLoading = false;
 		isInit.data = true;
 		d.filetype = config.filetype;
+		console.log(d);
 		var view = new View({
 			target : $('#manageMa'),
 			tplid : 'manage/data',

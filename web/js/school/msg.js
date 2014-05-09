@@ -41,8 +41,18 @@ define(['config','cache','helper/view'],function(config,Cache,View){
 		// },2000);		
 	}
 
+	function showMsg(e,d){
+		var obj = {
+			'message' : d.msg
+		}
+		obj.type = d.type;
+
+		Messenger().post(obj);		
+	}
+
 	var handlers = {
-		'msg:error' : showErr
+		'msg:error' : showErr,
+		'msg:show' : showMsg
 	}
 
 	for(var i in handlers){

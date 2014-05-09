@@ -285,7 +285,7 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 	}
 
 	function conventStatic(obj){
-		obj.allsize = util.getSize(obj.totalSize);
+		obj.allsize = util.getSize(obj.totalSize) || 0;
 		for(var i in obj.fileStatistics){
 			obj.fileStatistics[i].nsize = util.getSize(obj.fileStatistics[i].size); 
 		}

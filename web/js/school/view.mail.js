@@ -84,13 +84,13 @@ define(['config','helper/view','model.mail'],function(config,View){
 		}else{
 			nextPage = 0;
 		}
-		console.log(d);
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'mail.list',
 			data : {
 				list : d.list,
 				ul : d.ul,
+				page : nextPage,
 				type : nowType,
 				cate : nowCate,
 				filetype : config.filetype

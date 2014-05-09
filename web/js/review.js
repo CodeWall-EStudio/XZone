@@ -7,10 +7,10 @@
     }    
   });
 
-  require(['config','helper/util','helper/request','helper/view','msg'], function(config,util,request,View) {
+  require(['config','helper/util','helper/request','helper/view','model.review','msg'], function(config,util,request,View,Review) {
 
     var handerObj = $(Schhandler);
-
+    var nowType = null;
     
     if(!util.getCookie('skey')){
       window.location = config.cgi.gotologin;
@@ -165,9 +165,206 @@
       request.get(opt,success); 
     }
 
-
+    var total = 0;
     var id = util.getParam('id');
     var mail = util.getParam('mail');
+    var cate = util.getParam('cate');
+    var coll = util.getParam('coll')
+    var gid = util.getParam('gid');
+    var fdid = util.getParam('fdid');
+    var page = parseInt(util.getParam('page')) || 0;
+    var isInit = false;
+    if(page){
+      page -=1;
+    }
+    var oldpage = page;
+    var isLoad = false;
+
+    function next(i){
+      var t = $('#reviewFileList');
+      var rw = t.parent()[0].clientWidth;
+      var tw = t.width();
+      var nl = i*48+48;
+      var tl = t[0].offsetLeft - 36;
+      if(tw-rw>0){
+        if((tw-rw)%nl === 0 && (tw-rw)%480 === 0){
+          tl -=rw;
+          t.css('marginLeft',tl+'px');
+        }
+      }
+    }
+
+    function prev(i){
+      var t = $('#reviewFileList');
+      var rw = t.parent()[0].clientWidth;
+      var tl = t[0].offsetLeft - 36; 
+      if(i === 0 || i === 10){
+          tl += rw;
+          if(tl>0){
+            tl = 0;
+          }
+          t.css('marginLeft',tl+'px');
+      }   
+    }
+
+    //console.log(mail,coll,gid,fdid,page);
+    function renderBlock(list,id){
+      var tplid = 'review.block';
+      var target = $("#reviewBlock");
+      if(page !== oldpage){
+        tplid = 'review.list';
+        target = $('#reviewFileList');
+      }
+      var obj = {
+        target : target,
+        tplid : tplid,
+        data : {
+          list : list,
+          page : page,
+          id : id
+        },
+        after : function(){
+          var l = $('#reviewFileList li').length;
+          $('#reviewFileList').width(48*l); 
+        }      
+      };
+
+      if(!isInit){
+        isInit = true;
+        obj.handlers = {
+          'li' : {
+            'click': function(e){
+              var t = $(this);
+              var id = t.attr('data-id');
+              if(id){
+                $("#reviewBlock li").removeClass('selected');
+                t.addClass('selected');
+                getFile(id);
+              }
+            }
+          },
+          '.ar-arrow' : {
+            'click' : function(){
+              var t = $("#reviewBlock li");
+              var l = $("#reviewBlock li").length;
+              var idx = 0;
+              $("#reviewBlock li").each(function(i){
+                if($(this).hasClass('selected')){
+                  idx = i;
+                }
+              });
+              next(idx);
+              if(idx<l-1){
+                  $("#reviewBlock li").removeClass('selected');
+                  var nt = $("#reviewBlock li").eq(idx+1);
+                  var id = nt.attr('data-id');
+                  nt.addClass('selected');  
+                  if(id){
+                    getFile(id);
+                  }
+              }else{
+                if($("#reviewBlock li").length < total){
+                  page++;
+                  loadFile();
+                }else{
+                  handerObj.triggerHandler('msg:show',{
+                    type: 'error',
+                    msg : '已经是最后一个文件了!'
+                  });
+                }
+              }
+            }
+          },
+          '.al-arrow' : {
+            'click' : function(){
+              var t = $("#reviewBlock li");
+              var l = $("#reviewBlock li").length;
+              var idx = 0;
+              $("#reviewBlock li").each(function(i){
+                if($(this).hasClass('selected')){
+                  idx = i;
+                }
+              });
+              prev(idx);
+              if(idx>0){
+                  $("#reviewBlock li").removeClass('selected');
+                  var nt = $("#reviewBlock li").eq(idx-1);
+                  var id = nt.attr('data-id');
+                  nt.addClass('selected');  
+                  if(id){
+                    getFile(id);
+                  }              
+              }else{
+                if(page>0){
+                  page--;
+                  loadFile();
+                }else{
+                  handerObj.triggerHandler('msg:show',{
+                    type: 'error',
+                    msg : '已经是第一个文件了!'
+                  });
+                }
+              }
+            }
+          }
+        }        
+      }
+
+      var view = new View(obj);
+      if(page === oldpage){
+        view.createPanel();  
+      }else if(page < oldpage){
+        view.beginPanel();
+        var tl = target[0].offsetLeft - 36; 
+        var rw = target.parent()[0].clientWidth;
+        target.css('marginLeft',tl-rw+"px");
+        console.log(222222222);
+        $('.al-arrow').click();
+      }else{
+        view.appendPanel();
+        $('.ar-arrow').click();
+      }
+      oldpage = page;
+    }
+
+    function fileLoad(d){
+      isLoad = false;
+      total = d.total;
+      renderBlock(d.list,id);
+    }
+
+    function mailLoad(d){
+      isLoad = false;
+      total = d.total;
+      renderBlock(d.list,id);
+    }
+
+    //拉文件列表
+    function loadFile(){
+      if(isLoad){
+        return;
+      }
+      isLoad = true;
+      if(fdid){
+        Review.getfile({
+          page : page,
+          pageNum : 10,
+          folderId : fdid,
+          order : '{"createTime":-1}'
+        },fileLoad);
+      }else if(mail){
+        Review.getmailfile({
+          page : page,
+          pageNum : 10,
+          cate : cate,
+          order : '{"createTime":-1}'
+        },mailLoad);
+      }else if(coll){
+
+      }      
+    }
+    
+    loadFile();
     getFile(id);
    
   });

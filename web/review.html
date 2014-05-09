@@ -5,144 +5,16 @@
   <meta name="author" content="Tencent" />
   <title>教师工作室</title>
   <link rel="stylesheet" type="text/css" href="/css/bootstrap.css" />
-  <link rel="stylesheet" type="text/css" href="/css/common.css" />
+  <link rel="stylesheet" type="text/css" href="css/review.css" />
   <link rel="stylesheet" type="text/css" href="/css/player/video-js.min.css" />
-  <style>
-    .otherType{
-      width:400px;
-      height:200px;
-      margin:100px auto;
-      text-align:center;
-    }
-
-i.icon-type1{
-  display:block;
-  /*margin-top:14px;*/
-  width:32px;
-  height:32px;
-  margin:10px auto;
-  background:url(css/imgs/type-img.png) no-repeat;
-}
-
-i.icon-type2{
-  display:block;
-  /*margin-top:14px;  */
-  width:32px;
-  height:32px;
-  margin:10px auto;
-  background:url(css/imgs/type-doc.png) no-repeat;
-}
-
-i.icon-type3{
-  display:block;
-  margin:10px auto;
-  /*margin-top:14px;  */
-  width:32px;
-  height:32px;
-  background:url(css/imgs/type-music.png) no-repeat;
-}
-
-i.icon-type4{
-  display:block;
-  margin:10px auto;
-  /*margin-top:14px;*/  
-  width:32px;
-  height:32px;
-  background:url(css/imgs/type-vedio.png) no-repeat;
-}
-
-i.icon-type5{
-  display:block;
-  margin:10px auto;
-  /*margin-top:14px;*/  
-  width:32px;
-  height:32px;
-  background:url(css/imgs/type-exe.png) no-repeat;
-}
-
-i.icon-type6{
-  display:block;
-  margin:10px auto;
-  /*margin-top:14px;*/  
-  width:32px;
-  height:32px;
-  background:url(css/imgs/type-zip.png) no-repeat;
-}
-
-i.icon-type0{
-  display:block;
-  margin:10px auto;
-  /*margin-top:14px;*/  
-  width:32px;
-  height:32px;
-  background:url(css/imgs/type-other.png) no-repeat;
-}
-   
-  	.file-review{
-  		text-align:center;
-/*      height:640px;*/
-  	}
-  	.playerZone{
-  		margin:10px auto;
-  		width:640px;
-  	}
-  	.text{
-  		width:640px;
-  		margin:0 auto;
-  		text-align:left;
-  	}
-  	dl{
-  		padding: 10px;
-  		width:500px;
-  		margin:0 auto;
-  		text-align:left;
-  	}
-  	.file-reivew-act{
-  		width:1000px;
-  		text-align : center;
-  		margin:0 auto;
-      text-align:center;
-  	}
-  	.file-reivew-act span{
-  		display:inline-block;
-  		width:24px;
-  		height:24px;  		
-  		cursor:pointer;
-  	}
-  	.flexpaper_viewer{
-  		width:960px;height:700px;
-  		padding-top:10px;
-  		margin:0 auto;
-  	}
-  	.to-left{
-
-  		background:url(/css/imgs/ll.png) no-repeat;
-  	}
-  	.to-right{
-
-  		background:url(/css/imgs/rl.png) no-repeat; 		
-  	}
-  	.zoom-in{
- 
-  		background:url(/css/imgs/jjj.png) no-repeat; 				
-  	}
-  	.zoom-out{
-  
-  		background:url(/css/imgs/jj.png) no-repeat;
-  	}  
-    .text-review{
-      width:500px;
-      text-align:left;
-      margin:0 auto;
-    }	
-  </style>
-
 </head>
 
 <body>
   <div class="modal-body">
     <div class="file-review" id="reviewDiv">
-    </div>    
+    </div>  
+    <div class="file-select-block" id="reviewBlock">
+    </div>  
   </div>
 
   <script>
