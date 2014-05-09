@@ -148,7 +148,7 @@ function getUserRoles(user, parameter, callback){
             role |= config.ROLE_PREPARE_MEMBER;
         }
         user.__role = role;
-        callback(err, user);
+        callback(null, user);
     });
 }
 

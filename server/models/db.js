@@ -17,6 +17,7 @@ exports.open = function(callback){
     MongoClient.connect(config.DB_URI, function(err, db){
         if(!err){
             ins = db;
+            Logger.error('DB open');
         }else{
             Logger.error('DB open error: ', err);
         }

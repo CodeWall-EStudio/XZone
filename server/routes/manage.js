@@ -416,7 +416,7 @@ exports.statistics = function(req, res) {
         ep.emit('totalDepartment');
     });
 
-    db.folder.count({}, function(err, num) {
+    db.folder.count({ parent: { $ne: null } }, function(err, num) {
         if (err) {
             Logger.error('[manage.statistics]', err);
         }

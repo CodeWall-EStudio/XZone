@@ -220,7 +220,11 @@ function convert(filepath, mimes, ext, callback) {
                 Logger.info('>>>convert file: exec', cmd);
                 process.exec(cmd, function(err, stdout, stderr) {
                     callback(err);
-                    Logger.error('>>>file convert error: to swf: ', err, stderr, mimes, ext);
+                    if (err) {
+                        Logger.error('>>>file convert error: to swf: ', err, stderr, mimes, ext);
+                    } else {
+                        Logger.info('>>>convert file: done with ', cmd);
+                    }
                 });
             } else {
                 callback(err);
@@ -234,6 +238,8 @@ function convert(filepath, mimes, ext, callback) {
             callback(err);
             if (err) {
                 Logger.error('>>>file convert error2: to swf', err, stderr, mimes, ext);
+            } else {
+                Logger.info('>>>convert file: done with ', cmd);
             }
         });
 
