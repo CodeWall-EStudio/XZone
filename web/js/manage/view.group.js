@@ -156,21 +156,35 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		//审核通过
 		'.apv-pass' : {
 			'click' : function(){
-				handerObj.triggerHandler('group:approve',{
-					groupId:nowGroup.id,
+				var obj = {
+					groupId : nowGroup.id,
+					status : 0,
 					validateText : 'pass',
 					validateStatus : 1
-				});				
+				}
+				handerObj.triggerHandler('group:modify',obj);				
+				// handerObj.triggerHandler('group:approve',{
+				// 	groupId:nowGroup.id,
+				// 	validateText : 'pass',
+				// 	validateStatus : 1
+				// });				
 			}
 		},
-		//审核通过
+		//审核不通过
 		'.apv-notpass' : {
 			'click' : function(){
-				handerObj.triggerHandler('group:approve',{
-					groupId:nowGroup.id,
+				var obj = {
+					groupId : nowGroup.id,
+					status : 1,
 					validateText : 'pass',
-					validateStatus : 1
-				});
+					validateStatus : 0
+				}
+				handerObj.triggerHandler('group:modify',obj);				
+				// handerObj.triggerHandler('group:approve',{
+				// 	groupId:nowGroup.id,
+				// 	validateText : 'pass',
+				// 	validateStatus : 1
+				// });
 			}
 		},
 		//保存修改

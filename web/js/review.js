@@ -173,12 +173,15 @@
     var gid = util.getParam('gid');
     var fdid = util.getParam('fdid');
     var page = parseInt(util.getParam('page')) || 0;
-    var isInit = false;
+    var key = util.getParam('key');
+    var ods = util.getParam('ods');
+    var isMove = false; //切换预览
+    var isInit = false; //是否已经初始化
     if(page){
       page -=1;
     }
     var oldpage = page;
-    var isLoad = false;
+    var isLoad = false;   //加载中
 
     function next(i){
       var t = $('#reviewFileList');
@@ -205,6 +208,14 @@
           }
           t.css('marginLeft',tl+'px');
       }   
+    }
+
+    //节流
+    function lookMove(){
+      isMove = true;
+      setTimeout(function(){
+        isMove = false;
+      },500);
     }
 
     //console.log(mail,coll,gid,fdid,page);
@@ -234,6 +245,10 @@
         obj.handlers = {
           'li' : {
             'click': function(e){
+              if(isMove){
+                return;
+              }
+              lookMove();
               var t = $(this);
               var id = t.attr('data-id');
               if(id){
@@ -245,6 +260,10 @@
           },
           '.ar-arrow' : {
             'click' : function(){
+              if(isMove){
+                return;
+              }
+              lookMove();
               var t = $("#reviewBlock li");
               var l = $("#reviewBlock li").length;
               var idx = 0;
@@ -277,6 +296,10 @@
           },
           '.al-arrow' : {
             'click' : function(){
+              if(isMove){
+                return;
+              }
+              lookMove();              
               var t = $("#reviewBlock li");
               var l = $("#reviewBlock li").length;
               var idx = 0;
@@ -318,7 +341,6 @@
         var tl = target[0].offsetLeft - 36; 
         var rw = target.parent()[0].clientWidth;
         target.css('marginLeft',tl-rw+"px");
-        console.log(222222222);
         $('.al-arrow').click();
       }else{
         view.appendPanel();
@@ -339,6 +361,12 @@
       renderBlock(d.list,id);
     }
 
+    function collLoad(d){
+      isLoad = false;
+      total = d.total;
+      renderBlock(d.list,id);
+    }    
+
     //拉文件列表
     function loadFile(){
       if(isLoad){
@@ -350,17 +378,27 @@
           page : page,
           pageNum : 10,
           folderId : fdid,
-          order : '{"createTime":-1}'
+          order : ods,
+          key : key,
         },fileLoad);
       }else if(mail){
         Review.getmailfile({
           page : page,
           pageNum : 10,
+          order : ods,
+          key : key,          
           cate : cate,
-          order : '{"createTime":-1}'
+          order : ods
         },mailLoad);
       }else if(coll){
-
+        Review.getcollfile({
+          page : page,
+          pageNum : 10,
+          order : ods,
+          key : key,          
+          cate : cate,
+          order : ods
+        },collLoad);
       }      
     }
     

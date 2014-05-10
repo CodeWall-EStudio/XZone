@@ -93,6 +93,8 @@ define(['config','helper/view','model.mail'],function(config,View){
 				page : nextPage,
 				type : nowType,
 				cate : nowCate,
+				key : nowKey,
+				ods : nowOds,
 				filetype : config.filetype
 			}
 		});

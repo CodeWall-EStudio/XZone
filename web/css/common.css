@@ -206,10 +206,25 @@ a{
 	text-align:left;
 	position:relative;
 	text-align:right;
-	background:#ebeef3;
+	background:#A1A3A7;
+}
+.userinfo .prog-block{
+	position:relative;
+	display:block;
+	height:20px;
+}
+.userinfo .prog-txts{
+	width:100%;
+	position:absolute;
+	z-index:3;
+	text-align:center;
+	color:#fff;
+	text-shadow:1px 1px 2px #000;
 }
 .userinfo .prog{
 	position:absolute;
+	z-index:2;
+	top:0;
 	width:40px;
 	height:18px;
 	background:#496fba;
@@ -307,7 +322,6 @@ a{
 	padding:10px 0;
 	margin:5px 0;
 	height:48px;	
-	border-radius:10px;
 	background-color: #ffde9a;
 	border-color: #faebcc;	
 }
@@ -741,4 +755,8 @@ strong.bold{
 
 #topFoldPath,#parentFoldPath,#thisFoldPath{
 	max-height:200px;
+}
+
+#uploader{
+	height:260px;
 }

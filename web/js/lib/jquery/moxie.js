@@ -2054,10 +2054,10 @@ define('moxie/runtime/Runtime', [
 
 					Basic.extend(shimContainer.style, {
 						position: 'absolute',
-						top: '0px',
+						bottom: '0px',
 						left: '0px',
-						width: '1px',
-						height: '1px',
+						width: '100px',
+						height: '24px',
 						overflow: 'hidden'
 					});
 

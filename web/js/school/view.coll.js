@@ -66,6 +66,8 @@ define(['config','helper/view','model.coll'],function(config,View){
 			data : {
 				list : d.list,
 				page : nextPage,
+				ods : nowOds,
+				key : nowKey,
 				filetype : config.filetype
 			}
 		});

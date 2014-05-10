@@ -84,8 +84,6 @@ define(['config'],function(config){
     	if(!setting){
 		    $("#uploader").pluploadQueue(upload_settings).unbind('allcompleta').bind('allcomplete',function(){
 		    	if($('.plupload_failed').length == 0){
-		    		//window.location.reload();	
-		    		//$('#uploadFile').modal('hide');
 		    		$('#uploadFile .close-upload').click();
 		    	}
 			});

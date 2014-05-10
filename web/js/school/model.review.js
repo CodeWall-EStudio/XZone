@@ -27,7 +27,6 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 		}
 		var success = function(d){
 			if(d.err == 0){
-				console.log(callback,d.result);
 				if(typeof callback === 'function'){
 					callback(d.result);
 				}else{
@@ -45,6 +44,19 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			cgi : config.cgi.favsearch,
 			data : d
 		}	
+
+		var success = function(d){
+			if(d.err == 0){
+				if(typeof callback === 'function'){
+					callback(d.result);
+				}else{
+					handerObj.triggerHandler('review:fileload',d.result);
+				}
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);
 	}
 
 	return {

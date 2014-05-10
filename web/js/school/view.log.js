@@ -27,9 +27,10 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 					}
 				});
 				view.appendPanel();
+				console.log(data.result.total,$('#logList tr').length);
 				if($('#logList tr').length < data.result.total){
 					nowPage++;
-					$('.next-log-page').attr('data-next',1);
+					$('.next-log-page').attr('data-next',nowPage).text('点击加载更多');
 				}else{
 					$('.next-log-page').removeAttr('data-next').text('已经全部加载完了');
 				}
@@ -72,8 +73,10 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 						pageNum : pageNum
 					};		
 					if(parseInt($(this).attr('data-type'))){
-						obj.type = [$(this).attr('data-type')]
+						obj.type = [$(this).attr('data-type')];
+						logType = $(this).attr('data-type');
 					}
+
 					$('#logList').html('');
 					$('.next-log-page').removeAttr('data-next');
 					if(nowGid){
@@ -81,6 +84,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 					}else{
 						obj.fromUserId = myInfo.id;
 					}
+					nowPage = 0;
 					loadLog(obj);									
 			});
 			
@@ -126,6 +130,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 					}else{
 						obj.fromUserId = myInfo.id;
 					}
+					nowPage = 0;
 					loadLog(obj);
 				}else{
 					return;

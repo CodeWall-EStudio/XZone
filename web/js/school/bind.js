@@ -20,9 +20,9 @@ define(['config'],function(config){
             },
             messages:{
                     foldname : {
-                            require : '请输入文件夹名称',
-                            maxlength : '文件名称最长120个字',
-                            minlength : '文件名称至少需要2个字'
+                            required : '请输入名称',
+                            maxlength : '名称最长120个字',
+                            minlength : '名称至少需要2个字'
                     }
             },
             submitHandler : function(form) { 
@@ -50,7 +50,7 @@ define(['config'],function(config){
 
 	/***********************************/
 	$('#newFold .check-open').bind('click',function(){
-		if($(this)[0].checked){
+		if($(this).prop('checked')){
 			$('#newFold .read-fold').removeClass('hide');
 		}else{
 			$('#newFold .read-fold').addClass('hide');
@@ -232,33 +232,21 @@ define(['config'],function(config){
     	var target = $(e.target),
     		cmd = target.attr('cmd');
     	if(cmd == 'selectall'){
-			if(target[0].checked){
-				$('#fileList .liclick:not(:checked)').each(function(){
-					$(this)[0].checked = true;
-				});
+			if(target.prop('checked')){
+				$('#fileList .liclick:not(:checked)').prop({'checked':true});
 			}else{
-				$('#fileList .liclick:checked').each(function(){
-					$(this).attr('checked',false);
-				});
+				$('#fileList .liclick:checked').prop({'checked':false});
 			}
 			checkAct();    		
     	}else if(cmd == 'select'){
 			var tag = target.attr('data-tag');
 			if(tag == 'folds'){	
-				$('#fileList .fdclick').each(function(){
-					$(this)[0].checked = true;
-				});
-				$('#fileList .fclick').each(function(){
-					$(this)[0].checked = false;
-				});	
+				$('#fileList .fdclick').prop({'checked':true});
+    			$('#fileList .fclick').prop({'checked':false});
 				checkFoldAct();
 			}else if(tag == 'files'){
-				$('#fileList .fdclick').each(function(){
-					$(this)[0].checked = false;
-				});
-				$('#fileList .fclick').each(function(){
-					$(this)[0].checked = true;
-				});	
+				$('#fileList .fdclick').prop({'checked':false});
+    			$('#fileList .fclick').prop({'checked':true});				
 				checkAct();	
 			}
 			    	
@@ -557,7 +545,13 @@ define(['config'],function(config){
 				if(file){
 					if(!target.hasClass('liclick') && !target.hasClass('name-edit') && !target.hasClass('share-file') && !target.hasClass('no-act') && !target.hasClass('file-name')){
 						var p = target.parents("tr");
-						p.find('.liclick').click();										
+						if(p.find('.liclick').prop('checked')){
+							p.find('.liclick').prop({'checked':false});
+						}else{
+							p.find('.liclick').prop({'checked':true});
+						}
+						checkAct();
+						//p.find('.liclick').click();										
 					}
 				}
 				break;

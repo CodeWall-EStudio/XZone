@@ -180,7 +180,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowPrep){
 			pr = nowPrep;
 		}
-		//console.log(nowGroup);
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'file.user.list',
@@ -194,6 +193,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				down : config.cgi.filedown,
 				pr : nowPrep,
 				dep : depnum,
+				ods : nowOds,
+				key : nowKey,
 				school : nowSchool,
 				auth : nowAuth
 			}
@@ -1102,6 +1103,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowPrep == 'group'){
 			pr = 1;
 		}
+
 		var view = new View({
 			target : target,
 			tplid : 'file.user.list',
@@ -1114,6 +1116,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				ginfo : nowGroup,
 				down : config.cgi.filedown,
 				school : nowSchool,
+				ods : nowOds,
+				key : nowKey,
 				auth : nowAuth,
 				dep : depnum,
 				pr : pr
