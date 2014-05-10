@@ -162,12 +162,12 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					validateText : 'pass',
 					validateStatus : 1
 				}
-				handerObj.triggerHandler('group:modify',obj);				
-				// handerObj.triggerHandler('group:approve',{
-				// 	groupId:nowGroup.id,
-				// 	validateText : 'pass',
-				// 	validateStatus : 1
-				// });				
+				//handerObj.triggerHandler('group:modify',obj);				
+				handerObj.triggerHandler('group:approve',{
+					groupId:nowGroup.id,
+					validateText : 'pass',
+					validateStatus : 1
+				});				
 			}
 		},
 		//审核不通过
@@ -565,11 +565,11 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 			data : d		
 		});
 		view.createPanel();
-
 		if(d.status == 1){
 			$('.group-action-btn button').removeClass('active').prop({
 				'disabled' : false
 			});
+			
 		}else{
 			$('.group-action-btn button.apv-pass').addClass('active').prop({
 				'disabled' : true
