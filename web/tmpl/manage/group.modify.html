@@ -37,5 +37,13 @@
 					</div>
 				</div>
 				<div class="action-modify-zone" id="groupModifyZone">
+					<%if(type=='group'){%>
 					<div>你还没有选择小组</div>
+					<%}else if(type=='dep'){%>
+					<div>你还没有选择部门</div>
+					<%}else if(type=='prep'){%>
+					<div>你还没有选择备课</div>
+					<%}else if(type=='pschool'){%>
+					<div>你还没有选择学年</div>
+					<%}%>
 				</div>

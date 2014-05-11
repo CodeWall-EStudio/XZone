@@ -5,6 +5,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		action = 0,
 		nowKey = '',
 		nowGroup = null,
+		isLoading = false;
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
@@ -419,56 +420,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				list : list.children,
 				ulist : list.users,
 				selected : selected
-			}
-			// },
-			// handlers : {
-			// 	'.plus' : {
-			// 		'click' : function(){
-			// 			var target = $(this),
-			// 				id = target.attr('data-id');
-			// 			var p = target.parent('li');
-			// 			if(p.find('ul').length > 0){
-			// 				//var ul = p.find('ul')[0];
-			// 				if(target.hasClass("minus")){
-			// 					target.removeClass('minus');
-			// 					p.find('ul').hide();
-			// 				}else{
-			// 					target.addClass('minus');
-			// 					p.find('ul').show();
-			// 				}
-			// 				return;
-			// 			}else{	
-			// 				target.addClass('minus');
-			// 				var p = target.parent('li');
-			// 				userList(getUList(id,d.list),p);
-			// 			}						
-			// 		}
-			// 	}
-			// }
-			// after : function(){
-			// 	target.find('.plus').unbind().bind('click',function(e){
-			// 			var target = $(e.target),
-			// 				id = target.attr('data-id');
-			// 			var p = target.parent('li');
-			// 			if(p.find('ul').length > 0){
-			// 				var ul = p.find('ul')[0];
-			// 				if(target.hasClass("minus")){
-			// 					target.removeClass("minus");
-			// 					console.log(target.attr('class'),e.target);
-			// 					p.find('ul').hide();
-			// 				}else{
-			// 					console.log(222);
-			// 					target.addClass("minus");
-			// 					p.find('ul').show();
-			// 				}
-			// 				return;
-			// 			}else{	
-			// 				target.addClass('minus');
-			// 				var p = target.parent('li');
-			// 				userList(getUList(id,list.children),p);
-			// 			}
-			// 	});
-			// }			
+			}			
 		});
 		view.appendPanel();
 	}
@@ -589,8 +541,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 						for(var i in d.files){
 							fls.push(d.files[i].id);
 						}
-						actTarget.find('input:checked').each(function(){
-							li.push($(this).val());
+						actTarget.find('#shareToUser i').each(function(){
+							li.push($(this).data('id'));
 						});
 						if(li.length===0){
 							return;

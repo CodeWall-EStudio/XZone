@@ -30,7 +30,7 @@ define(['config','helper/request','cache'],function(config,request,Cache){
 	function getDepUser(e,d){
 		var departments = Cache.get('departments');
 		if(departments){
-			handerObj.triggerHandler('nav:userload',{ type : d.type,files: d.files, list :departments});
+			handerObj.triggerHandler('nav:userload',{ type : d.type,data:d.data,files: d.files, list :departments});
 			return;
 		}
 		var opt = {
@@ -94,6 +94,7 @@ define(['config','helper/request','cache'],function(config,request,Cache){
 				var obj = conventGroup(d.result.data);
 				handerObj.triggerHandler('nav:createsuc',{list:obj});
 			}
+			handerObj.triggerHandler('msg:error',d.err);
 		}
 		request.post(opt,success);			
 	}
@@ -107,9 +108,11 @@ define(['config','helper/request','cache'],function(config,request,Cache){
 		var success = function(d){
 			if(d.err == 0){
 				var obj = conventGroup(d.result.data);
-				handerObj.triggerHandler('nav:modifysuc',{list:obj});
+				handerObj.triggerHandler('nav:modifysuc',obj);
 			}
+			handerObj.triggerHandler('msg:error',d.err);
 		}
+
 		request.post(opt,success);		
 	}
 

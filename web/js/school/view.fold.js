@@ -82,7 +82,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 							id = t.attr('data-id'),
 							mt = $('#'+target);
 						//console.log(12345);
-						console.log(mt.attr('loading'));
+						//mt.attr('loading');
 						//if(!mt.attr('data-loaded')){
 							var obj = {
 								folderId : id,
@@ -174,6 +174,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			filetype : config.filetype,
 			type : nowType,
 			key : nowKey,
+			fdid : nowFd,
 			list : d.list
 		};	
 		var view = new View({

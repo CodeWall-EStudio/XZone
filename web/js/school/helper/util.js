@@ -345,6 +345,9 @@ define(['../config'], function($, config) {
     };	
 
     var getNums = function(x){
+    	if(x===0){
+    		return 0;
+    	}
 		var f_x = parseFloat(x);  
 		if (isNaN(f_x))  
 		{  
@@ -363,6 +366,11 @@ define(['../config'], function($, config) {
 		{  
 			s_x += '0';  
 		}  
+		if(s_x<100){
+			s_x = Math.ceil(s_x);
+		}else{
+			s_x = 100;
+		}
 		return s_x;      	
     }
 

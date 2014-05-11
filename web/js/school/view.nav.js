@@ -16,7 +16,6 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 
 
 	function navLoad(e,d){
-
 		var opt = {
 			target : navTarget,
 			tplid : 'nav',
@@ -231,7 +230,11 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 							members.push($(this).val());
 						});
 						if(name == ''){
-							handerObj.triggerHandler('msg:err',77);
+							handerObj.triggerHandler('msg:error',77);
+							return;
+						}
+						if(name.length < 3){
+							handerObj.triggerHandler('msg:error',76);
 							return;
 						}
 						var obj = {
@@ -295,13 +298,18 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		handerObj.triggerHandler('nav:load',myinfo);
 	}
 
+	function modifySuc(e,d){
+		$("#my-m-group"+d.id).text(d.name).attr('title',d.name);
+	}
+
 	var handlers = {
 		'nav:load' : navLoad,
 		'nav:newgroup' : newGroup,
 		'nav:groupmanage' : manageGroup,
 		'nav:userload' : userLoad,
 		'nav:createsuc' : createSuc,
-		'nav:infosuc' : infoSuc
+		'nav:infosuc' : infoSuc,
+		'nav:modifysuc' : modifySuc
 	}
 
 	for(var i in handlers){

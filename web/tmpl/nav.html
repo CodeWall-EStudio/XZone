@@ -11,7 +11,7 @@
 								var item = group[i];
 						%>
 							<li>
-								<a href="#gid=<%+item.id%>" title="<%+item.name %>"><%-item.name %> </a>
+								<a <%if(item.auth){%>id="my-m-group<%+item.id%>"<%}%>href="#gid=<%+item.id%>" title="<%+item.name %>"><%-item.name %> </a>
 								<%if(item.auth){%>
 									<span><a data-id="<%+item.id%>" class="manage-one-group">管理</a></span>
 								<%}%>
@@ -29,9 +29,9 @@
 						%>
 							<li>
 								<%if(item.pt){%>
-								<a href="#groupprep=1" title="<%+item.name %>"><%-item.name%></a>
+								<a <%if(item.auth && !item.pt){%>id="my-m-group<%+item.id%>"<%}%> href="#groupprep=1" title="<%+item.name %>"><%-item.name%></a>
 								<%}else{%>
-								<a href="#gid=<%+item.id%>" title="<%+item.name %>"><%-item.name%></a>
+								<a <%if(item.auth && !item.pt){%>id="my-m-group<%+item.id%>"<%}%> href="#gid=<%+item.id%>" title="<%+item.name %>"><%-item.name%></a>
 								<%}%>
 								<%if(item.auth && !item.pt){%>
 									<span><a data-id="<%+item.id%>" class="manage-one-group">管理</a></span>

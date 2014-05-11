@@ -307,7 +307,7 @@ a{
 	float:left;
 	background:#fff;
 	min-width:810px;
-	min-height:600px;
+	min-height:700px;
 	height:100%;
 	width:100%;
 	padding:0 5px;
@@ -759,4 +759,7 @@ strong.bold{
 
 #uploader{
 	height:260px;
+}
+.dropdown-menu a.selected{
+	font-weight:bold;
 }
