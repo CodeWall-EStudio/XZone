@@ -2,6 +2,7 @@
 var EventProxy = require('eventproxy');
 var us = require('underscore');
 var ObjectID = require('mongodb').ObjectID;
+var DBRef = require('mongodb').DBRef;
 
 var config = require('../config');
 var U = require('../util');
@@ -304,7 +305,7 @@ exports.modify = function(req, res){
         }
 
         if(sizegroup){
-            doc.sizegroupId = sizegroup._id;
+            doc.sizegroup = new DBRef('sizegroup', sizegroup._id);
             doc.size = sizegroup.size;
         }
 
