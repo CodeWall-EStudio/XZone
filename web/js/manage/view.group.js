@@ -457,7 +457,8 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					var obj = {
 						page : nowPage,
 						pageNum : pageNum,
-						type : types[type]
+						type : types[type],
+						order : '{"'+nowOn+'":'+nowOd+'}'
 					}
 					if(nowType == 'pschool'){
 						obj.parent = false;

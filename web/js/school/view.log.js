@@ -27,7 +27,6 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 					}
 				});
 				view.appendPanel();
-				console.log(data.result.total,$('#logList tr').length);
 				if($('#logList tr').length < data.result.total){
 					nowPage++;
 					$('.next-log-page').attr('data-next',nowPage).text('点击加载更多');

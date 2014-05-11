@@ -15,7 +15,7 @@
 				<td>
 					<input class="group-check" type="radio" name="gt" value="1" <%if(name){%>disabled<%}%> <%if(archivable){%>checked<%}%> />周期小组
 					<input class="group-check" type="radio" name="gt" value="0" <%if(name){%>disabled<%}%> <%if(!archivable){%>checked<%}%> />自由小组
-					<div class="group-prep-span <%if(typeof grade == 'undefined'){%>hide<%}%>">
+					<div class="group-prep-span <%if(typeof grade == 'undefined' || !grade){%>hide<%}%>">
 						<select class="group-prep">
 							<%
 								for(var i in prep){
