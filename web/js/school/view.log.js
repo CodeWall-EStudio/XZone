@@ -64,9 +64,10 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 			obj.fromUserId = myInfo.id;
 		}
 		$('#logList').html('');
-
-		isLoad = true;
-		loadLog(obj);
+		if(!isLoad){
+			isLoad = true;
+			loadLog(obj);
+		}
 		if(!isInit){
 			$('#logBlock .dropdown-menu li').bind('click',function(){
 				$('#logType').attr('data-type',$(this).attr('data-type')).text($(this).text());
@@ -87,8 +88,10 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 						obj.fromUserId = myInfo.id;
 					}
 					nowPage = 0;
-					isLoad = true;
-					loadLog(obj);									
+					if(!isLoad){
+						isLoad = true;
+						loadLog(obj);
+					}
 			});
 			
 			$('.btn-log-search').bind('click',function(){
@@ -134,8 +137,10 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 						obj.fromUserId = myInfo.id;
 					}
 					nowPage = 0;
-					isLoad = true;
-					loadLog(obj);
+					if(!isLoad){
+						isLoad = true;
+						loadLog(obj);
+					}
 				}else{
 					return;
 				}
@@ -174,8 +179,10 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 					}else{
 						obj.fromUserId = myInfo.id;
 					}	
-					isLoad = true;				
-					loadLog(obj);				
+					if(!isLoad){
+						isLoad = true;
+						loadLog(obj);
+					}				
 					// handerObj.triggerHandler('manage:log',{
 					// 	page : nowPage,
 					// 	pageNum : pageNum
