@@ -5,12 +5,14 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 		nowPage = 0,
 		nowDate = new Date().getTime(),
 		nowGid = 0,
+		isLoad = false,
 		logType = 0,
 		logSt = 0,
 		logEt = 0,
 		myInfo = null;
 
 	function loadLog(obj){
+		isLoad = false;
 		var opt = {
 			cgi : config.cgi.logsearch,
 			data : obj
@@ -63,6 +65,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 		}
 		$('#logList').html('');
 
+		isLoad = true;
 		loadLog(obj);
 		if(!isInit){
 			$('#logBlock .dropdown-menu li').bind('click',function(){
@@ -84,6 +87,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 						obj.fromUserId = myInfo.id;
 					}
 					nowPage = 0;
+					isLoad = true;
 					loadLog(obj);									
 			});
 			
@@ -130,6 +134,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 						obj.fromUserId = myInfo.id;
 					}
 					nowPage = 0;
+					isLoad = true;
 					loadLog(obj);
 				}else{
 					return;
@@ -168,7 +173,8 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 						obj.fromeGroupId = nowGid;
 					}else{
 						obj.fromUserId = myInfo.id;
-					}					
+					}	
+					isLoad = true;				
 					loadLog(obj);				
 					// handerObj.triggerHandler('manage:log',{
 					// 	page : nowPage,
