@@ -241,6 +241,7 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 	}
 
 	function boardasideaddSuc(e,d){
+		$('#groupBoard .board-empty').remove();
 		var view = new View({
 			target : $('#groupBoard').find('ul'),
 			tplid : 'group.boardone',

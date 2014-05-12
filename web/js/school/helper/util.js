@@ -365,12 +365,8 @@ define(['../config'], function($, config) {
 		while (s_x.length <= pos_decimal + 2)  
 		{  
 			s_x += '0';  
-		}  
-		if(s_x<100){
-			s_x = Math.ceil(s_x);
-		}else{
-			s_x = 100;
-		}
+		} 
+
 		return s_x;      	
     }
 

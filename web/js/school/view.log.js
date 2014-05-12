@@ -83,7 +83,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 					$('#logList').html('');
 					$('.next-log-page').removeAttr('data-next');
 					if(nowGid){
-						obj.fromeGroupId = nowGid;
+						obj.fromGroupId = nowGid;
 					}else{
 						obj.fromUserId = myInfo.id;
 					}
@@ -132,7 +132,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 						logEt = et;
 					}
 					if(nowGid){
-						obj.fromeGroupId = nowGid;
+						obj.fromGroupId = nowGid;
 					}else{
 						obj.fromUserId = myInfo.id;
 					}
@@ -175,7 +175,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 						obj.endTime = logEt;
 					}					
 					if(nowGid){
-						obj.fromeGroupId = nowGid;
+						obj.fromGroupId = nowGid;
 					}else{
 						obj.fromUserId = myInfo.id;
 					}	

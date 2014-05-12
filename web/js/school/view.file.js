@@ -20,7 +20,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowPid = 0,	
 		nowType = 0,
 		nowSchool = 0,
-		nowAuth = 0,		
+		nowAuth = 0,
+		isMember = {},		
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -622,7 +623,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	}
 
 	function shareLoad(e,d){
-		
+		// if($.isEmptyObject(isMember)){
+		// 	for(var i in d.list){
+		// 		isMember[d.list[i].id] = d.list[i].isMember;
+		// 	}
+		// }
 		var selected = [];
 		var view = new View({
 			target : actTarget,
