@@ -83,7 +83,7 @@ exports.search = function(params, callback){
 		query.fromGroupId = params.fromGroupId;
 	}
 
-	Logger.debug('log/search: ',query);
+	console.log('log/search: ',query);
     db.search('log', query, params, callback);
 
 };
