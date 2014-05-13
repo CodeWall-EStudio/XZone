@@ -262,6 +262,7 @@ a{
 	width:178px;
 	border-left:1px solid #d3d6da;
 	background:#f6f7f9;
+	min-height:850px;
 	height:100%;
 	padding-bottom:80px;
 }
@@ -762,4 +763,8 @@ strong.bold{
 }
 .dropdown-menu a.selected{
 	font-weight:bold;
+}
+.board-time span{
+	color:#999;
+	font-size:12px;
 }

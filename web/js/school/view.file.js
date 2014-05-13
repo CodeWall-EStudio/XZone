@@ -732,6 +732,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 						//}
 						//if(li.length===0){
 
+						if(d.type == 'dep' && !obj.toFolderId){
+							handerObj.triggerHandler('msg:error',60);
+							return;
+						}
 						handerObj.triggerHandler('file:shareto',obj);
 					}
 				}
@@ -1060,7 +1064,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowPrep == 'group'){
 			pr = 1;
 		}
-
+		d.nick = Cache.get('myinfo').nick;
 		var view = new View({
 			target : target,
 			tplid : 'file.user.list',

@@ -128,6 +128,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 						logSt = st;
 					}
 					if(et){
+						et += 3600*24*1000;
 						obj.endTime = et;
 						logEt = et;
 					}
