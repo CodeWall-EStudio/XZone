@@ -19,6 +19,9 @@ a{
 	cursor:pointer;
 	text-decoration: none;
 }
+a:hover{
+	text-decoration: none;	
+}
 .header{
 	width:100%;
 	min-width:1000px;
@@ -57,6 +60,9 @@ a{
 	color:#fff;
 	border-bottom:1px solid #102860;
 	transition:.25s linear;
+}
+.header .header-nav li.selected{
+	background-color:#1C3764;
 }
 .header .header-nav li.nav.open{
 	border:1px solid #c3c5cb;

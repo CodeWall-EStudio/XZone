@@ -30,6 +30,11 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 			myGroups = myInfo.group2key;
 		}
 		nowGroup = myGroups[nowGid];
+		if(nowGroup.type === 2){
+			util.showNav('dep');
+		}else{
+			util.showNav('group');
+		}
 
 			$("#fileActZone .renamefile").show();
 			$("#fileActZone .delfile").show();

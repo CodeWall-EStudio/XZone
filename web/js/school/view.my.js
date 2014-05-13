@@ -1,4 +1,4 @@
-define(['config','cache','helper/view','model.file'],function(config,Cache,View){
+define(['config','cache','helper/view','helper/util','model.file'],function(config,Cache,View,Util){
 
 	var	handerObj = $(Schhandler),
 		myInfo = null,
@@ -50,6 +50,7 @@ define(['config','cache','helper/view','model.file'],function(config,Cache,View)
 		// }else{
 		// 	obj.fdid = d.rootfdid;
 		// }
+		Util.showNav('my');
         handerObj.triggerHandler('file:init',d);
         handerObj.triggerHandler('fold:init',d);	
         handerObj.triggerHandler('upload:param',d);

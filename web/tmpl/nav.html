@@ -1,9 +1,9 @@
 			<i class="logo"></i>
 			<ul class="navbar-nav header-nav">
-				<li class="nav selected">
+				<li class="nav myspace selected">
 					<a href="#">我的空间</a>			
 				</li>
-				<li class="nav">
+				<li class="nav groupspace">
 					<a data-toggle="dropdown">小组空间<b class="caret"></b></a>
 					<ul class="dropdown-menu menu" role="menu" aria-labelledby="dLabel">
 						<%
@@ -20,7 +20,7 @@
 						<li class="create-new-group"><a id="createNewGroup" class="create-new-group">申请新的小组</a></li>
 					</ul>
 				</li>
-				<li class="nav">
+				<li class="nav depspace">
 					<a data-toggle="dropdown">部门空间<b class="caret"></b></a>
 					<ul class="dropdown-menu menu" role="menu" aria-labelledby="dLabel">
 						<%
@@ -41,7 +41,7 @@
 					</ul>				
 				</li>
 				<%if(school){%>
-					<li class="nav"><a href="#school=1">学校空间</a></li>
+					<li class="nav schoolspace"><a href="#school=1">学校空间</a></li>
 				<%}%>
 			</ul>
 			<div class="userinfo">

@@ -17,6 +17,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		$('#userAside').hide();
 		$("#groupAside").show();
 
+		util.showNav('school');
 		userAsideTarget.hide();
 		userPrepAsideTarget.hide();
 		groupPrepAsideTarget.hide();

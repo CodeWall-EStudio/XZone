@@ -1,7 +1,7 @@
 /**
  * 常用公用方法
  */
-define(['../config'], function($, config) {
+define(['../config'], function(config) {
 
 	var util = {};
 
@@ -434,6 +434,11 @@ define(['../config'], function($, config) {
     	}
     }
 
+    var showNav = function(type){
+    	$('#pageNav .nav').removeClass('selected');
+    	$('#pageNav .'+type+'space').addClass('selected');
+    }
+
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -451,6 +456,7 @@ define(['../config'], function($, config) {
 	util.getNums = getNums;
 	util.getStatus = getStatus;
 	util.logType = showLogType;
+	util.showNav = showNav;
 
 	return util;
 
