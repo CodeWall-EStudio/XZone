@@ -9,7 +9,7 @@ var us = require('underscore');
 var config = require('../config');
 var ERR = require('../errorcode');
 var db = require('../models/db');
-var group = require('../models/group');
+var mGroup = require('../models/group');
 var Util = require('../util');
 var userHelper = require('../helper/user_helper');
 var fileHelper = require('../helper/file_helper');
@@ -85,12 +85,13 @@ exports.initGroups = function(req,res){
         name : '备课检查',
         status : 0,
         type : 2,
-        pt : 1
+        pt : 1,
+        creator: req.loginUser._id
     };
     // 防止重复创建
     db.group.findOne(param, function(err, doc){
         if(!doc){
-            group.create(param,function(){
+            mGroup.create(param,function(){
                 console.log('备课检查创建完成');
             });
         }else{
@@ -103,11 +104,12 @@ exports.initGroups = function(req,res){
         name : '学校空间',
         status : 0,
         type : 0,
+        creator: req.loginUser._id
     };
     // 防止重复创建
     db.group.findOne(param2, function(err, doc){
         if(!doc){
-            group.create(param2,function(){
+            mGroup.create(param2,function(){
                 console.log('学校空间创建完成');
             });
         }else{
