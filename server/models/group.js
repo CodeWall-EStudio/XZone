@@ -4,6 +4,7 @@ var DBRef = require('mongodb').DBRef;
 var us = require('underscore');
 
 var ERR = require('../errorcode');
+var config = require('../config');
 var Logger = require('../logger');
 var db = require('./db');
 var mFolder = require('./folder');
