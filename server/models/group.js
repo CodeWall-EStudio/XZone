@@ -235,7 +235,7 @@ exports.isPrepareMember = function(userId, callback){
     exports.getGroup({ pt: 1 }, function(err, group){
         if(!group){
             console.log('>>>isPrepareMember, no pt=1 group');
-            callback('can not find prepare group');
+            callback('can not find prepare group', ERR.SERVER_ERROR);
         }else{
             exports.isGroupMember(group._id, userId, callback);
         }

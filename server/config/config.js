@@ -75,13 +75,14 @@ exports.QQ_CONNECT_APPID = '100548719';
 // appkey
 exports.QQ_CONNECT_APPKEY = '9e47324ac7fed9f8364d4982ccf3037e';
 
+// 登陆成功的回调地址
+exports.QQ_CONNECT_CALLBACK = exports.APP_DOMAIN + '/api/user/loginSuccessWithQQ';
+
 exports.QQ_CONNECT_SITE = 'https://graph.qq.com';
 
 exports.QQ_CONNECT_AUTH_PATH = '/oauth2.0/authorize';
 
 exports.QQ_CONNECT_TOKEN_PATH = '/oauth2.0/token';
-
-exports.QQ_CONNECT_CALLBACK = exports.APP_DOMAIN + '/api/user/loginSuccessWithQQ';
 
 exports.QQ_CONNECT_OPENID_PATH = '/oauth2.0/me';
 
