@@ -248,6 +248,7 @@
 		</dd>
 <%}else if(type=='prep' || type =='pschool' || type==3){%>
 	<%
+
 		if(st){
 	%>
 		<dt>
@@ -272,7 +273,8 @@
 					<td>
 						<input type="text" class="end-time"  />
 					</td>
-				</tr>								
+				</tr>
+
 				<%if(typeof status !='undefined' && status != 2 && status != 4){%>
 				<tr>
 					<td>状态:</td>

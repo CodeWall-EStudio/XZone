@@ -251,7 +251,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 						alert('你还没有填写分组名');
 						return;
 					}
-					if(managelist.length == 0 && memberlist.length ==0){
+					if(nowType != 'pschool' && managelist.length == 0 && memberlist.length ==0){
 						alert('你还没选择成员或者管理员');
 						return;
 					}
@@ -261,9 +261,14 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					name : name,
 					content : '',
 					status : 0,
-					type : types[nowType],
-					members : memberlist,
-					managers : managelist,
+					type : types[nowType]
+				}
+
+				if(memberlist.length){
+					obj.members = memberlist;
+				}
+				if(managelist.length){
+					obj.managers = managelist;
 				}
 
 
@@ -563,7 +568,19 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		var view = new View({
 			target : $('#groupModifyZone'),
 			tplid : 'manage/group.modify.dl',
-			data : d		
+			data : d,
+			after : function(){
+				if(nowType == 'pschool'){
+						$('.start-time').pickmeup({
+    						format  : 'Y-m-d',
+    						hide_on_select : true
+						});
+						$('.end-time').pickmeup({
+    						format  : 'Y-m-d',
+    						hide_on_select	: true
+						});						
+				}
+			}		
 		});
 		view.createPanel();
 		if(d.status == 1){
