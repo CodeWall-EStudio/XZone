@@ -144,7 +144,7 @@ function getUserRoles(user, parameter, callback){
     }
 
     mGroup.isPrepareMember(user._id, function(err, result){
-        if(result){
+        if(!err && result){
             role |= config.ROLE_PREPARE_MEMBER;
         }
         user.__role = role;

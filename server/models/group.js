@@ -4,6 +4,7 @@ var DBRef = require('mongodb').DBRef;
 var us = require('underscore');
 
 var ERR = require('../errorcode');
+var config = require('../config');
 var Logger = require('../logger');
 var db = require('./db');
 var mFolder = require('./folder');
@@ -235,7 +236,7 @@ exports.isPrepareMember = function(userId, callback){
     exports.getGroup({ pt: 1 }, function(err, group){
         if(!group){
             console.log('>>>isPrepareMember, no pt=1 group');
-            callback('can not find prepare group');
+            callback('can not find prepare group', ERR.SERVER_ERROR);
         }else{
             exports.isGroupMember(group._id, userId, callback);
         }
