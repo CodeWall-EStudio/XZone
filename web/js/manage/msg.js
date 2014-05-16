@@ -1,4 +1,4 @@
-define(['config','cache','helper/view'],function(config,Cache,View){
+define(['../school/config','cache','helper/view'],function(config,Cache,View){
 	var	handerObj = $(Schhandler);
 	var msg = config.msg;
 

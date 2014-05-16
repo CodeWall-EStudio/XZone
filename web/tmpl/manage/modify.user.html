@@ -22,9 +22,10 @@
 							<%
 							 for(var i in sglist){
 							 	var item = sglist[i];
+							 	if(!item.type){
 							%>
 							<option value="<%+item.id%>" <%if(data.sizegroup && data.sizegroup.$id == item.id){%>selected<%}%>><%-item.name%></option>
-							<%}%>
+							<%}}%>
 						</select>
 						<div>
 							当前使用<%-data.pre%>%

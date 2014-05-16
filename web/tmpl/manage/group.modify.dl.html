@@ -77,9 +77,10 @@
 						<%
 						 for(var i in sglist){
 						 	var item = sglist[i];
+						 	if(item.type){
 						%>
 						<option value="<%+item.id%>" <%if(sizegroup && sizegroup.$id == item.id){%>selected<%}else{%><%if(!sizegroup && item.isDefault){%>selected<%}}%>><%-item.name%></option>
-						<%}%>
+						<%}}%>
 					</select>
 				</td>
 			</tr>
@@ -154,9 +155,10 @@
 							<%
 							 for(var i in sglist){
 							 	var item = sglist[i];
+							 	if(item.type){
 							%>
 							<option value="<%+item.id%>" <%if(sizegroup && sizegroup.$id == item.id){%>selected<%}else{%><%if(!sizegroup && item.isDefault){%>selected<%}}%>><%-item.name%></option>
-							<%}%>
+							<%}}%>
 						</select>
 					</td>
 				</tr>			
@@ -226,9 +228,10 @@
 							<%
 							 for(var i in sglist){
 							 	var item = sglist[i];
+							 	if(item.type){
 							%>
 							<option value="<%+item.id%>" <%if(sizegroup && sizegroup.$id == item.id){%>selected<%}else{%><%if(!sizegroup && item.isDefault){%>selected<%}}%>><%-item.name%></option>
-							<%}%>
+							<%}}%>
 						</select>
 					</td>
 				</tr>
@@ -302,7 +305,7 @@
 							<%
 								for(var i in prep){
 									var item = prep[i];
-									if(!item.parent){
+									if(!item.parent && !item.status){
 							%>
 								<option data-id="<%+item.id%>" value="<%+item.id%>"><%-item.name%></option>
 							<%

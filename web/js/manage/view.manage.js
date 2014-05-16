@@ -25,6 +25,24 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		return i;
 	}
 
+	function checkObj(idx,n,type){
+		var grade = Cache.get('grade');
+		var subject = Cache.get('subject');		
+		if(type == 'grade'){
+			for(var i in grade){
+				if(idx != i && grade[i] == n){
+					return;
+				}
+			}
+		}else{
+			for(var i in subject){
+				if(idx != i && subject[i] == n){
+					return;
+				}
+			}
+		}
+	}
+
 	function gradeInit(){
 		$('.manage-tabs').hide();	
 		var grade = Cache.get('grade');
@@ -54,16 +72,18 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 								var grade = Cache.get('grade');
 								$('#addGrade').removeClass('hide');
 								$('#addSubject').addClass('hide');
-								$('#gradeNo').val(id);
+								$('#gradeNo').val(id).attr('data-old',id);
 								$('#gradeName').val(grade[id]);
 								$('.btn-save-grade').attr('data-modify',1);
+								$('.btn-del-grade').removeClass('hide');	
 							}else{
 								var subject = Cache.get('subject');
 								$('#addSubject').removeClass('hide');
 								$('#addGrade').addClass('hide');
-								$('#subjectNo').val(id);
+								$('#subjectNo').val(id).attr('data-old',id);
 								$('#subjectName').val(subject[id]);
 								$('.btn-save-sub').attr('data-modify',1);
+								$('.btn-del-sub').removeClass('hide');	
 							}
 						}
 					},
@@ -73,7 +93,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							$('#addSubject').addClass('hide');
 							$('#addGrade input').val('');
 							$('.btn-save-grade').removeAttr('data-modify');
-													
+							$('.btn-del-grade').addClass('hide');						
 						}
 					},
 					'.add-subject' : {
@@ -82,23 +102,54 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							$('#addSubject').removeClass('hide');
 							$('#addSubject input').val('');
 							$('.btn-save-sub').removeAttr('data-modify');	
+							$('.btn-del-sub').addClass('hide');
 						}
 					},
+					'.btn-del-grade' : {
+						'click' : function(){
+							var n = $.trim($('#gradeNo').val());
+							delete grade[n];
+							handerObj.triggerHandler('manage:setkey',{
+								key : 'grade',
+								value : grade
+							});							
+						}
+					},
+					'.btn-del-sub' : {
+						'click' : function(){
+							var n = $.trim($('#subjectNo').val());
+							delete subject[n];
+							handerObj.triggerHandler('manage:setkey',{
+								key : 'subject',
+								value : grade
+							});							
+						}	
+					},					
 					'.btn-save-grade' : {
 						'click' : function(){
 							var v = $.trim($('#gradeName').val());
 							var n = $.trim($('#gradeNo').val());
+							var on = $('#gradeNo').attr('data-old');
 							var modify = $(this).attr('data-modify');							
 							if(v == '' || n == ''){
 								handerObj.triggerHandler('msg:error',77);
 								return;
 							}
-
+							if(parseInt(n) == 0 || parseInt(n) > 99){
+								handerObj.triggerHandler('msg:error',75);
+								return;
+							}
 							if(grade){
 								if(modify){
-									grade[n] = v;
+									if(!grade[n] || checkObj(v,n,'grade')){
+										grade[n] = v;
+										delete grade[on];
+									}else{
+										handerObj.triggerHandler('msg:error',79);
+									}									
+									
 								}else{
-									if(!grade[n]){
+									if(!grade[n] || checkObj(v,n,'grade')){
 										grade[n] = v;
 									}else{
 										handerObj.triggerHandler('msg:error',79);
@@ -118,16 +169,26 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						'click' : function(){
 							var v = $.trim($('#subjectName').val());
 							var n = $.trim($('#subjectNo').val());
+							var on = $('#gradeNo').attr('data-old');
 							var modify = $(this).attr('data-modify');
 							if(v == '' || n == ''){
 								handerObj.triggerHandler('msg:error',77);
 								return;
-							}							
+							}
+							if(parseInt(n) == 0 || parseInt(n) > 99){
+								handerObj.triggerHandler('msg:error',75);
+								return;
+							}
 							if(subject){
 								if(modify){
-									subject[n] = v;
+									if(!subject[n] || checkObj(v,n,'subject')){
+										subject[n] = v;
+										delete subject[on];
+									}else{
+										handerObj.triggerHandler('msg:error',79);
+									}
 								}else{
-									if(!subject[n]){
+									if(!subject[n] || checkObj(v,n,'subject')){
 										subject[n] = v;
 									}else{
 										handerObj.triggerHandler('msg:error',79);
@@ -162,7 +223,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		var grade = Cache.get('grade');
 		var subject = Cache.get('subject');
 
-		if(isInit['size']){
+		
+		if(isInit.size){
 			$('#sizeManage').show();
 		}else{		
 			var view = new View({
@@ -179,6 +241,9 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						isLoading = true;
 						handerObj.triggerHandler('manage:sgrouplist');
 					}
+
+					$('.manage-tabs').hide();	
+					$('#sizeManage').show();
 				},
 				data : {
 					list : false
@@ -188,7 +253,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						'click' : function(e){
 							nowSizeGroupId = 0;
 							$('.del-size-group').prop({'disabled':true});
-							$("#addSize").removeClass('hide').removeAttr('data-modify').removeAttr('data-id');
+							$("#addSize").removeClass('hide');
+							$(".btn-save-size").removeClass('hide').removeAttr('data-modify').removeAttr('data-id');
 							resetSize();
 						}
 					},
@@ -565,7 +631,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 
 	function delSizeGroup(e,d){
 		isLoading = false;
-		resizeSize();
+		//resizeSize();
 		$("#addSize").addClass('hide');
 		$('.size-group'+d).remove();
 

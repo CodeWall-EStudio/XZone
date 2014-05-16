@@ -76,7 +76,7 @@
 		<td><%-glist[item.grade]%></td>
 		<td><%-subject[item.tag]%></td>
 		<td class="td-pre" data-fid="<%-item.rootFolder.$id%>" title="查看文件统计"><%-item.folderCount%></td>
-		<td><%-item.stname%></td>
+		<td><%if(item.status){%>正常<%}else{%><%-item.stname%><%}%></td>
 	</tr>
 	<%
 		}
@@ -103,7 +103,7 @@
 		<td><%-glist[item.grade]%></td>
 		<td><%-subject[item.tag]%></td>
 		<td class="td-pre" data-fid="<%-item.rootFolder.$id%>" title="查看文件统计"><%-item.folderCount%></td>
-		<td><%-item.stname%></td>
+		<td><%if(item.status){%>正常<%}else{%><%-item.stname%><%}%></td>
 	</tr>
 	<%}}%>
 <%}%>

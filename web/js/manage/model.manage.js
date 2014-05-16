@@ -218,9 +218,8 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 				handerObj.triggerHandler('cache:set',{key: 'sizegroup' ,data: list,type:1});
 				// handerObj.triggerHandler('cache:set',{key: 'sizegroup' ,data: list,type:1});
 				handerObj.triggerHandler('manage:sizegroupadded', obj);
-			}else{
-				handerObj.triggerHandler('msg:error',data.err);
 			}
+			handerObj.triggerHandler('msg:error',data.err);
 		}
 		request.post(opt,success);			
 	}
@@ -242,9 +241,8 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 				handerObj.triggerHandler('cache:set',{key: 'sizegroup' ,data: list,type:1});
 				// handerObj.triggerHandler('cache:set',{key: 'sizegroup' ,data: list,type:1});
 				handerObj.triggerHandler('manage:sizegroupmodifyed', obj);
-			}else{
-				handerObj.triggerHandler('msg:error',data.err);
 			}
+			handerObj.triggerHandler('msg:error',data.err);
 		}
 		request.post(opt,success);
 	}
@@ -262,9 +260,8 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 				delete list[d.sizegroupId];
 				handerObj.triggerHandler('cache:set',{key: 'sizegroup' ,data: list,type:1});
 				handerObj.triggerHandler('manage:sizegroupdeled', d.sizegroupId);
-			}else{
-				handerObj.triggerHandler('msg:error',data.err);
 			}
+			handerObj.triggerHandler('msg:error',data.err);
 		}
 		request.post(opt,success);
 	}		
