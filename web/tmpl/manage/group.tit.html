@@ -12,8 +12,18 @@
 			<i class="ad"></i>
 		<%}%>
 	</th>
+	<th class="group-order" data-on="grade" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
+		学期 
+		<%if(on == 'grade' && od== 1){%>
+			<i class="ad"></i>
+		<%}else if(on == 'grade' && od== -1){%>
+			<i class="au"></i>
+		<%}else{%>
+			<i class="ad"></i>
+		<%}%>		
+	</th>	
 	<th class="group-order" data-on="memberCount" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
-		成员 
+		成员数 
 		<%if(on == 'memberCount' && od== 1){%>
 			<i class="ad"></i>
 		<%}else if(on == 'memberCount' && od== -1){%>
@@ -27,16 +37,6 @@
 		<%if(on == 'archivable' && od== 1){%>
 			<i class="ad"></i>
 		<%}else if(on == 'archivable' && od== -1){%>
-			<i class="au"></i>
-		<%}else{%>
-			<i class="ad"></i>
-		<%}%>		
-	</th>
-	<th class="group-order" data-on="grade" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
-		学期 
-		<%if(on == 'grade' && od== 1){%>
-			<i class="ad"></i>
-		<%}else if(on == 'grade' && od== -1){%>
 			<i class="au"></i>
 		<%}else{%>
 			<i class="ad"></i>
@@ -63,7 +63,7 @@
 		<%}%>		
 	</th>
 	<th class="group-order" data-on="used" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
-		容量 
+		已使用 
 		<%if(on == 'used' && od== 1){%>
 			<i class="ad"></i>
 		<%}else if(on == 'used' && od== -1){%>
@@ -73,7 +73,7 @@
 		<%}%>		
 	</th>
 <%}else if(type=='dep'){%>
-	<th>序号 <i class="ad"></i></th>
+	<th>排序号 <i class="ad"></i></th>
 	<th class="group-order" data-on="name" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
 		名称 
 		<%if(on == 'name' && od== 1){%>
@@ -85,7 +85,7 @@
 		<%}%>
 	</th>
 	<th class="group-order" data-on="memberCount" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
-		成员 
+		成员数 
 		<%if(on == 'memberCount' && od== 1){%>
 			<i class="ad"></i>
 		<%}else if(on == 'memberCount' && od== -1){%>
@@ -105,7 +105,7 @@
 		<%}%>		
 	</th>
 	<th class="group-order" data-on="size" data-od="<%if(od==1){%>-1<%}else{%>1<%}%>">
-		容量 
+		容量组
 		<%if(on == 'size' && od== 1){%>
 			<i class="ad"></i>
 		<%}else if(on == 'size' && od== -1){%>

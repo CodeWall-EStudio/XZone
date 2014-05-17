@@ -1,5 +1,12 @@
 <%if(type=='group' || type==1){%>
 		<td><a href="/#gid=<%-id%>" target="_blank"><%-name%></a></td>
+		<td>
+			<%if(grade){%>
+				<%-prep[grade].name%>
+			<%}else{%>
+				-
+			<%}%>
+		</td>		
 		<td><%-memberCount%></td>
 		<td>
 			<%if(archivable){%>
@@ -8,13 +15,7 @@
 				自由小组
 			<%}%>
 		</td>
-		<td>
-			<%if(grade){%>
-				<%-prep[grade].name%>
-			<%}else{%>
-				-
-			<%}%>
-		</td>
+
 		<td>
 			<%-stname%>
 		</td>
@@ -25,7 +26,7 @@
 		<td><%-order%></td>
 		<td><a href="/#gid=<%-id%>" target="_blank"><%-name%></a></td>
 		<td><%-memberCount%></td>
-		<td><%-stname%></td>
+		<td><td class="td-status"><%if(!status){%>正常<%}else{%><%-stname%><%}%></td></td>
 		<td><%-size%></td>
 		<td><%-pre%>%</td>
 <%}else if(type=='prep'||type==3){%>	
@@ -43,5 +44,5 @@
 		<td><%-grade%></td>
 		<td><%-tag%></td>
 		<td><%-folderCount%></td>
-		<td><%if(status){%>正常<%}else{%><%-stname%><%}%></td>
+		<td><%if(!status){%>正常<%}else{%><%-stname%><%}%></td>
 <%}%>

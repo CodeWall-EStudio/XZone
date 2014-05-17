@@ -316,7 +316,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		//取消修改
 		'.btn-reset' : {
 			'click' : function(){
-				console.log(nowType);	
+				$('#groupModifyZone').hide();
 			}
 		},
 		//设置管理员
@@ -607,7 +607,6 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 	//小组列表加载完成
 	function groupLoad(e,d){
 		//status : 0 已审核 1 审核中  2 已归档 3 已关闭
-		//console.log(d.total);
 		isLoading = false;
 		d.type = nowType;
 		var prep = Cache.get('preps').g2key;
@@ -654,20 +653,32 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 	}
 
 	//添加
-	function addShareUser(obj){
+	function addShareUser(obj,type){
 		//console.log(obj);
-		if($('.shareUser'+obj._id).length==0){
+		var id = 'memberUser';
+		//管理员
+		if(type){
+			id = 'manageUser';
+		}
+		obj.tid = id;
+		if($('.'+id+obj._id).length==0){
 			var view = new View({
 				target : $('#shareToUser'),
-				tplid : 'share.user.span',
+				tplid : 'manage/share.user.span',
 				data : obj
 			});
 			view.appendPanel();
 		}
 	}
 	//删除
-	function delShareUser(obj){
-		$('.shareUser'+obj._id).remove();
+	function delShareUser(obj,type){
+		var id = 'memberUser';
+		//管理员
+		if(type){
+			id = 'manageUser';
+		}
+
+		$('.'+ 	id+obj._id).remove();
 		$('.userClick'+obj._id).prop({
 			'checked':false
 		}).parents('ul.child').prevAll('.dep-click').prop({
@@ -796,9 +807,9 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 							for(var i=0,l=ul.length;i<l;i++){
 								var item = ul[i];
 								if(check){
-									addShareUser(item);
+									addShareUser(item,d.type);
 								}else{
-									delShareUser(item);
+									delShareUser(item,d.type);
 								}
 							}
 						}
