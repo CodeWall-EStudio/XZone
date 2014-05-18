@@ -273,7 +273,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 
 				if(nowType == 'group'){
 					obj.archivable = archivable;
-					if(archivable){
+					if(parseInt(archivable)){
 						var preps = Cache.get('preps'),
 							prepobj = preps.g2key;
 						obj.grade = $('.group-prep').val();
@@ -295,7 +295,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						obj.tag = sid;						
 					}
 				}
-
 
 				if(modify){
 					id = $('#modifyZone .group-name').attr('data-id');
