@@ -6,17 +6,19 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		for(var i in obj){
 			var item = obj[i];
 			item.id = item._id;
-			item.pre = util.getNums(item.used/item.size)*100;
+			item.pre = Math.round(util.getNums(item.used/item.size)*100);
 			if(item.size){
 				item.size = util.getSize(item.size);
 			}else{
 				item.size = 0;
 			}
+			
 			if(item.used){
 				item.used = util.getSize(item.used);
 			}else{
 				item.used = 0;
 			}
+
 			item.osize = item.size;
 			item.oused = item.used;	
 			list[item.id] = item;
@@ -51,17 +53,17 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			cgi : config.cgi.usermodify,
 			data : d
 		}
-		var success = function(d){
-			if(d.err == 0){
-				
+
+		var success = function(data){
+			if(data.err == 0){
+				handerObj.triggerHandler('user:modifysuc',d);
 				// var list = convent(d.result);
 				// handerObj.triggerHandler('user:modifysuc',{
 				// 	list : list,
 				// 	total : total
 				// });
-			}else{
-				handerObj.triggerHandler('msg:error',d.err);
 			}
+			handerObj.triggerHandler('msg:error',data.err);
 		}
 		request.post(opt,success);			
 	}
@@ -70,12 +72,16 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		var opt = {
 			cgi : config.cgi.filestatus,
 			data : {
-				folderId : d
+				folderId : d.id
 			}
 		}	
+		var sid = d.sid;
 		var success = function(d){
 			if(d.err == 0){
+				d.result.osize = d.result.totalSize;
 				d.result.size = util.getSize(d.result.totalSize);
+				d.result.sid = sid;
+
 				handerObj.triggerHandler('user:statusload',d.result);
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);

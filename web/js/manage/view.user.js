@@ -1,10 +1,13 @@
-define(['../school/config','../school/cache','../school/helper/view','model.user'],function(config,Cache,View){
+define(['../school/config','../school/cache','../school/helper/view','../school/helper/util','model.user'],function(config,Cache,View,Util){
 	var handerObj = $(Schhandler);
 	var isInit = {}, //初始化
 		userList = {},
 		isLoading = false;
 		nowUin = 0,
 		nowPage = 0,
+		nowOrder = '{name:1}',
+		nowOd = 1,
+		nowOn = 'name',
 		nowKey = '',
 		pageNum = config.pagenum;
 
@@ -15,6 +18,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 
 	function getUser(obj){
 		obj.pageNum = pageNum;
+		obj.order = nowOrder;
 		handerObj.triggerHandler('user:search',obj);
 	}
 
@@ -48,6 +52,15 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 	//用户列表加载完成
 	function userLoad(e,d){
 		$.extend(userList,d.list);
+
+		if(nowOd == 1){
+			$('th.order-'+nowOn).attr('data-od',-1);
+			$('th.order-'+nowOn+' i').attr('class','au');
+		}else{
+			$('th.order-'+nowOn).attr('data-od',1);
+			$('th.order-'+nowOn+' i').attr('class','ad');
+		}
+
 		var view = new View({
 			target : $('#userList'),
 			tplid : 'manage/search.user.list',
@@ -64,12 +77,27 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 
 	function userModifySuc(e,d){
 		$('.btn-user-colse').prop({'disabled':true});
-		$.extend(userList[d.id],d);
+		$('.btn-user-open').prop({'disabled':true});
+
+		$.extend(userList[d.userId],d);
+		var sglist = Cache.get('sizegroup');s
+
+		if(d.sizegroupId){
+			userList[d.userId].size = sglist[d.sizegroupId].size;
+			userList[d.userId].sizegroup.$id = d.sizegroupId;
+			userList[d.userId].pre = Util.getNums(userList[d.userId].used/userList[d.userId].size)*100;
+			if(userList[d.userId].size){
+				userList[d.userId].size = Util.getSize(userList[d.userId].size);
+			}else{
+				userList[d.userId].size = 0;
+			}			
+		}
+
 		var view = new View({
-			target : $('#tr-user'+d.id),
+			target : $('#tr-user'+d.userId),
 			tplid : 'manage/search.user.list.one',
 			data : {
-				item : d
+				item : userList[d.userId]
 			}
 		});
 		view.createPanel();
@@ -85,6 +113,10 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 			var view = new View({
 				target : $('#userMa'),
 				tplid : 'manage/search.user',
+				data : {
+					on : nowOn,
+					od : nowOd
+				},
 				after : function(){
 					isInit.user = true;
 					getUser({
@@ -110,10 +142,28 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 							handerObj.triggerHandler('user:getfolder',id);
 						}
 					},
+					'.user-order' : {
+						'click' : function(){
+							var on = $(this).attr('data-on'),
+								od = $(this).attr('data-od');
+							nowOn = on;
+							nowOd = od;
+							nowOrder = '{"'+on+'":'+od+'}';
+							reloadUser();
+							var obj = {
+								page : 0
+							}
+							getUser(obj);							
+						}
+					},
 					'.user-data' : {
 						'click' : function(){
 							var id = $(this).attr('data-id');
-							handerObj.triggerHandler('user:folderstatus',id);
+							var sid = $(this).attr('data-sid');
+							handerObj.triggerHandler('user:folderstatus',{
+								id : id,
+								sid : sid
+							});
 						}
 					},
 					'.user-search-key' : {
@@ -139,11 +189,30 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 							if($(e.target).hasClass('user-data') || $(e.target).hasClass('user-fold')){
 								return;
 							}
-							$('.btn-user-colse').prop({'disabled':false});
+							//$('.btn-user-colse').prop({'disabled':false});
 							nowUin = $(this).attr('data-id');
+							var status = parseInt($(this).attr('data-status'));
+
+							if(status){
+								$('#userMa .btn-user-open').prop({'disabled':false});
+								$('#userMa .btn-user-colse').prop({'disabled':true});
+							}else{
+								$('#userMa .btn-user-open').prop({'disabled':true});
+								$('#userMa .btn-user-colse').prop({'disabled':false});
+							}
+
 							$('.tr-user').removeClass('group-tr-selected');
 							$(this).addClass('group-tr-selected');
 							modifyUser(nowUin);
+						}
+					},
+					'.btn-user-open' : {
+						'click' : function(){
+							var obj = {
+								userId : nowUin,
+								status : 0
+							}
+							handerObj.triggerHandler('user:modify',obj);
 						}
 					},
 					'.btn-user-colse' : {
@@ -189,7 +258,9 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 
 	function statusLoad(e,d){
 		isLoading = false;
-		//console.log(d);
+		var sglist = Cache.get('sizegroup');
+		d.allsize = sglist[d.sid].size;
+		d.pre = Math.round(Util.getNums(d.osize/d.allsize)*100);
 		var view = new View({
 			target : $("#userModifyBlock"),
 			tplid : 'manage/status.user',
@@ -406,6 +477,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.user
 
 	var handlers = {
 		'user:listload' : userLoad,
+		'user:modifysuc' : userModifySuc,
 		'user:statusload' : statusLoad,
 		'user:depsload' : depsLoad,
 		'user:foldload' : foldLoad

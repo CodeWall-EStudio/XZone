@@ -408,11 +408,15 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				status = t.attr('data-status'),
 				arch = t.attr('data-arch');
 			var t1 = $(e.target),
-				fid = t1.attr('data-fid');
+				fid = t1.attr('data-fid'),
+				sid = t1.attr('data-sid');
 			//显示统计
 			if(fid){
 				if(!isLoading){
-					handerObj.triggerHandler('group:folderstatus',fid);
+					handerObj.triggerHandler('group:folderstatus',{
+						id: fid,
+						sid : sid || 0
+					});
 				}
 				return;
 			}
@@ -629,7 +633,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		//status : 0 已审核 1 审核中  2 已归档 3 已关闭
 		isLoading = false;
 		d.type = nowType;
-
 		var prep = Cache.get('preps').g2key;
 		var grade = Cache.get('grade');
 		var subject = Cache.get('subject');		
@@ -866,7 +869,13 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 
 	function statusLoad(e,d){
 		isLoading = false;
-		//console.log(d);
+		var sglist = Cache.get('sizegroup');
+		if(d.sid){
+			d.allsize = sglist[d.sid].size;
+			d.pre = Math.round(Util.getNums(d.osize/d.allsize)*100);			
+		}
+
+		console.log(d);
 		var view = new View({
 			target : $("#groupModifyZone"),
 			tplid : 'manage/status',
@@ -980,8 +989,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 			tplid : 'manage/group.list.one',
 			data : d
 		});
-		// view.createPanel();		
-		// $('#tableBody').append(target);
+		view.createPanel();		
+		$('#tableBody').append(target);
 	}
 
 	function modifySuc(e,d){

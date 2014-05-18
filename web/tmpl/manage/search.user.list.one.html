@@ -1,4 +1,4 @@
-		<td><%-item.nick%></td>
+		<td><a class="user-fold" data-id="<%-item.rootFolder.$id%>"><%-item.nick%></a></td>
 		<td><%-item.name%></td>
 		<td>
 			<%if(item.status){%>
@@ -8,4 +8,4 @@
 			<%}%>
 		</td>
 		<td><%-item.size%></td>
-		<td><%-item.pre%>%</td>
+		<td><a class="user-data" data-id="<%-item.rootFolder.$id%>" data-sid="<%-item.sizegroup.$id%>"><%-item.pre%>%</a></td>

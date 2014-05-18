@@ -46,9 +46,7 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 		}else{
 			$("#btnZone").hide();
 		}
-		// handerObj.triggerHandler('group:init',myGroups[nowGid]);
 		if(myGroups[nowGid]){
-			//handerObj.triggerHandler('group:info',{gid:nowGid,type:'group'});
 			handerObj.triggerHandler('group:infosuc',myGroups[nowGid]);
 		}else{
 			handerObj.triggerHandler('msg:error',1010);
@@ -174,6 +172,11 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 	        handerObj.triggerHandler('fold:init',nowData); 
 	        handerObj.triggerHandler('upload:param',nowData);
     	}
+    	//延时2秒加载小组的详细资料拿用户id
+    	
+    	setTimeout(function(){
+
+    	},2000);
 	}
 
 	function newBoard(){

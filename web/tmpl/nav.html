@@ -12,8 +12,10 @@
 						%>
 							<li>
 								<a <%if(item.auth){%>id="my-m-group<%+item.id%>"<%}%>href="#gid=<%+item.id%>" title="<%+item.name %>"><%-item.name %> </a>
-								<%if(item.auth){%>
+								<%if(item.auth && item.status == 0){%>
 									<span><a data-id="<%+item.id%>" class="manage-one-group">管理</a></span>
+								<%}else if(item.auth && item.status == 1){%>
+									待审核
 								<%}%>
 							</li>
 						<%}%>

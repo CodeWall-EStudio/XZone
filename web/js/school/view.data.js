@@ -9,64 +9,71 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 				var list = [],
 					clist = [];
 				var filetype = config.filetype;
-				for(var i in data.list){
-					var item = data.list[i];
-					list.push([filetype[item.type],item.size,item.count]);
-					clist.push([filetype[item.type],item.count]);
-				};
-				var plot2 = jQuery.jqplot ('dataPre', [list],{
-					seriesDefaults: {
-						renderer: jQuery.jqplot.PieRenderer, 
-						rendererOptions: {
-							padding: 20, 
-							fill: true,
-							showDataLabels: true, 
-							sliceMargin: 4, 
-							lineWidth: 5
-							}
-						}, 
-						legend: { 
-							show:true, 
-							location: 'e' 
-						},
-						cursor : {
-							show: true,              //是否显示光标  
-							showTooltip: true,      // 是否显示提示信息栏  
-							followMouse: false,
+		if(data.totalCount){
+			for(var i in data.list){
+				var item = data.list[i];
+				list.push([filetype[item.type],item.size,item.count]);
+				clist.push([filetype[item.type],item.count]);
+			};
+			var plot2 = jQuery.jqplot ('dataPre', [list],{
+				seriesDefaults: {
+					renderer: jQuery.jqplot.PieRenderer, 
+					rendererOptions: {
+						padding: 20, 
+						fill: true,
+						showDataLabels: true, 
+						sliceMargin: 4, 
+						lineWidth: 5
 						}
+					}, 
+					legend: { 
+						show:true, 
+						location: 'e' 
+					},
+					cursor : {
+						show: true,              //是否显示光标  
+						showTooltip: true,      // 是否显示提示信息栏  
+						followMouse: false,
 					}
-				);
-
-				var plot3 = jQuery.jqplot ('dataPre1', [clist],{
-					seriesDefaults: {
-						renderer: jQuery.jqplot.PieRenderer, 
-						rendererOptions: {
-							padding: 20, 
-							fill: true,
-							showDataLabels: true, 
-							sliceMargin: 4, 
-							lineWidth: 5
-							}
-						}, 
-						legend: { 
-							show:true, 
-							location: 'e' 
-						},
-						cursor : {
-							show: true,              //是否显示光标  
-							showTooltip: true,      // 是否显示提示信息栏  
-							followMouse: false,
+				}
+			);
+		}else{
+			$('#dataPre').html('暂无文件');
+		}
+		if(data.totalSize){
+			var plot3 = jQuery.jqplot ('dataPre1', [clist],{
+				seriesDefaults: {
+					renderer: jQuery.jqplot.PieRenderer, 
+					rendererOptions: {
+						padding: 20, 
+						fill: true,
+						showDataLabels: true, 
+						sliceMargin: 4, 
+						lineWidth: 5
 						}
+					}, 
+					legend: { 
+						show:true, 
+						location: 'e' 
+					},
+					cursor : {
+						show: true,              //是否显示光标  
+						showTooltip: true,      // 是否显示提示信息栏  
+						followMouse: false,
 					}
-				);	
-				data.filetype = config.filetype;
-				data.getSize = Util.getSize;
-				var view = new View({
-					target : $('#dataTable'),
-					tplid : 'data.table',
-					data : data,					
-				});
-				view.createPanel();
+				}
+			);	
+			data.filetype = config.filetype;
+			data.getSize = Util.getSize;
+			var view = new View({
+				target : $('#dataTable'),
+				tplid : 'data.table',
+				data : data,					
+			});
+			view.createPanel();
+		}else{
+			$('#dataPre1').html('暂无文件');
+		}
 	}
 
 	function loadData(obj){

@@ -371,10 +371,9 @@ define(['../config'], function(config) {
 		//alert('function:changeTwoDecimal->parameter error');  
 			return 0;  
 		}  
-		var f_x = Math.round(x*100)/100;  
+		var f_x = Math.ceil(x*100)/100;  
 		var s_x = f_x.toString();  
 		var pos_decimal = s_x.indexOf('.');  
-		
 		if (pos_decimal < 0)  
 		{
 			return f_x;
@@ -383,7 +382,6 @@ define(['../config'], function(config) {
 		{  
 			s_x += '0';  
 		} 
-
 		return s_x;      	
     }
 
@@ -402,12 +400,15 @@ define(['../config'], function(config) {
         return getNums(size) + units[unit];    	
     }
 
-    var getStatus = function(status){
+    var getStatus = function(status,approve){
     	// /0 已审核 1 审核中  2 已归档 3 已关闭
     	switch(status){
     		case 0:
     			return '已审核';
     		case 1:
+    			if(!approve){
+    				return '审核不通过';
+    			}
     			return '审核中';
     		case 2:
     			return '已归档';

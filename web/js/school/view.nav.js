@@ -14,6 +14,15 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		modelNav.triggerHandler('nav:init',util.getParam('ticket'));
 	}
 
+	function createSuc(e,d){
+		var myinfo = Cache.get('myinfo');
+		console.log(d.list);
+		myinfo.group.push(d.list);
+		myinfo.group2key[d.list.id] = d.list;
+
+		handerObj.triggerHandler('cache:set',{key: 'myinfo',data: myinfo});
+		handerObj.triggerHandler('nav:load',myinfo);
+	}
 
 	function navLoad(e,d){
 		var opt = {
@@ -288,15 +297,6 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 			handerObj.triggerHandler('nav:getdep',{type:'modify',data: d});
 		}
 	}	
-
-	function createSuc(e,d){
-		var myinfo = Cache.get('myinfo');
-		myinfo.group.push(d.list);
-		myinfo.group2key[d.list.id] = d.list;
-
-		handerObj.triggerHandler('cache:set',{key: 'myinfo',data: myinfo});
-		handerObj.triggerHandler('nav:load',myinfo);
-	}
 
 	function modifySuc(e,d){
 		$("#my-m-group"+d.id).text(d.name).attr('title',d.name);

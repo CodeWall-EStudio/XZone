@@ -58,6 +58,9 @@
 <%}%>
 </div>
 <ul class="act-zone">
+	<%if(gid){%>
+	<li class="dropdown" id="changeUser"></li>
+	<%}%>
 	<li class="all-file file-type dropdown" id="changeFileType">
 		<a id="drop-type" "button" data-toggle="dropdown" >
 			<%-filetype[type]%>

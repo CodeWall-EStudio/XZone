@@ -9,7 +9,6 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		var g2key = {};
 		for(var i in list){
 			list[i] = conventGroup(list[i]);
-
 			g2key[list[i].id] = list[i];
 		}
 
@@ -33,7 +32,7 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		}else{
 			data.used = 0;
 		}		
-		data.stname = util.getStatus(data.status);
+		data.stname = util.getStatus(data.status,data.validateStatus);
 		data.osize = data.size;
 		data.oused = data.used;
 		data.st = data.startTime;
@@ -259,12 +258,15 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		var opt = {
 			cgi : config.cgi.filestatus,
 			data : {
-				folderId : d
+				folderId : d.id
 			}
 		}	
+		var sid = d.sid
 		var success = function(d){
 			if(d.err == 0){
+				d.result.osize = d.result.totalSize;				
 				d.result.size = util.getSize(d.result.totalSize);
+				d.result.sid = sid;
 				handerObj.triggerHandler('group:statusload',d.result);
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);

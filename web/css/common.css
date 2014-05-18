@@ -143,7 +143,7 @@ a:hover{
 }
 .header .menu li a{
 	display:inline-block;
-	width:120px;
+	width:100px;
 	overflow:hidden;
 	text-overflow:ellipsis;
 	white-space:nowrap;
