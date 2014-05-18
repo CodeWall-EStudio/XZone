@@ -215,7 +215,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 
 
 				var sem = 0;
-				if(nowType == 'prep'){
+				if(nowType == 'prep' || nowType=='pschool'){
 					//添加学年
 					if($('.start-time').length){
 						sem = 1;
@@ -287,7 +287,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 					var order = $('.group-no').val();
 					obj.order = order;
 					obj.sizegroupId = sgid;
-				}else if(nowType == 'prep'){
+				}else if(nowType == 'prep' || nowType == 'pschool'){
 					if(sem){
 						obj.startTime = st;
 						obj.endTime = et;
@@ -297,6 +297,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 						obj.tag = sid;						
 					}
 				}
+
 
 				if(modify){
 					id = $('#modifyZone .group-name').attr('data-id');
@@ -565,20 +566,25 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		}
 		var slist = Cache.get('sizegroup');
 		d.sglist = slist;
+		d.type = nowType;
+
+		//console.log(d,nowType);
 		var view = new View({
 			target : $('#groupModifyZone'),
 			tplid : 'manage/group.modify.dl',
 			data : d,
 			after : function(){
 				if(nowType == 'pschool'){
-						$('.start-time').pickmeup({
-    						format  : 'Y-m-d',
-    						hide_on_select : true
-						});
-						$('.end-time').pickmeup({
-    						format  : 'Y-m-d',
-    						hide_on_select	: true
-						});						
+					var st = new Date(d.startTime);
+					var et = new Date(d.endTime);
+					$('.start-time').pickmeup({
+						format  : 'Y-m-d',
+						hide_on_select : true
+					});
+					$('.end-time').pickmeup({
+						format  : 'Y-m-d',
+						hide_on_select	: true
+					});						
 				}
 			}		
 		});
@@ -609,6 +615,7 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 		//status : 0 已审核 1 审核中  2 已归档 3 已关闭
 		isLoading = false;
 		d.type = nowType;
+
 		var prep = Cache.get('preps').g2key;
 		var grade = Cache.get('grade');
 		var subject = Cache.get('subject');		
