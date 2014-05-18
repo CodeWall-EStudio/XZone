@@ -409,7 +409,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	function bind(){
 		$('#groupTable').on('click','.group-tr',function(e){
 			var t = $(this),
-				id = t.attr('data-id');
+				id = t.attr('data-id'),
+				status = t.attr('data-status'),
 				arch = t.attr('data-arch');
 			var t1 = $(e.target),
 				fid = t1.attr('data-fid');
@@ -617,9 +618,11 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 			$('.group-action-btn button.apv-notpass').addClass('active').prop({
 				'disabled' : true
 			});						
-			$('.group-action-btn button.del-group').removeClass('active').prop({
-				'disabled' : false
-			});
+			if(d.status != 4){
+				$('.group-action-btn button.del-group').removeClass('active').prop({
+					'disabled' : false
+				});
+			}
 			$('.group-action-btn button.del-prep').removeClass('active').prop({
 				'disabled' : false
 			});						
@@ -998,7 +1001,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 			d.prep = tg2key;
 		}		
 		var id = d.id;
-
 		var view = new View({
 			target : $('.group-tr'+id),
 			tplid : 'manage/group.list.one',

@@ -301,6 +301,7 @@
 				<tr>
 					<td>学期:</td>
 					<td>
+						<input class="group-name" type="hidden" <%if(typeof id != 'undefined'){%>data-id="<%+id%>"<%}%> />
 						<select id="prepPrep">
 							<%
 								for(var i in prep){

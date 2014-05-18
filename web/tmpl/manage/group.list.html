@@ -3,7 +3,7 @@
 		for(var i in g2key){
 			var item = g2key[i];
 	%>
-	<tr data-id="<%+item.id%>" <%if(item.archivable){%>data-arch="<%=item.archivable%>"<%}%> class="group-tr group-tr<%-item.id%>">
+	<tr data-id="<%+item.id%>"  data-status="<%+item.status%>" <%if(item.archivable){%>data-arch="<%=item.archivable%>"<%}%> class="group-tr group-tr<%-item.id%>">
 		<td><a href="/#gid=<%-item.id%>" target="_blank"><%-item.name%></a></td>
 		<td>
 			<%if(item.grade){%>
