@@ -254,6 +254,8 @@ exports.modify = function(req, res){
     var members = params.members;
     var managers = params.managers;
     var sizegroup = params.sizegroupId;
+	var startTime = params.startTime;
+	var endTime = params.endTime;
 
     var parentId = group.parent && group.parent.oid;
 
@@ -303,6 +305,12 @@ exports.modify = function(req, res){
         if('status' in params){
             doc.status = params.status;
         }
+		if(startTime){
+			doc.startTime = startTime;
+		}
+		if(endTime){
+			doc.endTime = endTime;
+		}
 
         if(sizegroup){
             doc.sizegroup = new DBRef('sizegroup', sizegroup._id);

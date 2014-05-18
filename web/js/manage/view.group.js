@@ -179,12 +179,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 					validateText : 'pass',
 					validateStatus : 0
 				}
-				handerObj.triggerHandler('group:modify',obj);				
-				// handerObj.triggerHandler('group:approve',{
-				// 	groupId:nowGroup.id,
-				// 	validateText : 'pass',
-				// 	validateStatus : 1
-				// });
+				//handerObj.triggerHandler('group:modify',obj);				
+				handerObj.triggerHandler('group:approve',obj);
 			}
 		},
 		//保存修改
