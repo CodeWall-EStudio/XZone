@@ -221,6 +221,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						sem = 1;
 						st = $('.start-time').pickmeup('get_date').getTime();
 						et = $('.end-time').pickmeup('get_date').getTime();
+						et += 3600*24000;
+						et -= 1000;
 
 						if(st >= et){
 							alert('结束时间不能早于开始时间')
