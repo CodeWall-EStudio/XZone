@@ -223,7 +223,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						et = $('.end-time').pickmeup('get_date').getTime();
 						et += 3600*24000;
 						et -= 1000;
-
 						if(st >= et){
 							alert('结束时间不能早于开始时间')
 						}
@@ -258,6 +257,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						return;
 					}
 				}
+
 
 				var obj = {
 					name : name,
