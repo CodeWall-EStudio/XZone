@@ -329,7 +329,24 @@ define(['../config'], function(config) {
 	var formatTime = function(time) {
 		var d = new Date(time);
 
-		return d.getFullYear(d)+'-'+(d.getMonth()+1)+'-'+d.getDate() + ' ' + d.getHours()+':'+d.getMinutes();
+		var m = d.getMonth()+1;
+		var day = d.getDate();
+		var h =  d.getHours();
+		var m1 = d.getMinutes();
+		if(m<10){
+			m = '0'+m;
+		}
+		if(day<10){
+			day = '0'+day;
+		}
+		if(h<10){
+			h = '0' + h;
+		}
+		if(m1 < 10){
+			m1 = '0' + m1;
+		}
+
+		return d.getFullYear(d)+'-'+m+'-'+day + ' ' + h+':'+m1;
 	}
 
 

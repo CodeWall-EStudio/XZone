@@ -1,4 +1,4 @@
-define(['../school/config','../school/cache','../school/helper/view','model.group'],function(config,Cache,View){
+define(['../school/config','../school/cache','../school/helper/view','../school/helper/util','model.group'],function(config,Cache,View,Util){
 	var handerObj = $(Schhandler);
 	var isInit = false, //初始化
 		isListBind = false, //已经绑定
@@ -577,14 +577,28 @@ define(['../school/config','../school/cache','../school/helper/view','model.grou
 				if(nowType == 'pschool'){
 					var st = new Date(d.startTime);
 					var et = new Date(d.endTime);
+					// $('.start-time').datetimepicker({
+					// 	timepicker:false,
+					// 	value:st,
+					// 	format:'Y-m-d',
+					// 	lang:'ch'
+					// });
+					// $('.end-time').datetimepicker({
+					// 	timepicker:false,
+					// 	value:et,
+					// 	format:'Y-m-d',
+					// 	lang:'ch'
+					// });	
 					$('.start-time').pickmeup({
 						format  : 'Y-m-d',
 						hide_on_select : true
-					});
+					}).val(Util.time(st));
+					$('.start-time').pickmeup('set_date', st);
 					$('.end-time').pickmeup({
 						format  : 'Y-m-d',
 						hide_on_select	: true
-					});						
+					}).val(Util.time(et));		
+					$('.end-time').pickmeup('set_date', et);				
 				}
 			}		
 		});
