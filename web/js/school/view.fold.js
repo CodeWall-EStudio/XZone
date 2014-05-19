@@ -44,8 +44,12 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			type : nowType,
 			key : nowKey,
 			fold : obj || 0,
-			fdid : nowFd
-		};	
+			fdid : nowFd			
+		}
+		if(nowGid){
+			data.ml = nowGinfo.mlist;
+		}
+	
 		if(nowPrep == 'my'){
 			tpl = 'prep.tit';
 			data.pr = nowPrep;
@@ -305,7 +309,6 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(d.isOpen){
 			nowData.open = 1;
 		}
-
 		if(nowData.info){
 			handerObj.triggerHandler('file:init',nowData);
 		}
@@ -373,7 +376,6 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(nowPrep){
 			pr = nowPrep;
 		}
-
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'fold.user.list',

@@ -228,7 +228,6 @@ define(['config'],function(config){
 	});
 
     $('#boxtableTit').on('click','#selectAll',function(e){
-		console.log(1234);
 		if($(this).prop('checked')){
 			$('#boxTableList .liclick:not(:checked)').prop({'checked':true});
 		}else{

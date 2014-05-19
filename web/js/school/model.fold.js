@@ -11,7 +11,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				name : item.name,
 				mark : item.mark,
 				hasChild : item.hasChild,
-				nick : item.creator.nick,				
+				nick : item.creator.nick  || item.nick,				
 				time : util.time(item.createTime),
 				open : item.isOpen || 0,
 				read : item.isReadonly || 0
@@ -63,6 +63,8 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		var success = function(d){
 			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
+				var myinfo = Cache.get('myinfo');
+				d.result.data.nick = myinfo.nick;
 				var list = convent([d.result.data]);
 				handerObj.triggerHandler('fold:load',{list:list,pid:d.result.data.parent['$id']});	
 			}else{

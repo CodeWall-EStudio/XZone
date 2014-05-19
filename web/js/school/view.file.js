@@ -111,20 +111,24 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowPrep){
 			tpl = 'prep.table.tit';
 		}
+		var obj = {
+			order : nowOrder,
+			gid : nowGid,
+			fdid : nowFd,
+			uid : nowUid,
+			prep : nowPrep,
+			auth : nowAuth			
+		}
+		if(nowGid){
+			obj.ml = nowGroup.mlist;
+		}
 		// if(!nowFd && rootFd){
 		// 	nowFd = rootFd;
 		// }
 		var view = new View({
 			target : tabletitTarget,
 			tplid : tpl,
-			data : {
-				order : nowOrder,
-				gid : nowGid,
-				fdid : nowFd,
-				uid : nowUid,
-				prep : nowPrep,
-				auth : nowAuth
-			}			
+			data : obj		
 		});
 		view.createPanel();
 

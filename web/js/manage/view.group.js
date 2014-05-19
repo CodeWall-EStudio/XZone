@@ -621,6 +621,10 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				$('.group-action-btn button.del-group').removeClass('active').prop({
 					'disabled' : false
 				});
+			}else{
+				$('.group-action-btn button.del-group').removeClass('active').prop({
+					'disabled' : true
+				});				
 			}
 			$('.group-action-btn button.del-prep').removeClass('active').prop({
 				'disabled' : false

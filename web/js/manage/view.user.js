@@ -80,7 +80,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		$('.btn-user-open').prop({'disabled':true});
 
 		$.extend(userList[d.userId],d);
-		var sglist = Cache.get('sizegroup');s
+		var sglist = Cache.get('sizegroup');
 
 		if(d.sizegroupId){
 			userList[d.userId].size = sglist[d.sizegroupId].size;

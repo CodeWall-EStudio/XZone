@@ -300,6 +300,7 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 
 	function modifySuc(e,d){
 		$("#my-m-group"+d.id).text(d.name).attr('title',d.name);
+		$('.group-name-tit').text(d.name);
 	}
 
 	var handlers = {

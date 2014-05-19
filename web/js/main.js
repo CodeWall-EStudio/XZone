@@ -282,6 +282,7 @@
         fatarget.addClass('hide');
 
         var gid = data.gid,
+            uid = data.uid || 0,
             fdid = data.fdid || 0;
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
@@ -289,6 +290,7 @@
             type = data.type || 0;
         var d = {
           gid : gid,
+          uid : uid,
           fdid : fdid,
           type : type
         }

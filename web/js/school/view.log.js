@@ -12,12 +12,13 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 		myInfo = null;
 
 	function loadLog(obj){
-		isLoad = false;
+		
 		var opt = {
 			cgi : config.cgi.logsearch,
 			data : obj
 		}		
 		var success = function(data){
+			isLoad = false;
 			if(data.err==0){
 				var view = new View({
 					target : $('#logList'),

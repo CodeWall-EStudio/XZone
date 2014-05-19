@@ -4,7 +4,7 @@
 	<div class="tit-div" style="z-index:20">
 	<%if(gid){%>
 		<%if(fold){%>
-			<a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>" class="dr-menu" data-id="<%-fold.idpath[0]%>" data-target="topFoldPath" stlyle="z-index:20"><%-gname%></a>
+			<a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>" class="group-name-tit dr-menu" data-id="<%-fold.idpath[0]%>" data-target="topFoldPath" stlyle="z-index:20"><%-gname%></a>
 		<%}else{%>
 			<a href="#<%if(school){%>school=1&<%}%>gid=<%+gid%>" style="z-index:20"><%-gname%></a>
 		<%}%>
@@ -59,7 +59,19 @@
 </div>
 <ul class="act-zone">
 	<%if(gid){%>
-	<li class="dropdown" id="changeUser"></li>
+	<li class="dropdown" id="changeUser">
+		<a id="drop-type" "button" data-toggle="dropdown" >
+			全部用户
+		<b class="caret"></b></a>
+		<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+			<%
+				for(var i in ml){
+					var item = ml[i];
+			%>
+				<li><a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%><%if(fold){%>fdid=<%+fold.id%>&<%}%>&uid=<%+item.id%>"><%-item.nick%></a></li>
+			<%}%>
+		</ul>		
+	</li>
 	<%}%>
 	<li class="all-file file-type dropdown" id="changeFileType">
 		<a id="drop-type" "button" data-toggle="dropdown" >

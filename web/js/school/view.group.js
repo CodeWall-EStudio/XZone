@@ -5,6 +5,7 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 		myGroups = null,
 		myInfo = null,
 		nowGroup,
+		nowUid = 0,
 		nowPage = 0,
 		nowData = null,
 		nowFd = 0;
@@ -21,14 +22,15 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 		titTarget = $("#boxtableTit");		
 
 	function init(e,d){
-
 		nowGid = d.gid;
 		nowFd = d.fdid || 0;
+		nowUid = d.uid || 0;
 		nowData = d;
 		if(!myGroups){
 			myInfo = Cache.get('myinfo'),
 			myGroups = myInfo.group2key;
 		}
+
 		nowGroup = myGroups[nowGid];
 		if(nowGroup.type === 2){
 			util.showNav('dep');
@@ -36,21 +38,21 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 			util.showNav('group');
 		}
 
-			$("#fileActZone .renamefile").show();
-			$("#fileActZone .delfile").show();
-			$("#fileActZone .movefile").show();		
+		$("#fileActZone .renamefile").show();
+		$("#fileActZone .delfile").show();
+		$("#fileActZone .movefile").show();		
 
 		if(nowGroup.isMember){
 			$("#btnZone").show();
-			//$('.btn-upload').show();
 		}else{
 			$("#btnZone").hide();
 		}
-		if(myGroups[nowGid]){
-			handerObj.triggerHandler('group:infosuc',myGroups[nowGid]);
-		}else{
-			handerObj.triggerHandler('msg:error',1010);
-		}
+		handerObj.triggerHandler('group:info',nowGid);
+		// if(myGroups[nowGid]){
+		// 	handerObj.triggerHandler('group:infosuc',myGroups[nowGid]);
+		// }else{
+		// 	handerObj.triggerHandler('msg:error',1010);
+		// }
 	}
 
 	function groupAside(){
@@ -131,6 +133,12 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 			gid : nowGid,
 			fdid : nowFd,
 			info : d
+		}
+		if(myGroups[nowGid]){
+			d.isMember = myGroups[nowGid].isMember;
+		}
+		if(nowUid){
+			nowData.uid = nowUid;
 		}
 		if(d.recy){
 			showAside(d);
