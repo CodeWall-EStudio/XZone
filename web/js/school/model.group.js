@@ -144,9 +144,10 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				boardId : d.boardId
 			}
 		}
+		var id = d.boardId;
 		var success = function(d){
 			if(d.err == 0){
-				handerObj.triggerHandler('group:boarddelsuc',{target:target});
+				handerObj.triggerHandler('group:boarddelsuc',{target:target,id:id});
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}

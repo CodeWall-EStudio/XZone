@@ -6,10 +6,10 @@
 							for(var i = 0,l=list.length;i<l;i++){
 								var item = list[i];
 						%>
-							<li>
+							<li class="boardmsg boardmsg<%+item.id%>">
 								<p class="board-time"><%-item.name%> <span><%-item.time%></span></p>
 								<p><%-item.content%></p>
-
+								<%if(auth){%><a class="delete-board" data-id="<%+item.id%>">删除</a><%}%>
 							</li>
 						<%}%>
 					<%}else{%>

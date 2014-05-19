@@ -204,6 +204,7 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 		view.createPanel();
 	}
 
+	//侧边栏
 	function boardAsideSuc(e,d){
 		// $('#groupBoard').data('list',d.list);
 		var target,
@@ -227,7 +228,16 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 					'click' : function(){
 						handerObj.triggerHandler('board:init',{gid : nowGid});
 					}	
-				}
+				},
+				'.delete-board' : {
+					'click' : function(){
+						var id = $(this).attr('data-id');
+						handerObj.triggerHandler('board:del',{
+							boardId : id,
+							target : target
+						});						
+					}
+				}				
 			}
 		});
 		view.createPanel();
@@ -250,6 +260,7 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 
 	function boardasideaddSuc(e,d){
 		$('#groupBoard .board-empty').remove();
+		d.auth = nowGroup.auth;
 		var view = new View({
 			target : $('#groupBoard').find('ul'),
 			tplid : 'group.boardone',
@@ -395,6 +406,17 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 					actTarget.find('.page-zone').text('更多文件').attr('data-key',d.keyword);
 				}
 			},
+			handlers : {
+				'.delete-board' : {
+					'click' : function(){
+						var id = $(this).attr('data-id');
+						handerObj.triggerHandler('board:del',{
+							boardId : id,
+							target : target
+						});						
+					}
+				}
+			},
 			data : {
 				list : d.list,
 				auth : nowGroup.auth
@@ -411,7 +433,11 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 
 	function delSuc(e,d){
 		var target = d.target;
-		target.parent('li').remove();
+		$('.boardmsg'+d.id).remove();
+		if($('.boardmsg').length===0){
+			$('.group-board-list').html('<li class="board-empty">暂无留言</li>');
+		}
+		//target.parent('li').remove();
 	}
 
 	var handlers = {

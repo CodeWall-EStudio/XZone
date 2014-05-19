@@ -3,7 +3,7 @@
 							for(var i = 0,l=list.length;i<l;i++){
 								var item = list[i];
 						%>
-							<li>
+							<li class="boardmsg boardmsg<%+item.id%>">
 								<%-item.time%>   发表人:<%-item.name%> <%if(auth){%><a cmd="del" data-id="<%+item.id%>">删除</a><%}%>
 								<p><%-item.content%></p>
 
