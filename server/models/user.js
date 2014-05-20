@@ -128,7 +128,7 @@ exports.getUserAllInfo = function(user, callback){
     ep.on('getGroupsCb', function(result){
         var memberDep = result.departments;
         // 读取所有部门
-        db.search('group', { type: 2 , validateStatus: { $in: [1, null] } }, {},
+        db.search('group', { type: 2 , validateStatus: { $in: [1, null] }, status: { $nin: [3, 4] } }, {},
                     ep.done('getGroupsCb2', function(total, docs){
 
             result.departments = [];

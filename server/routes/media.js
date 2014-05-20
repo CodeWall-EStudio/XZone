@@ -44,7 +44,7 @@ function getFolder(params, callback){
                 name: params.name,
                 deletable: false,
                 creator: params.creator,
-                folder: params.parentId
+                folder: params.parent
             }, callback);
         }
     });
