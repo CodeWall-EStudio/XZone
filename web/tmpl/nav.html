@@ -7,8 +7,15 @@
 					<a data-toggle="dropdown">小组空间<b class="caret"></b></a>
 					<ul class="dropdown-menu menu" role="menu" aria-labelledby="dLabel">
 						<%
+							var show = 0;
 							for(var i in group){
 								var item = group[i];
+								if((item.status === 2 || item.status === 1) && !show){
+									show = 1;
+						%>
+							<li class="create-new-group"><a id="createNewGroup" class="create-new-group">申请新的小组</a></li>						
+						<%
+								}
 						%>
 							<li>
 								<a <%if(item.auth){%>id="my-m-group<%+item.id%>"<%}%>href="#gid=<%+item.id%>" title="<%+item.name %>"><%-item.name %> </a>
@@ -16,10 +23,14 @@
 									<span><a data-id="<%+item.id%>" class="manage-one-group">管理</a></span>
 								<%}else if(item.auth && item.status == 1){%>
 									待审核
+								<%}else if (item.status === 2){%>
+									已归档
 								<%}%>
 							</li>
 						<%}%>
-						<li class="create-new-group"><a id="createNewGroup" class="create-new-group">申请新的小组</a></li>
+						<%if(!show){%>
+							<li class="create-new-group"><a id="createNewGroup" class="create-new-group">申请新的小组</a></li>		
+						<%}%>
 					</ul>
 				</li>
 				<li class="nav depspace">

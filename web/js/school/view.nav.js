@@ -16,8 +16,19 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 
 	function createSuc(e,d){
 		var myinfo = Cache.get('myinfo');
-		console.log(d.list);
-		myinfo.group.push(d.list);
+
+		var normal = [],
+			over = [];
+		for(var i=0,l=myinfo.group.length;i<l;i++){
+			if(myinfo.group[i].status === 2){
+				over.push(myinfo.group[i]);
+			}else{
+				normal.push(myinfo.group[i]);
+			}
+		}
+		over = [d.list].concat(over);
+		myinfo.group = normal.concat(over);
+		//myinfo.group.push(d.list);
 		myinfo.group2key[d.list.id] = d.list;
 
 		handerObj.triggerHandler('cache:set',{key: 'myinfo',data: myinfo});

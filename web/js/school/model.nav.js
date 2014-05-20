@@ -81,6 +81,8 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 			o.group2key[item.id] = item;
 		}
 
+		var normal = [],
+			over = [];
 		for(var i =0,l=data.groups.length;i<l;i++){
 			var item = data.groups[i];
 			if(!item){
@@ -95,25 +97,13 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 			o.group2key[item.id] = item;
 			item.pt = item.pt || 0;
 			o.group.push(item);
-			// switch(item.type){
-			// 	case 0: //学校
-			// 		o.school = item;
-			// 		break;
-			// 	case 1: //小组
-					
-			// 		break;
-			// 	case 2: //部门
-			// 		item.isMember = item.isMember || 1;
-			// 		o.dep.push(item);
-			// 		o.dep2key[item.id] = item;
-			// 		break;
-			// 	case 3: //备课
-			// 		o.prep.push(item);
-			// 		o.prep2key[item.id] = item;
-			// 		break;
-			// }
-
+			if(item.status === 2){
+				over.push(item);
+			}else{
+				normal.push(item);
+			}
 		}
+		o.group = normal.concat(over);
 		return o;
 	}
 
