@@ -194,6 +194,10 @@ module.exports = {
                 name: 'keyword'
             },
             {
+                name: 'creatorId', // 文件创建者
+                type: 'user'
+            },
+            {
                 name: 'type',
                 min: 0,
                 type: 'number'
@@ -401,6 +405,10 @@ module.exports = {
             },
             {
                 name: 'keyword'
+            },
+            {
+                name: 'creatorId', // 文件创建者
+                type: 'user'
             },
             {
                 name: 'type',

@@ -320,6 +320,7 @@ exports.search = function(req, res){
     var params = req.parameter;
 
     var folder = params.folderId;
+    var creator = params.creatorId;
 
     var loginUser = req.loginUser;
     
@@ -332,7 +333,9 @@ exports.search = function(req, res){
     params.isDeref = true;
     params.recursive = true;
 
-    if(folder.__role & config.FOLDER_PRIVATE){
+    if(creator){
+        params.creator = creator._id;
+    }else if(folder.__role & config.FOLDER_PRIVATE){
         // 个人空间搜索, 搜索自己创建的文件
         params.creator = loginUser._id;
     }else if((folder.__role & config.FOLDER_DEPARTMENT) && (loginUser.__role & config.ROLE_VISITOR)){

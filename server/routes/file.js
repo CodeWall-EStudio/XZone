@@ -918,6 +918,7 @@ exports.search = function(req, res){
     var folder = parameter.folderId;
 
     var loginUser = req.loginUser;
+    var creator = parameter.creatorId;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
@@ -939,9 +940,13 @@ exports.search = function(req, res){
         isDeref: true
     });
 
+
     Logger.debug('file/search: ', folder._id, 'user role: ', loginUser.__role, 'folder role: ', folder.__role);
 
-    if(folder.__role & config.FOLDER_PRIVATE){
+    if(creator){
+        
+        searchParams.creator = creator._id;
+    }else if(folder.__role & config.FOLDER_PRIVATE){
 
         // 个人空间搜索, 搜索自己创建的文件
         searchParams.creator = loginUser._id;
