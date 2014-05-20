@@ -35,8 +35,8 @@
 				<tr>
 					<td></td>
 					<td>
-						<button class="btn btn-primary btn-user-save" <%if(name){%>data-modify="1"<%}%> >保存</button>
-						<button class="btn btn-primary btn-reset">取消</button>
+						<button class="btn btn-primary btn-user-save" <%if(data.name){%>data-modify="1"<%}%> >保存</button>
+						<button class="btn btn-primary btn-reset" <%if(data.name){%>data-id="<%-data.id%>"<%}%> >取消</button>
 					</td>
 				</tr>									
 			</table>

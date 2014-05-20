@@ -234,6 +234,16 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							handerObj.triggerHandler('user:modify',obj);
 						}
 					},
+					'.btn-reset' : {
+						'click' : function(){
+							var id = $(this).attr('data-id');
+							if(id){
+								$('.tr-user'+id).click();
+							}else{
+								$('#userModifyBlock').html('');
+							}
+						}
+					},
 					'.user-search-btn' : {
 						'click' : function(){
 							var v = $('.user-search-key').val(),

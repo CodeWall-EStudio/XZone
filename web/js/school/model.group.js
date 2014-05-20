@@ -122,9 +122,9 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				var data = convent([d.result.data]);
-				if(type){
+				//if(type){
 					handerObj.triggerHandler('group:boardasideaddsuc',data);
-				}else{
+				if(!type){
 					handerObj.triggerHandler('group:boardaddsuc',data);
 				}
 				//handerObj.triggerHandler('group:infosuc',d.result.data);

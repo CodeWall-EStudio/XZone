@@ -314,7 +314,12 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		//取消修改
 		'.btn-reset' : {
 			'click' : function(){
-				$('#groupModifyZone').hide();
+				var id = $(this).attr('data-id');
+				if(id){
+					$('.group-tr'+id).click();
+				}else{
+					$('#groupModifyZone').hide();
+				}
 			}
 		},
 		//设置管理员
