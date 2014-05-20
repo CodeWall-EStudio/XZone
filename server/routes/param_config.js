@@ -885,6 +885,10 @@ module.exports = {
                 type: 'number'
             },
             {
+                name: 'keyword',
+                type: 'string'
+            },
+            {
                 // parent = true 返回有 parent 的
                 // parent=false, 返回没有 parent 的
                 // 不传 parent, 返回所有的

@@ -34,6 +34,9 @@ exports.listGroups = function(req, res) {
             query.parent = null;
         }
     }
+    if (params.keyword) {
+        query['name'] = new RegExp('.*' + U.encodeRegexp(params.keyword) + '.*');
+    }
 
     params.extendQuery = query;
 

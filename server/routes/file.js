@@ -797,7 +797,7 @@ function moveFile(user, params, callback){
 
     mFile.getFile({ // 重名检查
         name: file.name,
-        'folder.$id': params.targetId
+        'folder.$id': targetFolder._id
     }, function(err, fl){
         if (fl) {
             return ep.emit('error', 'file name duplicate', ERR.DUPLICATE);
