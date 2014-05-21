@@ -43,7 +43,7 @@ exports.getCollection = function(name, callback){
 };
 
 exports.dereference = function(doc, keys, callback){
-    // Logger.debug('dereference: ', doc._id, keys);
+    Logger.debug('dereference: ', doc._id, doc.name, keys);
     exports.open(function(err, db){
         if(err){
             callback(err, null);
