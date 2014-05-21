@@ -101,6 +101,8 @@ exports.get = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
+    Logger.debug('folder.get', folder);
+
     mFile.countFile({ 'folder.$id': folder._id }, ep.done('countFile'));
 
     db.dereference(folder, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, ep.done('dereference'));
@@ -110,7 +112,7 @@ exports.get = function(req, res){
         folder.hasFile = !!filesCount;
 
         U.removePrivateMethods(folder);
-        
+
         res.json({
             err: ERR.SUCCESS,
             result: {
