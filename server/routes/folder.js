@@ -96,22 +96,27 @@ exports.get = function(req, res){
     var params = req.parameter;
     var folder = params.folderId;
 
-    db.dereference(folder, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, function(err, doc){
-        if (err) {
-            res.json({
-                err: ERR.SERVER_ERROR,
-                msg: err
-            });
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
 
-        } else {
-            U.removePrivateMethods(folder);
-            res.json({
-                err: ERR.SUCCESS,
-                result: {
-                    data: folder
-                }
-            });
-        }
+    mFile.countFile({ 'folder.$id': folder._id }, ep.done('countFile'));
+
+    db.dereference(folder, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, ep.done('dereference'));
+
+    ep.all('dereference', 'countFile', function(doc, filesCount){
+
+        folder.hasFile = !!filesCount;
+
+        U.removePrivateMethods(folder);
+        
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                data: folder
+            }
+        });
     });
     
 };

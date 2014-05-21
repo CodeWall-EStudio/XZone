@@ -146,6 +146,11 @@ exports.getFile = function(query, callback){
 
 };
 
+exports.countFile = function(query, callback){
+    
+    db.file.count(query, callback);
+}
+
 exports.search = function(params, callback){
     var folderId = params.folderId;
     
