@@ -404,12 +404,18 @@ define(['../config'], function(config) {
     	// /0 已审核 1 审核中  2 已归档 3 已关闭
     	switch(status){
     		case 0:
-    			return '已审核';
-    		case 1:
-    			if(!approve){
+    			if(approve === 0){
     				return '审核不通过';
+    			}else{    		
+    				return '已审核';
     			}
-    			return '审核中';
+    		case 1:
+    			if(approve === 0){
+    				return '审核不通过';
+    			}else{
+    				return '审核中';	
+    			}
+    			
     		case 2:
     			return '已归档';
     		case 3:

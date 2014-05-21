@@ -3,7 +3,10 @@
 				var item = list[i];
 		%>
 		<tr class="fold fold<%+item.id%>">
-			<td width="30"><%if(pr != 'group'){%><input type="checkbox" name="file" class="fdclick liclick" value="<%+item.id%>" data-type="fold" /><%}%></td>
+			<td width="30">
+				<%if(pr != 'group'){%>
+					<input type="checkbox" name="file" <%if(!item.hasChild && !item.hasFile){%>class="fdclick liclick"<%}%> value="<%+item.id%>" data-type="fold" <%if(item.hasChild || item.hasFile){%>disabled title="该文件夹下有文件夹或文件夹,不能删除"<%}%> /><%}%>
+				</td>
 			<td>
 				<%if(gid){%>
 				<a href="#<%if(school){%>school=1&<%}%><%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold<%if(item.open && !item.read){%>-open<%}else if(item.open && item.read){%>-read<%}%>"></i></a>

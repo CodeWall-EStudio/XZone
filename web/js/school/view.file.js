@@ -149,7 +149,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		}
 		data.type = nowType;
 		if(nowUid){
-			data.uid = nowUid;
+			data.creatorId = nowUid;
 		}
 		if(nowAuth){
 			data.status = 1;
@@ -268,7 +268,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			obj.groupId = nowGid;
 		}
 		if(nowUid){
-			obj.uid = nowUid;
+			obj.creatorId = nowUid;
 		}
 
 		if(nowAuth){
@@ -305,7 +305,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			obj.groupId = nowGid;
 		}
 		if(nowUid){
-			obj.uid = nowUid;
+			obj.creatorId = nowUid;
 		}
 		if(nowAuth){
 			obj.status = 1;

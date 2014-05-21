@@ -11,6 +11,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				name : item.name,
 				mark : item.mark,
 				hasChild : item.hasChild,
+				hasFile : item.hasFile,
 				nick : item.creator.nick  || item.nick,				
 				time : util.time(item.createTime),
 				open : item.isOpen || 0,
@@ -239,7 +240,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		'fold:delfolds' : delFold,
 		'fold:one' : foldOne,
 		'fold:new' : foldCreate,
-		'fold:serach' : foldSearch,
+		'fold:search' : foldSearch,
 		'fold:get' : foldGet,
 		'fold:edit' : editmark
 	}	

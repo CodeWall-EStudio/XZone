@@ -101,7 +101,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 								mt.show();
 								//mt.dropdown('toggle');
 							}else{
-								handerObj.triggerHandler('fold:get',obj);
+								handerObj.triggerHandler('foldsearch:start',obj);
 							}
 						//}
 					}
@@ -289,15 +289,15 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			var o1 = {
 				folderId : rootFd
 				//o1.groupId = nowGid;
-			}			
+			}					
 			o1.root = 1;
 			if(!nowGid){
-				handerObj.triggerHandler('fold:get',o1);
+				handerObj.triggerHandler('foldsearch:start',o1);
 			};
 		}
 
 		if(nowKey == ''){
-			handerObj.triggerHandler('fold:get',obj);
+			handerObj.triggerHandler('foldsearch:start',obj);
 		}else{
 			obj.key = nowKey;
 			handerObj.triggerHandler('foldsearch:start',obj);
@@ -363,7 +363,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				if(nowGinfo.rootFolder){
 					obj.folderId = nowGinfo.rootFolder.id;
 				}
-				handerObj.triggerHandler('fold:get',obj);
+				handerObj.triggerHandler('foldsearch:start',obj);
 			}
 		}else{
 		}
@@ -417,8 +417,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 
 		var data = {
 			keyword : nowKey,
-			page:nextPage,
-			pageNum : config.pagenum,
+			page:0,
+			pageNum : 0,
 			order : nowOds			
 		}
 
@@ -428,8 +428,12 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(nowFd){
 			data.folderId = nowFd;
 		}
+		if(nowUid){
+			data.creatorId = nowUid;
+		}
+		//console.log(data);
 		
-		handerObj.triggerHandler('fold:serach',data);			
+		handerObj.triggerHandler('fold:search',data);			
 	}	
 
 	//新建文件夹

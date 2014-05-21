@@ -24,23 +24,24 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		}
 		return i;
 	}
-
-	function checkObj(idx,n,type){
+	//是否有重名
+	function checkObj(n,idx,type){
 		var grade = Cache.get('grade');
 		var subject = Cache.get('subject');		
 		if(type == 'grade'){
 			for(var i in grade){
 				if(idx != i && grade[i] == n){
-					return;
+					return true;
 				}
 			}
 		}else{
 			for(var i in subject){
 				if(idx != i && subject[i] == n){
-					return;
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 
 	function gradeInit(){
@@ -121,7 +122,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							delete subject[n];
 							handerObj.triggerHandler('manage:setkey',{
 								key : 'subject',
-								value : grade
+								value : subject
 							});							
 						}	
 					},					
@@ -141,24 +142,27 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							}
 							if(grade){
 								if(modify){
-									if(!grade[n] || checkObj(v,n,'grade')){
-										grade[n] = v;
+									//没有重名
+									if(checkObj(v,n,'grade') || (grade[n] && n!=on)){
+										handerObj.triggerHandler('msg:error',79);
+										return;										
+									}else{
 										delete grade[on];
-									}else{
-										handerObj.triggerHandler('msg:error',79);
-									}									
-									
+										grade[n] = v;										
+									}
 								}else{
-									if(!grade[n] || checkObj(v,n,'grade')){
+									if(!grade[n] && !checkObj(v,n,'grade')){
 										grade[n] = v;
 									}else{
 										handerObj.triggerHandler('msg:error',79);
+										return;
 									}
 								}
 							}else{
 								grade = {};
 								grade[n] = v;
 							}
+							//return;
 							handerObj.triggerHandler('manage:setkey',{
 								key : 'grade',
 								value : grade
@@ -181,23 +185,26 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							}
 							if(subject){
 								if(modify){
-									if(!subject[n] || checkObj(v,n,'subject')){
-										subject[n] = v;
-										delete subject[on];
-									}else{
+									if(checkObj(v,n,'subject') || (subject[n] && n!=on)){
 										handerObj.triggerHandler('msg:error',79);
+										return;										
+									}else{
+										delete subject[on];
+										subject[n] = v;										
 									}
 								}else{
-									if(!subject[n] || checkObj(v,n,'subject')){
+									if(!subject[n] && !checkObj(v,n,'subject')){
 										subject[n] = v;
 									}else{
 										handerObj.triggerHandler('msg:error',79);
+										return;
 									}
 								}
 							}else{
 								subject = {};
 								subject[n] = v;
 							}
+							//return;
 							handerObj.triggerHandler('manage:setkey',{
 								key : 'subject',
 								value : subject

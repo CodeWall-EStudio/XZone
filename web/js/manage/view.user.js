@@ -92,7 +92,9 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				userList[d.userId].size = 0;
 			}			
 		}
-
+		if(typeof d.status != 'undefined'){
+			$('#tr-user'+d.userId).attr('data-status',d.status);
+		}
 		var view = new View({
 			target : $('#tr-user'+d.userId),
 			tplid : 'manage/search.user.list.one',
