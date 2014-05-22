@@ -97,6 +97,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 							if(nowGid){
 								obj.groupId = nowGid;
 							}
+							if(nowUid){
+								obj.creatorId = nowUid;
+							}							
 							if(mt.attr('loading')){
 								$('.tit-menu').hide();
 								mt.show();
@@ -285,6 +288,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(nowGid){
 			obj.groupId = nowGid;
 		}
+		if(nowUid){
+			obj.creatorId = nowUid;
+		}
 
 		if(isLoad){
 			return;			
@@ -295,7 +301,10 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			var o1 = {
 				folderId : rootFd
 				//o1.groupId = nowGid;
-			}					
+			}	
+			if(nowUid){
+				o1.creatorId = nowUid;
+			}
 			o1.root = 1;
 			if(!nowGid){
 				handerObj.triggerHandler('fold:get',o1);

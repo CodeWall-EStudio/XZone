@@ -119,6 +119,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			gid = data.groupId || 0,
 			order = data.order || {},
 			fdid = data.folderId || 0,
+			creator = data.creatorId || 0,
 			type = data.type || 0,
 			root = data.root || 0,
 			tplid = data.tplid,
@@ -131,6 +132,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 
 		if(gid){
 			obj.groupId = gid;
+		}
+		if(creator){
+			obj.creatorId = creator;
 		}
 
 		var opt = {
