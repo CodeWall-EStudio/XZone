@@ -22,6 +22,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		nowPid = 0,	
 		isOpen = 0,
 		isRead = 0,
+		isLoad = false,
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -101,7 +102,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 								mt.show();
 								//mt.dropdown('toggle');
 							}else{
-								handerObj.triggerHandler('foldsearch:start',obj);
+								handerObj.triggerHandler('fold:get',obj);
 							}
 						//}
 					}
@@ -285,22 +286,27 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			obj.groupId = nowGid;
 		}
 
+		if(isLoad){
+			return;			
+		}
+		isLoad = true;
 		if(nowFd != rootFd){
+
 			var o1 = {
 				folderId : rootFd
 				//o1.groupId = nowGid;
 			}					
 			o1.root = 1;
 			if(!nowGid){
-				handerObj.triggerHandler('foldsearch:start',o1);
+				handerObj.triggerHandler('fold:get',o1);
 			};
 		}
 
 		if(nowKey == ''){
-			handerObj.triggerHandler('foldsearch:start',obj);
+			handerObj.triggerHandler('fold:get',obj);
 		}else{
 			obj.key = nowKey;
-			handerObj.triggerHandler('foldsearch:start',obj);
+			handerObj.triggerHandler('fold:get',obj);
 		}
 	}
 
@@ -329,6 +335,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	function foldLoad(e,d){
+		isLoad = false;
 		//个人的首页
 		if(!nowGid){ // && !nowFd){
 
@@ -343,6 +350,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 					handerObj.triggerHandler('cache:set',{key: 'myfold',data:d.list});
 				}
 			}
+		//小组,部门,学校
 		}else if(nowGinfo.rootFolder){
 			if(nowGinfo.rootFolder.id == nowFd){
 				if(d.pid == rootFd){
@@ -355,6 +363,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 					handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:d.list});
 				}
 			}else{
+				//这个地方有点糊涂了...暂时不用,可能是树哪儿的逻辑.
 				var obj = {
 					groupId : nowGid,
 					target : foldTarget,
@@ -363,9 +372,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				if(nowGinfo.rootFolder){
 					obj.folderId = nowGinfo.rootFolder.id;
 				}
-				handerObj.triggerHandler('foldsearch:start',obj);
+				//handerObj.triggerHandler('fold:get',obj);
 			}
-		}else{
 		}
 		
 		if(d.root){

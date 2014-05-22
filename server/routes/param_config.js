@@ -380,6 +380,10 @@ module.exports = {
                 type: 'number'
             },
             {
+                name: 'creatorId', // 文件创建者
+                type: 'user'
+            },
+            {
                 name: 'order',
                 type: 'object'
             }

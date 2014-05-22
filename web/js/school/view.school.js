@@ -105,11 +105,15 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 	}
 
 	function showApv(e,d){
+		var fold = Cache.get('rootFolder'+nowGid);
+
 		var view = new View({
 			target : actTarget,
 			tplid : 'file.apv',
 			data : {
-				name : d.name
+				name : d.name,
+				fold : fold,
+				gid : nowGid
 			},
 			after : function(){
 				$("#actWin").modal('show');
@@ -122,7 +126,42 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 							validateText : actTarget.find('.val-text').val(),
 							validateStatus : d.status
 						}
+						if($('#schoolFoldResultUl input:checked').length){
+							obj.fdid = $('#schoolFoldResultUl input:checked').val();
+							obj.gid = nowGid;
+						}
 						handerObj.triggerHandler('school:approv',obj);
+					}
+				},
+				'.plus' : {
+					'click' : function(){
+						var t = $(this),
+							id = t.attr('data-id'),
+							load = t.attr('data-load'),
+							gid = t.attr('data-gid');
+						var p = t.parent('li');
+						if(p.find('ul').length > 0){
+							if(t.hasClass("minus")){
+								t.removeClass('minus');
+								p.find('ul').hide();
+							}else{
+								t.addClass('minus');
+								p.find('ul').show();
+							}
+							return;
+						}
+						if(load){
+							return;
+						}
+						t.addClass('minus').attr('data-load',1);
+						var obj = {
+							folderId : id,
+							target : p,
+							groupId : gid,
+							tplid : 'share.fold.li',
+							type : 1
+						};
+						handerObj.triggerHandler('fold:get',obj);						
 					}
 				}
 			}
