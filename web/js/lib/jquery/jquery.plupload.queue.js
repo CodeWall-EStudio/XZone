@@ -129,6 +129,7 @@ used as it is.
 										'<div class="plupload_progress_bar"></div>' +
 									'</div>' +
 								'</div>' +
+								'<div class="plupload_error_msg"></div>' +
 								'<div class="plupload_clearer">&nbsp;</div>' +
 							'</div>' +
 						'</div>' +
@@ -194,15 +195,18 @@ used as it is.
 				}
 
 				function updateTotalProgress() {
-					$('span.plupload_total_status', target).html(uploader.total.percent + '%');
-					$('div.plupload_progress_bar', target).css('width', uploader.total.percent + '%');
+					$('span.plupload_total_status', target).html(uploader.total.percent + '%').show();
+					$('div.plupload_progress_bar', target).css('width', uploader.total.percent + '%').show();
 					$('span.plupload_upload_status', target).html(
 						_('已经上传 %d/%d 文件').replace(/%d\/%d/, uploader.total.uploaded+'/'+uploader.files.length)
-					);
+					).show();
+					$('.plupload_file_size',target).show();
 				}
 
 				function updateList() {
 					var fileList = $('ul.plupload_filelist', target).html(''), inputCount = 0, inputHTML;
+
+					var nowsize = 0;
 
 					$.each(uploader.files, function(i, file) {
 						inputHTML = '';
@@ -219,6 +223,7 @@ used as it is.
 
 							$('#' + id + '_count').val(inputCount);
 						}
+						nowsize += file.size;
 
 						fileList.append(
 							'<li id="' + file.id + '">' +
@@ -249,17 +254,32 @@ used as it is.
 						$('span.plupload_add_text', target).html(_('%d files queued').replace(/%d/, uploader.total.queued));
 					}
 
-					$('a.plupload_start', target).toggleClass('plupload_disabled', uploader.files.length == (uploader.total.uploaded + uploader.total.failed));
+					if(nowsize+uploader.used <= uploader.allsize){
+						$('a.plupload_start', target).toggleClass('plupload_disabled', uploader.files.length == (uploader.total.uploaded + uploader.total.failed));
+						// Scroll to end of file list
+						fileList[0].scrollTop = fileList[0].scrollHeight;
 
-					// Scroll to end of file list
-					fileList[0].scrollTop = fileList[0].scrollHeight;
+						updateTotalProgress();
 
-					updateTotalProgress();
-
-					// Re-add drag message if there is no files
-					if (!uploader.files.length && uploader.features.dragdrop && uploader.settings.dragdrop) {
-						//$('#' + id + '_filelist').append('<li class="plupload_droptext">' + _("拖拽文件到这里") + '</li>');
+						// Re-add drag message if there is no files
+						if (!uploader.files.length && uploader.features.dragdrop && uploader.settings.dragdrop) {
+							//$('#' + id + '_filelist').append('<li class="plupload_droptext">' + _("拖拽文件到这里") + '</li>');
+						}	
+						$('span.plupload_total_status', target).show();
+						$('div.plupload_progress_bar', target).show();
+						$('span.plupload_upload_status', target).show();
+						$('.plupload_file_size',target).show();
+						$('.plupload_error_msg').hide();
+					}else{
+						handerObj.triggerHandler('msg:error',50);
+						$('.plupload_error_msg').html('你上传的文件已经超过剩余空间!');
+						$('span.plupload_total_status', target).hide();
+						$('div.plupload_progress_bar', target).hide();
+						$('span.plupload_upload_status', target).hide();
+						$('.plupload_file_size',target).hide();
 					}
+
+
 				}
 
 				function destroy() {
@@ -437,6 +457,11 @@ used as it is.
 
 				uploader.bind('UploadComplete',function(){
 					target.triggerHandler('allcomplete');
+				});
+
+				handerObj.bind('plup:sizechange',function(e,d){
+					uploader.allsize = d.size;
+					uploader.used = d.used;
 				});
 
 				handerObj.bind('plup:changeSet',function(e,d){

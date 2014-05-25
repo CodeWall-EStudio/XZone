@@ -409,12 +409,14 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				}
 			}else{
             	var td = d.list[0];
-            	var target = $('#foldList .fold'+td.pid);
-            	//根目录下的文件夹
-            	if(td.pid == rootFd){
-            		target  = foldTarget;
-            	}					
-				makeTree(d.list,target,nowFd);				
+            	if(d.list.length){
+	            	var target = $('#foldList .fold'+td.pid);
+	            	//根目录下的文件夹
+	            	if(td.pid == rootFd){
+	            		target  = foldTarget;
+	            	}					
+					makeTree(d.list,target,nowFd);				
+				}
 				//这个地方有点糊涂了...暂时不用,可能是树哪儿的逻辑.
 				//非跟目录
 				// var obj = {

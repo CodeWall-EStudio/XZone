@@ -1,4 +1,4 @@
-define(['config'],function(config){
+define(['config','cache'],function(config,Cache){
 	var	handerObj = $(Schhandler)
 		setting = 0;
 
@@ -69,6 +69,8 @@ define(['config'],function(config){
     //     upload_settings.chunk_size = '1mb';
     // }
 
+	var myinfo = Cache.get('myinfo');
+
     function paramChange(e,d){
     	var url = config.cgi.upload+'?';
     	if(d.gid){
@@ -78,8 +80,8 @@ define(['config'],function(config){
     		url += 'folderId='+d.fdid;
     	}
 
+    	console.log(d);
     	upload_settings.url = url;
-
     	
     	if(!setting){
 		    $("#uploader").pluploadQueue(upload_settings).unbind('allcompleta').bind('allcomplete',function(){
@@ -90,6 +92,7 @@ define(['config'],function(config){
 		}else{
 			handerObj.triggerHandler('plup:changeSet',url);
 		}
+		handerObj.triggerHandler('plup:sizechange',d);
 		setting = 1;
     }
 

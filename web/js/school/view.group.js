@@ -150,6 +150,8 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 			nowData.fdid = d.rootFolder.id || d.rootFolder.$id;
 		}
 		nowData.rootfdid = d.rootFolder.id || d.rootFolder.$id;
+		nowData.used = nowData.info.used;
+		nowData.size = nowData.info.size;
 
 		$('#aside .aside-divs').hide();
 		switch(d.type){

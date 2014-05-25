@@ -44,6 +44,8 @@ define(['config','cache','helper/view','helper/util','model.file'],function(conf
 			d.fdid = myInfo.rootFolder.id;
 		}
 		d.rootfdid = myInfo.rootFolder.id;
+		d.used = myInfo.oused;
+		d.size = myInfo.osize;
 		var obj = {};
 		// if(d.fdid){
 		// 	obj.fdid = d.fdid;
