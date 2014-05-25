@@ -229,6 +229,22 @@ exports.isGroupMember = function(groupId, userId, callback){
     });
 };
 
+function checkTeacherDepartment(userId, callback){
+
+    db.department.findOne({ 'name': '教学处' }, function(err, doc){
+        if(err){
+            return callback(err, doc);
+        }
+        db.departuser.findOne( { 'department.$id': doc._id, 'user.$id': userId }, function(err, doc){
+            if(doc){
+                return callback(null, true, doc);
+            }else{
+                return callback(err, doc);
+            }
+        });
+    });
+}
+
 exports.isPrepareMember = function(userId, callback){
     // console.log('>>>isPrepareMember', userId);
 
@@ -238,10 +254,18 @@ exports.isPrepareMember = function(userId, callback){
             console.log('>>>isPrepareMember, no pt=1 group');
             callback('can not find prepare group', ERR.SERVER_ERROR);
         }else{
-            exports.isGroupMember(group._id, userId, callback);
+            exports.isGroupMember(group._id, userId, function(err, result, doc){
+                if(result){
+                    callback(err, result, doc);
+                }else{
+                    // 检查是否是教学处的
+                    checkTeacherDepartment(userId, callback);
+                }
+            });
         }
     });
 };
+
 
 
 exports.modify = function(query, doc, callback){
