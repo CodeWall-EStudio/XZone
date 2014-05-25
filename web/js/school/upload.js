@@ -36,7 +36,6 @@ define(['config','cache'],function(config,Cache){
 						//plupload_uploading
 					}
 				});
-
 				break;
 		}
 	});
@@ -80,7 +79,6 @@ define(['config','cache'],function(config,Cache){
     		url += 'folderId='+d.fdid;
     	}
 
-    	console.log(d);
     	upload_settings.url = url;
     	
     	if(!setting){

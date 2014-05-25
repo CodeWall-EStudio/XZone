@@ -122,6 +122,8 @@ i.icon-type0{
   		text-align : center;
   		margin:0 auto;
       text-align:center;
+      position:fixed;
+      bottom:140px;
   	}
   	.file-reivew-act span{
   		display:inline-block;

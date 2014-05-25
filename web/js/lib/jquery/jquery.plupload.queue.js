@@ -438,6 +438,10 @@ used as it is.
 					if(t.err !=0){
 						file.status = 4;
 						file.hint = msgs[t.err];
+						handerObj.triggerHandler('msg:error',t.err);
+						if(uploader.total.uploaded>0){
+							uploader.total.uploaded -=1;
+						}
 					}else{
 						t.result.data.id = t.result.data._id;
 						t.result.data.fid = t.result.data.resource;
