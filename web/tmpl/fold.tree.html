@@ -17,8 +17,8 @@
 				var url = '#fdid='+item.id;
 			}
 	%>
-		<li class="list-li fold<%+item.id%>">
-			<i <%if(item.hasChild){%>cmd="next" class="plus"<%}%> data-id="<%+item.id%>"></i><a title="<%+item.name%>" class="list-link" href="<%+url%>" data-gid="<%+gid%>" data-id="<%+item.id%>"> <%=item.name%></a>							
+		<li id="foldtreeli<%+item.id%>" class="list-li fold<%+item.id%> <%if(item.id === fdid){%>selected<%}%>">
+			<i id="foldtree<%+item.id%>" <%if(item.hasChild){%>cmd="next" class="plus"<%}%> data-id="<%+item.id%>"></i><a title="<%+item.name%>" class="list-link" href="<%+url%>" data-gid="<%+gid%>" data-id="<%+item.id%>"> <%=item.name%></a>							
 		</li>						
 	<%}%>
 </ul>

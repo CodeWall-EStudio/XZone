@@ -23,6 +23,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		isOpen = 0,
 		isRead = 0,
 		isLoad = false,
+		treeLoad = false,
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -118,17 +119,19 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	/*
 	需要拉根目录下的文件夹
 	*/
-	function makeTree(list,target){
-		//foldTarget.html('');
+	function makeTree(list,target,id,tree){//列表.目标,当前文件夹id,是否是从树中点击过来的.
 		if(target == foldTarget){
 			foldTarget.html('');
 		};
-		var view = new View({
-			target : target,
-			tplid : 'fold.tree',
-			after : function(){
-				target.find('.plus').unbind().bind('click',function(e){
-						var target = $(e.target),
+
+		var handlers = {};
+		if(!treeLoad){
+			treeLoad = true;
+			handlers = {
+				'.plus' : {
+					'click' : function(){
+						//console.log(123);
+						var target = $(this),
 							load = target.attr('data-load'),
 							id = target.attr('data-id');
 						var p = target.parent('li');
@@ -153,23 +156,41 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 						if(nowGid){
 							obj.groupId = nowGid;
 						}
-						handerObj.triggerHandler('fold:get',obj);
-				});
+						handerObj.triggerHandler('fold:get',obj);							
+					}
+				}
+			}
+		}
+
+		var view = new View({
+			target : target,
+			tplid : 'fold.tree',
+			before : function(){
+				$('#foldList li').removeClass('selected');
+			},
+			after : function(){
+				if(!$("#foldList").attr('show')){
+					$('#foldTree').click();
+				}
+				$('#foldtree'+nowFd).attr('data-load',1).addClass('minus');
+				$('#foldtreeli'+nowFd).addClass('selected').find('ul').show();
+				// if(!tree){
+				// 	var path = list[0].idpath;
+				// 	path = path.split(',');
+				// 	for(var i in path){
+				// 		if(!$("#foldtree"+path[i]).hasClass('.minus') && !$("#foldtree"+path[i]).attr('data-load')){
+				// 		}
+				// 	}
+				// }
 			},
 			data : {
 				list : list,
 				gid : nowGid,
+				fdid : id,
 				order : nowOds,
 				school : nowSchool
-			}
-			// },
-			// handlers : {
-			// 	'.plus' : {
-			// 		'click' : function(e){
-
-			// 		}
-			// 	}
-			// }
+			},
+			handlers : handlers
 		});
 		view.appendPanel();			
 	}
@@ -206,7 +227,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(d.root){
 			handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:d.list});
 		}
-		makeTree(d.list,d.target);
+		makeTree(d.list,d.target,nowFd,true);
 		d.target.addClass('minus');
 		d.target.find('i:first').addClass('minus');
 	}
@@ -296,20 +317,21 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			return;			
 		}
 		isLoad = true;
-		if(nowFd != rootFd){
 
-			var o1 = {
-				folderId : rootFd
-				//o1.groupId = nowGid;
-			}	
-			if(nowUid){
-				o1.creatorId = nowUid;
-			}
-			o1.root = 1;
-			if(!nowGid){
-				handerObj.triggerHandler('fold:get',o1);
-			};
-		}
+
+		// if(nowFd != rootFd){
+
+		// 	var o1 = {
+		// 		folderId : rootFd
+		// 	}	
+		// 	if(nowUid){
+		// 		o1.creatorId = nowUid;
+		// 	}
+		// 	o1.root = 1;
+		// 	if(!nowGid){
+		// 		handerObj.triggerHandler('fold:get',o1);
+		// 	};
+		// }
 
 		if(nowKey == ''){
 			handerObj.triggerHandler('fold:get',obj);
@@ -347,40 +369,62 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		isLoad = false;
 		//个人的首页
 		if(!nowGid){ // && !nowFd){
-
-			if(!nowFd || nowFd == rootFd || d.root){
+			//if(!nowFd || nowFd == rootFd || d.root){
+				
+            	//新建文件夹
                 if(d.pid == rootFd){
                 	var fl = Cache.get('myfold');
                 	fl.push(d.list[0]);
-                	makeTree(fl,foldTarget);
+                	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'myfold',data:fl});                	
                 }else{
-					makeTree(d.list,foldTarget);
+	            	var td = d.list[0];
+	            	var target = $('#foldList .fold'+td.pid);
+	            	//根目录下的文件夹
+	            	if(td.pid == rootFd){
+	            		target  = foldTarget;
+	            	}
+					makeTree(d.list,target,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'myfold',data:d.list});
 				}
-			}
+			//}
 		//小组,部门,学校
 		}else if(nowGinfo.rootFolder){
 			if(nowGinfo.rootFolder.id == nowFd){
 				if(d.pid == rootFd){
                 	var fl = Cache.get('rootFolder'+nowGid);
                 	fl.push(d.list[0]);
-                	makeTree(fl,foldTarget);
+                	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:fl});
 				}else{
-					makeTree(d.list,foldTarget);
+
+	            	var td = d.list[0];
+	            	var target = $('#foldList .fold'+td.pid);
+	            	//根目录下的文件夹
+	            	if(td.pid == rootFd){
+	            		target  = foldTarget;
+	            	}					
+					makeTree(d.list,target,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:d.list});
 				}
 			}else{
+            	var td = d.list[0];
+            	var target = $('#foldList .fold'+td.pid);
+            	//根目录下的文件夹
+            	if(td.pid == rootFd){
+            		target  = foldTarget;
+            	}					
+				makeTree(d.list,target,nowFd);				
 				//这个地方有点糊涂了...暂时不用,可能是树哪儿的逻辑.
-				var obj = {
-					groupId : nowGid,
-					target : foldTarget,
-					root: 1
-				}
-				if(nowGinfo.rootFolder){
-					obj.folderId = nowGinfo.rootFolder.id;
-				}
+				//非跟目录
+				// var obj = {
+				// 	groupId : nowGid,
+				// 	target : foldTarget,
+				// 	root: 1
+				// }
+				// if(nowGinfo.rootFolder){
+				// 	obj.folderId = nowGinfo.rootFolder.id;
+				// }
 				//handerObj.triggerHandler('fold:get',obj);
 			}
 		}

@@ -6,6 +6,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		nowPage = 0,
 		pageNum = config.pagenum,
 		nowKey = '',
+		nowOrder = 0,
 		nowOd = 1,
 		nowArch = 0;
 		nowOn = 'name',
@@ -360,6 +361,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 					nowOd = od;
 					nowOn = on;
 					reloadGroup();
+					nowOrder = 0;
 					getGroup({
 						page : 0,
 						order : '{'+nowOn+':'+nowOd+'}'
@@ -374,8 +376,13 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				var t = $(this),
 					next = t.attr('data-next');
 				if(next){
+					var order = '{'+nowOn+':'+nowOd+'}';
+					if(nowOrder){
+						order = nowOrder;
+					}
+
 					getGroup({
-						order : '{'+nowOn+':'+nowOd+'}',
+						order : order,
 						keyword : nowKey,
 						page : nowPage
 					});
@@ -470,14 +477,21 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 					var obj = {
 						page : nowPage,
 						pageNum : pageNum,
-						type : types[type],
-						order : '{"'+nowOn+'":'+nowOd+'}'
+						type : types[type]
+					}
+
+					obj.order = '{"'+nowOn+'":'+nowOd+'}';
+					if(type == 'dep'){
+						nowOrder = '{"status":1,"order":1}';
+						obj.order = nowOrder;
 					}
 					if(nowType == 'pschool'){
 						obj.parent = false;
 					}else if(nowType == 'prep'){
 						obj.parent = true;
 					}
+
+
 					isLoading = true;	
 					if(type=='pschool' || type=='prep'){
 						handerObj.triggerHandler('group:plist',obj);
@@ -553,6 +567,9 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		nowArch = 0;
 		nowGroup = null;
 		isLoading = false;
+		if(nowType === 'dep'){
+			nowOrder = '{"status":1,"order":1}';			
+		}
 
 		var view = new View(objTit);
 		view.createPanel();		

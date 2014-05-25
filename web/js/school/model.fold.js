@@ -15,7 +15,10 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				nick : item.creator.nick  || item.nick,				
 				time : util.time(item.createTime),
 				open : item.isOpen || 0,
-				read : item.isReadonly || 0
+				read : item.isReadonly || 0,
+				pid : item.parent.$id,
+				tid : item.top.$id,
+				idpath : item.idpath
 			})
 		}
 		return list;

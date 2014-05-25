@@ -774,3 +774,8 @@ strong.bold{
 	color:#999;
 	font-size:12px;
 }
+
+#foldList .selected > a{
+	font-weight:bold;
+	background:#eee
+}
