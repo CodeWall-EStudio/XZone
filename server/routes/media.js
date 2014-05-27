@@ -204,7 +204,7 @@ exports.download = function(req, res){
 
         res.send();
 
-        mLog.create({
+        var obj = {
             // fromUserId: loginUser._id,
             fromUserId: null,
             fromUserName: 'media download',
@@ -217,9 +217,20 @@ exports.download = function(req, res){
             operateType: 2,
 
             srcFolderId: file.folder.oid,
+            srcFolderName: folder && folder.name,
+
             // distFolderId: folderId,
-            fromGroupId: folder ? folder.group && folder.group.oid : null
+            fromGroupId: folder && folder.group && folder.group.oid
             // toGroupId: saveFolder.group || saveFolder.group.oid
-        });
+        };
+        if(!obj.fromGroupId){
+            mLog.create(obj);
+        }else{
+            mGroup.getGroup({ _id: obj.fromGroupId }, function(err, group){
+                obj.fromGroupName = group && group.name;
+                mLog.create(obj);
+            });
+        }
+        
     });
 };

@@ -168,6 +168,8 @@ exports.RULES = {
                 if (!folder) {
                     return callback('can\'t find a folder contain this file');
                 }
+                file.__folder = folder;
+                
                 verifyFolder(user, folder, function(err, folder){
                     if(folder.__archived){
                         return callback('can\'t modify an archived file', ERR.UNMODIFABLE);

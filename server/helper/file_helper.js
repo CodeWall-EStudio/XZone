@@ -24,6 +24,7 @@ exports.saveUploadFile = function(params, callback) {
     var loginUser = params.loginUser;
     var body = params.parameter;
     var groupId = folder.group && folder.group.oid;
+    var folderGroup = null;
 
     var uploadFilePath = body['file_path'];
     var name = body.name || body['file_name'];
@@ -72,6 +73,7 @@ exports.saveUploadFile = function(params, callback) {
                 if (err) {
                     return ep.emit('error', err, ERR.SERVER_ERROR);
                 }
+                folderGroup = group;
                 // Logger.debug(group, fileSize);
                 mGroup.checkUsed(group, fileSize, ep.done('updateSpaceUsed'));
             });
@@ -155,8 +157,10 @@ exports.saveUploadFile = function(params, callback) {
 
             // srcFolderId: null,
             distFolderId: folder._id.toString(),
+            distFolderName: folder.name,
 
-            toGroupId: groupId
+            toGroupId: groupId,
+            toGroupName: folderGroup && folderGroup.name
         });
 
     });

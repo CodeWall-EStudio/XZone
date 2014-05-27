@@ -31,7 +31,11 @@ exports.create = function(params, callback){
         operateType: params.operateType,
 
         srcFolderId: params.srcFolderId && params.srcFolderId.toString(),
-        distFolderId: params.distFolderId && params.distFolderId.toString()
+        srcFolderName: params.srcFolderName,
+
+        distFolderId: params.distFolderId && params.distFolderId.toString(),
+        distFolderName: params.distFolderName
+
 
     };
     if(params.fromGroupId){

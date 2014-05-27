@@ -251,7 +251,7 @@ exports.isPrepareMember = function(userId, callback){
     // 获取备课小组
     exports.getGroup({ pt: 1 }, function(err, group){
         if(!group){
-            console.log('>>>isPrepareMember, no pt=1 group');
+            Logger.debug('[isPrepareMember] no pt=1 group');
             callback('can not find prepare group', ERR.SERVER_ERROR);
         }else{
             exports.isGroupMember(group._id, userId, function(err, result, doc){
@@ -259,6 +259,7 @@ exports.isPrepareMember = function(userId, callback){
                     callback(err, result, doc);
                 }else{
                     // 检查是否是教学处的
+                    Logger.debug('[isPrepareMember] check if in teacher department');
                     checkTeacherDepartment(userId, callback);
                 }
             });

@@ -5,6 +5,8 @@ var us = require('underscore');
 var ERR = require('../errorcode');
 var mLog = require('../models/log');
 var mFile = require('../models/file');
+var mFolder = require('../models/folder');
+var mGroup = require('../models/group');
 
 
 exports.delete = function(req, res){
@@ -34,23 +36,39 @@ exports.delete = function(req, res){
 
     files.forEach(function(file){
         mFile.delete({ _id: file._id }, options, ep.group('delete', function(result){
-            // 记录该操作
-            mLog.create({
-                fromUserId: loginUser._id,
-                fromUserName: loginUser.nick,
 
-                fileId: file._id,
-                fileName: file.name,
+            mFolder.getFolder({ _id: file.folder.oid }, function(err, parent){
 
-                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-                //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
-                //11: delete(移动到回收站) 12: 创建文件夹
-                operateType: 6,
-                // 这里要用 parent._id, 因为 getFolder 方法把它解开了
-                srcFolderId: file.folder && file.folder._id,
-                // distFolderId: params.targetId,
-                fromGroupId: file.folder && file.folder.group && file.folder.group.oid
-                // toGroupId: toGroupId
+
+                var obj = {
+                    fromUserId: loginUser._id,
+                    fromUserName: loginUser.nick,
+
+                    fileId: file._id,
+                    fileName: file.name,
+
+                    //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                    //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+                    //11: delete(移动到回收站) 12: 创建文件夹
+                    operateType: 6,
+
+                    srcFolderId: file.folder && file.folder.oid,
+                    srcFolderName: parent && parent.name,
+                    
+                    // distFolderId: params.targetId,
+                    fromGroupId: file.folder && file.folder.group && file.folder.group.oid
+                    // toGroupId: toGroupId
+                };
+                if(!obj.fromGroupId){
+                    // 记录该操作
+                    mLog.create(obj);
+
+                }else{
+                    mGroup.getGroup({ _id: obj.fromGroupId }, function(err, group){
+                        obj.fromGroupName = group && group.name;
+                        mLog.create(obj);
+                    });
+                }
             });
             return result;
         }));

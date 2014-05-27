@@ -20,7 +20,9 @@ exports.create = function(req, res){
     var parameter = req.parameter;
     // var groupId = params.groupId;
     var folder = parameter.folderId;
-    var parentId = folder._id;
+    var parentFolder = parameter.folderId;
+
+    // var parentId = parentFolder._id;
     var name = parameter.name;
 
     var createParams = us.extend({}, parameter);
@@ -30,12 +32,12 @@ exports.create = function(req, res){
         res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-    if(folder.__role & config.FOLDER_DEPARTMENT){
+    if(parentFolder.__role & config.FOLDER_DEPARTMENT){
         // 继承父文件夹的公开和读写状态
-        if(folder.isOpen){
+        if(parentFolder.isOpen){
             createParams.isOpen = 1;
         }
-        if(folder.isReadonly){
+        if(parentFolder.isReadonly){
             createParams.isReadonly = 1;
         }
     }
@@ -43,7 +45,7 @@ exports.create = function(req, res){
     // 检查重名
     mFolder.getFolder({
         name: name,
-        'parent.$id': folder._id
+        'parent.$id': parentFolder._id
     }, ep.done('checkName'));
 
 
@@ -54,8 +56,8 @@ exports.create = function(req, res){
         }
 
         createParams.creator = loginUser._id;
-        createParams.folder = folder;
-        if(folder.group){
+        createParams.folder = parentFolder;
+        if(parentFolder.group){
             createParams.groupId = folder.group.oid;
         }
 
@@ -83,9 +85,12 @@ exports.create = function(req, res){
             //11: delete(移动到回收站) 12: 创建文件夹
             operateType: 12,
 
-            srcFolderId: parentId,
+            srcFolderId: parentFolder._id,
+            srcFolderName: parentFolder.name,
+
             // distFolderId: params.targetId,
-            fromGroupId: folder.group && folder.group.oid
+            fromGroupId: parentFolder.group && parentFolder.group.oid,
+            fromGroupName: parentFolder.__group && parentFolder.__group.name
             // toGroupId: toGroupId
         });
     });
@@ -158,24 +163,31 @@ exports.modify = function(req, res){
             }else {
                 res.json({ err: ERR.SUCCESS , result: { data: doc }});
                 
-                // 记录该操作
-                mLog.create({
-                    fromUserId: loginUser._id,
-                    fromUserName: loginUser.nick,
 
-                    folderId: doc._id.toString(),
-                    folderName: oldFolderName,
-                    newFolderName: doc.name,
+                mFolder.getFolder({ _id: folder.parent.oid }, function(err, parent){
+                    // 记录该操作
+                    mLog.create({
+                        fromUserId: loginUser._id,
+                        fromUserName: loginUser.nick,
 
-                    //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-                    //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
-                    //11: delete(移动到回收站) 12: 创建文件夹
-                    operateType: 5,
+                        folderId: doc._id.toString(),
+                        folderName: oldFolderName,
+                        newFolderName: doc.name,
 
-                    srcFolderId: folder.parent._id,
-                    // distFolderId: params.targetId,
-                    fromGroupId: folder.group && folder.group.oid.toString()
-                    // toGroupId: toGroupId
+                        //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                        //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+                        //11: delete(移动到回收站) 12: 创建文件夹
+                        operateType: 5,
+
+                        srcFolderId: folder.parent.oid,
+                        srcFolderName: parent && parent.name,
+
+                        // distFolderId: params.targetId,
+                        fromGroupId: folder.group && folder.group.oid,
+                        fromGroupName: folder.__group && folder.__group.name
+                        // toGroupId: toGroupId
+                    });
+
                 });
             }
         });
@@ -234,23 +246,29 @@ function deleteFolder(loginUser, folder, callback){
         }
 
         mFolder.delete({ folder: folder } , callback);
-        // 记录该操作
-        mLog.create({
-            fromUserId: loginUser._id,
-            fromUserName: loginUser.nick,
 
-            folderId: folder._id,
-            folderName: folder.name,
+        mFolder.getFolder({ _id: folder.parent.oid }, function(err, parent){
 
-            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-            //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
-            //11: delete(移动到回收站) 12: 创建文件夹
-            operateType: 6,
-            // 这里要用 parent._id, 因为 getFolder 方法把它解开了
-            srcFolderId: folder.parent && folder.parent._id,
-            // distFolderId: params.targetId,
-            fromGroupId: folder.group && folder.group.oid
-            // toGroupId: toGroupId
+            // 记录该操作
+            mLog.create({
+                fromUserId: loginUser._id,
+                fromUserName: loginUser.nick,
+
+                folderId: folder._id,
+                folderName: folder.name,
+
+                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+                //11: delete(移动到回收站) 12: 创建文件夹
+                operateType: 6,
+
+                srcFolderId: folder.parent && folder.parent.oid,
+                srcFolderName: parent && parent.name,
+                // distFolderId: params.targetId,
+                fromGroupId: folder.group && folder.group.oid,
+                fromGroupName: folder.__group && folder.__group.name
+                // toGroupId: toGroupId
+            });
         });
     });
 }
