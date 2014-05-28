@@ -56,7 +56,7 @@ exports.AUTH_TYPE = 'self';// auto, sso, qq, self
 // ==== User Center 相关的配置 ====================================================
 
 // 默认新建用户的密码
-exports.DEFAULT_USER_PWD = 8888;
+exports.DEFAULT_USER_PWD = '8888';
 
 // ==== SSO登陆相关的配置 ====================================================
 

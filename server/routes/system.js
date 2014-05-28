@@ -9,6 +9,7 @@ var us = require('underscore');
 var config = require('../config');
 var ERR = require('../errorcode');
 var db = require('../models/db');
+var Logger = require('../logger');
 var mGroup = require('../models/group');
 var Util = require('../util');
 var userHelper = require('../helper/user_helper');
@@ -18,6 +19,95 @@ var mFolder = require('../models/folder');
 var mSizegroup = require('../models/sizegroup');
 
 var FileTool = require('../file_tool');
+
+
+exports.init = function(req, res){
+    
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
+    });
+
+    db.storage.findOne({ key: 'xzone_init' }, ep.doneLater('checkInit'));
+
+    ep.on('checkInit', function(doc){
+        if(doc){
+            return ep.emit('error', 'already init');
+        }
+
+        mUser.getUser({ name: 'xzone_admin' }, ep.doneLater('checkInitUser'));
+
+        db.group.findOne({ type: 2, pt: 1 }, ep.doneLater('checkPrepareGroup'));
+
+        db.group.findOne({ type: 0 }, ep.doneLater('checkSchoolGroup'));
+
+    });
+
+    // 创建初始管理员
+    ep.on('checkInitUser', function(doc){
+        if(doc){
+            ep.emit('createInitUserDone', doc);
+            Logger.info('already has init user');
+        }else{
+            var initUser = {
+                name: 'xzone_admin',
+                nick: '系统初始化管理员',
+                pwd: Util.md5(config.DEFAULT_USER_PWD),
+                auth: 15
+            };
+            Logger.info('create init user');
+            mUser.create(initUser, ep.done('createInitUserDone'));
+        }
+    });
+
+    // 创建备课部门
+    ep.all('createInitUserDone', 'checkPrepareGroup', function(user, doc){
+        if(doc){
+            ep.emit('createPrepareDone', doc);
+            Logger.info('already has prepare group');
+        }else{
+            var param = {
+                name : '备课检查',
+                status : 0,
+                type : 2,
+                pt : 1,
+                creator: user._id
+            };
+            Logger.info('create prepare group');
+            mGroup.create(param, ep.done('createPrepareDone'));
+        }
+    });
+
+    // 创建学校空间
+    ep.all('createInitUserDone',  'checkSchoolGroup', function(user, doc){
+        if(doc){
+            ep.emit('createSchoolDone', doc);
+            Logger.info('already has school');
+        }else{
+            var param = {
+                name : '学校空间',
+                status : 0,
+                type : 0,
+                creator: user._id
+            };
+            Logger.info('create school');
+            mGroup.create(param, ep.done('createSchoolDone'));
+        }
+    });
+
+    ep.all('createInitUserDone','createPrepareDone', 'createSchoolDone', function(){
+
+        Logger.info('all init done');
+        db.storage.save({ key: 'xzone_init', value: 'ok' }, ep.done('initDone'));
+    });
+
+    ep.on('initDone', function(){
+
+        res.json({ err: ERR.SUCCESS, msg: 'init done.'});
+    });
+
+};
+
 
 function createDepart(parent, dep, callback){
     var ep = new EventProxy();
@@ -78,53 +168,6 @@ function createDepart(parent, dep, callback){
         });
     }
 }
-
-exports.initGroups = function(req,res){
-
-    var param = {
-        name : '备课检查',
-        status : 0,
-        type : 2,
-        pt : 1,
-        creator: req.loginUser._id
-    };
-    // 防止重复创建
-    db.group.findOne(param, function(err, doc){
-        if(!doc){
-            mGroup.create(param,function(){
-                console.log('备课检查创建完成');
-            });
-        }else{
-            console.log('备课检查已经创建');
-        }
-    });
-    
-
-   var param2 = {
-        name : '学校空间',
-        status : 0,
-        type : 0,
-        creator: req.loginUser._id
-    };
-    // 防止重复创建
-    db.group.findOne(param2, function(err, doc){
-        if(!doc){
-            mGroup.create(param2,function(){
-                console.log('学校空间创建完成');
-            });
-        }else{
-            console.log('学校空间已经创建了!!');
-        }
-    });
-
-    res.json({
-        err: 0,
-        result: {
-            'msg' : '初始化完成!'
-        }
-    });
-
-};
 
 // 初始化学校的部门架构
 exports.initDeparts = function(req, res){

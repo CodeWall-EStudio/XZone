@@ -706,6 +706,12 @@ exports.RULES = {
         }
     },
 
+    '/api/system/init': { // 系统初始化接口, 只会运行一次
+
+        verify: function(user, parameter, callback){
+            return callback(null);
+        }
+    }
 };
 
 /**
