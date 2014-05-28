@@ -45,7 +45,7 @@ exports.gotoLogin = function(req, res){
     }else if(type === 'sso'){
         url = cas.getLoginUrl();
     }else{
-        url = '/login.html';
+        url = '/center/login.html';
     }
 
     res.redirect(url);

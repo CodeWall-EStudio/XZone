@@ -18,7 +18,7 @@ exports.create = function(params, callback){
         name: params.name || '',
         pwd: params.pwd || '',
         
-        auth: 0,
+        auth: params.auth || 0,
         status: 0,
 
         sizegroup: params.sizegroupId ? new DBRef('sizegroup', params.sizegroupId) : null,
