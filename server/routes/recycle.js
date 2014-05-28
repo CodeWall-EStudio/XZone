@@ -111,9 +111,9 @@ exports.search = function(req, res){
     var searchParams = us.extend({}, parameter);
 
     searchParams.extendQuery = {
-        del: true,
-        isDeref: true
+        del: true
     };
+    searchParams.isDeref = true;
 
     delete searchParams.groupId;
 
