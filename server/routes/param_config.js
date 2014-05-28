@@ -682,12 +682,7 @@ module.exports = {
             }
         ]
     },
-    '/api/user/resetPwd': {
-        method: 'GET',
-        params: [
-        ]
-    },
-
+    
     '/api/user/departments': {
         method: 'GET',
         params: [
@@ -1054,6 +1049,16 @@ module.exports = {
             {
                 name: 'nick',
                 type: 'string',
+                required: true
+            }
+        ]
+    },
+    '/api/manage/resetUserPwd': {
+        method: 'POST',
+        params: [
+            {
+                name: 'userId',
+                type: 'user',
                 required: true
             }
         ]

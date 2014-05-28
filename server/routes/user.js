@@ -312,17 +312,4 @@ exports.search = function(req, res){
     });
 };
 
-exports.resetPwd = function(req, res){
-    var params = req.parameter;
-    var loginUser = req.loginUser;
-
-    mUser.update({ _id: loginUser._id }, { pwd: Util.md5(config.DEFAULT_USER_PWD) }, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
-            res.json({
-                err: ERR.SUCCESS
-            });
-        }
-    });
-};
+    

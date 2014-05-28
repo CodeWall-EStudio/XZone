@@ -506,7 +506,6 @@ exports.RULES = {
     // user
 
 
-
     // recycle
     '/api/recycle/delete': {
         verify: function(user, parameter, callback){
@@ -702,6 +701,24 @@ exports.RULES = {
         }
     },
     '/api/manage/modifyUser': {
+        verify: function(user, parameter, callback){
+
+            if(user.__role & config.ROLE_MANAGER){
+                return callback(null);
+            }
+            return callback('no auth');
+        }
+    },
+    '/api/manage/createUser': {
+        verify: function(user, parameter, callback){
+
+            if(user.__role & config.ROLE_MANAGER){
+                return callback(null);
+            }
+            return callback('no auth');
+        }
+    },
+    '/api/manage/resetUserPwd': {
         verify: function(user, parameter, callback){
 
             if(user.__role & config.ROLE_MANAGER){

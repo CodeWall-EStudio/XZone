@@ -409,6 +409,22 @@ exports.modifyUser = function(req, res) {
 
 };
 
+exports.resetUserPwd = function(req, res){
+
+    var loginUser = req.loginUser;
+
+    mUser.update({ _id: loginUser._id }, { pwd: Util.md5(config.DEFAULT_USER_PWD) }, function(err, doc){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else{
+            res.json({
+                err: ERR.SUCCESS
+            });
+        }
+    });
+
+};
+
 /**
  * 统计系统所有文件和小组的数量
  * @param  {[type]} req [description]
