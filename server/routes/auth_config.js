@@ -662,66 +662,12 @@ exports.RULES = {
             return callback('no auth');
         }
     },
-    '/api/manage/approveGroup': {
-        verify: function(user, parameter, callback){
-
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            return callback('no auth');
-        }
-
-    },
+    
     '/api/manage/listPrepares': {
         verify: function(user, parameter, callback){
 
             if((user.__role & config.ROLE_MANAGER) ||
                     (user.__role & config.ROLE_PREPARE_MEMBER)){
-                return callback(null);
-            }
-            return callback('no auth');
-        }
-    },
-    '/api/manage/approveFile': {
-        verify: function(user, parameter, callback){
-
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            return callback('no auth');
-        }
-    },
-    '/api/manage/listFiles': {
-        verify: function(user, parameter, callback){
-
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            return callback('no auth');
-        }
-    },
-    '/api/manage/modifyUser': {
-        verify: function(user, parameter, callback){
-
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            return callback('no auth');
-        }
-    },
-    '/api/manage/createUser': {
-        verify: function(user, parameter, callback){
-
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            return callback('no auth');
-        }
-    },
-    '/api/manage/resetUserPwd': {
-        verify: function(user, parameter, callback){
-
-            if(user.__role & config.ROLE_MANAGER){
                 return callback(null);
             }
             return callback('no auth');
@@ -745,7 +691,20 @@ exports.RULES = {
             }
             return callback('no auth');
         }
-    }
+    },
+
+    // system
+    '/api/system/*': { // 系统初始化相关的接口, 只有系统管理员有权限
+
+        verify: function(user, parameter, callback){
+
+            if(user.__role & config.AUTH_SYS_MANAGER){
+
+                return callback(null);
+            }
+            return callback('no auth');
+        }
+    },
 
 };
 

@@ -153,11 +153,25 @@ function getUserRoles(user, parameter, callback){
     });
 }
 
+function getAuthRule(path){
+    var rule = AuthConfig.RULES[path];
+    if(!rule){
+        for(var i in AuthConfig.RULES){
+            var reg = new RegExp(i.replace(/\//g,'\\/').replace(/\*/g,'.*').replace(/\?/g,'.+'));
+            if(reg.test(path)){
+                Logger.debug('[getAuthRule] ' + path + ' match ' + i);
+                return AuthConfig.RULES[path];
+            }
+        }
+    }
+    return rule;
+}
+
 function checkAPIAuth(path, user, parameter, callback){
     if(AuthConfig.AUTH_WHITE_LIST.indexOf(path) > -1){
         return callback(null);
     }
-    var rule = AuthConfig.RULES[path];
+    var rule = getAuthRule(path);
     if(!rule || !rule.verify){
         return callback(null);
     }

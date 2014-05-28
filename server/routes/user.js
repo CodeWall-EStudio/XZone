@@ -231,7 +231,7 @@ exports.login = function(req, res){
 
     var type = req.type || req.parameter.type || 'self';
 
-    mUser.getUser({ name: name, pwd: pwd }, function(err, user){
+    mUser.getUser({ name: name, pwd: pwd, status: 0 }, function(err, user){
 
         if(err){
             if(json){
