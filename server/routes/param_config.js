@@ -688,13 +688,20 @@ module.exports = {
         params: [
         ]
     },
-    // '/api/user/modify': { // 只能修改自己的
-    //     method: 'POST',
-    //     params: [
-    //         // TODO
-    //     ]
-
-    // },
+    '/api/user/modify': { // 只能修改自己的
+        method: 'POST',
+        params: [
+            {
+                name: 'nick'
+            },
+            {
+                name: 'pwd'
+            },
+            {
+                name: 'newPwd'
+            }
+        ]
+    },
     '/api/user/search': {
         method: 'GET',
         params: [
@@ -1030,6 +1037,10 @@ module.exports = {
             {
                 name: 'nick',
                 type: 'string'
+            },
+            {
+                name: 'auth',
+                type: 'number'
             }
         ]
     },

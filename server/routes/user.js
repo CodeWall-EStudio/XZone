@@ -62,6 +62,8 @@ exports.get = function(req, res){
         }else{
             var user = us.extend({}, data.user);
             Util.removePrivateMethods(user);
+            delete user.pwd;
+
             data.user = user;
             res.json({
                 err: ERR.SUCCESS,
@@ -74,6 +76,7 @@ exports.get = function(req, res){
 exports.info = function(req, res){
     
     var user = req.parameter.userId;
+    delete user.pwd;
 
     res.json({
         err: ERR.SUCCESS,
@@ -293,6 +296,36 @@ exports.logoff = function(req, res){
     }
 };
 
+exports.modify = function(req, res){
+    var params = req.parameter;
+    var loginUser = req.loginUser;
+    var pwd = params.pwd;
+    var newPwd = params.newPwd;
+
+    var doc = {};
+    if(params.nick){
+        doc.nick = params.nick;
+    }
+
+    if(pwd && newPwd && pwd !== newPwd){
+        if(Util.md5(pwd) !== loginUser.pwd){
+            return res.json({ err: ERR.PASSWORD_ERROR, msg: 'pwd is wrong' });
+        }
+        doc.pwd = Util.md5(newPwd);
+    }
+
+    mUser.update({ _id: loginUser._id }, doc, function(err, doc){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else{
+            delete doc.pwd;
+            
+            res.json({
+                err: ERR.SUCCESS
+            });
+        }
+    });
+};
 
 exports.search = function(req, res){
     var params = req.parameter;

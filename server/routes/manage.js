@@ -29,7 +29,9 @@ exports.listGroups = function(req, res) {
 
     if ('parent' in params) {
         if (params.parent) {
-            query.parent = { $ne: null };
+            query.parent = {
+                $ne: null
+            };
         } else {
             query.parent = null;
         }
@@ -346,12 +348,20 @@ exports.createUser = function(req, res){
     var name = params.name;
     var nick = params.nick;
 
-    mUser.getUser({ name: name }, function(err, doc){
-        if(err){
-            return res.json({ err: ERR.SERVER_ERROR, msg: err });
+    mUser.getUser({
+        name: name
+    }, function(err, doc) {
+        if (err) {
+            return res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
         }
-        if(doc){
-            return res.json({ err: ERR.DUPLICATE, msg: 'already has the same account name: ' + name});
+        if (doc) {
+            return res.json({
+                err: ERR.DUPLICATE,
+                msg: 'already has the same account name: ' + name
+            });
         }
         doc = {
             name: name,
@@ -360,9 +370,12 @@ exports.createUser = function(req, res){
             sizegroupId: sizegroup._id,
             size: sizegroup.size
         };
-        mUser.create(doc, function(err, doc){
-            if(err){
-                return res.json({ err: doc || ERR.SERVER_ERROR, msg: err });
+        mUser.create(doc, function(err, doc) {
+            if (err) {
+                return res.json({
+                    err: doc || ERR.SERVER_ERROR,
+                    msg: err
+                });
             }
             delete doc.pwd; // 去除密码
 
@@ -391,7 +404,9 @@ exports.modifyUser = function(req, res) {
     if ('status' in params) {
         doc.status = params.status;
     }
-
+    if (params.auth) { //更改权限 
+        doc.auth = params.auth;
+    }
     mUser.update({
         _id: user._id
     }, doc, function(err, result) {
@@ -409,14 +424,21 @@ exports.modifyUser = function(req, res) {
 
 };
 
-exports.resetUserPwd = function(req, res){
+exports.resetUserPwd = function(req, res) {
 
     var loginUser = req.loginUser;
 
-    mUser.update({ _id: loginUser._id }, { pwd: Util.md5(config.DEFAULT_USER_PWD) }, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
+    mUser.update({
+        _id: loginUser._id
+    }, {
+        pwd: Util.md5(config.DEFAULT_USER_PWD)
+    }, function(err, doc) {
+        if (err) {
+            res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
+        } else {
             res.json({
                 err: ERR.SUCCESS
             });
@@ -473,7 +495,11 @@ exports.statistics = function(req, res) {
         ep.emit('totalDepartment');
     });
 
-    db.folder.count({ parent: { $ne: null } }, function(err, num) {
+    db.folder.count({
+        parent: {
+            $ne: null
+        }
+    }, function(err, num) {
         if (err) {
             Logger.error('[manage.statistics]', err);
         }

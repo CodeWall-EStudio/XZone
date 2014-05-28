@@ -26,6 +26,7 @@ module.exports = exports = {
 
     LOGIN_FAILURE: 1040, // 登录失败
     ACCOUNT_ERROR: 1041, // 用户名或密码错误
+    PASSWORD_ERROR: 1042, // 密码错误
 
     SUCCESS: 0
 };
