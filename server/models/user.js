@@ -16,6 +16,8 @@ exports.create = function(params, callback){
         openid: params.openid,
         nick: params.nick || '',
         name: params.name || '',
+        pwd: params.pwd || '',
+        
         auth: 0,
         status: 0,
 
@@ -273,6 +275,8 @@ exports.search = function(params, callback){
     var keyword = params.keyword || '';
 
     var extendQuery = params.extendQuery || {};
+
+    params.fields = { pwd: 0 }; //排除掉密码
 
     var query = {};
 

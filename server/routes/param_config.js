@@ -611,6 +611,37 @@ module.exports = {
         params: []
     },
 
+    '/api/user/login': {
+        method: 'POST',
+        params: [
+            {
+                name: 'name',
+                type: 'string',
+                required: true
+            },
+            {
+                name: 'pwd',
+                type: 'string',
+                required: true
+            },
+            {
+                name: 'json',
+                type: 'boolean'
+            }
+        ]
+    },
+
+    '/api/user/info': {
+        method: 'GET',
+        params: [
+            {
+                name: 'userId',
+                type: 'user',
+                required: true
+            }
+        ]
+    },
+
     '/api/user/gotoLogin': {
         method: 'GET',
         params: [
@@ -645,8 +676,18 @@ module.exports = {
     '/api/user/logoff': {
         method: 'GET',
         params: [
+            {
+                name: 'json',
+                type: 'boolean'
+            }
         ]
     },
+    '/api/user/resetPwd': {
+        method: 'GET',
+        params: [
+        ]
+    },
+
     '/api/user/departments': {
         method: 'GET',
         params: [
@@ -990,6 +1031,30 @@ module.exports = {
             {
                 name: 'status',
                 type: 'number'
+            },
+            {
+                name: 'nick',
+                type: 'string'
+            }
+        ]
+    },
+    '/api/manage/createUser': {
+        method: 'POST',
+        params: [
+            {
+                name: 'name',
+                type: 'string',
+                required: true
+            },
+            {
+                name: 'sizegroupId',
+                type: 'sizegroup',
+                required: true
+            },
+            {
+                name: 'nick',
+                type: 'string',
+                required: true
             }
         ]
     },

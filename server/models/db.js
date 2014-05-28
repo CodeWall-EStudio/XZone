@@ -101,6 +101,8 @@ exports.search = function(collectionName, query, options, callback){
     var order = options.order || null;
     var page = Number(options.page) || 0;
     var pageNum = Number(options.pageNum) || 0;
+    var fields = options.fields || {};
+
     var skipNum = pageNum * page;
     if(order){
         order = U.jsonParse(order);
@@ -109,7 +111,7 @@ exports.search = function(collectionName, query, options, callback){
     Logger.info('search:', collectionName, query, order, page, pageNum);
     exports.getCollection(collectionName, function(err, collection){
         
-        var cursor = collection.find(query);
+        var cursor = collection.find(query, fields);
         var ep = EventProxy.create('total', 'result', function(total, list){
             Logger.info('search done:', collectionName, query, order, page, pageNum, '\ntotal: ', total);
             callback(null, total || 0, list);

@@ -11,7 +11,7 @@ var mGroup = require('../models/group');
 var mFile = require('../models/file');
 var mFolder = require('../models/folder');
 var mUser = require('../models/user');
-var U = require('../util');
+var Util = require('../util');
 var Logger = require('../logger');
 
 exports.listGroups = function(req, res) {
@@ -35,7 +35,7 @@ exports.listGroups = function(req, res) {
         }
     }
     if (params.keyword) {
-        query['name'] = new RegExp('.*' + U.encodeRegexp(params.keyword) + '.*');
+        query['name'] = new RegExp('.*' + Util.encodeRegexp(params.keyword) + '.*');
     }
 
     params.extendQuery = query;
@@ -337,6 +337,44 @@ exports.listFiles = function(req, res) {
             }
         });
     });
+};
+
+exports.createUser = function(req, res){
+    var params = req.parameter;
+
+    var sizegroup = params.sizegroupId;
+    var name = params.name;
+    var nick = params.nick;
+
+    mUser.getUser({ name: name }, function(err, doc){
+        if(err){
+            return res.json({ err: ERR.SERVER_ERROR, msg: err });
+        }
+        if(doc){
+            return res.json({ err: ERR.DUPLICATE, msg: 'already has the same account name: ' + name});
+        }
+        doc = {
+            name: name,
+            nick: nick,
+            pwd: Util.md5(config.DEFAULT_USER_PWD),
+            sizegroupId: sizegroup._id,
+            size: sizegroup.size
+        };
+        mUser.create(doc, function(err, doc){
+            if(err){
+                return res.json({ err: doc || ERR.SERVER_ERROR, msg: err });
+            }
+            delete doc.pwd; // 去除密码
+
+            return res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    data: doc
+                }
+            });
+        });
+    });
+
 };
 
 exports.modifyUser = function(req, res) {

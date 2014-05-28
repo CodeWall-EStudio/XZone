@@ -7,7 +7,7 @@ var us = require('underscore');
 var CAS = require('../lib/cas');
 var config = require('../config');
 var ERR = require('../errorcode');
-var U = require('../util');
+var Util = require('../util');
 var userHelper = require('../helper/user_helper');
 
 var mUser = require('../models/user');
@@ -28,7 +28,7 @@ var oauth = new OAuth2(
 );
 
 exports.gotoLogin = function(req, res){
-    var type = req.type || req.param('type') || 'cas';
+    var type = req.type || req.param('type') || 'self';
     var url;
     if(config.AUTH_TYPE !== 'auto'){
         type = config.AUTH_TYPE;
@@ -42,8 +42,10 @@ exports.gotoLogin = function(req, res){
             'redirect_uri': config.QQ_CONNECT_CALLBACK,
             state: state
         });
-    }else{
+    }else if(type === 'sso'){
         url = cas.getLoginUrl();
+    }else{
+        url = '/login.html';
     }
 
     res.redirect(url);
@@ -59,13 +61,25 @@ exports.get = function(req, res){
             res.json({ err: data || ERR.SERVER_ERROR, msg: err});
         }else{
             var user = us.extend({}, data.user);
-            U.removePrivateMethods(user);
+            Util.removePrivateMethods(user);
             data.user = user;
             res.json({
                 err: ERR.SUCCESS,
                 result: data
             });
         }// end of else 
+    });
+};
+
+exports.info = function(req, res){
+    
+    var user = req.parameter.userId;
+
+    res.json({
+        err: ERR.SUCCESS,
+        result: {
+            user: user
+        }
     });
 };
 
@@ -207,9 +221,57 @@ exports.departments = function(req, res){
     });
 };
 
+exports.login = function(req, res){
+    var parameter = req.parameter;
+    var name = parameter.name;
+    var pwd = parameter.pwd;
+    var json = parameter.json;
+
+    pwd = Util.md5(pwd);
+
+    var type = req.type || req.parameter.type || 'self';
+
+    mUser.getUser({ name: name, pwd: pwd }, function(err, user){
+
+        if(err){
+            if(json){
+                return res.json({ err: ERR.LOGIN_FAILURE, msg: 'server error'});
+            }
+            return res.redirect('/loginfail.html?err=' + ERR.LOGIN_FAILURE);
+        }
+        if(!user){
+            if(json){
+                return res.json({ err: ERR.ACCOUNT_ERROR, msg: 'account or password is wrong'});
+            }
+            return res.redirect('/loginfail.html?err=' + ERR.ACCOUNT_ERROR);
+        }
+
+        var skey = Util.md5(user.name + ':' + user.pwd + ':' + Date.now());
+
+        req.session[skey] = user._id.toString();
+        res.cookie('skey', skey, { });
+
+        if(json){
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    skey: skey,
+                    userId: user._id,
+                    name: user.name,
+                    nick: user.nick
+                }
+            });
+        }else if(req.redirectUrl){
+            res.redirect(req.redirectUrl);
+        }else{
+            res.redirect('/');
+        }// end redirectUrl
+    });
+};
 
 exports.logoff = function(req, res){
-    var type = req.type || req.parameter.type || 'cas';
+    var type = req.type || req.parameter.type || 'self';
+    var json = req.parameter.json;
 
     if(config.AUTH_TYPE !== 'auto'){
         type = config.AUTH_TYPE;
@@ -219,12 +281,18 @@ exports.logoff = function(req, res){
 
     res.clearCookie('skey');
     res.clearCookie('connect.sid');
-    if(type === 'qq'){
+
+    if(json){
+        res.json({ err: ERR.SUCCESS, msg: 'ok' });
+    }else if(type === 'qq'){
         res.redirect('/');
-    }else{
+    }else if(type === 'sso'){
         res.redirect(cas.getLogoutUrl());
+    }else{
+        res.redirect('/');
     }
 };
+
 
 exports.search = function(req, res){
     var params = req.parameter;
@@ -239,6 +307,21 @@ exports.search = function(req, res){
                     total: total,
                     list: docs
                 }
+            });
+        }
+    });
+};
+
+exports.resetPwd = function(req, res){
+    var params = req.parameter;
+    var loginUser = req.loginUser;
+
+    mUser.update({ _id: loginUser._id }, { pwd: Util.md5(config.DEFAULT_USER_PWD) }, function(err, doc){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else{
+            res.json({
+                err: ERR.SUCCESS
             });
         }
     });
