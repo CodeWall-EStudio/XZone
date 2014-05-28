@@ -1,4 +1,4 @@
-define(['config','helper/view','cache','model.groupprep'],function(config,View,Cache){
+define(['config','helper/view','cache','helper/util','model.groupprep'],function(config,View,Cache,Util){
 	var	handerObj = $(Schhandler);
 
 	var	stitTarget = $('#sectionTit'),
@@ -59,6 +59,7 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 
 	function init(e,d){
 		d.prep = 'group';
+		Util.showNav('dep');
 		if(d){
 			nowD = d;
 			nowGrade = d.grade || 0;

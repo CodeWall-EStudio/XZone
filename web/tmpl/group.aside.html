@@ -20,8 +20,10 @@
 			<%}%>
 			<div class="group-board" id="groupBoard">
 			</div>
+			<%if(!pt){%>
 			<ul>
 				<li><a href="#recy=1&gid=<%+id%>">回收站</a></li>
 				<li><a href="#mylog=1&gid=<%+id%>">日志</a></li>
 				<li><a href="#data=1&fdid=<%+rootFolder.id%>">数据汇总</a></li>
 			</ul>	
+			<%}%>

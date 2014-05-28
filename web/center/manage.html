@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Xzone" />
+  <meta http-equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" />
+  <title>用户中心</title>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/manage.css" />
+
+</head>
+<body>
+  <div id="header" class="header">
+    <div id="pageNav">
+      <i class="logo"></i>
+      <div id="pageNav">
+        <ul class="navbar-nav header-nav">
+          <li class="nav" cmd="maUser">用户和组织结构</li>
+          <li class="nav" cmd="maGroup">小组和部门</li>
+        </ul>
+      </div>
+      <div class="userinfo" id="userInfo">
+      </div>
+    </div>
+    <div class="manage-menus">
+      <div id="maUser" class="manage-nav">
+        <ul>
+          <li><a cmd="user">用户列表</a></li>
+          <li><a cmd="userdep">组织结构</a></li>
+        </ul>
+      </div>
+      <div id="maGroup" class="manage-nav">
+        <ul>
+          <li><a cmd="group">小组</a></li>
+          <li><a cmd="dep">部门</a></li>
+          <li><a cmd="prep">备课目录</a></li>
+        </ul>
+      </div>     
+    </div>
+  </div>
+
+
+  <script src="js/lib/jquery-1.9.1.min.js"></script>
+  <script data-main="js/manage.js" src="js/lib/require/require.2.1.9.min.js"></script>
+</body>
+</html>
