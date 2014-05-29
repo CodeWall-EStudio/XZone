@@ -469,4 +469,6 @@ td{
 
 .section-tit .prep-list .section-tit-menu1{
 	min-width:220px;
+	max-height:350px;
+	overflow-y:auto;
 }
