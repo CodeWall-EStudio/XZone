@@ -169,9 +169,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				$('#foldList li').removeClass('selected');
 			},
 			after : function(){
-				if(!$("#foldList").attr('show')){
-					$('#foldTree').click();
-				}
+				// if(!$("#foldList").attr('show')){
+				// 	$('#foldTree').click();
+				// }
 				$('#foldtree'+nowFd).attr('data-load',1).addClass('minus');
 				$('#foldtreeli'+nowFd).addClass('selected').find('ul').show();
 				// if(!tree){
