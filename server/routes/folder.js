@@ -386,6 +386,28 @@ exports.search = function(req, res){
     });
 };
 
+
+function statisticsFolder(folder, callback){
+
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    mFolder.statistics(folder._id, ep.doneLater('statFolder'));
+
+    mFile.statistics(folder._id, ep.doneLater('statFile'));
+
+    ep.all('statFolder', 'statFile', function(folderResult, fileResult){
+
+        var result = folderResult;
+        result.fileStat = fileResult;
+        result.folderId = folder._id;
+
+        callback(null, result);
+
+    });
+
+}
+
 /**
  * 统计文件夹个数
  * @param  {[type]} req [description]
@@ -396,15 +418,44 @@ exports.statistics = function(req, res){
     var parameter = req.parameter;
     var folder = parameter.folderId;
 
-    mFolder.statistics(folder._id, function(err, result){
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
 
-        if(err){
-            return res.json({ err: result || ERR.SERVER_ERROR, msg: err});
-        }
+    statisticsFolder(folder, ep.doneLater('statisticsFolder'));
+
+    ep.on('statisticsFolder', function(result){
+
         res.json({
             err: ERR.SUCCESS,
             result: result
         });
 
     });
+
+};
+
+exports.batchStatistics = function(req, res){
+    var parameter = req.parameter;
+    var folders = parameter.folderId;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    ep.after('statisticsFolder', folders.length, function(list){
+
+        res.json({
+            err: ERR.SUCCESS,
+            list: list
+        });
+
+    });
+
+    folders.forEach(function(folder){
+        statisticsFolder(folder, ep.group('statisticsFolder'));
+    });
+
 };
