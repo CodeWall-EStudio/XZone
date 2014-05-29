@@ -10,8 +10,8 @@ var mUser = require('../models/user');
 var Util = require('../util');
 var Logger = require('../logger');
 
-exports.create = function(params, callback){
-    
+exports.create = function(params, callback) {
+
     var doc = {
         name: params.name,
         order: params.order || 0,
@@ -21,62 +21,100 @@ exports.create = function(params, callback){
         updateTime: Date.now()
     };
 
-    db.department.save(doc, function(err){
-        callback(err, doc);
+    db.department.save(doc, function(err) {
+        callback(err, err || doc);
     });
 
 };
 
-exports.modify = function(query, doc, callback){
+exports.modify = function(query, doc, callback) {
 
     doc.updateTime = Date.now();
 
-    db.department.findAndModify(query, [],  { $set: doc },
-            { 'new':true}, callback);
+    db.department.findAndModify(query, [], {
+        $set: doc
+    }, {
+        'new': true
+    }, callback);
 
 };
 
-exports.delete = function(query, callback){
-    
+exports.delete = function(query, callback) {
+
     Logger.info('[organization] delete: ', query);
 
-    
-    
+
+
     db.department.remove(query, callback);
 
 };
 
-exports.getUsers = function(departmentId, options, callback){
+exports.getUsers = function(departmentId, options, callback) {
 
     var fetchDetail = options.fetchDetail || false;
 
-    db.departuser.find({ 'department.$id': departmentId }, function(err, depUsers){
+    db.departuser.find({
+        'department.$id': departmentId
+    }, function(err, depUsers) {
 
-        if(fetchDetail && depUsers && depUsers.length){
-            ep.after('fetchDepartUsers', depUsers.length, function(list){
+        if (fetchDetail && depUsers && depUsers.length) {
+            ep.after('fetchDepartUsers', depUsers.length, function(list) {
                 var users = us.compact(list);
 
                 callback(null, users);
             });
 
-            depUsers.forEach(function(doc){
+            depUsers.forEach(function(doc) {
 
                 // 过滤掉测试用户
-                db.user.findOne({ _id: doc.user.oid, test: null, status: 0 }, ep.group('fetchDepartUsers'));
+                db.user.findOne({
+                    _id: doc.user.oid,
+                    test: null,
+                    status: 0
+                }, ep.group('fetchDepartUsers'));
 
             });
-        }else{
-            callback(err, depUsers);
+        } else {
+            callback(err, err || depUsers);
         }
 
     });
 
 };
 
-exports.getChildren = function(departmentId, options, callback){
-    
-    db.department.find({ 'parent.$id': departmentId }, callback);
+exports.getChildren = function(departmentId, options, callback) {
+
+    db.department.find({
+        'parent.$id': departmentId
+    }, callback);
 
 };
 
+exports.addUser = function(params, callback) {
 
+    db.departuser.findOne ({
+        'user.$id': params.userId,
+        'department.$id': params.organizationId
+    }, function(err, result){
+        if(result){
+            return callback(err, result);
+        }
+        var doc = {
+            user: new DBRef('user', params.userId),
+            department: new DBRef('department', params.organizationId)
+        };
+        db.department.save(doc, function(err){
+            callback(err, err || doc);
+        });
+    });
+};
+
+exports.removeUser = function(params, callback) {
+
+    db.departuser.remove({
+        'user.$id': params.userId,
+        'department.$id': params.organizationId
+    }, {
+        multi: true
+    }, callback);
+};
