@@ -1,4 +1,4 @@
-define(['config','helper/view','cache','helper/util','model.file'],function(config,View,Cache,util){
+define(['config','helper/view','cache','helper/util','model.file'],function(config,View,Cache,util,Model){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
@@ -313,8 +313,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		handerObj.triggerHandler('file:search',obj);				
 	}
 
-	function fileDel(e,d){
-		console.log(d);
+	function fileCheckSuc(e,d){
 		var view = new View({
 			target : actTarget,
 			tplid : 'del',
@@ -335,7 +334,44 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				}
 			}
 		});
-		view.createPanel();
+		view.createPanel();		
+	}
+
+	function fileDel(e,d){
+		if(!$.isEmptyObject(d.fd)){
+			var fl = [];
+			for(var i in d.fd){
+				fl.push(i);
+			}
+			var obj = {
+				folderId : fl,
+				fd : d.fd,
+				fl : d.fl
+			}
+			handerObj.triggerHandler('file:checkfold',obj);
+		}else{
+			var view = new View({
+				target : actTarget,
+				tplid : 'del',
+				data : d,
+				after : function(){
+					$("#actWin").modal('show');
+				},
+				handlers : {
+					'.btn-del' : {
+						'click' : function(){
+							if(!$.isEmptyObject(d.fl)){
+								handerObj.triggerHandler('file:delfiles',d.fl);
+							}
+							if(!$.isEmptyObject(d.fd)){
+								handerObj.triggerHandler('fold:delfolds',d.fd);
+							}
+						}
+					}
+				}
+			});
+			view.createPanel();
+		}
 	}
 
 	function delSuc(e,d){
@@ -1144,6 +1180,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		'model:change' : modelChange,
 		'search:start' : search,
 		'file:del' : fileDel,
+		'fild:checkSuc' : fileCheckSuc,
 		'file:init' : fileInit,
 		'file:load' : fileLoad,
 		'file:tocoll' : toColl,

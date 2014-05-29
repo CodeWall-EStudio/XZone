@@ -59,6 +59,7 @@ define(['config','helper/view','cache','model.groupprep'],function(config,View,C
 
 	function init(e,d){
 		d.prep = 'group';
+		util.showNav('dep');
 		if(d){
 			nowD = d;
 			nowGrade = d.grade || 0;

@@ -141,7 +141,7 @@ a:hover{
 	top:0;
 	left:130px;
 }
-.header .menu li a{
+.header .menu li a.text-limit{
 	display:inline-block;
 	width:100px;
 	overflow:hidden;
