@@ -4,3 +4,4 @@ test/*
 data/*
 
 logs/*
+/config.js
