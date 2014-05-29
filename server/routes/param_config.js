@@ -435,7 +435,7 @@ module.exports = {
         ]
     },
     '/api/folder/batchStatistics': { // 批量统计制定文件夹下面又多少个子文件夹
-        method: 'GET',
+        method: 'GET,POST',
         params: [
             {
                 name: 'folderId',
