@@ -1223,6 +1223,75 @@ module.exports = {
                 type: '[number]'
             }
         ]
+    },
+
+    // organization
+    '/api/organization/create': {
+        method: 'POST',
+        params: [{
+            name: 'name',
+            required: true
+        },{
+            name: 'order',
+            type: 'number',
+            required: true
+        },{
+            name: 'parentId',
+            type: 'department'
+        }]
+    },
+
+    '/api/organization/modify': {
+        method: 'POST',
+        params: [
+            {
+                name: 'organizationId',
+                type: 'department',
+                required: true
+            },{
+                name: 'name'
+            },{
+                name: 'order',
+                type: 'number'
+            }
+        ]
+    },
+
+    '/api/organization/delete': {
+        method: 'POST',
+        params: [
+            {
+                name: 'organizationId',
+                type: 'department',
+                required: true
+            }
+        ]
+    },
+
+    '/api/organization/addUser': {
+        method: 'POST',
+        params: [{
+            name: 'userId',
+            type: 'user',
+            required: true
+        },{
+            name: 'organizationId',
+            type: 'department',
+            required: true
+        }]
+    },
+
+    '/api/organization/removeUser': {
+        method: 'POST',
+        params: [{
+            name: 'userId',
+            type: 'user',
+            required: true
+        },{
+            name: 'organizationId',
+            type: 'department',
+            required: true
+        }]
     }
 };
 

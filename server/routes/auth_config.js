@@ -711,7 +711,20 @@ exports.RULES = {
         verify: function(user, parameter, callback){
             return callback(null);
         }
-    }
+    },
+
+    // organization
+    '/api/organization/*': { // 用户中心的组织架构的接口, 管理员可调用
+
+        verify: function(user, parameter, callback){
+
+            if(user.__role & config.AUTH_MANAGER){
+
+                return callback(null);
+            }
+            return callback('no auth');
+        }
+    },
 };
 
 /**

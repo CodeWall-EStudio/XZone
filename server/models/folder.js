@@ -126,24 +126,35 @@ exports.delete = function(params, callback){
 
         db.folder.find(query, ep.done('findAllChild'));
     }else{
-        deleteFolderAndFiles(folder, callback);
+        deleteFolderAndFiles(folder, ep.doneLater('deleteDone'));
 
     }
 
-
     ep.on('findAllChild', function(docs){
         if(!docs.length){
-            deleteFolderAndFiles(folder, callback);
+            deleteFolderAndFiles(folder, ep.doneLater('deleteDone'));
             return;
         }
 
         ep.after('delete', docs.length, function(list){
-            callback(null, U.calculate(list));
+
+            ep.emit('deleteDone', U.calculate(list));
         });
 
         docs.forEach(function(doc){
 
             deleteFolderAndFiles(doc, ep.group('delete'));
+        });
+    });
+
+    ep.on('deleteDone', function(list){
+
+        db.folder.count({ 'parent.$id': folder.parent.oid }, function(err, count){
+            if(!err && !count){ // 没有文件了, 重置标志位
+                db.folder.update( { _id: folder.parent.oid }, { $set: { hasChild: false } }, function(){});
+            }
+
+            callback(null, list);
         });
     });
 };
