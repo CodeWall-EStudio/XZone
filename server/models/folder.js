@@ -138,7 +138,7 @@ exports.delete = function(params, callback){
 
         ep.after('delete', docs.length, function(list){
 
-            ep.emit('deleteDone', null, U.calculate(list));
+            ep.emit('deleteDone', U.calculate(list));
         });
 
         docs.forEach(function(doc){
