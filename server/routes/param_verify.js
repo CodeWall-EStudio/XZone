@@ -33,7 +33,7 @@ function findOne(coll, value, pcfg, callback) {
 
 function findArray(coll, value, pcfg, callback) {
     if (!value.forEach) {
-        return callback(pcfg.name + ' must be an array');
+        return callback(pcfg.name + ' must be an array, value: ' + value);
     }
     if (!value.length) {
         return callback(null, value);
@@ -60,7 +60,7 @@ var checkers = {
     'number': function(value, pcfg, callback) {
         value = Number(value);
         if (isNaN(value)) {
-            return callback(pcfg.name + ' must be a number');
+            return callback(pcfg.name + ' must be a number, value: ' + value);
         }
         if (('min' in pcfg) && value < pcfg.min) {
             return callback(pcfg.name + ' must be less than ' + pcfg.min);
@@ -99,12 +99,12 @@ var checkers = {
             value = U.jsonParse(value);
             callback(null, value);
         } catch (e) {
-            callback(pcfg.name + ' must be an object');
+            callback(pcfg.name + ' must be an object, value: ' + value);
         }
     },
 
     '[number]': function(value, pcfg, callback) {
-        var notAnArrayMsg = pcfg.name + ' must be a number array';
+        var notAnArrayMsg = pcfg.name + ' must be a number array, value: ' + value;
         if (!value.forEach) {
             return callback(notAnArrayMsg);
         }
