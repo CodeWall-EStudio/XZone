@@ -264,6 +264,7 @@ exports.listPrepares = function(req, res) {
         type: 3, // type=3 是备课学年
         parent: null
     }, function(result) {
+        Logger.debug('[listPrepares] {type: 3, parent: null }.length ', result.length);
         if (result && result.length) {
             if (fetchChild) {
                 ep.after('fetchGroupDetail', result.length, function( /*list*/ ) {
