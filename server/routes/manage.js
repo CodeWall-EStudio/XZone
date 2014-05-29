@@ -290,6 +290,7 @@ exports.listPrepares = function(req, res) {
         res.json({
             err: ERR.SUCCESS,
             result: {
+                total: list.length,
                 list: list
             }
         });
