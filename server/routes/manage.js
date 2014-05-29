@@ -29,7 +29,9 @@ exports.listGroups = function(req, res) {
 
     if ('parent' in params) {
         if (params.parent) {
-            query.parent = { $ne: null };
+            query.parent = {
+                $ne: null
+            };
         } else {
             query.parent = null;
         }
@@ -263,7 +265,7 @@ exports.listPrepares = function(req, res) {
     db.group.find({
         type: 3, // type=3 是备课学年
         parent: null
-    }, ep.doneLater('findPrepare');
+    }, ep.doneLater('findPrepare'));
 
     ep.on('findPrepare', function(result) {
         Logger.debug('[listPrepares] {type: 3, parent: null }.length ', result && result.length);
@@ -422,7 +424,11 @@ exports.statistics = function(req, res) {
         ep.emit('totalDepartment');
     });
 
-    db.folder.count({ parent: { $ne: null } }, function(err, num) {
+    db.folder.count({
+        parent: {
+            $ne: null
+        }
+    }, function(err, num) {
         if (err) {
             Logger.error('[manage.statistics]', err);
         }
