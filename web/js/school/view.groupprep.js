@@ -1,4 +1,4 @@
-define(['config','helper/view','cache','model.groupprep'],function(config,View,Cache){
+define(['config','helper/view','cache','helper/util','model.groupprep'],function(config,View,Cache,util){
 	var	handerObj = $(Schhandler);
 
 	var	stitTarget = $('#sectionTit'),
