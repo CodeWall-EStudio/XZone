@@ -211,8 +211,9 @@ function fetchDepartments(dep, callback){
     // 2. 查询该部门的子部门
     db.search('department', { 'parent.$id': dep._id }, { order: { order: 1 } }, ep.doneLater('getDeps'));
 
-    ep.on('getDeps', function(deps){
-        dep.children = deps || [];
+    ep.on('getDeps', function(total, deps){
+        deps = deps || [];
+        dep.children = deps;
 
         ep.after('fetchChildDeparts', deps.length, function(){
             ep.emit('getDepartsDone');
