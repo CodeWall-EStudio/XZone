@@ -97,12 +97,12 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		for(var i in d){
 			var item = d[i];
 			td[item._id] = d[i];
-			if(item.children){
+			if(item.children && item.children.length){
 				var tk = conventOrg(item.children);
 				$.extend(td,tk);
 			}
 		}
-		console.log(td);
+		return td;
 	}
 	//读组织树
 	function loadUser(e,d){
@@ -117,7 +117,7 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		var success = function(data){
 			if(data.err == 0){
 				var d2k = conventOrg(data.result.list);
-				console.log(data);
+				console.log(d2k);
 				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list,type:1});
 				handerObj.triggerHandler('user:depsload',{ root:data.result.root,list :data.result.list,kl : d2k });
 			}else{
