@@ -36,10 +36,11 @@ define(function() {
 			modify : CGI_PATH + 'manage/modifyUser',
 			resetpwd : CGI_PATH + 'manage/resetUserPwd',
 
+			orglist : CGI_PATH + 'organization/tree',
 			createorgan : CGI_PATH + 'organization/create',
 			adduser : CGI_PATH + 'organization/addUser',
 			removeuser : CGI_PATH + 'organization/removeUser',
-			deleteuser : CGI_PATH + 'organization/delete',
+			orgdelete : CGI_PATH + 'organization/delete',
 			organmodify : CGI_PATH + 'organization/modify',			
 
 			//文件操作

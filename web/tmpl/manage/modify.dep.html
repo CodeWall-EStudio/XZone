@@ -4,7 +4,7 @@
 		<tr>
 			<td>组织名称</td>
 			<td>
-				<input type="text" id="orgName" value="<%if(data){%><%-data.name%><%}%>" />
+				<input type="text" id="orgName" <%if(data){%>data-id="<%-data._id%>"<%}%> value="<%if(data){%><%-data.name%><%}%>" />
 			</td>
 		</tr>
 		<tr>
@@ -17,8 +17,15 @@
 		<tr>
 			<td>上级组织</td>
 			<td>
-				<div>请从左边单组织列表中选择上级组织id</div>
-				<div id="orgParents"></div>
+				<div id="orgParents">
+					<%if(data && data.parent.$id !== rid){%>
+						<%-kl[data.parent.$id].name %>
+					<%}else if(typeof pid !== 'undefined'){%>
+						<%-pname%>
+						<input type="hidden" id="orgParentId" value="<%-pid%>" />
+					<%}%>
+
+				</div>
 			</td>
 		</tr>
 		<tr>

@@ -112,14 +112,13 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		// 	return;
 		// }
 		var opt = {
-			cgi : config.cgi.departments //userlist
+			cgi : config.cgi.orglist //userlist
 		}		
 		var success = function(data){
 			if(data.err == 0){
-				var d2k = conventOrg(data.result.list);
-				console.log(d2k);
-				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list,type:1});
-				handerObj.triggerHandler('user:depsload',{ root:data.result.root,list :data.result.list,kl : d2k });
+				var d2k = conventOrg(data.result.data.children);
+				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.data.children,type:1});
+				handerObj.triggerHandler('user:depsload',{ root:data.result.data._id, list :data.result.data.children,kl : d2k });
 			}else{
 				handerObj.triggerHandler('msg:error',data.err);
 			}
@@ -153,7 +152,6 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 				handerObj.triggerHandler('user:createsuc',obj);
 			}
 			handerObj.triggerHandler('msg:error',data.err);
-			console.log(data);
 		}
 		request.post(opt,success);
 	}
@@ -182,12 +180,43 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 				handerObj.triggerHandler('user:orgcreatesuc',obj);
 			}
 			handerObj.triggerHandler('msg:error',data.err);
-			console.log(data);
 		}
 		request.post(opt,success);
 	}
 
+	function modifyOrg(e,d){
+		var opt = {
+			cgi : config.cgi.organmodify,
+			data : d
+		}
+		var success = function(data){
+			if(data.err===0){
+				var obj = data.result.data;
+				handerObj.triggerHandler('user:orgmodifysuc',obj);
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}
+
+	function delOrg(e,d){
+		var opt = {
+			cgi : config.cgi.orgdelete,
+			data : {
+				organizationId : d
+			}
+		}
+		var success = function(data){
+			if(data.err===0){
+				handerObj.triggerHandler('user:orgdelsuc',d);
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);	}
+
 	var handlers = {
+		'user:orgdel' : delOrg,
+		'user:orgmodify' : modifyOrg,
 		'user:orgcreate' : createOrg,
 		'user:resetpwd' : resetPwd,
 		'user:create' : createUser,

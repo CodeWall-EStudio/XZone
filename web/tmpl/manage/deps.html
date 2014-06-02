@@ -7,7 +7,9 @@
 				var item = list[i];
 				if(item.children){
 		%>
-			<li><%if(item.children.length){%><i cmd="next" class="plus" data-id="<%+item._id%>"></i><%}%> <a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <strong><%=item.name%></a></strong> <span class="org-select hide"  title="<%+item.name%>" data-id="<%+item._id%>">选择</span></a></li>
+			<li id="org<%-item._id%>"><%if(item.children.length){%><i cmd="next" class="plus" data-id="<%+item._id%>"></i><%}%> <a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <strong><%=item.name%></a></strong> 	
+				</a>
+			</li>
 			<%}%>
 		<%}%>
 		<%}else{%>
@@ -21,6 +23,7 @@
 			<div class="action-list">
 				<div class="action-btn-list">
 					<button class="btn btn-primary btn-org-create">添加组织</button>
+					<button class="btn btn-primary btn-org-adduser">添加用户</button>					
 					<button class="btn btn-primary btn-org-modify" disabled>修改组织</button>
 					<button class="btn btn-danger btn-org-del" disabled>删除组织</button>
 				</div>

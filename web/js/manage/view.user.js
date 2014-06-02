@@ -9,6 +9,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		nowOd = 1,
 		nowOn = 'name',
 		nowKey = '',
+		nowOid = 0,
 		pageNum = config.pagenum;
 
 	//组织树初始化
@@ -450,13 +451,14 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	}		
 
 	//用户列表
-	function getuserList(list,target){
+	function getuserList(list,target,pid){
 
 		var selected = target.find('.dep-click:checked').length;
 		var view = new View({
 			target : target,
 			tplid : 'manage/deps.user.li',
 			data : {
+				pid : pid,
 				list : list.children,
 				ulist : list.users,
 				selected : selected
@@ -465,12 +467,14 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		view.appendPanel();
 	}
 
-	function createOrg(){
+	function createOrg(pid,name){
 		var view = new View({
 			target : $('#depModifyZone'),
 			tplid : 'manage/modify.dep',
 			data : {
-				data : false
+				data : false,
+				pid : pid,
+				pname : name
 			},
 			after : function(){
 				$('#depsList .org-select').removeClass('hide');
@@ -479,8 +483,38 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		view.createPanel();
 	}
 
-	function modifyOrg(id){
+	function modifyOrg(id,list,rid){
+		var view = new View({
+			target : $('#depModifyZone'),
+			tplid : 'manage/modify.dep',
+			data : {
+				data : list[id],
+				kl : list,
+				rid : rid
+			},
+			after : function(){
+				$('#depsList .org-select').removeClass('hide');
+				$('.btn-org-save').attr('data-modify',1);
+			}
+		});
+		view.createPanel();
+	}
 
+	function delOrg(id){
+		handerObj.triggerHandler('msg:config',{
+			msg : '你确定要删除该组织，删除之后不能恢复',
+			act : {
+				sub : {
+					label : '确定',
+					action : function(){
+						handerObj.triggerHandler('user:orgdel',id);
+					}
+				},
+				cancel : {
+					label : '取消'
+				}
+			}
+		});
 	}
 
 	function depsLoad(e,d){
@@ -516,21 +550,27 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						}else{	
 							target.addClass('minus');
 							var p = target.parent('li');
-							getuserList(getUList(id,d.list),p);
+							getuserList(getUList(id,d.list),p,id);
 						}						
 					}
 				},
 				'.list-link' : {
 					'click' : function(e){
 						var id = $(this).attr('data-id');
-						console.log(id);
-					}
-				},
-				'.org-select' : {
-					'click' : function(){
-						var id = $(this).attr('data-id'),
-							name = $(this).attr('title');
-						$('#orgParents').html(name + '<i class="dep-close"></i>').attr('data-id',id);
+						nowOid = id;
+						if(kl[id].children && kl[id].children.length){
+							$('.btn-org-adduser').prop('disabled',true);
+							$('.btn-org-create').prop('disabled',false);
+						}else{
+							$('.btn-org-adduser').prop('disabled',false);
+							$('.btn-org-create').prop('disabled',true);
+						}
+						if(!kl[id].children.length && !kl[id].user){
+							$('.btn-org-del').prop('disabled',false);
+						}else{
+							$('.btn-org-del').prop('disabled',true);
+						}
+						modifyOrg(id,kl,root);
 					}
 				},
 				'.dep-close' : {
@@ -540,20 +580,31 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				},
 				'.btn-org-create' : {
 					'click' : function(){
-						createOrg();
+						var id = nowOid;
+						var name = '';
+						if(id){
+							name = kl[id].name;
+						}
+						createOrg(id,name);
 					}
 				},
-				'.btn-org-delete' : {
+				'.btn-org-adduser' : {
 					'click' : function(){
-
+						console.log(1);
+					}
+				},
+				'.btn-org-del' : {
+					'click' : function(){
+						var id = nowOid;
+						delOrg(id);
 					}
 				},
 				'.btn-org-save' : {
 					'click' : function(){
-						var modify = $(this).attr('data-modify');
+						var modify = $(this).attr('data-modify') || 0;
 						var name = $('#orgName').val();
 						var order = $('#orgOrder').val();
-						var parent = $('#orgParents').attr('data-id') || 0;
+						var parent = $('#orgParentId').val() || 0;
 						if(order === ''){
 							handerObj.triggerHandler('msg:error',10);
 							return;
@@ -566,14 +617,18 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							name : name,
 							order : parseInt(order)
 						}
-						if(parent){
+						if(parseInt(parent)){
 							obj.parentId = parent;
 						}else{
-							obj.parentId = root._id;
+							var id = $("#orgName").attr('data-id');
+							obj.parentId = root;
 						}
-						console.log(obj);
-						handerObj.triggerHandler('user:orgcreate',obj);
-
+						if(modify){
+							obj.organizationId = id;
+							handerObj.triggerHandler('user:orgmodify',obj);
+						}else{
+							handerObj.triggerHandler('user:orgcreate',obj);
+						}
 					}
 				}	
 			}
@@ -585,8 +640,12 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 
 	}
 
-	function orgModifySuc(e,d){
+	function orgDelSuc(e,d){
+		$('#org'+d).remove();
+	}
 
+	function orgModifySuc(e,d){
+		$("#org"+d._id + ' strong').text(d.name);
 	}
 
 	function foldLoad(e,d){
@@ -608,6 +667,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	}
 
 	var handlers = {
+		'user:orgdelsuc' : orgDelSuc,
+		'user:orgmodifysuc' : orgModifySuc,
 		'user:orgcreatesuc' : orgCreateSuc,
 		'user:listload' : userLoad,
 		'user:modifysuc' : userModifySuc,

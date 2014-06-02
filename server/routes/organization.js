@@ -140,6 +140,7 @@ exports.delete = function(req, res){
     var params = req.parameter;
 
     var organ = params.organizationId;
+    var ep = new EventProxy();
 
     mOrganization.getChildren(organ._id, {}, ep.doneLater('getChildrenDone'));
 
