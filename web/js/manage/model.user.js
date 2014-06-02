@@ -93,15 +93,16 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 
 	//读组织树
 	function loadUser(e,d){
-		var departments = Cache.get('departments');
-		if(departments){
-			handerObj.triggerHandler('user:depsload',{ list :departments});
-			return;
-		}
+		// var departments = Cache.get('departments');
+		// if(departments){
+		// 	handerObj.triggerHandler('user:depsload',{ list :departments});
+		// 	return;
+		// }
 		var opt = {
 			cgi : config.cgi.departments //userlist
 		}		
 		var success = function(data){
+			console.log(data);
 			if(data.err == 0){
 				var d2k = {};
 				for(var i in data.result.list){
