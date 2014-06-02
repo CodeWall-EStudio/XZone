@@ -484,7 +484,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	}
 
 	function depsLoad(e,d){
-		console.log(d);
+		var root = d.root;
 		var kl = d.kl;
 		var view = new View({
 			target : $('#deptreeMa'),
@@ -568,6 +568,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						}
 						if(parent){
 							obj.parentId = parent;
+						}else{
+							obj.parentId = root._id;
 						}
 						console.log(obj);
 						handerObj.triggerHandler('user:orgcreate',obj);

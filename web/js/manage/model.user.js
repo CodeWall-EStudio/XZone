@@ -91,6 +91,19 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		request.get(opt,success);			
 	}	
 
+
+	function conventOrg(d){
+		var td = {};
+		for(var i in d){
+			var item = d[i];
+			td[item._id] = d[i];
+			if(item.children){
+				var tk = conventOrg(item.children);
+				$.extend(td,tk);
+			}
+		}
+		console.log(td);
+	}
 	//读组织树
 	function loadUser(e,d){
 		// var departments = Cache.get('departments');
@@ -102,14 +115,11 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			cgi : config.cgi.departments //userlist
 		}		
 		var success = function(data){
-			console.log(data);
 			if(data.err == 0){
-				var d2k = {};
-				for(var i in data.result.list){
-					d2k[data.result.list[i]._id] = data.result.list[i];
-				}
+				var d2k = conventOrg(data.result.list);
+				console.log(data);
 				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list,type:1});
-				handerObj.triggerHandler('user:depsload',{ list :data.result.list,kl : d2k });
+				handerObj.triggerHandler('user:depsload',{ root:data.result.root,list :data.result.list,kl : d2k });
 			}else{
 				handerObj.triggerHandler('msg:error',data.err);
 			}
@@ -119,7 +129,6 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 
 	//读目录
 	function getFolder(e,d){
-		console.log(d);
 		var opt = {
 			cgi : config.cgi.foldlist,
 			data : {

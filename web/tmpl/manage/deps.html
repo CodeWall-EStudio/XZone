@@ -2,12 +2,16 @@
 	<div>
 		<ul id="depsList" class="act-fold-list">
 		<%
+		if(list.length){
 			for(var i=0,l=list.length;i<l;i++){
 				var item = list[i];
-				if(item.children || item.users){
+				if(item.children){
 		%>
-			<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i> <a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <strong><%=item.name%></a></strong> <span class="org-select hide"  title="<%+item.name%>" data-id="<%+item._id%>">选择</span></a></li>
+			<li><%if(item.children.length){%><i cmd="next" class="plus" data-id="<%+item._id%>"></i><%}%> <a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <strong><%=item.name%></a></strong> <span class="org-select hide"  title="<%+item.name%>" data-id="<%+item._id%>">选择</span></a></li>
 			<%}%>
+		<%}%>
+		<%}else{%>
+			<li>还没有添加组织</li>
 		<%}%>
 		</ul>		
 	</div>
