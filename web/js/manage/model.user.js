@@ -102,7 +102,6 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			cgi : config.cgi.departments //userlist
 		}		
 		var success = function(data){
-			console.log(data);
 			if(data.err == 0){
 				var d2k = {};
 				for(var i in data.result.list){
@@ -111,7 +110,7 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list,type:1});
 				handerObj.triggerHandler('user:depsload',{ list :data.result.list,kl : d2k });
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				handerObj.triggerHandler('msg:error',data.err);
 			}
 		}
 		request.get(opt,success);		
