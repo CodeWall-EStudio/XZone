@@ -112,7 +112,47 @@ exports.init = function(req, res){
         }
     });
 
-    ep.all('createInitUserDone','createPrepareDone', 'createSchoolDone', 'createOrganizationDone', function(){
+    // 创建默认用户空间组
+
+    ep.on('createInitUserDone', 'checkSizegroup', function(user, doc){
+        if(doc){
+            Logger.info('already has sizegroup');
+            return ep.emit('createSizegroupDone');
+        }else{
+
+
+            // 创建个人默认空间组
+            doc = {
+                name: 'user_default',
+                type: 0,
+                size: config.DEFAULT_USER_SPACE,
+                isDefault: true,
+                updateUserId: user._id
+            };
+
+            mSizegroup.create(doc, ep.doneLater('nextSizegroup'));
+
+            // 创建小组默认空间组
+            var doc2 = {
+                name: 'group_default',
+                type: 1,
+                size: config.DEFAULT_USER_SPACE,
+                isDefault: true,
+                updateUserId: user._id
+            };
+            ep.on('nextSizegroup', function(){
+                
+                mSizegroup.create(doc2, ep.doneLater('createSizegroupDone'));
+            });
+        }
+    });
+
+    ep.all('createInitUserDone',
+            'createPrepareDone',
+            'createSchoolDone',
+            'createOrganizationDone',
+            'createSizegroupDone',
+                function(){
 
         Logger.info('all init done');
         db.storage.save({ key: 'xzone_init', value: 'ok' }, ep.done('initDone'));
