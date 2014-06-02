@@ -11,6 +11,7 @@ var ERR = require('../errorcode');
 var db = require('../models/db');
 var Logger = require('../logger');
 var mGroup = require('../models/group');
+var mOrganization = require('../models/organization');
 var Util = require('../util');
 var userHelper = require('../helper/user_helper');
 var fileHelper = require('../helper/file_helper');
@@ -25,10 +26,9 @@ exports.init = function(req, res){
     
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
-        //return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
+        return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
     });
 
-    db.storage.findOne({ key: 'xzone_init' }, ep.doneLater('checkInit'));
 
     ep.on('checkInit', function(doc){
         if(doc){
@@ -37,25 +37,27 @@ exports.init = function(req, res){
 
         mUser.getUser({ name: 'xzone_admin' }, ep.doneLater('checkInitUser'));
 
+        db.group.findOne({ type: 0 }, ep.doneLater('checkSchoolGroup'));
+
         db.group.findOne({ type: 2, pt: 1 }, ep.doneLater('checkPrepareGroup'));
 
-        db.group.findOne({ type: 0 }, ep.doneLater('checkSchoolGroup'));
+        db.department.findOne({ parent: null }, ep.doneLater('checkOrganization'));
 
     });
 
     // 创建初始管理员
     ep.on('checkInitUser', function(doc){
         if(doc){
-            ep.emit('createInitUserDone', doc);
             Logger.info('already has init user');
+            ep.emit('createInitUserDone', doc);
         }else{
             var initUser = {
-                name: 'horde',
+                name: 'xzone_admin',
                 nick: '初始化管理员',
                 pwd: Util.md5(config.DEFAULT_USER_PWD),
                 auth: 15
             };
-            Logger.info('create init user');
+            Logger.info('create init user: ' + initUser.name);
             mUser.create(initUser, ep.done('createInitUserDone'));
         }
     });
@@ -63,8 +65,8 @@ exports.init = function(req, res){
     // 创建备课部门
     ep.all('createInitUserDone', 'checkPrepareGroup', function(user, doc){
         if(doc){
-            ep.emit('createPrepareDone', doc);
             Logger.info('already has prepare group');
+            ep.emit('createPrepareDone', doc);
         }else{
             var param = {
                 name : '备课检查',
@@ -81,8 +83,8 @@ exports.init = function(req, res){
     // 创建学校空间
     ep.all('createInitUserDone',  'checkSchoolGroup', function(user, doc){
         if(doc){
-            ep.emit('createSchoolDone', doc);
             Logger.info('already has school');
+            ep.emit('createSchoolDone', doc);
         }else{
             var param = {
                 name : '学校空间',
@@ -95,7 +97,22 @@ exports.init = function(req, res){
         }
     });
 
-    ep.all('createInitUserDone','createPrepareDone', 'createSchoolDone', function(){
+    // 创建根组织架构
+    ep.all('createInitUserDone',  'checkOrganization', function(user, doc){
+        if(doc){
+            Logger.info('already has root organization');
+            ep.emit('createOrganizationDone', doc);
+        }else{
+            var param = {
+                name : '根组织',
+                creator: user._id
+            };
+            Logger.info('create root organization');
+            mOrganization.create(param, ep.done('createOrganizationDone'));
+        }
+    });
+
+    ep.all('createInitUserDone','createPrepareDone', 'createSchoolDone', 'createOrganizationDone', function(){
 
         Logger.info('all init done');
         db.storage.save({ key: 'xzone_init', value: 'ok' }, ep.done('initDone'));
@@ -106,6 +123,7 @@ exports.init = function(req, res){
         res.json({ err: ERR.SUCCESS, msg: 'init done.'});
     });
 
+    db.storage.findOne({ key: 'xzone_init' }, ep.doneLater('checkInit'));
 };
 
 

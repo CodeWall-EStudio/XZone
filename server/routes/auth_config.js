@@ -24,7 +24,8 @@ exports.AUTH_WHITE_LIST = [
     '/api/user/loginWithQQ',
     '/api/user/loginSuccessWithQQ',
     '/api/media/upload',
-    '/api/media/download'
+    '/api/media/download',
+    '/api/system/init' // 系统初始化接口, 只会运行一次
 ];
 
 exports.RULES = {
@@ -703,13 +704,6 @@ exports.RULES = {
                 return callback(null);
             }
             return callback('no auth');
-        }
-    },
-
-    '/api/system/init': { // 系统初始化接口, 只会运行一次
-
-        verify: function(user, parameter, callback){
-            return callback(null);
         }
     },
 

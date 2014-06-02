@@ -15,7 +15,7 @@ exports.create = function(params, callback) {
     var doc = {
         name: params.name,
         order: params.order || 0,
-        parent: new DBRef('department', params.parentId),
+        parent: params.parentId && new DBRef('department', params.parentId),
         creator: new DBRef('user', params.creator),
         createTime: Date.now(),
         updateTime: Date.now()
