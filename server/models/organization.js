@@ -118,3 +118,86 @@ exports.removeUser = function(params, callback) {
         multi: true
     }, callback);
 };
+
+
+function fetchDepartments(dep, callback){
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    // 1. 先查询该部门的用户
+    db.departuser.find({ 'department.$id': dep._id }, ep.doneLater('getUsers'));
+
+    ep.on('getUsers', function(depUsers){
+
+        dep.users = [];
+
+        ep.after('fetchDepartUsers', depUsers.length, function(list){
+            dep.users = us.compact(list);
+
+            ep.emit('getUsersDone');
+        });
+
+        depUsers.forEach(function(doc){
+
+            // 过滤掉测试用户
+            db.user.findOne({ _id: doc.user.oid, test: null, status: 0 }, ep.group('fetchDepartUsers'));
+
+        });
+
+    });
+
+    // 2. 查询该部门的子部门
+    db.search('department', { 'parent.$id': dep._id }, { order: { order: 1 } }, ep.doneLater('getDeps'));
+
+    ep.on('getDeps', function(total, deps){
+        deps = deps || [];
+        dep.children = deps;
+
+        ep.after('fetchChildDeparts', deps.length, function(){
+            ep.emit('getDepartsDone');
+        });
+
+        deps.forEach(function(doc){
+            fetchDepartments(doc, ep.group('fetchChildDeparts'));
+        });
+
+    });
+
+    ep.all('getUsersDone', 'getDepartsDone', function(){
+
+        callback(null, dep);
+    });
+
+}
+
+exports.getOrganizationTree = function(params, callback){
+
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    db.department.findOne({ parent: null }, ep.doneLater('getOrgRoot'));
+
+    ep.on('getOrgRoot', function(root){
+
+        if(!root){
+            return callback('can\'t find the root of organization');
+        }
+
+        // 查询一级部门
+        db.search('department', { 'parent.$id': root._id }, { order: { order: 1 } }, function(err, total, docs){
+            if(err){
+                return callback(err);
+            }
+            root.children = docs;
+
+            ep.after('fetchChildDeparts', docs.length, function(){
+                callback(null, root);
+            });
+
+            docs.forEach(function(doc){
+                fetchDepartments(doc, ep.group('fetchChildDeparts'));
+            });
+            
+        });
+    });
+};

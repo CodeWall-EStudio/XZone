@@ -13,6 +13,7 @@ var userHelper = require('../helper/user_helper');
 var mUser = require('../models/user');
 var mGroup = require('../models/group');
 var mMessage = require('../models/message');
+var mOrganization = require('../models/organization');
 
 var cas = new CAS({
     base_url: config.CAS_BASE_URL,
@@ -210,7 +211,7 @@ exports.loginSuccessWithQQ = function(req, res, next){
 exports.departments = function(req, res){
     var params = req.parameter;
 
-    mUser.getAllDepartments(params, function(err, data){
+    mOrganization.getOrganizationTree(params, function(err, data){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{

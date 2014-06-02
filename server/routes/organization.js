@@ -7,7 +7,7 @@ var db = require('../models/db');
 var config = require('../config');
 var ERR = require('../errorcode');
 var mUser = require('../models/user');
-var mOrgnization = require('../models/organization');
+var mOrganization = require('../models/organization');
 var Util = require('../util');
 
 exports.create = function(req, res){
@@ -25,7 +25,7 @@ exports.create = function(req, res){
 
     if(parent){
 
-        mOrgnization.getUsers(parent._id, { fetchDetail: false }, ep.doneLater('getUsersDone'));
+        mOrganization.getUsers(parent._id, { fetchDetail: false }, ep.doneLater('getUsersDone'));
     }else{
         ep.emitLater('getUsersDone', []);
     }
@@ -35,7 +35,7 @@ exports.create = function(req, res){
             return ep.emit('error', 'this organization is not empty, it has user', ERR.NOT_EMPTY);
         }
 
-        mOrgnization.create({
+        mOrganization.create({
             name: name,
             order: order,
             parentId: parent && parent._id,
@@ -65,13 +65,13 @@ exports.addUser = function(req, res){
     });
 
 
-    mOrgnization.getChildren(organ._id, {}, ep.doneLater('getChildrenDone'));
+    mOrganization.getChildren(organ._id, {}, ep.doneLater('getChildrenDone'));
 
     ep.on('getChildrenDone', function(list){
         if(list && list.length){
             return ep.emit('error', 'addUser failure, this organization has child', ERR.UNINSERTABLE);
         }
-        mOrgnization.addUser({
+        mOrganization.addUser({
             userId: user._id,
             organizationId: organ._id
         }, ep.done('addUserDone'));
@@ -96,7 +96,7 @@ exports.removeUser = function(req, res){
         return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
     });
 
-    mOrgnization.removeUser({
+    mOrganization.removeUser({
         userId: user._id,
         organizationId: organ._id
     }, ep.done('removeUserDone'));
@@ -123,7 +123,7 @@ exports.modify = function(req, res){
         doc.order = order;
     }
 
-    mOrgnization.modify({ _id: organization._id }, doc, function(err, result){
+    mOrganization.modify({ _id: organization._id }, doc, function(err, result){
         if(err){
             return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
         }
@@ -141,9 +141,9 @@ exports.delete = function(req, res){
 
     var organ = params.organizationId;
 
-    mOrgnization.getChildren(organ._id, {}, ep.doneLater('getChildrenDone'));
+    mOrganization.getChildren(organ._id, {}, ep.doneLater('getChildrenDone'));
 
-    mOrgnization.getUsers(organ._id, { fetchDetail: false }, ep.doneLater('getUsersDone'));
+    mOrganization.getUsers(organ._id, { fetchDetail: false }, ep.doneLater('getUsersDone'));
 
 
     ep.all('getChildrenDone', 'getUsersDone', function(deps, users){
@@ -154,7 +154,7 @@ exports.delete = function(req, res){
             return ep.emit('error', 'this organization has user', ERR.NOT_EMPTY);
         }
 
-        mOrgnization.delete({
+        mOrganization.delete({
             _id: organ._id
         }, ep.done('deleteDone'));
     });
@@ -167,3 +167,26 @@ exports.delete = function(req, res){
     });
 };
 
+exports.tree = function(req, res){
+    var params = req.parameter;
+
+    // params.fetchUser = false;
+
+    mOrganization.getOrganizationTree(params, function(err, data){
+        if(err){
+            res.json({ err: ERR.SERVER_ERROR, msg: err});
+        }else{
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    data: data
+                }
+            });
+        }
+    });
+};
+
+exports.search = function(req, res){
+    // TODO
+    res.json({ err: ERR.SERVER_ERROR, msg: 'not ready'});
+};

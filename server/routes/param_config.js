@@ -1293,6 +1293,11 @@ module.exports = {
             type: 'department',
             required: true
         }]
+    },
+
+    '/api/organization/tree': {
+        method: 'GET',
+        params: []
     }
 };
 
