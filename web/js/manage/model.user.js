@@ -102,9 +102,14 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			cgi : config.cgi.departments //userlist
 		}		
 		var success = function(data){
+			console.log(data);
 			if(data.err == 0){
+				var d2k = {};
+				for(var i in data.result.list){
+					d2k[data.result.list[i]._id] = data.result.list[i];
+				}
 				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list,type:1});
-				handerObj.triggerHandler('user:depsload',{ list :data.result.list});
+				handerObj.triggerHandler('user:depsload',{ list :data.result.list,kl : d2k });
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}
@@ -165,7 +170,6 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		var success = function(data){
 			if(data.err===0){
 				var obj = data.result.data;
-				obj.id = obj._id;
 				handerObj.triggerHandler('user:orgcreatesuc',obj);
 			}
 			handerObj.triggerHandler('msg:error',data.err);

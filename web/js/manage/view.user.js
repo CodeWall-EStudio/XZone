@@ -460,29 +460,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				list : list.children,
 				ulist : list.users,
 				selected : selected
-			},
-			after : function(){
-				// target.find('.plus').unbind().bind('click',function(e){
-				// 		var target = $(e.target),
-				// 			id = target.attr('data-id');
-				// 		var p = target.parent('li');
-				// 		if(p.find('ul').length > 0){
-				// 			var ul = p.find('ul')[0];
-				// 			if(target.hasClass("minus")){
-				// 				target.removeClass('minus');
-				// 				p.find('ul').hide();
-				// 			}else{
-				// 				target.addClass('minus');
-				// 				p.find('ul').show();
-				// 			}
-				// 			return;
-				// 		}else{	
-				// 			target.addClass('minus');
-				// 			var p = target.parent('li');
-				// 			getuserList(getUList(id,list.children),p);
-				// 		}
-				// });
-			}			
+			}		
 		});
 		view.appendPanel();
 	}
@@ -507,6 +485,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 
 	function depsLoad(e,d){
 		console.log(d);
+		var kl = d.kl;
 		var view = new View({
 			target : $('#deptreeMa'),
 			tplid : 'manage/deps',
@@ -539,6 +518,12 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							var p = target.parent('li');
 							getuserList(getUList(id,d.list),p);
 						}						
+					}
+				},
+				'.list-link' : {
+					'click' : function(e){
+						var id = $(this).attr('data-id');
+						console.log(id);
 					}
 				},
 				'.org-select' : {
@@ -594,6 +579,14 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		view.appendPanel();
 	}
 
+	function orgCreateSuc(e,d){
+
+	}
+
+	function orgModifySuc(e,d){
+
+	}
+
 	function foldLoad(e,d){
 		var view = new View({
 			target : $('#userModifyBlock'),
@@ -613,6 +606,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	}
 
 	var handlers = {
+		'user:orgcreatesuc' : orgCreateSuc,
 		'user:listload' : userLoad,
 		'user:modifysuc' : userModifySuc,
 		'user:statusload' : statusLoad,

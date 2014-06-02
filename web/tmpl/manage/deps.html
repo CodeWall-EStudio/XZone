@@ -6,7 +6,7 @@
 				var item = list[i];
 				if(item.children || item.users){
 		%>
-			<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <strong><%=item.name%></a></strong> <span class="org-select hide"  title="<%+item.name%>" data-id="<%+item._id%>">选择</span></li>
+			<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i> <a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <strong><%=item.name%></a></strong> <span class="org-select hide"  title="<%+item.name%>" data-id="<%+item._id%>">选择</span></a></li>
 			<%}%>
 		<%}%>
 		</ul>		
