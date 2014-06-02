@@ -1237,7 +1237,8 @@ module.exports = {
             required: true
         },{
             name: 'parentId',
-            type: 'department'
+            type: 'department',
+            required: true
         }]
     },
 

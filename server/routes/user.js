@@ -214,10 +214,13 @@ exports.departments = function(req, res){
         if(err){
             res.json({ err: ERR.SERVER_ERROR, msg: err});
         }else{
+            var departs = data.children;
+            delete data.children;
             res.json({
                 err: ERR.SUCCESS,
                 result: {
-                    list: data.children
+                    root: data,
+                    list: departs
                 }
             });
         }
