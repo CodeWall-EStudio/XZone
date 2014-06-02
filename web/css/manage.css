@@ -280,3 +280,11 @@ table.jqplot-table-legend{
 	height:18px;
 	background:#496fba;	
 }
+#depModifyZone .dep-close{
+	float:none;
+	display:inline-block;
+	background:url(imgs/close.png) no-repeat;
+	width:12px;
+	height:12px;
+	cursor:pointer;
+}

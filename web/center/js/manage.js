@@ -1,3 +1,4 @@
+window.Schhandler = {};
 ;(function() {
 
   requirejs.config({
@@ -7,7 +8,7 @@
     }    
   });
 
-  require(['config'], function(config){
+  require(['config','view.user'], function(config,user){
 
  	var cgi = config.cgi;
 
@@ -34,8 +35,7 @@
               case 'dep':
               case 'prep':
               case 'school':
-              case 'pschool':
-                group.init(cmd);
+                //group.init(cmd);
                 break;
               case 'user':
               case 'userdep':
@@ -45,7 +45,7 @@
       });   
     }
 
-    manage.init();
+    init();
 
 	});
 

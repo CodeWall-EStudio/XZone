@@ -1,4 +1,4 @@
-define(['../school/config','../school/cache','../school/helper/view','../school/helper/util','model.user'],function(config,Cache,View,Util){
+define(['config','helper/cache','helper/view','helper/util','model.user'],function(config,Cache,View,Util){
 	var handerObj = $(Schhandler);
 	var isInit = {}, //初始化
 		userList = {},
@@ -9,7 +9,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		nowOd = 1,
 		nowOn = 'name',
 		nowKey = '',
-		pageNum = config.pagenum;
+		pageNum = config.pageNum;
 
 	//组织树初始化
 	function despInit(){
@@ -20,21 +20,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		obj.pageNum = pageNum;
 		obj.order = nowOrder;
 		handerObj.triggerHandler('user:search',obj);
-	}
- 
-	//添加用户
-	function addUser(){
-		var sglist = Cache.get('sizegroup');
-
-		var view = new View({
-			target : $('#userModifyBlock'),
-			tplid : 'manage/modify.user',
-			data : {
-				data : false,
-				sglist : sglist
-			}
-		});
-		view.createPanel();		
 	}
 
 	//修改用户
@@ -78,9 +63,10 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 
 		var view = new View({
 			target : $('#userList'),
-			tplid : 'manage/search.user.list',
+			tplid : 'user.list',
 			data : d
 		});
+		console.log(d);
 		view.appendPanel();
 		if($('#tableBody tr').length < d.total){
 			nowPage++;
@@ -112,7 +98,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		}
 		var view = new View({
 			target : $('#tr-user'+d.userId),
-			tplid : 'manage/search.user.list.one',
+			tplid : 'user.list.one',
 			data : {
 				item : userList[d.userId]
 			}
@@ -129,7 +115,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 			$('#userMa').removeClass('hide');
 			var view = new View({
 				target : $('#userMa'),
-				tplid : 'manage/search.user',
+				tplid : 'user',
 				data : {
 					on : nowOn,
 					od : nowOd
@@ -217,7 +203,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 								$('#userMa .btn-user-open').prop({'disabled':true});
 								$('#userMa .btn-user-colse').prop({'disabled':false});
 							}
-							$('#userMa .btn-user-cpwd').prop({'disabled':false});
 
 							$('.tr-user').removeClass('group-tr-selected');
 							$(this).addClass('group-tr-selected');
@@ -226,42 +211,24 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 					},
 					'.btn-user-add' : {
 						'click' : function(){
-							addUser();
+							var view = new View({
+								target : $('#userModifyBlock'),
+								tplid : 'user.create'
+							});
+							view.createPanel();
 						}
 					},
-					'.btn-user-cpwd' : {
+					'.btn-sub-user' : {
+
+					},
+					'.btn-user-modify' : {
 						'click' : function(){
-							var obj = {
-								msg : '重置该用户的密码？',
-								act : {
-									sub : {
-										label : '重置',
-										action : function(){
-											handerObj.triggerHandler('user:resetpwd',nowUin);
-										}
-									},
-									cancel : {
-										label : '取消',
-										action : function(){
-											Messenger().hide();
-										}
-									}
-								}
-							};
-							handerObj.triggerHandler('msg:config',obj);
+							console.log(222);
 						}
 					},
-					'.btn-user-newsub' : {
+					'.btn-user-pwd' : {
 						'click' : function(){
-							var name = $('#userName').val(),
-								nick = $('#userNick').val(),
-								sg = $('#userSizeGroup').val();
-							var obj = {
-								name : name,
-								nick : nick,
-								sizegroupId : sg
-							}
-							handerObj.triggerHandler('user:create',obj);
+							console.log(3);
 						}
 					},
 					'.btn-user-open' : {
@@ -285,10 +252,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 					'.btn-user-save' : {
 						'click' : function(){
 							var sizeid = $('.user-size-group').val();
-							var nick = $('#userNick').val();
 							var obj = {
 								userId : nowUin,
-								nick : nick,
 								sizegroupId : sizeid
 							}
 							handerObj.triggerHandler('user:modify',obj);
@@ -485,28 +450,9 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 			}			
 		});
 		view.appendPanel();
-	}
-
-	function createOrg(){
-		var view = new View({
-			target : $('#depModifyZone'),
-			tplid : 'manage/modify.dep',
-			data : {
-				data : false
-			},
-			after : function(){
-				$('#depsList .org-select').removeClass('hide');
-			}
-		});
-		view.createPanel();
-	}
-
-	function modifyOrg(id){
-
-	}
+	}	
 
 	function depsLoad(e,d){
-		console.log(d);
 		var view = new View({
 			target : $('#deptreeMa'),
 			tplid : 'manage/deps',
@@ -540,55 +486,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							getuserList(getUList(id,d.list),p);
 						}						
 					}
-				},
-				'.org-select' : {
-					'click' : function(){
-						var id = $(this).attr('data-id'),
-							name = $(this).attr('title');
-						$('#orgParents').html(name + '<i class="dep-close"></i>').attr('data-id',id);
-					}
-				},
-				'.dep-close' : {
-					'click' : function(){
-						$('#orgParents').html('').removeAttr('data-id');
-					}
-				},
-				'.btn-org-create' : {
-					'click' : function(){
-						createOrg();
-					}
-				},
-				'.btn-org-delete' : {
-					'click' : function(){
-
-					}
-				},
-				'.btn-org-save' : {
-					'click' : function(){
-						var modify = $(this).attr('data-modify');
-						var name = $('#orgName').val();
-						var order = $('#orgOrder').val();
-						var parent = $('#orgParents').attr('data-id') || 0;
-						if(order === ''){
-							handerObj.triggerHandler('msg:error',10);
-							return;
-						}
-						if(name == ''){
-							handerObj.triggerHandler('msg:error',11);							
-							return;
-						}
-						var obj = {
-							name : name,
-							order : parseInt(order)
-						}
-						if(parent){
-							obj.parentId = parent;
-						}
-						console.log(obj);
-						handerObj.triggerHandler('user:orgcreate',obj);
-
-					}
-				}	
+				}				
 			}
 		});
 		view.appendPanel();

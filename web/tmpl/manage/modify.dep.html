@@ -1,0 +1,32 @@
+<dt><h4>组织信息</h4></dt>
+<dd>
+	<table width="100%" class="table table-striped table-hover table-list table-files">
+		<tr>
+			<td>组织名称</td>
+			<td>
+				<input type="text" id="orgName" value="<%if(data){%><%-data.name%><%}%>" />
+			</td>
+		</tr>
+		<tr>
+			<td>排序</td>
+			<td>
+				<input type="text" id="orgOrder" value="<%if(data){%><%-data.order%><%}%>" />
+			</td>
+		</tr>
+
+		<tr>
+			<td>上级组织</td>
+			<td>
+				<div>请从左边单组织列表中选择上级组织id</div>
+				<div id="orgParents"></div>
+			</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>
+				<button class="btn btn-primary btn-org-save" <%if(data){%>data-modify="1"<%}%>>保存</button>
+				<button class="btn btn-primary btn-reset" <%if(data){%>data-modify="1"<%}%>>取消</div>
+			</td>
+		</tr>
+	</table>
+</dd>

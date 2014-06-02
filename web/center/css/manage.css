@@ -149,3 +149,117 @@ li{
   background-color:#428bca;
   color:#fff;
 }
+.manage-nav{
+  padding:0;
+}
+.manage-nav li{
+  line-height:24px;
+  float:left;
+  padding:4px 12px;
+  font-size:14px;
+}
+.manage-nav li a{
+  width:100%;
+  display:block;
+}
+.mcontainer {
+  clear:both;
+}
+.manage-list-zone{
+  float:left;
+  width:47%;
+  padding:1%;
+}
+/*右边的*/
+.manage-act-zone{
+  float:right;
+  width:47%;
+  padding:1%;
+}
+.manage-act-zone dl{
+  padding:20px;
+}
+.manage-act-zone dt{
+  line-height:32px;
+  height:32px;
+}
+.manage-act-zone dt h4{
+  font-size:16px;
+  float:left;
+  line-height:32px;
+  height:32px;
+}
+.manage-act-zone dt span{
+  font-size:12px;
+  margin-left:12px;
+  float:left;
+  font-weight:200;
+}
+.manage-act-zone td{
+  padding:4px;
+}
+.action-modify-zone{
+  clear:both;
+}
+.action-modify-zone table{
+  margin-bottom:12px;
+}
+.action-modify-zone i.close{
+  display:inline-block;
+  width:12px;
+  height:12px;
+  float:none;
+  background:url(imgs/close.png) no-repeat;
+}
+.action-list{
+  width:100%;
+}
+.action-list,.action-btn-list{
+  float:left;
+}
+.member-list{
+  padding:10px 0;
+}
+.table-striped > tbody > tr.group-tr-selected > td{
+  background-color:#fdf7f7;
+}
+.group-tr-selected td{
+  background-color:#fdf7f7;
+}
+.group-order{
+  cursor:pointer;
+}
+.next-group-page,.next-user-page,.next-log-page{
+  cursor:pointer;
+  width:100%;
+  padding:10px 0;
+  text-align:center;
+}
+
+
+/*search*/
+.search-zone{
+  float:right;
+  height:38px;
+  width:215px;
+  border:1px solid #ddd;
+}
+
+.search-zone input{
+  width:180px;
+  text-indent:1em;
+  font-size:14px;
+  line-height:36px;
+  height:36px;
+  border:none;
+}
+
+.search-zone button{
+  background:url(imgs/search-btn.png) no-repeat;
+  margin:12px 10px 0 0;
+  float:right;
+  width:17px;
+  height:16px;
+  border:none;
+}
+

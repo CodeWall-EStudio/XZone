@@ -25,7 +25,7 @@ exports.init = function(req, res){
     
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
-        return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
+        //return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
     });
 
     db.storage.findOne({ key: 'xzone_init' }, ep.doneLater('checkInit'));
@@ -50,7 +50,7 @@ exports.init = function(req, res){
             Logger.info('already has init user');
         }else{
             var initUser = {
-                name: 'xzone_admin',
+                name: 'horde',
                 nick: '初始化管理员',
                 pwd: Util.md5(config.DEFAULT_USER_PWD),
                 auth: 15

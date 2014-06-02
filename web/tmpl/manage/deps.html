@@ -1,4 +1,4 @@
-<div id="depsBlock" class="manage-tabs manage-grade-tab">
+<div id="depsBlock" class="manage-tabs manage-grade-tab manage-list-zone">
 	<div>
 		<ul id="depsList" class="act-fold-list">
 		<%
@@ -6,10 +6,23 @@
 				var item = list[i];
 				if(item.children || item.users){
 		%>
-			<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <strong><%=item.name%></a></strong></li>
+			<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <strong><%=item.name%></a></strong> <span class="org-select hide"  title="<%+item.name%>" data-id="<%+item._id%>">选择</span></li>
 			<%}%>
 		<%}%>
 		</ul>		
 	</div>
 </div>
+	<div class="manage-act-zone">
+		<div>
+			<div class="action-list">
+				<div class="action-btn-list">
+					<button class="btn btn-primary btn-org-create">添加组织</button>
+					<button class="btn btn-primary btn-org-modify" disabled>修改组织</button>
+					<button class="btn btn-danger btn-org-del" disabled>删除组织</button>
+				</div>
+			</div>
+		</div>
+		<dl id="depModifyZone" class="clear">
+		</dl>
+	</div>
 <div class="clear"></div>

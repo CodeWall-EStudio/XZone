@@ -1,4 +1,4 @@
-define(['../school/config','../school/helper/request','../school/helper/util','../school/cache'],function(config,request,util,Cache){
+define(['config','helper/request','helper/util','helper/cache'],function(config,request,util,Cache){
 	var handerObj = $(Schhandler);
 
 	function convent(obj){
@@ -127,57 +127,7 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		request.get(opt,success);
 	}
 
-	function createUser(e,d){
-		var opt = {
-			cgi : config.cgi.create,
-			data : d
-		}
-		var success = function(data){
-			if(data.err===0){
-				var obj = data.result.data;
-				obj.id = obj._id;
-				handerObj.triggerHandler('user:createsuc',obj);
-			}
-			handerObj.triggerHandler('msg:error',data.err);
-			console.log(data);
-		}
-		request.post(opt,success);
-	}
-
-	function resetPwd(e,d){
-		var opt = {
-			cgi : config.cgi.resetpwd,
-			data : {
-				userId : d
-			}
-		}
-		var success = function(data){
-			handerObj.triggerHandler('msg:error',data.err);
-		}
-		request.post(opt,success);		
-	}
-
-	function createOrg(e,d){
-		var opt = {
-			cgi : config.cgi.createorgan,
-			data : d
-		}
-		var success = function(data){
-			if(data.err===0){
-				var obj = data.result.data;
-				obj.id = obj._id;
-				handerObj.triggerHandler('user:orgcreatesuc',obj);
-			}
-			handerObj.triggerHandler('msg:error',data.err);
-			console.log(data);
-		}
-		request.post(opt,success);
-	}
-
 	var handlers = {
-		'user:orgcreate' : createOrg,
-		'user:resetpwd' : resetPwd,
-		'user:create' : createUser,
 		'user:search' : userSearch,
 		'user:modify' : userModify,
 		'user:folderstatus' : folderStatus,

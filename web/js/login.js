@@ -7,7 +7,7 @@
     }    
   });
 
-  require(['config'], function(config){
+  require(['school/config'], function(config){
 
  	var cgi = config.cgi;
 
