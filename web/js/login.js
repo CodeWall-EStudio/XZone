@@ -28,7 +28,7 @@
 				$.post(cgi.login,param,function(d){
 					console.log(typeof d.err);
 					if(d.err === 0){
-						window.location = 'manage.html'
+						window.location = 'index.html'
 					}else{
 						alert('出错拉!err:'+d.err);
 					}

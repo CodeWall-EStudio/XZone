@@ -219,9 +219,6 @@ function fetchDepartments(dep, callback){
             ep.emit('getDepartsDone');
         });
 
-        if(!deps){
-            deps = [];
-        }
         deps.forEach(function(doc){
             fetchDepartments(doc, ep.group('fetchChildDeparts'));
         });
