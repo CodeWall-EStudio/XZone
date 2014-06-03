@@ -13,6 +13,6 @@
 			<%}%>
 		</td>
 		<td><%-item.size%></td>
-		<td><a class="user-data" data-id="<%-item.rootFolder.$id%>" data-sid="<%-item.sizegroup.$id%>"><%-item.pre%>%</a></td>
+		<td><a class="user-data" data-id="<%-item.rootFolder.$id%>" <%if(item.sizegroup){%>data-sid="<%-item.sizegroup.$id%>"<%}%><%-item.pre%>%</a></td>
 	</tr>
 <%}%>
