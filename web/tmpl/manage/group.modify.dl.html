@@ -79,7 +79,7 @@
 						 	var item = sglist[i];
 						 	if(item.type){
 						%>
-						<option value="<%+item.id%>" <%if(sizegroup && sizegroup.$id == item.id){%>selected<%}else{%><%if(!sizegroup && item.isDefault){%>selected<%}}%>><%-item.name%></option>
+						<option value="<%+item.id%>" <%if(typeof sizegroup !='undefined' && sizegroup.$id == item.id){%>selected<%}else{%><%if(!sizegroup && item.isDefault){%>selected<%}}%>><%-item.name%></option>
 						<%}}%>
 					</select>
 				</td>
@@ -157,7 +157,7 @@
 							 	var item = sglist[i];
 							 	if(item.type){
 							%>
-							<option value="<%+item.id%>" <%if(sizegroup && sizegroup.$id == item.id){%>selected<%}else{%><%if(!sizegroup && item.isDefault){%>selected<%}}%>><%-item.name%></option>
+							<option value="<%+item.id%>" <%if(typeof sizegroup !='undefined' && sizegroup.$id == item.id){%>selected<%}else{%><%if(!sizegroup && item.isDefault){%>selected<%}}%>><%-item.name%></option>
 							<%}}%>
 						</select>
 					</td>
@@ -230,7 +230,7 @@
 							 	var item = sglist[i];
 							 	if(item.type){
 							%>
-							<option value="<%+item.id%>" <%if(sizegroup && sizegroup.$id == item.id){%>selected<%}else{%><%if(!sizegroup && item.isDefault){%>selected<%}}%>><%-item.name%></option>
+							<option value="<%+item.id%>" <%if(typeof sizegroup !='undefined' && sizegroup.$id == item.id){%>selected<%}else{%><%if(!sizegroup && item.isDefault){%>selected<%}}%>><%-item.name%></option>
 							<%}}%>
 						</select>
 					</td>
