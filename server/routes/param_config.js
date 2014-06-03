@@ -612,6 +612,12 @@ module.exports = {
                 name: 'order', // 排序号, 默认 0, 优先排序
                 type: 'number',
                 'default': 0
+            },
+            {
+                name: 'tag'
+            },
+            {
+                name: 'grade'
             }
         ]
     },

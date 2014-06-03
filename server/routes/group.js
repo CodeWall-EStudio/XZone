@@ -317,6 +317,14 @@ exports.modify = function(req, res){
 			doc.endTime = endTime;
 		}
 
+        if(params.tag){
+            doc.tag = params.tag;
+        }
+
+        if(params.grade){
+            doc.grade = params.grade;
+        }
+
         if(sizegroup){
             doc.sizegroup = new DBRef('sizegroup', sizegroup._id);
             doc.size = sizegroup.size;
