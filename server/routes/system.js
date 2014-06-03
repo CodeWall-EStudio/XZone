@@ -24,6 +24,8 @@ var FileTool = require('../file_tool');
 
 exports.init = function(req, res){
     
+    var msgs = [];
+
     var ep = new EventProxy();
     ep.fail(function(err, errCode){
         return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
@@ -43,12 +45,15 @@ exports.init = function(req, res){
 
         db.department.findOne({ parent: null }, ep.doneLater('checkOrganization'));
 
+        db.sizegroup.findOne({ }, ep.doneLater('checkSizegroup'));
+
     });
 
     // 创建初始管理员
     ep.on('checkInitUser', function(doc){
         if(doc){
             Logger.info('already has init user');
+            msgs.push('already has init user');
             ep.emit('createInitUserDone', doc);
         }else{
             var initUser = {
@@ -58,6 +63,7 @@ exports.init = function(req, res){
                 auth: 15
             };
             Logger.info('create init user: ' + initUser.name);
+            msgs.push('create init user: ' + initUser.name);
             mUser.create(initUser, ep.done('createInitUserDone'));
         }
     });
@@ -66,6 +72,7 @@ exports.init = function(req, res){
     ep.all('createInitUserDone', 'checkPrepareGroup', function(user, doc){
         if(doc){
             Logger.info('already has prepare group');
+            msgs.push('already has prepare group');
             ep.emit('createPrepareDone', doc);
         }else{
             var param = {
@@ -76,6 +83,7 @@ exports.init = function(req, res){
                 creator: user._id
             };
             Logger.info('create prepare group');
+            msgs.push('create prepare group');
             mGroup.create(param, ep.done('createPrepareDone'));
         }
     });
@@ -84,6 +92,7 @@ exports.init = function(req, res){
     ep.all('createInitUserDone',  'checkSchoolGroup', function(user, doc){
         if(doc){
             Logger.info('already has school');
+            msgs.push('already has school');
             ep.emit('createSchoolDone', doc);
         }else{
             var param = {
@@ -93,6 +102,7 @@ exports.init = function(req, res){
                 creator: user._id
             };
             Logger.info('create school');
+            msgs.push('create school');
             mGroup.create(param, ep.done('createSchoolDone'));
         }
     });
@@ -101,6 +111,7 @@ exports.init = function(req, res){
     ep.all('createInitUserDone',  'checkOrganization', function(user, doc){
         if(doc){
             Logger.info('already has root organization');
+            msgs.push('already has root organization');
             ep.emit('createOrganizationDone', doc);
         }else{
             var param = {
@@ -108,15 +119,16 @@ exports.init = function(req, res){
                 creator: user._id
             };
             Logger.info('create root organization');
+            msgs.push('create root organization');
             mOrganization.create(param, ep.done('createOrganizationDone'));
         }
     });
 
     // 创建默认用户空间组
-
-    ep.on('createInitUserDone', 'checkSizegroup', function(user, doc){
+    ep.all('createInitUserDone', 'checkSizegroup', function(user, doc){
         if(doc){
             Logger.info('already has sizegroup');
+            msgs.push('already has sizegroup');
             return ep.emit('createSizegroupDone');
         }else{
 
@@ -129,7 +141,8 @@ exports.init = function(req, res){
                 isDefault: true,
                 updateUserId: user._id
             };
-
+            Logger.info('create user_default sizegroup');
+            msgs.push('create user_default sizegroup');
             mSizegroup.create(doc, ep.doneLater('nextSizegroup'));
 
             // 创建小组默认空间组
@@ -141,7 +154,8 @@ exports.init = function(req, res){
                 updateUserId: user._id
             };
             ep.on('nextSizegroup', function(){
-                
+                Logger.info('create group_default sizegroup');
+                msgs.push('create group_default sizegroup');
                 mSizegroup.create(doc2, ep.doneLater('createSizegroupDone'));
             });
         }
@@ -160,7 +174,8 @@ exports.init = function(req, res){
 
     ep.on('initDone', function(){
 
-        res.json({ err: ERR.SUCCESS, msg: 'init done.'});
+        msgs.push('init done');
+        res.json({ err: ERR.SUCCESS, result: { msgs: msgs }});
     });
 
     db.storage.findOne({ key: 'xzone_init' }, ep.doneLater('checkInit'));
