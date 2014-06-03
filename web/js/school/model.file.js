@@ -387,7 +387,7 @@ define(['config','helper/request','helper/util','cache','helper/test'],function(
 					handerObj.triggerHandler('msg:error',40);
 				}
 			}
-			handerObj.triggerHandler('msg:error',d.err);
+			//handerObj.triggerHandler('msg:error',d.err);
 		}	
 		request.post(opt,success);	
 	}
