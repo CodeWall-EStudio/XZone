@@ -5,7 +5,7 @@
 		<tr class="fold fold<%+item.id%>">
 			<td width="30">
 				<%if(pr != 'group'){%>
-					<input type="checkbox" name="file" <%if(!item.hasChild && !item.hasFile){%>class="fdclick liclick"<%}%> value="<%+item.id%>" data-type="fold" <%if(item.hasChild || item.hasFile){%>disabled title="该文件夹下有文件夹或文件夹,不能删除"<%}%> /><%}%>
+					<input type="checkbox" name="file" class="fdclick liclick" value="<%+item.id%>" data-type="fold" <%if(item.hasChild || item.hasFile){%>data-child="1"<%}%> /><%}%>
 				</td>
 			<td>
 				<%if(gid){%>

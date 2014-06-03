@@ -338,6 +338,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	}
 
 	function fileDel(e,d){
+		if(d.cid.length){
+			handerObj.triggerHandler('msg:error',40);
+			return;
+		}		
 		if(!$.isEmptyObject(d.fd)){
 			var fl = [];
 			for(var i in d.fd){
@@ -356,6 +360,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				data : d,
 				after : function(){
 					$("#actWin").modal('show');
+
 				},
 				handlers : {
 					'.btn-del' : {

@@ -346,18 +346,23 @@ define(['config'],function(config){
     //删除文件和文件夹
     function deleteObj(){
     	var fid = {},
-    		fdid = {};
+    		fdid = {}
+    		cid = [];
 		$('.table-files .fclick:checked').each(function(e){
 			var id = $(this).val();
 			fid[id] = $('.fdname'+id).text();
 		});    	
 		$('.table-files .fdclick:checked').each(function(e){
 			var id = $(this).val();
+			if($(this).attr('data-child')){
+				cid.push(cid);
+			}
 			fdid[id] = $('.fdname'+id).text();
 		});		
 		handerObj.triggerHandler('file:del',{
 			fl : fid,
-			fd : fdid
+			fd : fdid,
+			cid : cid
 		});
     }
 
