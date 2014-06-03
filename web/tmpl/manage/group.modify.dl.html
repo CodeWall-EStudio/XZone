@@ -7,7 +7,7 @@
 	<dd>
 		<table class="table table-striped table-hover table-list table-files">
 			<tr>
-				<td>名称:</td>
+				<td width="100">名称:</td>
 				<td><input type="text" class="group-name" <%if(name){%>value="<%=name%>"<%}else{%>value=""<%}%>  <%if(typeof id != 'undefined'){%>data-id="<%+id%>"<%}%> /></td>
 			</tr>
 			<tr>
@@ -110,7 +110,7 @@
 					<td>学校空间<input type="hidden" class="group-name" <%if(name){%>value="<%=name%>"<%}else{%>value=""<%}%>  <%if(typeof id != 'undefined'){%>data-id="<%+id%>"<%}%> /></td>
 				</tr>
 				<tr>
-					<td>管理员:</td>
+					<td width="100">管理员:</td>
 					<td>
 					<div id="groupManageList" class="member-list">
 						<%
@@ -175,7 +175,7 @@
 		<dd>
 			<table class="table table-striped table-hover table-list table-files">
 				<tr>
-					<td>名称:</td>
+					<td width="100">名称:</td>
 					<td><input type="text" class="group-name" <%if(name){%>value="<%=name%>"<%}else{%>value=""<%}%>  <%if(typeof id != 'undefined'){%>data-id="<%+id%>"<%}%> /></td>
 				</tr>
 				<tr>
@@ -260,7 +260,7 @@
 		<dd>
 			<table class="table table-striped table-hover table-list table-files">
 				<tr>
-					<td>学期:</td>
+					<td width="100">学期:</td>
 					<td>
 						<input type="text" class="group-name" <%if(name){%>value="<%=name%>"<%}else{%>value=""<%}%>  <%if(typeof id != 'undefined'){%>data-id="<%+id%>"<%}%> />
 					</td>
@@ -299,7 +299,7 @@
 		<dd>
 			<table class="table table-striped table-hover table-list table-files">
 				<tr>
-					<td>学期:</td>
+					<td width="100">学期:</td>
 					<td>
 						<input class="group-name" type="hidden" <%if(typeof id != 'undefined'){%>data-id="<%+id%>"<%}%> />
 						<select id="prepPrep">
@@ -321,10 +321,10 @@
 					<td>
 						<select id="gradePrep">
 							<%
-								for(var i in grade){
-									var item = grade[i];
+								for(var i in grades){
+									var item = grades[i];
 							%>
-								<option data-id="<%+i%>" value="<%+i%>"><%-item%></option>
+								<option data-id="<%+i%>" value="<%+i%>" <%if(i==grade){%>selected<%}%>><%-item%></option>
 							<%}%>
 						</select>
 					</td>
@@ -337,7 +337,7 @@
 								for(var i in subject){
 									var item = subject[i];
 							%>
-								<option data-id="<%+i%>" value="<%+i%>"><%-item%></option>
+								<option data-id="<%+i%>" value="<%+i%>" <%if(i==tag){%>selected<%}%>><%-item%></option>
 							<%}%>
 						</select>										
 					</td>

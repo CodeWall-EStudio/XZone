@@ -600,7 +600,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		//}
 		if(nowType == 'prep' || nowType == 'pschool'){
 			d.subject = Cache.get('subject');;
-			d.grade = Cache.get('grade');
+			d.grades = Cache.get('grade');
 		}
 		var slist = Cache.get('sizegroup');
 		d.sglist = slist;
