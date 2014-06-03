@@ -284,8 +284,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 					obj.managers = managelist;
 				}
 
-
-
 				if(nowType == 'group'){
 					obj.archivable = archivable;
 					if(parseInt(archivable)){
@@ -318,6 +316,9 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						obj.status = 3;
 					}else{
 						obj.status = 0;
+					}
+					if(obj.name == nowGroup.name){
+						delete obj.name;
 					}
 					handerObj.triggerHandler('group:modify',obj);	
 				}else{
