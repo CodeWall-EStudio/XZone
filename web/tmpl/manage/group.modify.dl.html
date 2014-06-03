@@ -96,7 +96,7 @@
 		</table>
 		<div>
 			<button class="btn btn-primary btn-save" <%if(name){%>data-modify="1"<%}%> >保存</button>
-			<button class="btn btn-primary btn-reset" <%if(id){%>data-id="<%+id%>"<%}%>>取消</button>
+			<button class="btn btn-primary btn-reset" <%if(typeof id !='undefined') {%>data-id="<%+id%>"<%}%>>取消</button>
 		</div>
 	</dd>
 <%}else if(type=='school' || type===0){%>
@@ -165,7 +165,7 @@
 			</table>
 			<div>
 				<button class="btn btn-primary btn-save" <%if(name){%>data-modify="1"<%}%> >保存</button>
-				<button class="btn btn-primary btn-reset" <%if(id){%>data-id="<%+id%>"<%}%>>取消</button>
+				<button class="btn btn-primary btn-reset" <%if(typeof id !='undefined') {%>data-id="<%+id%>"<%}%>>取消</button>
 			</div>
 		</dd>	
 <%}else if(type=='dep' || type==2){%>
@@ -246,7 +246,7 @@
 			</table>
 			<div>
 				<button class="btn btn-primary btn-save" <%if(name){%>data-modify="1"<%}%> >保存</button>
-				<button class="btn btn-primary btn-reset" <%if(id){%>data-id="<%+id%>"<%}%>>取消</button>
+				<button class="btn btn-primary btn-reset" <%if(typeof id !='undefined') {%>data-id="<%+id%>"<%}%>>取消</button>
 			</div>
 		</dd>
 <%}else if(type=='prep' || type =='pschool' || type==3){%>
@@ -289,7 +289,7 @@
 			</table>
 			<div>
 				<button class="btn btn-primary btn-save" <%if(name){%>data-modify="1"<%}%> >保存</button>
-				<button class="btn btn-primary btn-reset" <%if(id){%>data-id="<%+id%>"<%}%>>取消</button>
+				<button class="btn btn-primary btn-reset" <%if(typeof id != 'undefined'){%>data-id="<%+id%>"<%}%>>取消</button>
 			</div>
 		</dd>	
 	<%}else{%>
@@ -392,7 +392,7 @@
 			</table>
 			<div>
 				<button class="btn btn-primary btn-save" <%if(name){%>data-modify="1"<%}%> >保存</button>
-				<button class="btn btn-primary btn-reset" <%if(id){%>data-id="<%+id%>"<%}%>>取消</button>
+				<button class="btn btn-primary btn-reset" <%if(typeof id !='undefined') {%>data-id="<%+id%>"<%}%>>取消</button>
 			</div>
 		</dd>
 	<%}%>

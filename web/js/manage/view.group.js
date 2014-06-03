@@ -125,7 +125,21 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
-					data : data
+					data : data,
+					after : function(){
+						if(nowType == 'pschool'){
+							$('.start-time').pickmeup({
+								format  : 'Y-m-d',
+								hide_on_select : true
+							});
+
+
+							$('.end-time').pickmeup({
+								format  : 'Y-m-d',
+								hide_on_select	: true
+							});			
+						}						
+					}
 				});
 				view.createPanel();
 			}
@@ -617,7 +631,9 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						format  : 'Y-m-d',
 						hide_on_select : true
 					}).val(Util.time(st));
+
 					$('.start-time').pickmeup('set_date', st);
+
 					$('.end-time').pickmeup({
 						format  : 'Y-m-d',
 						hide_on_select	: true
@@ -901,7 +917,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 			d.pre = Math.round(Util.getNums(d.osize/d.allsize)*100);			
 		}
 
-		console.log(d);
 		var view = new View({
 			target : $("#groupModifyZone"),
 			tplid : 'manage/status',
