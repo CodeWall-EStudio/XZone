@@ -305,6 +305,11 @@ exports.modify = function(req, res){
         if('status' in params){
             doc.status = params.status;
         }
+
+        if('order' in params){
+            doc.order = params.order;
+        }
+
 		if(startTime){
 			doc.startTime = startTime;
 		}

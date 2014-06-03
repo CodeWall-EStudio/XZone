@@ -148,6 +148,9 @@ exports.getUserAllInfo = function(user, callback){
                     result.departments.push(doc);
                 }
             });
+            result.departments.sort(function(a, b){
+                return (Number(a.order) || 0) - (Number(b.order) || 0);
+            });
             return result;
         }));
     });
