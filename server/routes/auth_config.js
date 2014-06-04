@@ -517,8 +517,17 @@ exports.RULES = {
 
             if(group){
                 verifyGroup(user, group, function(err){
-                    if(err || !group.__editable){
-                        return callback(msg + 'MANY', ERR.NOT_AUTH);
+                    if(err){
+                        return callback(msg, ERR.NOT_AUTH);
+                    }else if(group.__editable){
+                        return callback(null);
+                    }else if(group.__writable){
+                        // 普通写权限的成员, 只能对自己创建的文件操作
+                        for(var i = 0; i < files.length; i++){
+                            if(files[i].creator.oid.toString() !== uid){
+                                return callback(msg + files[i]._id);
+                            }
+                        }
                     }
 
                     // 这里就不再检查这些文件是否是属于这个group的了
@@ -543,8 +552,17 @@ exports.RULES = {
             
             if(group){
                 verifyGroup(user, group, function(err){
-                    if(err || !group.__editable){
-                        return callback(msg + 'MANY', ERR.NOT_AUTH);
+                    if(err){
+                        return callback(msg, ERR.NOT_AUTH);
+                    }else if(group.__editable){
+                        return callback(null);
+                    }else if(group.__writable){
+                        // 普通写权限的成员, 只能对自己创建的文件操作
+                        for(var i = 0; i < files.length; i++){
+                            if(files[i].creator.oid.toString() !== uid){
+                                return callback(msg + files[i]._id);
+                            }
+                        }
                     }
 
                     // 这里就不再检查这些文件是否是属于这个group的了
