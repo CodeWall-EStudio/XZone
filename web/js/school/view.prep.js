@@ -44,6 +44,24 @@ define(['config','helper/view','cache'],function(config,View,Cache){
         handerObj.triggerHandler('upload:param',data);		
 
 		$('#aside .aside-divs').hide();
+		var list = {};
+		var plength = 0;
+		for(var i in prepList){
+			var item = prepList[i];
+			if(item.parent){
+				if(!list[item.parent._id]){
+					list[item.parent._id] = prepKey[item.parent._id];
+				}
+				if(!list[item.parent._id].child){
+					list[item.parent._id].child = [];
+				}
+				list[item.parent._id].child.push(item);
+				plength++;
+			}else{
+				list[item.id] = item;
+			}
+		}
+		console.log(plength);
 		var view = new View({
 			target : $('#userPrepAside'),
 			tplid : 'myprep.list',
@@ -51,7 +69,8 @@ define(['config','helper/view','cache'],function(config,View,Cache){
 				$('#userPrepAside').show();
 			},
 			data : { 
-				list : prepList,
+				list : list,
+				plength : plength,
 				length : prepLength
 			}
 		})
