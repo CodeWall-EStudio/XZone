@@ -586,3 +586,67 @@ exports.fixPictureFolderError = function(req, res){
     res.json({ err: ERR.SUCCESS });
 
 };
+
+exports.updateLogs = function(req, res){
+
+    var updateList = [];
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    });
+
+    function checkLog(doc, callback){
+
+        var map = {
+            'fromUserId': ['user', 'fromUserName'],
+            'fileId': ['file', 'fileName'],
+            'folderId': ['folder', 'folderName'],
+            'srcFolderId': ['folder', 'srcFolderName'],
+            'distFolderId': ['folder', 'distFolderName'],
+            'fromGroupId': ['group', 'fromGroupName'],
+            'toGroupId': ['group', 'toGroupName'],
+            'toUserId': ['user', 'toUserName'],
+        }
+        var keys = [];
+
+        for(var key in map){
+            keys.push(key);
+
+            if(doc[key]){
+                db[map[key][0]].findOne({ _id: new ObjectID(doc[key]) }, function(err, result){
+                    if(result){
+                        var newDoc = {};
+
+                        newDoc[map[key][1]] = result.name;
+                        updateList.push({ _id: doc._id, key: key, value: result.name });
+                        db.log.update({ _id: doc._id }, {$set: newDoc }, ep.done(key));
+                    }else{
+                        ep.emitLater(key);
+                    }
+                });
+            }else{
+                ep.emitLater(key);
+            }
+        }
+
+        keys.push(callback);
+
+        ep.all.apply(ep, keys);
+
+     }
+
+    db.log.find({}, function(err, docs){
+        ep.after('checkLog', docs.length, function(){
+            res.json({ err: ERR.SUCCESS, result: updateList});
+        });
+
+        docs.forEach(function(doc){
+            checkLog(doc, ep.group('checkLog'));
+        });
+
+    });
+};
+
+
+

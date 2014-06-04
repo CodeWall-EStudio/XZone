@@ -1,18 +1,15 @@
-var ObjectID = require('mongodb').ObjectID;
-var DBRef = require('mongodb').DBRef;
-var EventProxy = require('eventproxy');
-var us = require('underscore');
+// var ObjectID = require('mongodb').ObjectID;
+// var DBRef = require('mongodb').DBRef;
+// var EventProxy = require('eventproxy');
+// var us = require('underscore');
 
 var db = require('./db');
-var ERR = require('../errorcode');
+// var ERR = require('../errorcode');
 var U = require('../util');
-var mRes = require('./resource');
-var mFile = require('./file');
+// var mRes = require('./resource');
+// var mFile = require('./file');
 
 exports.create = function(params, callback) {
-
-    var creator = params.creator;
-    var fileId = params.fileId;
 
     var doc = {
         fromUserId: params.fromUserId && params.fromUserId.toString(),
