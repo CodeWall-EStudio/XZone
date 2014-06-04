@@ -325,7 +325,7 @@
 								for(var i in grades){
 									var item = grades[i];
 							%>
-								<option data-id="<%+i%>" value="<%+i%>" <%if(grade && i==grade){%>selected<%}%>><%-item%></option>
+								<option data-id="<%+i%>" value="<%+i%>" <%if(typeof grade !='undefined' && i==grade){%>selected<%}%>><%-item%></option>
 							<%}%>
 						</select>
 					</td>
