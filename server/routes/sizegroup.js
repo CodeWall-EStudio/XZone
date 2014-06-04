@@ -21,7 +21,7 @@ exports.create = function(req, res){
         if(err){
             return res.json({ err: result || ERR.SERVER_ERROR, msg: err});
         }
-        if(doc){
+        if(result){
             return res.json({ err: ERR.DUPLICATE, msg: 'name duplicate'});
         }
 
