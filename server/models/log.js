@@ -9,7 +9,7 @@ var U = require('../util');
 var mRes = require('./resource');
 var mFile = require('./file');
 
-exports.create = function(params, callback){
+exports.create = function(params, callback) {
 
     var creator = params.creator;
     var fileId = params.fileId;
@@ -38,57 +38,66 @@ exports.create = function(params, callback){
 
 
     };
-    if(params.fromGroupId){
+    if (params.fromGroupId) {
         doc.fromGroupId = params.fromGroupId.toString();
         doc.fromGroupName = params.fromGroupName;
     }
-    if(params.toGroupId){
+    if (params.toGroupId) {
         doc.toGroupId = params.toGroupId.toString();
         doc.toGroupName = params.toGroupName;
     }
-    if(params.toUserId){
+    if (params.toUserId) {
         doc.toUserId = params.toUserId.toString();
         doc.toUserName = params.toUserName;
     }
 
-    db.log.save(doc, function(err, result){
-        if(callback){
+    db.log.save(doc, function(err, result) {
+        if (callback) {
             callback(err, result && doc);
         }
     });
 
 };
 
-exports.search = function(params, callback){
-    
+exports.search = function(params, callback) {
+
     var query = {};
-    if(params.startTime){
-        query.operateTime = { $gte: params.startTime };
+    if (params.startTime) {
+        query.operateTime = {
+            $gte: params.startTime
+        };
     }
-    if(params.endTime){
-        if(!query.operateTime){
+    if (params.endTime) {
+        if (!query.operateTime) {
             query.operateTime = {};
         }
         query.operateTime['$lte'] = params.endTime;
     }
 
-    if(!params.order){
-        params.order = { operateTime: -1 };
+    if (!params.order) {
+        params.order = {
+            operateTime: -1
+        };
     }
 
-    if(params.type){
-        query.operateType = { $in: params.type };
+    if (params.type) {
+        query.operateType = {
+            $in: params.type
+        };
     }
 
-	if(params.fromUserId){
-		query.fromUserId = params.fromUserId;
-	}
-	if(params.fromGroupId){
-		query.fromGroupId = params.fromGroupId;
-	}
+    if (params.fileName) {
+        query.fileName = new RegExp('.*' + U.encodeRegexp(params.fileName) + '.*');
+    }
 
-	console.log('log/search: ',query);
+    if (params.fromUserId) {
+        query.fromUserId = params.fromUserId;
+    }
+    if (params.fromGroupId) {
+        query.fromGroupId = params.fromGroupId;
+    }
+
+    console.log('log/search: ', query);
     db.search('log', query, params, callback);
 
 };
-

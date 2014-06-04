@@ -1146,7 +1146,11 @@ module.exports = {
                 name: 'endTime',
                 type: 'number'
             },
-			//加上来源用户和来源小组 一次只需要用一个
+            {
+                name: 'fileName',
+                type: 'string'
+            },
+            //加上来源用户和来源小组 一次只需要用一个
             {
                 name: 'fromUserId',
                 type: 'string'
