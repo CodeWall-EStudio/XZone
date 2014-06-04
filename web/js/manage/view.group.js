@@ -116,7 +116,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 					var grade = Cache.get('grade');
 					var subject = Cache.get('subject');					
 					data.prep = prep.g2key;
-					data.grade = grade;
+					data.grades = grade;
 					data .subject = subject;
 				}else if(nowType == 'group'){
 					var prep = Cache.get('preps');
