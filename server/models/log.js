@@ -1,58 +1,99 @@
-// var ObjectID = require('mongodb').ObjectID;
-// var DBRef = require('mongodb').DBRef;
-// var EventProxy = require('eventproxy');
-// var us = require('underscore');
+var ObjectID = require('mongodb').ObjectID;
+var DBRef = require('mongodb').DBRef;
+var EventProxy = require('eventproxy');
+var us = require('underscore');
 
 var db = require('./db');
-// var ERR = require('../errorcode');
+var ERR = require('../errorcode');
 var U = require('../util');
-// var mRes = require('./resource');
-// var mFile = require('./file');
+var Logger = require('../logger');
 
 exports.create = function(params, callback) {
 
-    var doc = {
-        fromUserId: params.fromUserId && params.fromUserId.toString(),
-        fromUserName: params.fromUserName,
+    var ep = new EventProxy();
+    ep.fail(callback);
 
-        fileId: params.fileId && params.fileId.toString(),
-        fileName: params.fileName,
+    var arr = [ // 这里是为了减少重复的类似的代码
+        ['fromUser', 'user', 'fromUserId', 'fromUserName'],
+        ['toUser', 'user', 'toUserId', 'toUserName'],
 
-        folderId: params.folderId && params.folderId.toString(),
-        folderName: params.folderName,
+        ['file', 'file', 'fileId', 'fileName'], // 这里指被操作的文件
+        ['folder', 'folder', 'folderId', 'folderName'], // 这里指被操作的文件夹
 
-        operateTime: Date.now(),
-        //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-        //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
-        //11: delete(移动到回收站) 12: 创建文件夹
-        operateType: params.operateType,
+        ['srcFolder', 'folder', 'srcFolderId', 'srcFolderName'],
+        ['distFolder', 'folder', 'distFolderId', 'distFolderName'],
 
-        srcFolderId: params.srcFolderId && params.srcFolderId.toString(),
-        srcFolderName: params.srcFolderName,
+        ['fromGroup', 'group', 'fromGroupId', 'fromGroupId'],
+        ['toGroup', 'group', 'toGroupId', 'fromGroupName']
 
-        distFolderId: params.distFolderId && params.distFolderId.toString(),
-        distFolderName: params.distFolderName
+    ];
+
+    ep.all('fromUser', 'toUser', 'file', 'folder',
+        'srcFolder', 'distFolder', 'fromGroup', 'toGroup',
+        function(fromUser, toUser, file, folder, srcFolder, distFolder, fromGroup, toGroup) {
+
+            var doc = {
+                operateTime: Date.now(),
+
+                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+                //11: delete(移动到回收站) 12: 创建文件夹
+                operateType: params.operateType,
+
+                oldFileName: params.oldFileName, // 重命名的时候会传
+                oldFolderName: params.oldFolderName
+            };
+
+            var argus = arguments;
+            arr.forEach(function(item, i) {
+                var key = item[0],
+                    collName = item[1],
+                    collKey = item[2],
+                    collKeyName = item[3];
+                var data = argus[i];
+
+                // doc[key] = data;
+                doc[collKey] = data ? data._id.toString() : params[collKey];
+                doc[collKeyName] = data ? (data.nick || data.name) : params[collKeyName];
+
+            });
+
+            if (file) {
+                doc.fileType = file.type;
+                doc.fileSize = file.size;
+            }
 
 
-    };
-    if (params.fromGroupId) {
-        doc.fromGroupId = params.fromGroupId.toString();
-        doc.fromGroupName = params.fromGroupName;
-    }
-    if (params.toGroupId) {
-        doc.toGroupId = params.toGroupId.toString();
-        doc.toGroupName = params.toGroupName;
-    }
-    if (params.toUserId) {
-        doc.toUserId = params.toUserId.toString();
-        doc.toUserName = params.toUserName;
-    }
+            if (fromGroup) {
+                doc.fromGroupType = fromGroup.type;
+            }
 
-    db.log.save(doc, function(err, result) {
-        if (callback) {
-            callback(err, result && doc);
+            Logger.debug('[log] create: ', doc);
+            db.log.save(doc, function(err, result) {
+                if (callback) {
+                    callback(err, result && doc);
+                }
+            });
+
+        });
+
+    arr.forEach(function(item) {
+        var key = item[0],
+            collName = item[1],
+            collKey = item[2];
+
+        if (params[key]) {
+            ep.emitLater(key, params[key]);
+        } else if (params[collKey]) {
+            db[collName].findOne({
+                _id: params[collKey]
+            }, ep.doneLater(key));
+        } else {
+            ep.emitLater(key, null);
         }
+
     });
+
 
 };
 
@@ -92,6 +133,9 @@ exports.search = function(params, callback) {
     }
     if (params.fromGroupId) {
         query.fromGroupId = params.fromGroupId;
+    }
+    if (params.fromGroupType) {
+        query.fromGroupType = params.fromGroupType;
     }
 
     console.log('log/search: ', query);

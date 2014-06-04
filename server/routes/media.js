@@ -204,33 +204,25 @@ exports.download = function(req, res){
 
         res.send();
 
-        var obj = {
-            // fromUserId: loginUser._id,
+        mLog.create({
+
             fromUserId: null,
             fromUserName: 'media download',
 
-            fileId: file._id,
-            fileName: file.name,
+            file: file,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存
             operateType: 2,
 
+            srcFolder: folder,
             srcFolderId: file.folder.oid,
             srcFolderName: folder && folder.name,
 
-            // distFolderId: folderId,
+
             fromGroupId: folder && folder.group && folder.group.oid
-            // toGroupId: saveFolder.group || saveFolder.group.oid
-        };
-        if(!obj.fromGroupId){
-            mLog.create(obj);
-        }else{
-            mGroup.getGroup({ _id: obj.fromGroupId }, function(err, group){
-                obj.fromGroupName = group && group.name;
-                mLog.create(obj);
-            });
-        }
+
+        });
         
     });
 };
