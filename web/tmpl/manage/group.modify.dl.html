@@ -338,7 +338,7 @@
 								for(var i in subject){
 									var item = subject[i];
 							%>
-								<option data-id="<%+i%>" value="<%+i%>" <%if(i==tag){%>selected<%}%>><%-item%></option>
+								<option data-id="<%+i%>" value="<%+i%>" <%if(typeof tag != 'undefined' && i==tag){%>selected<%}%>><%-item%></option>
 							<%}%>
 						</select>										
 					</td>
