@@ -1165,6 +1165,10 @@ module.exports = {
                 //11: delete(移动到回收站) 12: 创建文件夹
                 name: 'type',
                 type: '[number]'
+            },
+            {
+                name: 'fromGroupType',
+                type: 'number'
             }
         ]
     }

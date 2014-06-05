@@ -74,24 +74,20 @@ exports.create = function(req, res){
         });
         // 记录该操作
         mLog.create({
-            fromUserId: loginUser._id,
-            fromUserName: loginUser.nick,
+            fromUser: loginUser,
 
-            folderId: folder._id,
-            folderName: folder.name,
+            folder: folder,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
             //11: delete(移动到回收站) 12: 创建文件夹
             operateType: 12,
 
-            srcFolderId: parentFolder._id,
-            srcFolderName: parentFolder.name,
+            srcFolder: parentFolder,
 
-            // distFolderId: params.targetId,
-            fromGroupId: parentFolder.group && parentFolder.group.oid,
-            fromGroupName: parentFolder.__group && parentFolder.__group.name
-            // toGroupId: toGroupId
+            fromGroupId: parentFolder.group && parentFolder.group.oid
+
+
         });
     });
 
@@ -163,32 +159,24 @@ exports.modify = function(req, res){
             }else {
                 res.json({ err: ERR.SUCCESS , result: { data: doc }});
                 
+                // 记录该操作
+                mLog.create({
+                    fromUser: loginUser,
 
-                mFolder.getFolder({ _id: folder.parent.oid }, function(err, parent){
-                    // 记录该操作
-                    mLog.create({
-                        fromUserId: loginUser._id,
-                        fromUserName: loginUser.nick,
+                    folder: doc,
+                    oldFolderName: oldFolderName,
 
-                        folderId: doc._id.toString(),
-                        folderName: oldFolderName,
-                        newFolderName: doc.name,
 
-                        //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-                        //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
-                        //11: delete(移动到回收站) 12: 创建文件夹
-                        operateType: 5,
+                    //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                    //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+                    //11: delete(移动到回收站) 12: 创建文件夹
+                    operateType: 5,
 
-                        srcFolderId: folder.parent.oid,
-                        srcFolderName: parent && parent.name,
+                    srcFolderId: folder.parent.oid,
 
-                        // distFolderId: params.targetId,
-                        fromGroupId: folder.group && folder.group.oid,
-                        fromGroupName: folder.__group && folder.__group.name
-                        // toGroupId: toGroupId
-                    });
-
+                    fromGroupId: folder.group && folder.group.oid
                 });
+
             }
         });
     });
@@ -247,28 +235,21 @@ function deleteFolder(loginUser, folder, callback){
 
         mFolder.delete({ folder: folder } , callback);
 
-        mFolder.getFolder({ _id: folder.parent.oid }, function(err, parent){
+        // 记录该操作
+        mLog.create({
+            fromUser: loginUser,
 
-            // 记录该操作
-            mLog.create({
-                fromUserId: loginUser._id,
-                fromUserName: loginUser.nick,
+            folder: folder,
 
-                folderId: folder._id,
-                folderName: folder.name,
+            //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+            //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+            //11: delete(移动到回收站) 12: 创建文件夹
+            operateType: 6,
 
-                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-                //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
-                //11: delete(移动到回收站) 12: 创建文件夹
-                operateType: 6,
+            srcFolderId: folder.parent && folder.parent.oid,
 
-                srcFolderId: folder.parent && folder.parent.oid,
-                srcFolderName: parent && parent.name,
-                // distFolderId: params.targetId,
-                fromGroupId: folder.group && folder.group.oid,
-                fromGroupName: folder.__group && folder.__group.name
-                // toGroupId: toGroupId
-            });
+            fromGroupId: folder.group && folder.group.oid
+
         });
     });
 }
