@@ -69,9 +69,9 @@ gulp.task('build',function(){
   gulp.src('src/*.html')
     .pipe(replace('%TimeStamp%',new Date().getTime()))
     .pipe(htmlreplace({    
-      'maincss' : 'css/main.css',
-      'reviewcss' : 'css/review.css',
-      'managecss' : 'css/manage.css'
+      'maincss' : 'css/main.css?t='+new Date().getTime(),
+      'reviewcss' : 'css/review.css?t='+new Date().getTime(),
+      'managecss' : 'css/manage.css?t='+new Date().getTime()
     }))
     .pipe(gulp.dest('./web/'));  
 });
@@ -97,10 +97,14 @@ gulp.task('watch',function(){
   gulp.watch('./src/*.html',['build']);
 });
 
-
 gulp.task('default', ['requirejs','concat','build','copy','watch'], function() {
   console.log('构建完成');
 });
+/*
+gulp.task('default', ['build'], function() {
+  console.log('构建完成');
+});
+*/
 /*
 gulp.task('requirejs', function() {
   rjs({
