@@ -5991,7 +5991,10 @@ define('view.prep',['config','helper/view','cache'],function(config,View,Cache){
 			var item = prepList[i];
 			if(item.parent){
 				if(!list[item.parent._id]){
-					list[item.parent._id] = prepKey[item.parent._id];
+					list[item.parent._id] = {
+						name : item.parent.name,
+						child : []
+					}
 				}
 				if(!list[item.parent._id].child){
 					list[item.parent._id].child = [];

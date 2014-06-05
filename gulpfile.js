@@ -82,7 +82,9 @@ gulp.task('copy',function(){
   gulp.src('./src/js/lib/**')
     .pipe(gulp.dest('./web/js/lib')); 
   gulp.src('./src/css/imgs/**')
-    .pipe(gulp.dest('./web/css/imgs')); 
+    .pipe(gulp.dest('./web/css/imgs'));
+  gulp.src('./src/css/img/**')
+    .pipe(gulp.dest('./web/css/img'));  
   gulp.src('./src/css/player/**')
     .pipe(gulp.dest('./web/css/player')); 
   gulp.src('./src/tmpl/**')
