@@ -1,0 +1,20 @@
+<div class="file-status-zone">
+	<div class="file-status-tit">共有<%-totalCount%>个文件<%if(totalCount){%>,占用空间<%-size%><%}%></div>
+	<div>
+		<div class="prop-block prop-block-width">
+			<div class="prop-txt"><%-pre%>%</div>
+			<div class="prop" style="width:<%+pre%>%"></div>
+		</div>
+	</div>
+	<ul class="status-nav-list">
+		<li class="status-size selected"><h4>按大小查看</h4></li>
+		<li class="status-count"><h4>按数量查看</h4></li>
+	</ul>
+	<div id="userPreImg" class="preimg-zone">
+		<%if(!totalCount){%>	
+			该用户还没有上传过文件
+		<%}%>
+	</div>
+	<div id="userPreImg1" class="preimg-zone">
+	</div>
+</div>

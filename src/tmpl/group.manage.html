@@ -1,0 +1,66 @@
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">管理小组</h4>
+				</div>
+				<div class="modal-body">
+					<div style="height:500px">
+	<table class="table" width="90%" align="center">
+		<tr>
+			<td width="100">小组名称:</td>
+			<td>
+				<input type="text" class="new-group-name" value="<%+group.name%>" style="width:400px;" />
+			</td>
+		</tr>
+		<tr>
+			<td width="100">小组简介:</td>
+			<td>
+				<textarea class="new-group-desc" style="width:400px;height:120px;"><%-group.content%></textarea>
+			</td>
+		</tr>	
+		<tr>
+			<td colspan="2">
+						<div>
+							<div>已选用户列表:<span id="groupSelectUser">
+								<%
+									for(var i = 0,l=group.members.length;i<l;i++){
+										var item = group.members[i];
+								%>
+								<span class="share-user-span shareUser<%+item._id%>"><%-item.nick%><i class="del-share-user" data-id="<%+item._id%>"></i></span>					
+								<%}%>			
+							</span></div>
+							<div>用户列表</div>							
+
+							<ul id="searchResult" class="act-fold-list" style="height:180px;overflow-y:auto;">
+								<%
+									for(var i=0,l=list.length;i<l;i++){
+										var item = list[i];
+										if(item.children || item.users){
+											var full = 0;
+											if(item.users){
+												var length = 0;
+												for(var m in item.users){
+													if($.inArray(item.users[m]._id,group.ml)>=0){
+														length++;
+													}
+												}
+												if(length == item.users.length){
+													full = 1;
+												}
+											}
+								%>
+									<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><input type="checkbox" class="dep-click" value="<%+item._id%>" <%if(full){%>checked<%}%> /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
+									<%}%>
+								<%}%>
+							</ul>
+						</div>					
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" align="right">
+					<button type="button" class="btn btn-primary btn-post"  data-dismiss="modal">确定</button>		
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+			</td>
+		</tr>
+	</tabel>
+					</div>
+				</div>				

@@ -1,0 +1,225 @@
+@import "jquery.ui.min.css";
+
+@import "base.css";
+
+@import "common.css";
+
+@import "icon.css";
+
+@import "scroll.css";
+
+@import "type.css";
+
+@import "messenger.css";
+
+@import "messenger-spinner.css";
+
+@import "messenger-theme-air.css";
+
+@import "messenger-theme-block.css";
+
+@import "messenger-theme-flat.css";
+
+@import "messenger-theme-future.css";
+
+@import "messenger-theme-ice.css";
+
+    .otherType{
+      width:400px;
+      height:200px;
+      margin:100px auto;
+      text-align:center;
+    }
+
+i.icon-type1{
+  display:block;
+  /*margin-top:14px;*/
+  width:32px;
+  height:32px;
+  margin:10px auto;
+  background:url(css/imgs/type-img.png) no-repeat;
+}
+
+i.icon-type2{
+  display:block;
+  /*margin-top:14px;  */
+  width:32px;
+  height:32px;
+  margin:10px auto;
+  background:url(css/imgs/type-doc.png) no-repeat;
+}
+
+i.icon-type3{
+  display:block;
+  margin:10px auto;
+  /*margin-top:14px;  */
+  width:32px;
+  height:32px;
+  background:url(css/imgs/type-music.png) no-repeat;
+}
+
+i.icon-type4{
+  display:block;
+  margin:10px auto;
+  /*margin-top:14px;*/  
+  width:32px;
+  height:32px;
+  background:url(css/imgs/type-vedio.png) no-repeat;
+}
+
+i.icon-type5{
+  display:block;
+  margin:10px auto;
+  /*margin-top:14px;*/  
+  width:32px;
+  height:32px;
+  background:url(css/imgs/type-exe.png) no-repeat;
+}
+
+i.icon-type6{
+  display:block;
+  margin:10px auto;
+  /*margin-top:14px;*/  
+  width:32px;
+  height:32px;
+  background:url(css/imgs/type-zip.png) no-repeat;
+}
+
+i.icon-type0{
+  display:block;
+  margin:10px auto;
+  /*margin-top:14px;*/  
+  width:32px;
+  height:32px;
+  background:url(css/imgs/type-other.png) no-repeat;
+}
+   
+  	.file-review{
+  		text-align:center;
+/*      height:640px;*/
+  	}
+  	.playerZone{
+  		margin:10px auto;
+  		width:640px;
+  	}
+  	.text{
+  		width:640px;
+  		margin:0 auto;
+  		text-align:left;
+  	}
+  	dl{
+  		padding: 10px;
+  		width:500px;
+  		margin:0 auto;
+  		text-align:left;
+  	}
+    ul{
+      margin:0;
+      padding:0;
+    }
+  	.file-reivew-act{
+  		width:1000px;
+  		text-align : center;
+  		margin:0 auto;
+      text-align:center;
+      position:fixed;
+      bottom:140px;
+  	}
+  	.file-reivew-act span{
+  		display:inline-block;
+  		width:24px;
+  		height:24px;  		
+  		cursor:pointer;
+  	}
+  	.flexpaper_viewer{
+  		width:960px;height:700px;
+  		padding-top:10px;
+  		margin:0 auto;
+  	}
+  	.to-left{
+
+  		background:url(/css/imgs/ll.png) no-repeat;
+  	}
+  	.to-right{
+
+  		background:url(/css/imgs/rl.png) no-repeat; 		
+  	}
+  	.zoom-in{
+ 
+  		background:url(/css/imgs/jjj.png) no-repeat; 				
+  	}
+  	.zoom-out{
+  
+  		background:url(/css/imgs/jj.png) no-repeat;
+  	}  
+    .text-review{
+      width:500px;
+      text-align:left;
+      margin:0 auto;
+    }	
+    .file-select-block{
+      position:fixed;
+      bottom:40px;
+      width:560px;
+      height:74px;
+      padding:10px;
+      left:50%;
+      margin-left:-280px;
+      background:#E4DEDE;
+    }
+    .file-select-block div{
+      float:left;
+    }
+    .file-select-block ul{
+      float:left;
+    }
+    .file-select-block li{
+      float:left;
+      width:40px;
+      height:40px;
+      border:1px solid #ddd;
+      background:#fff;
+      margin:4px;
+    }
+    .file-select-block .selected{
+      width:39px;
+      height:39px;
+      border:4px solid #428bca;
+    }
+    .file-select-block div.al-arrow{
+      background:url(/css/imgs/icon-prev.png) no-repeat;
+      width:36px;
+      height:54px;
+      display:block;
+    }
+    .file-select-block div.ar-arrow{
+      background:url(/css/imgs/icon-next.png) no-repeat;
+      width:36px;
+      height:54px; 
+      float:right;     
+      display:block;
+    }
+    .file-select-block .action{
+      position:absolute;
+      z-index:2;
+      width:100%;
+    }
+    .file-select-block .bg{
+      position:absolute;
+      padding:10px;
+      height:100%;
+      width:580px;
+      top:0;
+      left:0;
+      z-index:1;
+      background:#000;
+      opacity:0.5;
+    }
+    .review-list-block{
+      width:480px;
+      height:50px;
+      overflow:hidden;      
+    }
+    #reviewFileList{
+
+    }

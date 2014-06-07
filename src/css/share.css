@@ -1,0 +1,185 @@
+body { 
+	scrollbar-arrow-color: #b4c9de;   /*三角箭头的颜色*/
+	scrollbar-face-color: #b4c9de;       /*立体滚动条的颜色*/
+	scrollbar-3dlight-color: #b4c9de;    /*立体滚动条亮边的颜色*/
+	scrollbar-highlight-color: #b4c9de;  /*滚动条空白部分的颜色*/
+	scrollbar-shadow-color: #b4c9de;     /*立体滚动条阴影的颜色*/
+	scrollbar-darkshadow-color: #b4c9de; /*滚动条强阴影颜色*/
+	scrollbar-track-color: #ebeef3;      /*立体滚动条背景颜色*/
+	scrollbar-base-color: #ebeef3;    /*滚动条的基本颜色*/	
+}
+
+.share-tit{
+	padding:6px 0;
+}
+.share-tit span{
+	coloe:#f00;
+}
+.share-tit i{
+	color:#8b8b8b;
+	font-style : normal;
+}
+.share-msg{
+	height:36px;
+	padding:6px 0;
+	overflow:hidden;
+}
+.share-msg p{
+	position:relative;
+	top:-20px;
+	left:40px;
+}
+.share-msg input{
+	width:480px;
+}
+.share-act-zone{
+	padding:6px 0;
+	height:46px;
+	overflow:hidden;	
+}
+.share-act-zone p{
+	position:relative;
+	padding:6px 0;
+	float:left;
+}
+.share-act-zone div{
+	float:right;
+}
+.share-act-zone input,.search-area input{
+	width:300px;
+	text-indent:6px;
+	padding-right:22px;
+}
+.search-area{
+	position:relative;
+}
+.share-act-zone i, .search-area i{
+	display:block;
+	position:absolute;
+	cursor:pointer;
+	top:12px;
+	right:6px;
+	background: url(imgs/search-btn.png) no-repeat;
+	width: 17px;
+	height: 16px;
+	border: none;
+}
+.search-area i{
+	top:0;
+	left:0;
+}
+.share-target,.share-select{
+	width:50%;
+	float:left;
+}
+.share-target ul,.share-select ul{
+	margin-right:12px;
+	padding:6px 0 6px 6px;
+	border:1px solid #ddd;
+	overflow-y:auto;
+	height:200px;
+}
+.share-target a.selected,.share-select a.selected{
+	background:#b8bec5;
+}
+.share-target a,.share-select a{
+	display:block;
+	padding:4px;
+	width:98%;
+	color:#838383;
+	text-decoration: none;
+}
+.share-target a:hover,.share-select a:hover,.share-select a.select{
+	background:#b4c9de;
+}
+.share-act-zone input{
+	color:#9c9c9c;
+}
+.share-select ul.second{
+	border:none;
+	height:auto;
+	padding-left:12px;
+}
+.move-target{
+	height:260px;
+	overflow-y:auto;
+}
+
+.perplist,.perplist ul {
+	list-style-type:none;
+}
+.perplist .second .second{
+
+}
+.perplist a{
+	cursor:pointer;
+	display: inline-block;
+	width: 80%;
+	padding: 4px;	
+}
+.perplist a.selected{
+	background:#b8bec5;
+}
+
+.right{
+	float:right;
+}
+.search-input-length{
+	outline:none;
+	width:280px;
+}
+#groupResult{
+	float:left;
+	width:160px;
+	padding-top:10px;
+}
+#groupResult li{
+	padding:5px 10px;
+}
+#groupResult .color{
+	color:#f00;
+}
+#groupResult .group-result{
+	padding-top:10px;
+}
+#groupFoldResult{
+	float:left;
+	padding-top:10px;
+}
+.group-fold-result{
+	padding-top:10px;
+	float:left;
+	height:300px;
+	overflow-y:auto;
+	overflow-x:hidden;
+	clear:both;
+}
+.group-fold-result ul{
+	padding:4px 6px;
+}
+.group-fold-result li{
+	padding:4px 0;
+}
+.act-fold-list{
+	border: 1px solid #ddd;
+	padding:10px;
+}
+.act-fold-list ul{
+	padding-left:20px;
+}
+.act-fold-list li{
+	padding:5px 0;
+}
+.share-user-list{
+	padding:5px 0;
+}
+.share-user-span{
+	margin-right:12px;
+}
+.share-user-span i{
+	display:inline-block;
+	background:url(imgs/close.png) no-repeat;
+	width:12px;
+	height:12px;
+	cursor:pointer;
+}

@@ -1,0 +1,17 @@
+.board-input{
+	width:400px;
+}
+.board-list{
+}
+.board-list li{
+	padding:14px;
+	border-bottom:1px solid #666;
+}
+.board-list div{
+	font-size:12px;
+	color:#333;
+}
+.board-list p{
+	padding:6px 0 12px 0;
+	font-size:16px;
+}

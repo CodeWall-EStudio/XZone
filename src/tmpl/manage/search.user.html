@@ -1,0 +1,86 @@
+			<div class="manage-list-zone">
+				<div style="max-height:600px;overflow:auto">
+				<table class="table table-striped table-hover table-list table-files" width="100%">
+					<tr>
+						<th class="order-nick user-order" data-on="nick" data-od="<%if(on=='nick' && od>0){%>-1<%}else{%>1<%}%>">
+							姓名
+							<%if(on == 'nick' && od== 1){%>
+								<i class="ad"></i>
+							<%}else if(on == 'nick' && od== -1){%>
+								<i class="au"></i>
+							<%}else{%>
+								<i class="ad"></i>
+							<%}%>							
+						</th>
+						<th class="order-name user-order" data-on="name" data-od="<%if(on=='name' && od==1){%>-1<%}else{%>1<%}%>">
+							用户名
+							<%if(on == 'name' && od== 1){%>
+								<i class="ad"></i>
+							<%}else if(on == 'name' && od== -1){%>
+								<i class="au"></i>
+							<%}else{%>
+								<i class="ad"></i>
+							<%}%>							
+						</th>
+						<th class="order-status user-order" data-on="status" data-od="<%if(on=='status' && od==1){%>-1<%}else{%>1<%}%>">
+							状态
+							<%if(on == 'status' && od== 1){%>
+								<i class="ad"></i>
+							<%}else if(on == 'status' && od== -1){%>
+								<i class="au"></i>
+							<%}else{%>
+								<i class="ad"></i>
+							<%}%>							
+						</th>
+						<th class="order-size user-order" data-on="size" data-od="<%if(on=='size' && od==1){%>-1<%}else{%>1<%}%>">
+							容量
+							<%if(on == 'size' && od== 1){%>
+								<i class="ad"></i>
+							<%}else if(on == 'size' && od== -1){%>
+								<i class="au"></i>
+							<%}else{%>
+								<i class="ad"></i>
+							<%}%>								
+						</th>	
+						<th class="order-used user-order" data-on="used" data-od="<%if(on=='used' && od==1){%>-1<%}else{%>1<%}%>">
+							使用状态
+							<%if(on == 'used' && od== 1){%>
+								<i class="ad"></i>
+							<%}else if(on == 'used' && od== -1){%>
+								<i class="au"></i>
+							<%}else{%>
+								<i class="ad"></i>
+							<%}%>								
+						</th>
+					</tr>
+					<tbody id="userList">	
+					</tbody>				
+				</table>
+				</div>
+				<div class="next-group-page">
+					点击加载更多
+				</div>
+			</div>
+			<div class="manage-act-zone">
+				<div>
+					<div class="action-list">
+						<div class="action-btn-list">
+							<!--<button class="btn btn-primary">添加用户</button>-->
+							<button class="btn btn-primary btn-user-open" disabled>打开用户</button>
+							<button class="btn btn-danger btn-user-colse" disabled>关闭用户</button>
+						</div>
+						<div class="search-zone">
+							<input type="text" name="key" value="搜索用户" data-def="搜索用户" class="user-search-key" />
+							<input type="hidden" class="fid" name="fid" value="" />
+							<input type="hidden" class="gid" name="gid" value="" />
+							<button type="button" class="user-search-btn"></button>
+						</div>						
+					</div>
+					<div class="action-modify-zone">
+						<dl id="userModifyBlock">
+
+						</dl>
+					</div>
+				</div>
+			</div>
+			<div class="clear"></div>

@@ -1,0 +1,49 @@
+				<div class="action-list">
+					<div class="action-btn-list group-action-btn">
+						<!-- <button class="btn btn-primary import-group">导入小组</button> -->
+						<%if(type=='group'){%>
+							<button class="btn btn-primary add-group">添加小组</button>
+							<button class="btn btn-success apv-pass active" disabled>审核通过</button>
+							<button class="btn btn-danger apv-notpass active" disabled>审核不通过</button>
+							<button class="btn btn-danger del-group active" disabled>删除小组</button>						
+						<%}else if(type=='dep'){%>
+							<button class="btn btn-primary add-group">添加部门</button>
+							<button class="btn btn-danger del-group active" disabled>删除部门</button>						
+						<%}else if(type=='prep'){%>
+							<button class="btn btn-primary add-group">添加备课</button>
+							<button class="btn btn-danger del-prep active" disabled>删除备课</button>						
+						<%}else if(type=='pschool'){%>
+							<button class="btn btn-primary add-group">添加学期</button>
+							<button class="btn btn-danger del-prep active" disabled>删除学年</button>
+						<%}%>
+
+					</div>	
+					<div class="search-zone">
+						<%if(type=='group'){%>
+							<input type="text" name="key" value="搜索小组" data-def="搜索小组" class="search-key group-search-key" />
+						<%}else if(type=='dep'){%>
+							<input type="text" name="key" value="搜索部门" data-def="搜索部门" class="search-key group-search-key" />
+						<%}else if(type=='prep'){%>
+							<input type="text" name="key" value="搜索备课" data-def="搜索备课" class="search-key group-search-key" />
+						<%}else if(type=='pschool'){%>
+							<input type="text" name="key" value="搜索学年" data-def="搜索学年" class="search-key group-search-key" />
+						<%}%>
+						
+						<%if(type !== 'school'){%>
+						<input type="hidden" class="fid" name="fid" value="" />
+						<input type="hidden" class="gid" name="gid" value="" />
+						<button type="button" class="search-btn group-search-btn"></button>
+						<%}%>
+					</div>
+				</div>
+				<div class="action-modify-zone" id="groupModifyZone">
+					<%if(type=='group'){%>
+					<div>你还没有选择小组</div>
+					<%}else if(type=='dep'){%>
+					<div>你还没有选择部门</div>
+					<%}else if(type=='prep'){%>
+					<div>你还没有选择备课</div>
+					<%}else if(type=='pschool'){%>
+					<div>你还没有选择学年</div>
+					<%}%>
+				</div>

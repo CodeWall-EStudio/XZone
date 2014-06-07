@@ -1,0 +1,16 @@
+.pre-fold-list{
+	margin-bottom:20px;
+	line-height:32px;
+}
+.pre-fold-list li{
+	padding:4px;
+}
+.prep-file-list > tr > td{
+	line-height:32px;
+}
+.prep-file-list i.icon-type,.prep-file-list i.icon-type1,.prep-file-list i.icon-type2,.prep-file-list i.icon-type3,.prep-file-list i.icon-type4,.prep-file-list i.icon-type5,.prep-file-list i.icon-type6{
+	margin-top:0;
+}
+.mark-edit{
+	display:none;
+}

@@ -1,0 +1,49 @@
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">复制文件到备课</h4>
+				</div>
+				<div class="modal-body">
+
+					<div>
+						<div class="share-tit">
+							复制文件(<%=fl.length%>)个：
+							<i>
+								<%
+									for(var i =0,l=fl.length;i<l;i++){
+										var item = fl[i];
+								%>
+									<%if(i<8){%>
+										<%-item.name%>
+									<%}%>
+								<%}%>
+								<%if(fl.length>1){%>
+									等
+								<%}%>
+							</i>
+						</div>
+						<div class="move-target">
+							我的备课	
+							<ul id="prepList" class="act-fold-list">
+								<%if(prep.length){%>
+									<%
+										for(var i = 0,l=prep.length;i<l;i++){
+											var item = prep[i];
+											if(item.parent){
+									%>
+									<li>
+										<i cmd="next" class="plus" data-gid="<%+item.id%>" <%if(item.rootFolder){%>data-id="<%+item.rootFolder.id%>"<%}%>></i><a title="<%+item.name%>"  data-gid="<%+item.id%>" <%if(item.rootFolder){%>data-id="<%+item.rootFolder.id%>"<%}%> class="list-link"> <%=item.name%></a>				
+									</li>		
+									<%}%>
+									<%}%>
+								<%}else{%>
+									<li>您还没有创建文件夹</li>
+								<%}%>
+							</ul>
+						</div>					
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary btn-sub" disabled data-dismiss="modal">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+				</div>				

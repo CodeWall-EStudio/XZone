@@ -1,0 +1,6 @@
+<%
+	for(var i in list){
+		var item = list[i];
+%>
+	<li><a <%if(fdid == item.id){%>class="selected"<%}%> href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>"><%-item.name%></a></li>
+<%}%>

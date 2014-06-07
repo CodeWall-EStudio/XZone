@@ -1,0 +1,34 @@
+		<%
+			for(var i in list){
+				var item = list[i];
+		%>
+			<tr class="file coll<%+item.fileid%>" data-id="<?=$item['id']?>">
+					<td width="30"><input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" /></td>
+					<td>
+						<a class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
+						<%if(item.type<7){%>
+							<i class="icon-type<%+item.type%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
+						<%}else{%>
+							<i class="icon-type" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
+						<%}%>
+						</a>
+						<dl>
+							<dt><a class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
+								
+							</dt>
+						<dd>
+							<a href="/review.html#id=<%+item.fileid%>&coll=1<%if(page){%>&page=<%-page%><%}%>&key=<%=key%>&ods=<%=ods%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>" >预览</a>
+							<a href="/api/file/download?fileId=<%+item.fileid%>" target="_blank">下载</a>
+							<a cmd="uncoll" data-id="<%+item.fileid%>" data-favid="<%+item.id%>">取消收藏</a>
+						</dd>							
+						</dl>
+					</td>
+					<td width="90">
+						<%-filetype[item.type]%>
+					</td>
+					<td width="90"><%-item.size%></td>	
+					<td width="150">
+						<span><%-item.time%></span>
+					</td>
+			</tr>
+		<%}%>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Xzone" />
+  <meta http-equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" />
+  <title>教师工作室</title>
+  <!-- build:managecss -->
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+  <link rel="stylesheet" type="text/css" href="css/pickmeup.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/jquery.jqplot.css" />  
+  <link rel="stylesheet" type="text/css" href="css/main.css" />
+  <!-- endbuild -->
+</head>
+<body>
+
+	<div id="header" class="header">
+		<div id="pageNav">
+			<i class="logo"></i>
+			<div id="pageNav">
+				<ul class="navbar-nav header-nav">
+					<li class="nav" cmd="maUser">用户和组织结构</li>
+					<li class="nav" cmd="maGroup">小组和部门</li>
+					<li class="nav" cmd="maSchool">学校管理</li>
+					<li class="nav" cmd="maSystem">系统管理</li>
+				</ul>
+			</div>
+			<div class="userinfo" id="userInfo">
+			</div>
+		</div>
+		<div class="manage-menus">
+			<div id="maUser" class="manage-nav">
+				<ul>
+					<li><a cmd="user">用户列表</a></li>
+					<li><a cmd="userdep">组织结构</a></li>
+				</ul>
+			</div>
+			<div id="maGroup" class="manage-nav">
+				<ul>
+					<li><a cmd="group">小组</a></li>
+					<li><a cmd="dep">部门</a></li>
+					<li><a cmd="prep">备课目录</a></li>
+				</ul>
+			</div>
+			<div id="maSchool" class="manage-nav">
+				<ul>
+					<li><a cmd="school">学校</a></li>
+				</ul>				
+			</div>
+			<div id="maSystem" class="manage-nav">
+				<ul>
+					<li><a cmd="data">数据汇总</a></li>
+					<li><a cmd="pschool">学年管理</a></li>
+					<li><a cmd="grade">年级科目管理</a></li>
+					<li><a cmd="log">日志查询</a></li>
+					<li><a cmd="size">空间容量</a></li>
+					<!--<li><a cmd="manage">管理员授权</a></li>-->
+				</ul>					
+			</div>			
+		</div>
+	</div>
+
+	<div class="mcontainer">
+		<div class="manage-loading">正在加载....</div>
+		<div class="manage-section hide" id="userMa">
+
+		</div>
+		<div class="manage-section hide" id="deptreeMa">
+
+		</div>
+
+		<div class="manage-section hide" id="groupMa">
+			
+		</div>
+
+		<div class="manage-section hide" id="depMa">
+		
+		</div>
+
+		<div class="manage-section hide" id="prepMa">
+			
+		</div>	
+
+		<div class="manage-section hide" id="manageMa">
+
+		</div>	
+		<div class="clear"></div>
+	</div>
+
+	<div id="actWin" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content" id="actWinZone">
+			
+			</div>
+		</div>
+	</div>	
+
+	<script>
+		window.Schhandler = {};
+		//document.domain = 'codewalle.com';
+	</script>
+	<script src="/js/lib/jquery/jquery-1.8.3.js"></script>
+	<!-- build:jqlib -->
+	<script src="/js/lib/jquery/jq.validate.js"></script>
+	<script src="/js/lib/jquery/jquery.pickmeup.min.js"></script>
+	<script src="/js/lib/jquery/jquery.jqplot.min.js"></script>
+	<script src="/js/lib/jquery/jqplot.funnelRenderer.js"></script>
+	<script src="/js/lib/jquery/jqplot.pieRenderer.js"></script>
+	<!-- endbuild -->
+	<!-- build:bootstrap -->
+	<script src="/js/lib/bootstrap.min.js"></script>
+	<script src="/js/lib/messenger.min.js"></script>
+	<!-- endbuild -->
+	<script data-main="js/manage.js?t=%TimeStamp%" src="js/lib/require/require.2.1.8.js"></script>
+
+</body>
+</html>

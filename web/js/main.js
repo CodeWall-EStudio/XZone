@@ -2553,7 +2553,8 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			fdid : nowFd,
 			uid : nowUid,
 			prep : nowPrep,
-			auth : nowAuth			
+			auth : nowAuth,
+			school : nowSchool			
 		}
 		if(nowGid){
 			obj.ml = nowGroup.mlist;
@@ -2602,7 +2603,9 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			}
 			$("#fileActZone .movefile").hide();			
 		}
-
+		if(nowUid){
+			data.creatorId = nowUid;
+		}	
 		if(!d.info || nowSchool){
 			handerObj.triggerHandler('file:search',data);	
 		}else if((d.info && d.info.isMember) || d.open){
@@ -2710,6 +2713,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		if(nowAuth){
 			obj.status = 1;
 		}
+		console.log(obj);
 		handerObj.triggerHandler('file:search',obj);			
 	}
 
@@ -4700,7 +4704,8 @@ define('model.group',['config','helper/request','helper/util'],function(config,r
 	function groupInfo(e,d){
 		var deftype = 'group';
 		var gid,type = 0,
-			recy = false;
+			recy = false,
+			school = 0;
 		if(typeof d == 'object'){
 			gid = d.gid;
 			type = d.type;
@@ -6044,6 +6049,8 @@ define('model.recy',['config','helper/request','helper/util'],function(config,re
 				size : util.getSize(item.size),
 				osize : item.size,
 				type : item.type,
+				src : item.src || 0,
+				nick : item.creator.nick,				
 				time : util.time(item.createTime),
 				coll : item.coll
 			})
@@ -6101,6 +6108,8 @@ define('view.recy',['config','helper/view','cache','model.recy'],function(config
 			tplid : 'recy.tit',
 			data : {
 				filetype : config.filetype,
+				gid : nowGid,
+				school : nowSchool,
 				type : nowType,
 				key : nowKey
 			}
@@ -6112,7 +6121,7 @@ define('view.recy',['config','helper/view','cache','model.recy'],function(config
 		var myInfo = Cache.get('myinfo');
 		action = 1;
 		tmpTarget.html('');
-		crTit();
+		
 
 		nextPage = 0;
 
@@ -6127,18 +6136,24 @@ define('view.recy',['config','helper/view','cache','model.recy'],function(config
 		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		nowKey = d.key || '';
 
+		var name = 'myrecy';
+		if(nowSchool || nowGid){
+			name = 'recy';
+		}
 		var view = new View({
 			target : titTarget,
 			tplid : 'coll.table.tit',
 			data : {
 				order : nowOds,
-				name : 'myrecy',
+				name : name,
 				cate : 2,
-				type : nowType			
+				type : nowType,
+				gid : nowGid,
+				school : nowSchool		
 			}	
 		});
 		view.createPanel();
-
+		crTit();
 		var obj = {
 			keyword : nowKey,
 			page:nextPage,
@@ -6171,6 +6186,7 @@ define('view.recy',['config','helper/view','cache','model.recy'],function(config
 			target : tmpTarget,
 			tplid : 'recy.list',
 			data : {
+				gid : nowGid,
 				list : d.list,
 				filetype : config.filetype
 			}
@@ -6278,6 +6294,8 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
 		nowKey = '',
+		nowUid = 0,
+		nowType = 0,
 		rootFd = 0;
 
 	var actTarget = $('#actWinZone'),
@@ -6318,12 +6336,14 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		});
 		nowGid = school.id;
 		nowFd = school.rootFolder.id;
+		nowUid = d.uid;
 
 		var view = new View({
 			target : $("#groupAside"),
 			tplid : 'school.aside',
 			data : {
-				auth : school.auth
+				auth : school.auth,
+				type : nowType
 			},
 			handlers : {
 				'h3' : {
@@ -6334,9 +6354,11 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 						if(!$(e.target).hasClass('selected')){
 							$(e.target).addClass('selected');
 							if(cmd=='manage'){
-								d.auth = school.auth;	
+								d.auth = school.auth;
+								nowType = 1;	
 							}else{
 								d.auth = 0;
+								nowType = 0
 							}
 							d.school = 1;
 							if(cmd==='recy'){
@@ -6370,11 +6392,27 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		d.info = school;
 
 		d.school = 1;
-		d.auth = 0;
+		d.auth = nowType;
 
+		handerObj.triggerHandler('group:info',{
+			gid : nowGid,
+			type : 'school'	
+		});
         //handerObj.triggerHandler('file:init',d);
-        handerObj.triggerHandler('fold:init',d); 
+        
         handerObj.triggerHandler('upload:param',d);		
+	}
+
+	function infoSuc(e,d){
+		var obj = {
+			auth : nowType,
+			school : 1,
+			gid : nowGid,
+			fdid : nowFd,
+			uid : nowUid,
+			info : d
+		}
+		handerObj.triggerHandler('fold:init',obj); 
 	}
 
 	function showApv(e,d){
@@ -6386,7 +6424,8 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			data : {
 				name : d.name,
 				fold : fold,
-				gid : nowGid
+				gid : nowGid,
+				status : d.status
 			},
 			after : function(){
 				$("#actWin").modal('show');
@@ -6451,6 +6490,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 
 	var handlers = {
 		'school:init' : init,
+		'school:infosuc' : infoSuc,
 		'school:showapv' : showApv,
 		'school:apvsuc' : apvSuc
 	};
@@ -7538,6 +7578,31 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
 	var at = 0;
 
+	function showConfig(e,d){
+		if(typeof d === 'undefined'){
+			return;
+		}
+		var obj = {
+			message : d.msg,
+			actions : {
+				sub : {
+					label : d.act.sub.label || '确定',
+					action : function(){
+						d.act.sub.action();
+						msg.hide();
+					}
+				},
+				cancel : {
+					label : d.act.canel.label || '取消',
+					action : function(){
+						msg.hide();
+					}
+				}
+			}
+		}
+		var msg = Messenger().post(obj);
+	}
+
 	function showErr(e,d){
 		if(d == 1001){
 			window.location = config.cgi.gotologin;
@@ -7551,23 +7616,7 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 			obj.type = 'error'
 		}
 
-		Messenger().post(obj);
-		// clearTimeout(at);
-
-		// var alertDiv = $('<div class="alert alert-success alert-msg fade in"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><span></span></div>');
-
-
-		// alertDiv.removeClass('alert-danger');
-		// if(parseInt(d)){
-		// 	alertDiv.addClass('alert-danger');
-		// }
-		// $('body').append(alertDiv);
-		
-		// alertDiv.find('span').html(msg[d]);
-		// alertDiv.alert();
-		// at = setTimeout(function(){
-		// 	alertDiv.alert('close');
-		// },2000);		
+		Messenger().post(obj);	
 	}
 
 	function showMsg(e,d){
@@ -7581,7 +7630,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
 	var handlers = {
 		'msg:error' : showErr,
-		'msg:show' : showMsg
+		'msg:show' : showMsg,
+		'msg:config' : showConfig
 	}
 
 	for(var i in handlers){
@@ -7760,12 +7810,14 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
       school : function(data){
         showModel('school');
         var gid = data.gid,
+            uid = data.uid || 0,
             fdid = data.fdid || 0;
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
             type = data.type || 0;
         var d = {
+          uid : uid,
           fdid : fdid,
           type : type
         }
