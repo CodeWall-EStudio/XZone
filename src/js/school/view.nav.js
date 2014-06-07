@@ -43,7 +43,11 @@ Cache-Control: max-age=0, must-revalidate
 Content-Length: 9016
 Content-Type: text/html
 */
-		
+		// var reg = new RegExp("Date:(\s*?) GMT", "g");
+		// console.log(reg);
+		// var ret = headers.match(reg);
+		// console.log(ret);
+
 
 		var opt = {
 			target : navTarget,

@@ -27,7 +27,7 @@ define(['config','helper/request','helper/util','cache','helper/test'],function(
 		if(d.status){
 			url = config.cgi.mfilelist;
 		}
-		console.log(d.status,url);
+		
 		var opt = {
 			cgi : url,
 			data : d
