@@ -704,19 +704,40 @@ exports.RULES = {
     '/api/manage/approveFile': {
         verify: function(user, parameter, callback){
 
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            return callback('no auth');
+            mGroup.getGroup({
+                type: 0
+            }, function(err, group){
+                if (err) {
+                    return callback(err);
+                }
+                verifyGroup(user, group, function(err){
+                    if (group.__editable) {
+                        return callback(null);
+                    } else {
+                        return callback('no auth', ERR.NOT_AUTH);
+                    }
+                });
+            });
+
         }
     },
     '/api/manage/listFiles': {
         verify: function(user, parameter, callback){
 
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            return callback('no auth');
+            mGroup.getGroup({
+                type: 0
+            }, function(err, group){
+                if (err) {
+                    return callback(err);
+                }
+                verifyGroup(user, group, function(err){
+                    if (group.__editable) {
+                        return callback(null);
+                    } else {
+                        return callback('no auth', ERR.NOT_AUTH);
+                    }
+                });
+            });
         }
     },
     '/api/manage/modifyUser': {

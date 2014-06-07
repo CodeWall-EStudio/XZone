@@ -305,7 +305,7 @@ exports.listPrepares = function(req, res) {
  */
 exports.listFiles = function(req, res) {
     // var loginUser = req.loginUser;
-    // var params = req.parameter;
+    var params = req.parameter;
 
     var ep = new EventProxy();
     ep.fail(function(err, errCode) {
@@ -328,10 +328,10 @@ exports.listFiles = function(req, res) {
             status: 1
         };
 
-        mFile.search({
-            extendQuery: query,
-            isDeref: true
-        }, ep.done('search'));
+        params.extendQuery = query;
+        params.isDeref = true;
+
+        mFile.search(params, ep.done('search'));
 
     });
     ep.on('search', function(total, docs) {
