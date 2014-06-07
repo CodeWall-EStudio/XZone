@@ -110,7 +110,6 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			type : 'school'	
 		});
         //handerObj.triggerHandler('file:init',d);
-        //console.log($.ajax({async:false}).getAllResponseHeaders());
         handerObj.triggerHandler('upload:param',d);		
 	}
 

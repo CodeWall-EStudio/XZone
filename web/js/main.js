@@ -1096,7 +1096,7 @@ define('helper/templateManager',[],function(){
 			}
 			var startTime = new Date().getTime();
 			template = $.ajax({
-				url: tmplPath+tplid+tmplName,
+				url: tmplPath+tplid+tmplName+'?t='+Math.random(),
 				async: false,
 				error : function(data){
 					return false;
@@ -1562,6 +1562,15 @@ define('view.nav',['config','model.nav','helper/view','helper/util','cache','mod
 	}
 
 	function navLoad(e,d){
+		var headers  = $.ajax({async:false}).getAllResponseHeaders();
+/*
+Date: Sat, 07 Jun 2014 15:52:49 GMT
+Cache-Control: max-age=0, must-revalidate
+Content-Length: 9016
+Content-Type: text/html
+
+*/
+
 		var opt = {
 			target : navTarget,
 			tplid : 'nav',
@@ -6400,7 +6409,6 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			type : 'school'	
 		});
         //handerObj.triggerHandler('file:init',d);
-        //console.log($.ajax({async:false}).getAllResponseHeaders());
         handerObj.triggerHandler('upload:param',d);		
 	}
 

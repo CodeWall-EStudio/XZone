@@ -26,7 +26,7 @@ define([],function(){
 			}
 			var startTime = new Date().getTime();
 			template = $.ajax({
-				url: tmplPath+tplid+tmplName,
+				url: tmplPath+tplid+tmplName+'?t='+Math.random(),
 				async: false,
 				error : function(data){
 					return false;
