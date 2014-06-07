@@ -4420,6 +4420,7 @@ define('../school/config',[],function() {
 			mnewgroup : CGI_PATH+'manage/createGroup'+EXT,
 			mappfile : CGI_PATH+'manage/approveFile'+EXT,
 			mstatic : CGI_PATH+'manage/statistics'+EXT,
+			mfilelist : CGI_PATH+'manage/listFiles',
 
 			//用户 
 			usersearch : CGI_PATH+'user/search'+EXT,

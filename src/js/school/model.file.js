@@ -23,8 +23,13 @@ define(['config','helper/request','helper/util','cache','helper/test'],function(
 	}
 
 	function searchFile(e,d){
+		var url = config.cgi.filesearch;
+		if(d.status){
+			url = config.cgi.mfilelist;
+		}
+		console.log(d.status,url);
 		var opt = {
-			cgi : config.cgi.filesearch,
+			cgi : url,
 			data : d
 		}
 		var success = function(d){

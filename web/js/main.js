@@ -99,6 +99,7 @@ define('config',[],function() {
 			mnewgroup : CGI_PATH+'manage/createGroup'+EXT,
 			mappfile : CGI_PATH+'manage/approveFile'+EXT,
 			mstatic : CGI_PATH+'manage/statistics'+EXT,
+			mfilelist : CGI_PATH+'manage/listFiles',
 
 			//用户 
 			usersearch : CGI_PATH+'user/search'+EXT,
@@ -1568,8 +1569,8 @@ Date: Sat, 07 Jun 2014 15:52:49 GMT
 Cache-Control: max-age=0, must-revalidate
 Content-Length: 9016
 Content-Type: text/html
-
 */
+		
 
 		var opt = {
 			target : navTarget,
@@ -2048,8 +2049,13 @@ define('model.file',['config','helper/request','helper/util','cache','helper/tes
 	}
 
 	function searchFile(e,d){
+		var url = config.cgi.filesearch;
+		if(d.status){
+			url = config.cgi.mfilelist;
+		}
+		console.log(d.status,url);
 		var opt = {
-			cgi : config.cgi.filesearch,
+			cgi : url,
 			data : d
 		}
 		var success = function(d){
