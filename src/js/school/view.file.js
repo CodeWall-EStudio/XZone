@@ -95,6 +95,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			if(d.order){
 				nowOrder = d.order;
 			}
+			
 			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 			nowUid = d.uid || 0;
 			nowKey = d.key || '';

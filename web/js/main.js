@@ -2531,6 +2531,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			if(d.order){
 				nowOrder = d.order;
 			}
+			
 			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 			nowUid = d.uid || 0;
 			nowKey = d.key || '';
