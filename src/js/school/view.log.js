@@ -22,8 +22,10 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 			if(data.err==0){
 				var view = new View({
 					target : $('#logList'),
-					tplid : 'manage/log.list',
+					tplid : 'log.list',
 					data : {
+						filetype : config.filetype,
+						size : Util.getSize,
 						list : data.result.list,
 						logType : Util.logType,
 						time : Util.time

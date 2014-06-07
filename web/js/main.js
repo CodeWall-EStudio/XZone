@@ -6524,7 +6524,7 @@ define('view.log',['config','cache','helper/view','helper/request','helper/util'
 			if(data.err==0){
 				var view = new View({
 					target : $('#logList'),
-					tplid : 'manage/log.list',
+					tplid : 'log.list',
 					data : {
 						list : data.result.list,
 						logType : Util.logType,
