@@ -98,7 +98,7 @@ function deleteFolderAndFiles(folder, callback){
             updateUsed: true
         };
 
-        mFile.batchDelete({ 'folder.$id': folder._id }, options, function(err, count){
+        mFile.batchDelete({ 'folder.$id': folder._id, del: false }, options, function(err, count){
                     
             if(err){
                 Logger.error('>>>folder.delete [file]', err);
