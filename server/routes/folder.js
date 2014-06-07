@@ -373,9 +373,9 @@ function statisticsFolder(folder, callback){
     var ep = new EventProxy();
     ep.fail(callback);
 
-    mFolder.statistics(folder._id, ep.doneLater('statFolder'));
+    mFolder.statistics(folder._id, {}, ep.doneLater('statFolder'));
 
-    mFile.statistics(folder._id, ep.doneLater('statFile'));
+    mFile.statistics(folder._id, { ignoreDel: true }, ep.doneLater('statFile'));
 
     ep.all('statFolder', 'statFile', function(folderResult, fileResult){
 

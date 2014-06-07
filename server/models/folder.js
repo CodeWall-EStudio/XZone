@@ -247,7 +247,7 @@ exports.search = function(params, callback){
     });
 };
 
-exports.statistics = function(folderId, callback){
+exports.statistics = function(folderId, options, callback){
 
     var searchParams = {
         folderId: folderId,
