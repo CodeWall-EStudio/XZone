@@ -6410,6 +6410,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			gid : nowGid,
 			fdid : nowFd,
 			uid : nowUid,
+			order : nowOrder,
 			info : d
 		}
 		handerObj.triggerHandler('fold:init',obj); 

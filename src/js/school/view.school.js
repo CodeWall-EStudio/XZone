@@ -121,6 +121,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			gid : nowGid,
 			fdid : nowFd,
 			uid : nowUid,
+			order : nowOrder,
 			info : d
 		}
 		handerObj.triggerHandler('fold:init',obj); 
