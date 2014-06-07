@@ -48,6 +48,12 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		nowGid = school.id;
 		nowFd = school.rootFolder.id;
 		nowUid = d.uid;
+		if(d.fdid){
+			nowFd = d.fdid;
+		}else{
+			d.fdid = nowFd;
+		}
+
 
 		var view = new View({
 			target : $("#groupAside"),
@@ -97,9 +103,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		}		
 
 		d.gid = nowGid;
-		if(d.fdid){
-			nowFd = d.fdid;
-		}
+
 		d.info = school;
 
 		d.school = 1;
