@@ -134,7 +134,7 @@ exports.search = function(params, callback) {
     if (params.fromGroupId) {
         query.fromGroupId = params.fromGroupId;
     }
-    if (params.fromGroupType) {
+    if ('fromGroupType' in params) {
         query.fromGroupType = params.fromGroupType;
     }
 
