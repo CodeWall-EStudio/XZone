@@ -8,6 +8,24 @@ var ERR = require('../errorcode');
 var U = require('../util');
 var Logger = require('../logger');
 
+//操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+//6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+//11: delete(移动到回收站) 12: 创建文件夹
+var OPERATE_TYPE_NAME = {
+    1: '上传文件',
+    2: '下载文件',
+    3: '复制文件/文件夹',
+    4: '移动文件/文件夹',
+    5: '修改文件/文件夹',
+    6: '删除文件/文件夹',
+    7: '预览文件',
+    8: '保存文件',
+    9: '分享文件给用户',
+    10: '分享文件给小组/部门',
+    11: '移动文件到回收站',
+    12: '创建文件夹'
+};
+
 exports.create = function(params, callback) {
 
     var ep = new EventProxy();
@@ -39,6 +57,7 @@ exports.create = function(params, callback) {
                 //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
                 //11: delete(移动到回收站) 12: 创建文件夹
                 operateType: params.operateType,
+                operateName: OPERATE_TYPE_NAME[params.operateType] || '未命名操作',
 
                 oldFileName: params.oldFileName, // 重命名的时候会传
                 oldFolderName: params.oldFolderName
