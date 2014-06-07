@@ -97,8 +97,8 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		}		
 
 		d.gid = nowGid;
-		if(!d.fdid){
-			d.fdid = nowFd;
+		if(d.fdid){
+			nowFd = d.fdid;
 		}
 		d.info = school;
 
@@ -110,7 +110,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			type : 'school'	
 		});
         //handerObj.triggerHandler('file:init',d);
-        
+        //console.log($.ajax({async:false}).getAllResponseHeaders());
         handerObj.triggerHandler('upload:param',d);		
 	}
 
