@@ -53,7 +53,15 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 	}
 
 	function init(e,d){
+		$('#logGroupType').val(-1);
 		nowPage = 0;
+		nowGid = 0;
+		isLoad = false;
+		logType = 0;
+		logSt = 0;
+		logEt = 0;
+		nowType = -1;
+		nowKey = '';
 		myInfo = Cache.get('myinfo');
 		$('#logType').attr('data-type',0).text('全部');
 		var obj = {
@@ -107,8 +115,8 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 			$('.btn-log-search').bind('click',function(){
 				nowKey = $('#logSearchKey').val();
 				nowType = $('#logGroupType').val();
-				st = $('.log-start-time').pickmeup('get_date').getTime();
-				et = $('.log-end-time').pickmeup('get_date').getTime();
+				var st = $('.log-start-time').pickmeup('get_date').getTime();
+				var et = $('.log-end-time').pickmeup('get_date').getTime();
 				var type = parseInt($('#logType').attr('data-type'));
 				if(st == nowDate){
 					st = 0;
