@@ -104,7 +104,7 @@ exports.get = function(req, res){
 
     Logger.debug('folder.get', folder);
 
-    mFile.countFile({ 'folder.$id': folder._id }, ep.doneLater('countFile'));
+    mFile.countFile({ 'folder.$id': folder._id, del: false }, ep.doneLater('countFile'));
 
     db.dereference(folder, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, ep.doneLater('dereference'));
 
