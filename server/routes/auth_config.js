@@ -710,6 +710,10 @@ exports.RULES = {
                 if (err) {
                     return callback(err);
                 }
+                if (!group) {
+                    return callback('system error, school has not init!');
+                }
+                parameter.school = group;
                 verifyGroup(user, group, function(err){
                     if (group.__editable) {
                         return callback(null);
@@ -730,6 +734,10 @@ exports.RULES = {
                 if (err) {
                     return callback(err);
                 }
+                if (!group) {
+                    return callback('system error, school has not init!');
+                }
+                parameter.school = group;
                 verifyGroup(user, group, function(err){
                     if (group.__editable) {
                         return callback(null);
