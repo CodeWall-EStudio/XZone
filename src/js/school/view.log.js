@@ -15,7 +15,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 
 	function loadLog(obj){
 		if(nowKey != ''){
-			obj.filename = nowKey;
+			obj.fileName = nowKey;
 		}
 		if(nowType>=0){
 			obj.fromGroupType = nowType;
