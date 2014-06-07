@@ -128,11 +128,23 @@
 						</ul>
 					</div>
 					<div class="lv">
+						<select id="logGroupType">
+							<option value="-1">全部</option>
+							<option value="1">小组</option>
+							<option value="2">部门</option>
+							<option value="3">备课</option>
+							<option value="0">学校</option>
+						</select>
+					</div>					
+					<div class="lv">
 						开始时间 : <input type="text" class="log-start-time"  />
 					</div>
 					<div class="lv">
 						结束时间 : <input type="text" class="log-end-time"  />
 					</div>
+					<div class="lv">
+						<input type="text" id="logSearchKey" placeholder="搜索文件名" />
+					</div>					
 					<div class="lv">
 						<button class="btn btn-primary btn-log-search">开始搜索</button>
 					</div>

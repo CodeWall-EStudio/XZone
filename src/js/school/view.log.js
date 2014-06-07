@@ -9,10 +9,17 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 		logType = 0,
 		logSt = 0,
 		logEt = 0,
+		nowType = -1;
+		nowKey = '',
 		myInfo = null;
 
 	function loadLog(obj){
-		
+		if(nowKey != ''){
+			obj.filename = nowKey;
+		}
+		if(nowType>=0){
+			obj.fromGroupType = nowType;
+		}
 		var opt = {
 			cgi : config.cgi.logsearch,
 			data : obj
@@ -98,6 +105,8 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 			});
 			
 			$('.btn-log-search').bind('click',function(){
+				nowKey = $('#logSearchKey').val();
+				nowType = $('#logGroupType').val();
 				st = $('.log-start-time').pickmeup('get_date').getTime();
 				et = $('.log-end-time').pickmeup('get_date').getTime();
 				var type = parseInt($('#logType').attr('data-type'));
@@ -115,7 +124,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 					alert('开始时间不能小于结束时间!');
 					return;								
 				}
-				if(type || st || et){
+				if(type || st || et || nowKey != '' || nowType >= 0){
 					$('#logList').html('');
 					$('.next-log-page').removeAttr('data-next');
 					var obj = {

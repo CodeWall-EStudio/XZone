@@ -782,3 +782,6 @@ strong.bold{
 	font-weight:bold;
 	background:#eee
 }
+.log-start-time,.log-end-time{
+	width:120px;
+}
