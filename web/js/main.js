@@ -6511,10 +6511,17 @@ define('view.log',['config','cache','helper/view','helper/request','helper/util'
 		logType = 0,
 		logSt = 0,
 		logEt = 0,
+		nowType = -1;
+		nowKey = '',
 		myInfo = null;
 
 	function loadLog(obj){
-		
+		if(nowKey != ''){
+			obj.filename = nowKey;
+		}
+		if(nowType>=0){
+			obj.fromGroupType = nowType;
+		}
 		var opt = {
 			cgi : config.cgi.logsearch,
 			data : obj
@@ -6526,6 +6533,8 @@ define('view.log',['config','cache','helper/view','helper/request','helper/util'
 					target : $('#logList'),
 					tplid : 'log.list',
 					data : {
+						filetype : config.filetype,
+						size : Util.getSize,
 						list : data.result.list,
 						logType : Util.logType,
 						time : Util.time
@@ -6598,6 +6607,8 @@ define('view.log',['config','cache','helper/view','helper/request','helper/util'
 			});
 			
 			$('.btn-log-search').bind('click',function(){
+				nowKey = $('#logSearchKey').val();
+				nowType = $('#logGroupType').val();
 				st = $('.log-start-time').pickmeup('get_date').getTime();
 				et = $('.log-end-time').pickmeup('get_date').getTime();
 				var type = parseInt($('#logType').attr('data-type'));
@@ -6615,7 +6626,7 @@ define('view.log',['config','cache','helper/view','helper/request','helper/util'
 					alert('开始时间不能小于结束时间!');
 					return;								
 				}
-				if(type || st || et){
+				if(type || st || et || nowKey != '' || nowType >= 0){
 					$('#logList').html('');
 					$('.next-log-page').removeAttr('data-next');
 					var obj = {

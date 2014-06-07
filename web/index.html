@@ -5,7 +5,7 @@
   <meta name="author" content="Xzone" />
   <meta http-equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" />
   <title>教师工作室</title>
-  <link rel="stylesheet" href="css/main.css?t=1402141550219">
+  <link rel="stylesheet" href="css/main.css?t=1402145961794">
 
   <meta property="qc:admins" content="124110632765637457144563757" />
 
@@ -123,18 +123,30 @@
 						</ul>
 					</div>
 					<div class="lv">
+						<select id="logGroupType">
+							<option value="-1">全部</option>
+							<option value="1">小组</option>
+							<option value="2">部门</option>
+							<option value="3">备课</option>
+							<option value="0">学校</option>
+						</select>
+					</div>					
+					<div class="lv">
 						开始时间 : <input type="text" class="log-start-time"  />
 					</div>
 					<div class="lv">
 						结束时间 : <input type="text" class="log-end-time"  />
 					</div>
 					<div class="lv">
+						<input type="text" id="logSearchKey" placeholder="搜索文件名" />
+					</div>					
+					<div class="lv">
 						<button class="btn btn-primary btn-log-search">开始搜索</button>
 					</div>
 				</div>				
 				<table class="table table-striped table-hover table-list" width="100%">
 					<tr>
-						<th>文件名</th>
+						<th>名称</th>
 						<th width="90">类型</th>
 						<th width="90">大小</th>
 						<th width="140">日志类型</th>
@@ -251,6 +263,6 @@
 	<script src="js/lib/bootstrap.js"></script>
 	<script src="js/lib/jqlib.js"></script>
 	<script src="js/lib/jqupload.js"></script>
-	<script data-main="js/main.js?t=1402141550219" src="js/lib/require/require.2.1.8.js"></script>
+	<script data-main="js/main.js?t=1402145961792" src="js/lib/require/require.2.1.8.js"></script>
 </body>
 </html>
