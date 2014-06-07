@@ -206,7 +206,7 @@ function fetchGroupMembers(group, callback) {
         } else {
             group.members = list;
 
-            mFolder.statistics(group.rootFolder.oid, function(err, result) {
+            mFolder.statistics(group.rootFolder.oid, {}, function(err, result) {
                 if (!err) {
                     group.folderCount = result.total;
                 }

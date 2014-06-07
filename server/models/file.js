@@ -242,13 +242,17 @@ exports.search = function(params, callback){
     });
 };
 
-exports.statistics = function(folderId, callback){
+exports.statistics = function(folderId, options, callback){
 
     var searchParams = {
         folderId: folderId,
         recursive: true,
         searchAll: true
     };
+
+    if (options.ignoreDel) {
+        searchParams.del = false;
+    }
 
     exports.search(searchParams, function(err, total, docs){
         if(err){

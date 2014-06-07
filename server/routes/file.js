@@ -1051,7 +1051,7 @@ exports.statistics = function(req, res){
     var parameter = req.parameter;
     var folder = parameter.folderId;
 
-    mFile.statistics(folder._id, function(err, result){
+    mFile.statistics(folder._id, {}, function(err, result){
 
         if(err){
             return res.json({ err: result || ERR.SERVER_ERROR, msg: err});
