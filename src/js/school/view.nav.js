@@ -37,6 +37,7 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 
 	function navLoad(e,d){
 		var headers  = $.ajax({async:false}).getAllResponseHeaders();
+		util.getServerTime(headers);
 /*
 Date: Sat, 07 Jun 2014 15:52:49 GMT
 Cache-Control: max-age=0, must-revalidate

@@ -5,6 +5,8 @@ define(['config'],function(config){
 	var loading = 0,
 		nowFd = 0,   //当前文件夹id
 		nowGid = 0,  //当前小组id
+		isPrep = 0,
+		nowPrep = 0,
 		nowSchool = 0,
 		isMember = 0,
 		nowAuth = 0,
@@ -265,6 +267,10 @@ define(['config'],function(config){
     var checkAct = function(){
     	var l = $('.table-files .fclick:checked').length;
     	var n = $('.table-files .fdclick:checked').length;
+
+    	if(isPrep && !nowPrep){
+    		return;
+    	}
 
 		if(n == 0){
 			if(!nowSchool){
@@ -634,9 +640,20 @@ define(['config'],function(config){
     	}
     }
 
+    function prepChange(e,d){
+    	if(typeof d === 'object'){
+    		isPrep = 1;
+    		nowPrep = d.now;
+    	}else{
+    		isPrep = 0;
+    		nowPrep = 0;
+    	}
+    }
+
     var handlers = {
     	'page:change' : pageChange,
-    	'bind:school' : schoolChange
+    	'bind:school' : schoolChange,
+    	'bind:prep' : prepChange
     }
 
     for(var i in handlers){

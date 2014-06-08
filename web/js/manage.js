@@ -1663,7 +1663,9 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 				if(nowType == 'prep' || nowType == 'pschool'){
 					var prep = Cache.get('preps');
 					var grade = Cache.get('grade');
-					var subject = Cache.get('subject');					
+					var subject = Cache.get('subject');	
+					var ntime = Cache.get('nowtime');
+					data.ntime = ntime;
 					data.prep = prep.g2key;
 					data.grades = grade;
 					data .subject = subject;
@@ -4597,7 +4599,8 @@ define('msg',['../school/config','cache','helper/view'],function(config,Cache,Vi
     });
 
     handerObj.triggerHandler('manage:userinfo');
-
+    var headers  = $.ajax({async:false}).getAllResponseHeaders();
+    util.getServerTime(headers);
 
     mModel.getKey('grade');
     mModel.getKey('subject');

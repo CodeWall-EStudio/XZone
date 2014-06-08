@@ -45,7 +45,8 @@
     });
 
     handerObj.triggerHandler('manage:userinfo');
-
+    var headers  = $.ajax({async:false}).getAllResponseHeaders();
+    util.getServerTime(headers);
 
     mModel.getKey('grade');
     mModel.getKey('subject');

@@ -309,7 +309,7 @@
 									var item = prep[i];
 									if(!item.parent && !item.status){
 							%>
-								<option data-id="<%+item.id%>" value="<%+item.id%>"><%-item.name%></option>
+								<option data-id="<%+item.id%>" value="<%+item.id%>" <%if(item.startTime <= ntime && item.endTime >= ntime){%>selected<%}%>><%-item.name%></option>
 							<%
 								}
 							}

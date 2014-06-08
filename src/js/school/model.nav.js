@@ -1,9 +1,9 @@
-define(['config','helper/request','cache','helper/util'],function(config,request,cache,util){
+define(['config','helper/request','cache','helper/util'],function(config,request,Cache,util){
 
 	var	handerObj = $(Schhandler);
 
 	function convent(data){
-
+		var ntime = Cache.get('nowtime');
 		var o = {};
 		o.id = data.user._id;
 		o.nick = data.user.nick;
@@ -76,6 +76,9 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 				item.rootFolder.id = item.rootFolder._id || item.rootFolder.$id;
 			}				
 			item.isMember = true;	
+			if(item.parent && item.parent.startTime && (ntime <= item.parent.endTime && ntime >= item.parent.startTime)){
+				item.isNow = true;
+			}
 			o.prep.push(item);
 			o.prep2key[item.id] = item;
 			o.group2key[item.id] = item;
@@ -115,6 +118,8 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		}
 
 		var success = function(d){
+			var headers  = $.ajax({async:false}).getAllResponseHeaders();
+			util.getServerTime(headers);			
 			if(d.err == 0){
 				var obj = convent(d.result);
 				handerObj.triggerHandler('cache:set',{key: 'myinfo',data: obj});

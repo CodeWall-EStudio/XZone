@@ -114,7 +114,9 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 				if(nowType == 'prep' || nowType == 'pschool'){
 					var prep = Cache.get('preps');
 					var grade = Cache.get('grade');
-					var subject = Cache.get('subject');					
+					var subject = Cache.get('subject');	
+					var ntime = Cache.get('nowtime');
+					data.ntime = ntime;
 					data.prep = prep.g2key;
 					data.grades = grade;
 					data .subject = subject;

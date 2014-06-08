@@ -274,7 +274,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			nowPid = d.pid || 0;						
 		}
 
-		if(nowGid && !nowFd){
+		if(nowGid && !nowFd || (typeof nowData.now !== 'undefined' && !nowData.now)){
 			$('#btnZone').hide();
 		}else{
 			if(nowPrep == 'group'){
@@ -449,6 +449,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				list : d.list,
 				gid : nowGid,
 				pr : pr,
+				now : nowData.now,
 				prep : nowPrep,
 				grade : nowGrade,
 				school : nowSchool,

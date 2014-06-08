@@ -286,7 +286,7 @@ define('helper/router',[],function(){
  * 常用公用方法
  */
 define('helper/util',['../config'], function(config) {
-
+	var handerObj = $(Schhandler);
 	var util = {};
 
 	/**
@@ -747,6 +747,13 @@ define('helper/util',['../config'], function(config) {
     	$('#pageNav .'+type+'space').addClass('selected');
     }
 
+    var getServerTime = function(str){
+		var tmp = str.split(/\r\n/);
+		var tmp1 = tmp[0].split('Date:');
+		var nowtime = + new Date(tmp1[1]);
+		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
+    }
+
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -765,6 +772,7 @@ define('helper/util',['../config'], function(config) {
 	util.getStatus = getStatus;
 	util.logType = showLogType;
 	util.showNav = showNav;
+	util.getServerTime = getServerTime;
 
 	return util;
 
@@ -930,12 +938,12 @@ define('cache',['config'],function(config){
 		get : getCache
 	}
 });
-define('model.nav',['config','helper/request','cache','helper/util'],function(config,request,cache,util){
+define('model.nav',['config','helper/request','cache','helper/util'],function(config,request,Cache,util){
 
 	var	handerObj = $(Schhandler);
 
 	function convent(data){
-
+		var ntime = Cache.get('nowtime');
 		var o = {};
 		o.id = data.user._id;
 		o.nick = data.user.nick;
@@ -1008,6 +1016,9 @@ define('model.nav',['config','helper/request','cache','helper/util'],function(co
 				item.rootFolder.id = item.rootFolder._id || item.rootFolder.$id;
 			}				
 			item.isMember = true;	
+			if(item.parent && item.parent.startTime && (ntime <= item.parent.endTime && ntime >= item.parent.startTime)){
+				item.isNow = true;
+			}
 			o.prep.push(item);
 			o.prep2key[item.id] = item;
 			o.group2key[item.id] = item;
@@ -1047,6 +1058,8 @@ define('model.nav',['config','helper/request','cache','helper/util'],function(co
 		}
 
 		var success = function(d){
+			var headers  = $.ajax({async:false}).getAllResponseHeaders();
+			util.getServerTime(headers);			
 			if(d.err == 0){
 				var obj = convent(d.result);
 				handerObj.triggerHandler('cache:set',{key: 'myinfo',data: obj});
@@ -1564,6 +1577,7 @@ define('view.nav',['config','model.nav','helper/view','helper/util','cache','mod
 
 	function navLoad(e,d){
 		var headers  = $.ajax({async:false}).getAllResponseHeaders();
+		util.getServerTime(headers);
 /*
 Date: Sat, 07 Jun 2014 15:52:49 GMT
 Cache-Control: max-age=0, must-revalidate
@@ -4198,7 +4212,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			nowPid = d.pid || 0;						
 		}
 
-		if(nowGid && !nowFd){
+		if(nowGid && !nowFd || (typeof nowData.now !== 'undefined' && !nowData.now)){
 			$('#btnZone').hide();
 		}else{
 			if(nowPrep == 'group'){
@@ -4373,6 +4387,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 				list : d.list,
 				gid : nowGid,
 				pr : pr,
+				now : nowData.now,
 				prep : nowPrep,
 				grade : nowGrade,
 				school : nowSchool,
@@ -5964,7 +5979,7 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 	}			
 
 });
-define('view.prep',['config','helper/view','cache'],function(config,View,Cache){
+define('view.prep',['config','helper/view','cache','helper/util'],function(config,View,Cache,Util){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
@@ -6006,19 +6021,21 @@ define('view.prep',['config','helper/view','cache'],function(config,View,Cache){
 			prep : 'my'
 		}
         //handerObj.triggerHandler('file:init',data);
-        handerObj.triggerHandler('fold:init',data); 
-        handerObj.triggerHandler('upload:param',data);		
-
 		$('#aside .aside-divs').hide();
 		var list = {};
 		var plength = 0;
+		var ntime = Cache.get('nowtime');
 		for(var i in prepList){
 			var item = prepList[i];
 			if(item.parent){
 				if(!list[item.parent._id]){
 					list[item.parent._id] = {
+						id : item.parent._id,
 						name : item.parent.name,
 						child : []
+					};
+					if(item.parent.startTime && (ntime >= item.parent.startTime && ntime <= item.parent.endTime )){
+						list[item.parent._id].now = true;
 					}
 				}
 				if(!list[item.parent._id].child){
@@ -6030,7 +6047,17 @@ define('view.prep',['config','helper/view','cache'],function(config,View,Cache){
 				list[item.id] = item;
 			}
 		}
-		console.log(plength);
+		var tmp = [];
+		for(var i in list){
+			tmp.push(list[i]);
+		}
+		tmp.sort(function(a,b){
+			if(a.now){
+				return -1;
+			}else{
+				return 1;
+			}
+		});
 		var view = new View({
 			target : $('#userPrepAside'),
 			tplid : 'myprep.list',
@@ -6038,12 +6065,29 @@ define('view.prep',['config','helper/view','cache'],function(config,View,Cache){
 				$('#userPrepAside').show();
 			},
 			data : { 
-				list : list,
+				list : tmp,
 				plength : plength,
 				length : prepLength
 			}
 		})
 		view.createPanel();
+
+		var ngroup = prepKey[data.gid];
+		if(ngroup && ngroup.parent.startTime && (ntime >= ngroup.parent.startTime && ntime <= ngroup.parent.endTime )){
+			data.now = true;
+
+		}else{
+			data.now = false;
+			$('#btnZone').hide();
+			$("#fileActZone").addClass('hide');			
+		}
+
+		handerObj.triggerHandler('bind:prep',{
+			now : data.now,
+			prep : 1
+		});		
+        handerObj.triggerHandler('fold:init',data); 
+        handerObj.triggerHandler('upload:param',data);			
 	}
 
 	var handlers = {
@@ -6872,6 +6916,8 @@ define('bind',['config'],function(config){
 	var loading = 0,
 		nowFd = 0,   //当前文件夹id
 		nowGid = 0,  //当前小组id
+		isPrep = 0,
+		nowPrep = 0,
 		nowSchool = 0,
 		isMember = 0,
 		nowAuth = 0,
@@ -7132,6 +7178,10 @@ define('bind',['config'],function(config){
     var checkAct = function(){
     	var l = $('.table-files .fclick:checked').length;
     	var n = $('.table-files .fdclick:checked').length;
+
+    	if(isPrep && !nowPrep){
+    		return;
+    	}
 
 		if(n == 0){
 			if(!nowSchool){
@@ -7501,9 +7551,20 @@ define('bind',['config'],function(config){
     	}
     }
 
+    function prepChange(e,d){
+    	if(typeof d === 'object'){
+    		isPrep = 1;
+    		nowPrep = d.now;
+    	}else{
+    		isPrep = 0;
+    		nowPrep = 0;
+    	}
+    }
+
     var handlers = {
     	'page:change' : pageChange,
-    	'bind:school' : schoolChange
+    	'bind:school' : schoolChange,
+    	'bind:prep' : prepChange
     }
 
     for(var i in handlers){
@@ -7871,7 +7932,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
           d.key = key;
         }  
         handerObj.triggerHandler('page:change'); 
-        handerObj.triggerHandler('school:init',d);              
+        handerObj.triggerHandler('school:init',d); 
+        handerObj.triggerHandler('bind:prep',0);              
       },
       mailbox : function(data){
         showModel('mailbox');
@@ -7895,7 +7957,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
         }               
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('mail:init',d);
-        handerObj.triggerHandler('bind:school',0);   
+        handerObj.triggerHandler('bind:school',0);  
+        handerObj.triggerHandler('bind:prep',0);
         handerObj.triggerHandler('model:change','mail');
       },
       share : function(data){
@@ -7988,7 +8051,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('group:init',d);  
-        handerObj.triggerHandler('bind:school',0);   
+        handerObj.triggerHandler('bind:school',0);  
+        handerObj.triggerHandler('bind:prep',0); 
         handerObj.triggerHandler('model:change','file'); 
         //handerObj.triggerHandler('upload:param',d);    
       },
@@ -8016,7 +8080,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('my:init',d);
-        handerObj.triggerHandler('bind:school',0);   
+        handerObj.triggerHandler('bind:school',0); 
+        handerObj.triggerHandler('bind:prep',0);  
         handerObj.triggerHandler('model:change','file');  
         //.triggerHandler('upload:param',d);
       },

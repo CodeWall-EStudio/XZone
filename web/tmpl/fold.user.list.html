@@ -39,7 +39,7 @@
 						</span>
 						<%}else if(ginfo && ginfo.isMember){%>
 							<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
-								<%if(item.mark==''){%>
+								<%if(item.mark=='' && (typeof now == 'undefined' || now) ) {%>
 									编辑备注
 								<%}else{%>
 									<%-item.mark%>
