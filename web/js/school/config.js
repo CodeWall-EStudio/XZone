@@ -29,7 +29,7 @@ define(function() {
 			info : CGI_PATH + 'user/info',
 			umodify : CGI_PATH + 'user/modify',
 			login : CGI_PATH + 'user/login',
-			logout : CGI_PATH + 'user/logout',
+			logout : CGI_PATH + 'user/logoff',
 			valid : CGI_PATH + 'user/validate',
 
 			create : CGI_PATH + 'manage/createUser',
