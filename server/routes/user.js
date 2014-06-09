@@ -8,6 +8,7 @@ var CAS = require('../lib/cas');
 var config = require('../config');
 var ERR = require('../errorcode');
 var Util = require('../util');
+var Logger = require('../logger');
 var userHelper = require('../helper/user_helper');
 
 var mUser = require('../models/user');
@@ -34,7 +35,7 @@ exports.gotoLogin = function(req, res){
     if(config.AUTH_TYPE !== 'auto'){
         type = config.AUTH_TYPE;
     }
-    console.log('>>>gotoLogin login with ' + type);
+    Logger.info('[gotoLogin] login with ' + type);
     if(type === 'qq'){
         var state = Date.now();
         req.session[state] = 'qq';
@@ -48,7 +49,7 @@ exports.gotoLogin = function(req, res){
     }else{
         url = config.LOGIN_PAGE;
     }
-
+    Logger.info('[gotoLogin] redirect to: ' + url);
     res.redirect(url);
 };
 

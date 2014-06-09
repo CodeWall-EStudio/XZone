@@ -84,8 +84,8 @@ exports.checkAuthAndLogin = function(req, res, next){
     }
     var loginUid;
     if(!req.session || !skey || !(loginUid = req.session[skey])){
-        routeUser.gotoLogin(req, res);
         Logger.info('[checkAuthAndLogin] goto login', 'path: ', path, ', method: ', method);
+        routeUser.gotoLogin(req, res);
         return;
     }
     req.loginUid = loginUid;
