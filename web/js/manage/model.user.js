@@ -236,6 +236,7 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		};
 		var success = function(data){
 			if(data.err === 0){
+				console.log(d);
 				handerObj.triggerHandler('user:addusersuc',d);
 			}
 			handerObj.triggerHandler('msg:error',data.err);

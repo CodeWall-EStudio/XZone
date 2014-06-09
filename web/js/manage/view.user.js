@@ -525,7 +525,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	//add one user
 	function addOneOrgUser(obj){
 		handerObj.triggerHandler('msg:config',{
-			msg : '你确定要添加该用户到组织中吗？',
+			msg : '你确定要添加用户'+obj.nick+'到组织中吗？',
 			act : {
 				sub : {
 					label : '确定',
@@ -543,7 +543,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	//del one user
 	function delOneOrgUser(obj){
 		handerObj.triggerHandler('msg:config',{
-			msg : '你确定要从组织中删除该用户吗？',
+			msg : '你确定要从组织中删除'+obj.nick+'吗？',
 			act : {
 				sub : {
 					label : '确定',
@@ -730,9 +730,11 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				'.og-close' : {
 					'click' : function(){
 						var id = $(this).attr('data-id');
+						var item = userList[id];
 						var root = $('#orgUserSelectList').attr('data-root');
 							var obj = {
 								userId : id,
+								nick : item.nick,
 								organizationId : root
 							}
 							delOneOrgUser(obj);
@@ -825,12 +827,12 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	}
 
 	function addUserSuc(e,d){
-		$('<li id="oguser'+d.id+'">'+d.nick+' <i class="dep-close og-close" data-id="'+d.id+'"></i></li>').appendTo('.org-user-list');
+		$('<li id="oguser'+d.userId+'">'+d.nick+' <i class="dep-close og-close" data-id="'+d.userId+'"></i></li>').appendTo('.org-user-list');
 		$('#ouser'+d.id).hide().attr('data-hide',1);
 	}
 	function delUserSuc(e,d){
-		$('#oguser'+d.id).remove();
-		$('#ouser'+d.id).show().removeAttr('data-hide');
+		$('#oguser'+d.userId).remove();
+		$('#ouser'+d.userId).show().removeAttr('data-hide');
 	}
 
 	var handlers = {
