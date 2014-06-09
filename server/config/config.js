@@ -73,7 +73,7 @@ exports.DEFAULT_USER_PWD = '8888';
 exports.CAS_BASE_URL = 'http://dand.71xiaoxue.com:80/sso.web';
 
 // 这里要改为对应域名
-exports.CAS_SERVICE = exports.APP_DOMAIN + '/api/user/loginSuccess';
+exports.CAS_SERVICE = '/api/user/loginSuccess';
 
 // 获取用户详细资料的CGI
 exports.CAS_USER_INFO_CGI = 'http://mapp.71xiaoxue.com/components/getUserInfo.htm';
@@ -90,7 +90,7 @@ exports.QQ_CONNECT_APPID = '100548719';
 exports.QQ_CONNECT_APPKEY = '9e47324ac7fed9f8364d4982ccf3037e';
 
 // 登陆成功的回调地址
-exports.QQ_CONNECT_CALLBACK = exports.APP_DOMAIN + '/api/user/loginSuccessWithQQ';
+exports.QQ_CONNECT_CALLBACK = '/api/user/loginSuccessWithQQ';
 
 exports.QQ_CONNECT_SITE = 'https://graph.qq.com';
 

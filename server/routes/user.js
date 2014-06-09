@@ -17,7 +17,7 @@ var mOrganization = require('../models/organization');
 
 var cas = new CAS({
     base_url: config.CAS_BASE_URL,
-    service: config.CAS_SERVICE
+    service: config.APP_DOMAIN + config.CAS_SERVICE
 });
 
 var oauth = new OAuth2(
@@ -40,7 +40,7 @@ exports.gotoLogin = function(req, res){
         req.session[state] = 'qq';
         url = oauth.getAuthorizeUrl({
             'response_type': 'code',
-            'redirect_uri': config.QQ_CONNECT_CALLBACK,
+            'redirect_uri': config.APP_DOMAIN + config.QQ_CONNECT_CALLBACK,
             state: state
         });
     }else if(type === 'sso'){
@@ -167,7 +167,7 @@ exports.loginSuccessWithQQ = function(req, res, next){
 
     oauth.getOAuthAccessToken(code, {
                 'grant_type': 'authorization_code',
-                'redirect_uri': config.QQ_CONNECT_CALLBACK
+                'redirect_uri': config.APP_DOMAIN + config.QQ_CONNECT_CALLBACK
             },
             function (err, access_token, refresh_token, data){
 
