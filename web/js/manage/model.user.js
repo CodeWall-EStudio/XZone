@@ -32,15 +32,29 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			cgi : config.cgi.usersearch,
 			data : d
 		}
+		console.log(d.nowOg);
+		if(d.nowOg){
+			var nowOg = d.nowOg,
+				kl = d.kl;
+		}
 
 		var success = function(d){
 			if(d.err == 0){
 				var list = convent(d.result.list);
 				var total = d.result.total;
-				handerObj.triggerHandler('user:listload',{
-					list : list,
-					total : total
-				});
+				if(nowOg){
+					handerObj.triggerHandler('user:listload',{
+						list : list,
+						total : total,
+						nowOg : nowOg,
+						kl : kl
+					});
+				}else{
+					handerObj.triggerHandler('user:listload',{
+						list : list,
+						total : total
+					});
+				}
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}
@@ -118,7 +132,7 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			if(data.err == 0){
 				var d2k = conventOrg(data.result.data.children);
 				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.data.children,type:1});
-				handerObj.triggerHandler('user:depsload',{ root:data.result.data._id, list :data.result.data.children,kl : d2k });
+				handerObj.triggerHandler('user:depsload',{ root:data.result.data._id, list :data.result.data.children,kl : d2k});
 			}else{
 				handerObj.triggerHandler('msg:error',data.err);
 			}
@@ -212,7 +226,36 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 			}
 			handerObj.triggerHandler('msg:error',data.err);
 		}
-		request.post(opt,success);	}
+		request.post(opt,success);	
+	}
+
+	function orgUserAdd(e,d){
+		var opt = {
+			cgi : config.cgi.adduser,
+			data : d
+		};
+		var success = function(data){
+			if(data.err === 0){
+				handerObj.triggerHandler('user:addusersuc',d);
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}
+
+	function orgUserDel(e,d){
+		var opt = {
+			cgi : config.cgi.removeuser,
+			data : d
+		};
+		var success = function(data){
+			if(data.err === 0){
+				handerObj.triggerHandler('user:delusersuc',d);
+			}
+			handerObj.triggerHandler('msg:error',data.err);			
+		}
+		request.post(opt,success);
+	}	
 
 	var handlers = {
 		'user:orgdel' : delOrg,
@@ -224,7 +267,9 @@ define(['../school/config','../school/helper/request','../school/helper/util','.
 		'user:modify' : userModify,
 		'user:folderstatus' : folderStatus,
 		'user:getfolder' : getFolder,
-		'user:deps' : loadUser
+		'user:deps' : loadUser,
+		'user:orguseradd' : orgUserAdd,
+		'user:orguserdel' : orgUserDel		
 	}
 
 	for(var i in handlers){

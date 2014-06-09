@@ -18,7 +18,7 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	}
 
 	function getUser(obj){
-		obj.pageNum = pageNum;
+		obj.pageNum = 0;//pageNum;
 		obj.order = nowOrder;
 		handerObj.triggerHandler('user:search',obj);
 	}
@@ -69,6 +69,11 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 	function userLoad(e,d){
 		$.extend(userList,d.list);
 
+		if(d.nowOg){
+			addOrgUser(d.nowOg,d.kl);
+			return;
+		}
+
 		if(nowOd == 1){
 			$('th.order-'+nowOn).attr('data-od',-1);
 			$('th.order-'+nowOn+' i').attr('class','au');
@@ -83,12 +88,12 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 			data : d
 		});
 		view.appendPanel();
-		if($('#tableBody tr').length < d.total){
-			nowPage++;
-			$('#userMa .next-group-page').attr('data-next',1);
-		}else{
+		// if($('#tableBody tr').length < d.total){
+		// 	nowPage++;
+		// 	$('#userMa .next-group-page').attr('data-next',1);
+		// }else{
 			$('#userMa .next-group-page').removeAttr('data-next').text('已经全部加载完了');
-		}		
+		//}		
 	}
 
 	function userModifySuc(e,d){
@@ -517,6 +522,74 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		});
 	}
 
+	//add one user
+	function addOneOrgUser(obj){
+		handerObj.triggerHandler('msg:config',{
+			msg : '你确定要添加该用户到组织中吗？',
+			act : {
+				sub : {
+					label : '确定',
+					action : function(){
+						handerObj.triggerHandler('user:orguseradd',obj);
+					}
+				},
+				cancel : {
+					label : '取消'
+				}
+			}
+		});		
+	}
+
+	//del one user
+	function delOneOrgUser(obj){
+		handerObj.triggerHandler('msg:config',{
+			msg : '你确定要从组织中删除该用户吗？',
+			act : {
+				sub : {
+					label : '确定',
+					action : function(){
+						handerObj.triggerHandler('user:orguserdel',obj);
+					}
+				},
+				cancel : {
+					label : '取消'
+				}
+			}
+		});		
+	}
+
+	function addOrgUser(id,kl){
+		if($.isEmptyObject(userList)){
+			var obj = {
+				page : 0,
+				nowOg : id,
+				kl : kl
+			}
+			getUser(obj);
+		}else{
+			renderOrgUser({
+				nowOg : kl[id],
+				list : userList
+			});
+		}
+	}
+
+	function renderOrgUser(d){
+		var view = new View({
+			target : $('#depModifyZone'),
+			tplid : 'manage/user.dep',
+			data : {
+				data : d.nowOg,
+				list : d.list
+			},
+			after : function(){
+				$('#depsList .org-select').removeClass('hide');
+				$('.btn-org-save').attr('data-modify',1);
+			}
+		});
+		view.createPanel();
+	}
+
 	function depsLoad(e,d){
 		var root = d.root;
 		var kl = d.kl;
@@ -528,7 +601,8 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				isInit.deps = true;
 			},
 			data : {
-				list : d.list
+				list : d.list,
+				root : d.root
 			},
 			handlers : {
 				'.plus' : {
@@ -557,6 +631,13 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				'.list-link' : {
 					'click' : function(e){
 						var id = $(this).attr('data-id');
+						var isRoot = $(this).attr('data-root');
+						if(isRoot){
+							$('.btn-org-adduser').prop('disabled',true);
+							$('.btn-org-create').prop('disabled',false);
+							$('#depModifyZone').html();
+							return;
+						}
 						nowOid = id;
 						if(kl[id].children && kl[id].children.length){
 							$('.btn-org-adduser').prop('disabled',true);
@@ -573,11 +654,6 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 						modifyOrg(id,kl,root);
 					}
 				},
-				'.dep-close' : {
-					'click' : function(){
-						$('#orgParents').html('').removeAttr('data-id');
-					}
-				},
 				'.btn-org-create' : {
 					'click' : function(){
 						var id = nowOid;
@@ -590,9 +666,81 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 				},
 				'.btn-org-adduser' : {
 					'click' : function(){
-						console.log(1);
+						addOrgUser(nowOid,kl);
 					}
 				},
+				'.btn-org-search' : {
+					'keyup' : function(){
+						var v = $(this).val();
+						console.log(v);
+					}
+				},
+				'.btn-org-user-search' : {
+					'click' : function(){
+						var val = $('#searchOrgUser').val();
+						for(var i in userList){
+							var item = userList[i];
+							if(item.nick.indexOf(val)<0 && item.name.indexOf(val)<0){
+								$('#ouser'+item.id).hide();
+							}
+						}
+					}
+				},
+				'.btn-org-user-save' : {
+					'click' : function(){
+						var userlist = [];
+						var id = $(this).attr('data-id');
+						$('.org-user-list i.og-close').each(function(){
+							userlist.push($(this).attr('data-id'));
+						});
+						var obj = {
+							userId : userlist,
+							organizationId : id
+						}
+						//handerObj.triggerHandler('user:orgusermodify',obj);
+					}
+				},
+				'.btn-org-user-search-reset' : {
+					'click' : function(){
+						$('.org-user').each(function(){
+							if(!$(this).attr('data-hide')){
+								$(this).show();
+							}
+						});
+					}
+				},
+				'.org-user' : {
+					'click' : function(){
+						var id = $(this).attr('data-id');
+						var item = userList[id];
+						var root = $('#orgUserSelectList').attr('data-root');
+						if(!$('#oguser'+id).length){
+							var obj = {
+								userId : id,
+								nick : item.nick,
+								organizationId : root
+							}
+							addOneOrgUser(obj);
+							//handerObj.triggerHandler('user:orguseradd',obj);
+							//$('<li id="oguser'+id+'">'+item.nick+' <i class="dep-close og-close" data-id="'+id+'"></i></li>').appendTo('.org-user-list');
+							//$(this).hide().attr('data-hide',1);
+						}
+					}
+				},
+				'.og-close' : {
+					'click' : function(){
+						var id = $(this).attr('data-id');
+						var root = $('#orgUserSelectList').attr('data-root');
+							var obj = {
+								userId : id,
+								organizationId : root
+							}
+							delOneOrgUser(obj);
+							//handerObj.triggerHandler('user:orguserdel',obj);
+						//$('#oguser'+id).remove();
+						//$('#ouser'+id).show().removeAttr('data-hide');
+					}
+				},				
 				'.btn-org-del' : {
 					'click' : function(){
 						var id = nowOid;
@@ -628,6 +776,16 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 							handerObj.triggerHandler('user:orgmodify',obj);
 						}else{
 							handerObj.triggerHandler('user:orgcreate',obj);
+						}
+					}
+				},
+				'.btn-reset' : {
+					'click' : function(){
+						var id = $(this).attr('data-id');
+						if(id){
+							$('#org'+id).click();
+						}else{
+							$('#depModifyZone').html('');
 						}
 					}
 				}	
@@ -666,6 +824,15 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		}	
 	}
 
+	function addUserSuc(e,d){
+		$('<li id="oguser'+d.id+'">'+d.nick+' <i class="dep-close og-close" data-id="'+d.id+'"></i></li>').appendTo('.org-user-list');
+		$('#ouser'+d.id).hide().attr('data-hide',1);
+	}
+	function delUserSuc(e,d){
+		$('#oguser'+d.id).remove();
+		$('#ouser'+d.id).show().removeAttr('data-hide');
+	}
+
 	var handlers = {
 		'user:orgdelsuc' : orgDelSuc,
 		'user:orgmodifysuc' : orgModifySuc,
@@ -674,7 +841,9 @@ define(['../school/config','../school/cache','../school/helper/view','../school/
 		'user:modifysuc' : userModifySuc,
 		'user:statusload' : statusLoad,
 		'user:depsload' : depsLoad,
-		'user:foldload' : foldLoad
+		'user:foldload' : foldLoad,
+		'user:addusersuc' : addUserSuc,
+		'user:delusersuc' : delUserSuc
 	}
 
 	for(var i in handlers){

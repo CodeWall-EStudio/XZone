@@ -1,0 +1,53 @@
+<dt><h4>添加用户</h4></dt>
+<dd>
+	<table width="100%" class="table table-striped table-hover table-list table-files">
+		<tr>
+			<td width="100">名称：
+			</td>
+			<td><%-data.name%></td>
+		</tr>
+		<tr>
+			<td>输入关键字</td>
+			<td>
+				<input type="text" id="searchOrgUser" class="org-user-search" /> <button class="btn btn-primary btn-org-user-search">搜索</button> <button class="btn btn-primary btn-org-user-serach-reset">重置</button>
+			</td>
+		</tr>
+	</table>
+	<table width="100%" class="table table-striped table-hover table-list table-files">
+		<tr>
+			<td width="50%">
+				<ul class="org-user-selected" id="orgUserSelectList"  data-root="<%-data._id%>">
+					<%
+						for(var i in list){
+							var item = list[i];
+					%>
+						<li id="ouser<%+item.id%>" class="org-user" data-id="<%+item.id%>"><%-item.nick%></li>
+					<%}%>
+				</ul>				
+			</td>
+			<td width="50%">
+				<ul class="org-user-list">
+					<%
+						if(data.user){
+							for(var i in data.user){
+								var item = data.user[i];
+					%>
+						<li id="oguser<%-item._id%>"><%-item.nick%> <i class="dep-close og-close" data-id="<%+item._id%>"></i></li>
+					<%}%>
+					<%}%>
+				</ul>				
+			</td>
+		</tr>
+	</table>
+	<table width="100%" class="table table-striped table-hover table-list table-files">
+		<tr>
+			<td width="100">
+			</td>
+			<td>
+				<!--<button class="btn btn-primary btn-org-user-save" data-id="<%-data._id%>">保存</button>-->
+				<button class="btn btn-primary btn-reset">完成</button>				
+			</td>
+		</tr>
+	</table>
+	<div></div>
+</dd>

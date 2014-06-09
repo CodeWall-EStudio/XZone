@@ -90,6 +90,7 @@ a:hover{
 .header .userinfo{
 	line-height:60px;
 	font-size:18px;
+	width:200px;
 	position:relative;
 	float:right;
 }

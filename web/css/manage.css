@@ -288,3 +288,13 @@ table.jqplot-table-legend{
 	height:12px;
 	cursor:pointer;
 }
+.org-user-selected,.org-user-list{
+	background:#fff;
+	padding:10px;
+	border:1px solid #ddd;
+	height:400px;
+	overflow:auto;
+}
+.org-user-selected li{
+	cursor:pointer;
+}
