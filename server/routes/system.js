@@ -58,7 +58,7 @@ exports.init = function(req, res){
         }else{
             var initUser = {
                 name: 'xzone_admin',
-                nick: '初始化管理员',
+                nick: '初始管理员',
                 pwd: Util.md5(config.DEFAULT_USER_PWD),
                 auth: 15
             };
