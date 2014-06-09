@@ -366,6 +366,7 @@ exports.createUser = function(req, res){
         doc = {
             name: name,
             nick: nick,
+            from: 'ucenter',
             pwd: Util.md5(config.DEFAULT_USER_PWD),
             sizegroupId: sizegroup._id,
             size: sizegroup.size

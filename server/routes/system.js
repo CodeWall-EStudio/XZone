@@ -37,15 +37,15 @@ exports.init = function(req, res){
             return ep.emit('error', 'already init');
         }
 
-        mUser.getUser({ name: 'xzone_admin' }, ep.doneLater('checkInitUser'));
+        mUser.getUser({ name: 'xzone_admin' }, ep.done('checkInitUser'));
 
-        db.group.findOne({ type: 0 }, ep.doneLater('checkSchoolGroup'));
+        db.group.findOne({ type: 0 }, ep.done('checkSchoolGroup'));
 
-        db.group.findOne({ type: 2, pt: 1 }, ep.doneLater('checkPrepareGroup'));
+        db.group.findOne({ type: 2, pt: 1 }, ep.done('checkPrepareGroup'));
 
-        db.department.findOne({ parent: null }, ep.doneLater('checkOrganization'));
+        db.department.findOne({ parent: null }, ep.done('checkOrganization'));
 
-        db.sizegroup.findOne({ }, ep.doneLater('checkSizegroup'));
+        db.sizegroup.findOne({ }, ep.done('checkSizegroup'));
 
     });
 
