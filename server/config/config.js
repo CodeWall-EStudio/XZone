@@ -38,8 +38,6 @@ exports.STATIC_FILE_EXPIRES = 7 * 24 * 60 * 60 * 1000; // 静态文件的过期�
 // 默认每个用户的空间大小 3G
 exports.DEFAULT_USER_SPACE = 3 * 1024 * 1024 * 1024;
 
-exports.NOT_FOUND_PAGE = '/404.html';
-
 // 允许新媒体跨域上传和下载资源的 host
 exports.XHR2_ALLOW_ORIGIN = [
     'http://media.71xiaoxue.com'
@@ -52,6 +50,17 @@ exports.DOWNLOAD_APIS = [
 ];
 
 exports.AUTH_TYPE = 'self';// auto, sso, qq, self
+
+// 一些页面 url 的常量
+
+exports.INDEX_PAGE = '/index.html';
+
+exports.LOGIN_PAGE = '/login.html';
+
+exports.LOGIN_FAIL_PAGE = '/loginfail.html';
+
+exports.NOT_FOUND_PAGE = '/404.html';
+
 
 // ==== User Center 相关的配置 ====================================================
 

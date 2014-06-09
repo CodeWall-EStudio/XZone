@@ -46,7 +46,7 @@ exports.gotoLogin = function(req, res){
     }else if(type === 'sso'){
         url = cas.getLoginUrl();
     }else{
-        url = '/center/login.html';
+        url = config.LOGIN_PAGE;
     }
 
     res.redirect(url);
@@ -116,7 +116,7 @@ var validateTicket = function(ticket, callback){
 };
 
 exports.loginSuccess = function(req, res, next){
-    req.redirectUrl = '/index.html';
+    req.redirectUrl = config.INDEX_PAGE;
 
     var ticket = req.param('ticket');
 
@@ -129,7 +129,7 @@ exports.loginSuccess = function(req, res, next){
     validateTicket(ticket, function(err, valData, user){
         if(err){
             // res.json({err: valData || ERR.NOT_LOGIN, msg: err});
-            res.redirect('/loginfail.html');
+            res.redirect(LOGIN_FAIL_PAGE + '?err=' + (valData || ERR.NOT_LOGIN) + '&msg=' + String(err));
             console.log(err,valData,user);
             console.log('>>>validateTicket error:', err);
         }else{
@@ -155,7 +155,7 @@ exports.loginSuccessWithQQ = function(req, res, next){
     var state = req.param('state');
     var type = req.session[state];
 
-    req.redirectUrl = '/index.html';
+    req.redirectUrl = config.INDEX_PAGE;
 
     if(type !== 'qq'){ // server-side 
         res.json({ err: ERR.TICKET_ERROR, msg: 'not a valid request' });
@@ -244,13 +244,13 @@ exports.login = function(req, res){
             if(json){
                 return res.json({ err: ERR.LOGIN_FAILURE, msg: 'server error'});
             }
-            return res.redirect('/loginfail.html?err=' + ERR.LOGIN_FAILURE);
+            return res.redirect( config.LOGIN_FAIL_PAGE + '?err=' + ERR.LOGIN_FAILURE);
         }
         if(!user){
             if(json){
                 return res.json({ err: ERR.ACCOUNT_ERROR, msg: 'account or password is wrong'});
             }
-            return res.redirect('/loginfail.html?err=' + ERR.ACCOUNT_ERROR);
+            return res.redirect(config.LOGIN_FAIL_PAGE + '?err=' + ERR.ACCOUNT_ERROR);
         }
 
         var skey = Util.md5(user.name + ':' + user.pwd + ':' + Date.now());
