@@ -408,6 +408,9 @@ exports.modifyUser = function(req, res) {
     if (params.auth) { //更改权限 
         doc.auth = params.auth;
     }
+    if (params.nick) {
+        doc.nick = params.nick;
+    }
     mUser.update({
         _id: user._id
     }, doc, function(err, result) {
