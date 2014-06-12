@@ -7,7 +7,7 @@
     }    
   });
 
-  require(['config','../school/helper/router','../school/helper/util','view.group','view.user','view.manage','model.manage','msg','model.group'], function(config,router,util,group,user,manage,mModel) {
+  require(['config','helper/router','helper/util','view.group','view.user','view.manage','model.manage','msg','model.group'], function(config,router,util,group,user,manage,mModel) {
 
     var handerObj = $(Schhandler);
     var prepload = false;
