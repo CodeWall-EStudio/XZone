@@ -1,0 +1,14 @@
+					<%if(list.length>0){%>
+						<%
+							for(var i = 0,l=list.length;i<l;i++){
+								var item = list[i];
+						%>
+							<li class="boardmsg boardmsg<%+item.id%>">
+								<%-item.time%>   发表人:<%-item.name%> <%if(auth){%><a cmd="del" data-id="<%+item.id%>">删除</a><%}%>
+								<p><%-item.content%></p>
+
+							</li>
+						<%}%>
+					<%}else{%>
+						<li>暂无留言</li>
+					<%}%>

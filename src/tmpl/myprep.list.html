@@ -1,0 +1,23 @@
+			<div class="file-type-zone">
+				<a href="#">我的文件</a>
+				<a href="#myprep=1" class="selected">我的备课</a>
+			</div>			
+			<ul class="my-prep-list">
+				<%if(list.length>0){%>
+					<%
+						for(var i =0,l=list.length;i<l;i++){
+							var item = list[i];
+
+					%>
+					<li>
+						<%if(item.parent){%>
+						<a href="#myprep=1&gid=<%+item.id%>&fdid=<%+item.rootFolder.id%>"><%-item.name%></a>
+						<%}else{%>
+							<%-item.name%>
+						<%}%>
+					</li>
+					<%}%>
+				<%}else{%>
+					<li>你还没有加入教学组</li>
+				<%}%>
+			</ul>

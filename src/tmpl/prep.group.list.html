@@ -1,0 +1,35 @@
+		<%
+			for(var i in list){
+				var item = list[i];
+				if(pid == 0 || item.pid == pid){
+
+
+					if((grade != 0 && item.grade != grade) || (tag != 0 && item.tag != tag) ){
+						continue;
+					}
+					var members = item.members;
+					for(var j=0,l=members.length;j<l;j++){
+						if(uid != 0 && members[j]._id != uid){
+							continue;
+						}
+						var nick = ul[members[j]._id].nick || '',
+							nuid = members[j]._id;
+		%>
+		<tr class="fold fold<%+item.id%>">
+			<td>
+				<a href="#groupprep=1&gid=<%+item.id%>&fdid=<%+item.rootFolder['$id']%>&uid=<%+nuid%>" data-id="<%+item.id%>"><i class="fold"></i></a>
+				<dl>
+					<dt>
+						<a class="fdname<%+item.id%>" href="#groupprep=1&gid=<%+item.id%>&fdid=<%+item.rootFolder['$id']%>&uid=<%+nuid%>" data-id="<%+item.id%>"><%- nick%> <%-item.name%></a>
+					</dt>
+				</dl>							
+			</td>		
+			<td width="90"></td>
+			<td width="90"></td>
+			<td width="120"><span><%-item.time%></span></td>
+		</tr>
+		<%
+					}
+				}
+			}
+		%>

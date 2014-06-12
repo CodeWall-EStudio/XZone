@@ -1,0 +1,300 @@
+.from{
+	background:#fff;
+}
+
+.from-h2{
+	margin:0;
+	padding:20px;
+}
+.addfrom{
+	padding:30px;
+}
+.addfrom li{
+	position:relative;
+	padding:15px 0;
+}
+.manage-list{
+	margin-left:60px;
+}
+.user-list span{
+	display:inline-block;
+	padding:4px 8px;
+}
+.fail{
+	padding:40px;
+	text-align:center;
+}
+.success{
+	padding:40px;
+	text-align:center;
+}
+.user-list .color{
+	color:#f00;
+}
+.btn-search{
+	margin-left:12px;
+}
+.manage-menus{
+	clear:both;	
+	background-color:#fff;
+	height:52px;
+	line-height:32px;
+	padding-left:235px;
+	display:none;
+}
+.manage-menus a{
+	display:inline-block;
+	padding:4px 20px;
+	width:100px;
+}
+.manage-menus a.selected{
+	background-color:#428bca;
+	color:#fff;
+}
+#maGroup{
+	padding-left:100px;
+}
+#maSchool{
+	padding-left:200px;
+}
+#maSystem{
+	padding-left:100px;
+}
+.manage-nav{
+	padding:10px;
+	display:none;
+}
+
+.maside{
+	position:absolute;
+	width:160px;
+}
+
+.maside .manage-nav{
+	padding:10px;
+}
+.manage-nav li{
+	line-height:24px;
+	float:left;
+	font-size:14px;
+	padding:4px 12px;
+}
+.manage-nav li a{
+	display:block;
+	width:100%;
+}
+
+.mcontainer{
+	clear:both;
+}
+
+.manage-section{
+	margin:0 10px;
+	border:1px solid #ddd;
+	min-width: 810px;
+	min-height: 600px;
+	height: 100%;
+	width: 100%;	
+	background:#fff;
+}
+.manage-list-zone{
+	float:left;
+	width:47%;
+	padding:1%;
+}
+.manage-act-zone{
+	float:right;
+	width:47%;
+	padding:1%;
+}
+
+.manage-act-zone dl{
+	padding:20px 0;
+}
+.action-list .action-btn-list{
+	float:left;
+}
+.manage-act-zone dt{
+	line-height:32px;
+	height:32px;
+}
+.manage-act-zone dt h4{
+	font-size:16px;
+	float:left;
+	line-height:32px;
+	height:32px;
+}
+.manage-act-zone dt span{
+	font-size:12px;
+	margin-left:12px;
+	float:left;
+	font-weight:200;
+}
+.manage-act-zone td{
+	padding:4px;
+}
+.action-modify-zone{
+	clear:both;
+}
+.action-modify-zone table{
+	margin-bottom:10px;
+}
+
+.action-modify-zone i.close{
+	display:inline-block;
+	width:12px;
+	height:12px;
+	float:none;
+	background:url(imgs/close.png) no-repeat;
+}
+.member-list{
+	padding:10px 0;
+}
+.table-striped > tbody > tr.group-tr-selected > td{
+	background-color:#fdf7f7;
+}
+
+.group-tr-selected td{
+	background-color:#fdf7f7;
+}
+
+.group-order{
+	cursor:pointer;
+}
+.next-group-page,.next-user-page,.next-log-page{
+	cursor:pointer;
+	width:100%;
+	padding:10px 0;
+	text-align:center;
+}
+
+.grade-list{
+	padding:10px;
+}
+.grade-list li{
+	padding:4px;
+	line-height:28px;
+	font-size:14px;
+}
+.grade-zone{
+	padding:10px;
+}
+
+.manage-loading{
+	padding:50px;
+	text-align:center;
+	font-size:16px;
+}
+
+.td-pre{
+	color:#428bca;
+	cursor:pointer;
+}
+
+tr.jqplot-table-legend{
+	padding:4px;
+}
+td.jqplot-table-legend {
+	padding:4px;
+}
+
+.file-status-zone{
+	padding:20px 0;
+}
+.file-status-tit{
+	font-size:14px;
+	padding:10px;
+}
+
+.status-nav-list{
+	height:30px;
+}
+.status-nav-list li{
+	padding:2px 10px;
+	float:left;
+}
+.status-nav-list li.selected h4{
+	font-weight:600;
+}
+
+.data-tab{
+	padding:20px 10px;
+}
+.data-tab h3{
+	font-size:20px;
+	font-weight:600;
+	margin-bottom:12px;
+}
+.data-tab h4{
+	font-size:16px;
+	font-weight:600;
+	margin-bottom:12px;
+}
+.data-tab li{
+	padding:10px 0;
+	line-height:200%;
+	font-size:14px;
+}
+table.jqplot-table-legend{
+	border:none;
+}
+.log-tit{
+	height:30px;
+	line-height:30px;
+}
+.log-tit div.lv{
+	float:left;
+	position:relative;
+	padding:4px 10px;
+}
+.log-tit .dropdown-menu{
+	padding:10px;
+	color:#428bca;
+}
+.log-tit .dropdown-menu li{
+	cursor:pointer;
+}
+.prop-block-width{
+	width:100%;
+	border:1px solid #ddd;
+	margin:0 auto;
+}
+.prop-block{
+	position:relative;
+	display:block;
+	height:20px;
+}
+.prop-txt{
+	width:100%;
+	position:absolute;
+	z-index:3;
+	text-align:center;
+	color:#fff;
+	text-shadow:1px 1px 2px #000;
+}
+.prop{
+	position:absolute;
+	z-index:2;
+	top:0;
+	width:40px;
+	height:18px;
+	background:#496fba;	
+}
+#depModifyZone .dep-close{
+	float:none;
+	display:inline-block;
+	background:url(imgs/close.png) no-repeat;
+	width:12px;
+	height:12px;
+	cursor:pointer;
+}
+.org-user-selected,.org-user-list{
+	background:#fff;
+	padding:10px;
+	border:1px solid #ddd;
+	height:400px;
+	overflow:auto;
+}
+.org-user-selected li{
+	cursor:pointer;
+}

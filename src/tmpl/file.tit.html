@@ -1,0 +1,89 @@
+<div class="fold-list-link">
+	<a cmd="tree" id="foldTree" class="section-tit-a-first section-tit-a-border">树</a>				
+<%if(!key){%>
+	<div class="tit-div" style="z-index:20">
+	<%if(gid){%>
+		<%if(fold){%>
+			<a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>" class="group-name-tit dr-menu" data-id="<%-fold.idpath[0]%>" data-target="topFoldPath" stlyle="z-index:20"><%-gname%></a>
+		<%}else{%>
+			<a href="#<%if(school){%>school=1&<%}%>gid=<%+gid%>" style="z-index:20"><%-gname%></a>
+		<%}%>
+	<%}else{%>
+		<%if(fold){%>
+			<a href="#" class="dr-menu" data-id="<%-fold.idpath[0]%>" data-target="topFoldPath" stlyle="z-index:20">我的文件</a>
+		<%}else{%>
+		    <a href="#" style="z-index:20">我的文件</a>
+		<%}%>
+	<%}%>
+	<%if(fold && root != fold.id){%>
+		<ul id="topFoldPath" class="dropdown-menu menu tit-menu hide" role="menu" aria-labelledby="dLabel1">
+
+		</ul>
+	<%}%>
+	</div>
+	<%
+		if(fold){
+	%>	
+		<%if(fold.idpath.length>3){%>
+			<div class="tit-div" style="z-index:19"><a style="z-index:19">......</a></div>
+		<%}%>					
+		<%
+			if(fold.pid && fold.idpath.length>2){
+				var l = fold.idpath.length;
+		%>
+			<div class="tit-div" style="z-index:19">
+			<a  data-id="<%-fold.idpath[l-2]%>" data-target="parentFoldPath"  class="frist dr-menu" style="z-index:19" href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>"><%-fold.pname%></a>
+			<ul id="parentFoldPath" class="dropdown-menu menu tit-menu hide" role="menu" aria-labelledby="dLabel">
+				<li><a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>"><%-fold.pname%></a></li>
+			</ul>
+			</div>
+			<div class="tit-div" style="z-index:18">
+			<a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.id%>" data-id="<%=fold.idpath[l-1]%>" class="end dr-menu" data-target="thisFoldPath" style="z-index:18"><%-fold.name%></a>
+			<ul id="thisFoldPath" class="dropdown-menu menu tit-menu hide" role="menu" aria-labelledby="dLabel">
+			</ul>
+			</div>						
+		<%}else{%>	
+			<%if(root != fold.id){%>
+			<a data-id="<%=fold.idpath[l-1]%>" class="end" data-target="thisFoldPath" style="z-index:18" href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.id%>"><%-fold.name%></a>
+			<%}%>
+		<%}%>
+		<%if(fold.pid){%>	
+		<a class="second" style="z-index:17" class="end" href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>">返回上级</a>
+		<%}%>
+	<%}%>
+<%}else{%>	
+	<a >搜索结果</a>
+	<!-- <a class="end" href="/home?fid=<?=$fid?>&od=<?=$od?>&on=<?=$on?>">返回上级</a> -->
+	<a class="return" href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%=fdid%>">退出搜索结果</a>
+<%}%>
+</div>
+<ul class="act-zone">
+	<%if(gid){%>
+	<li class="dropdown" id="changeUser">
+		<a id="drop-type" "button" data-toggle="dropdown" >
+			全部用户
+		<b class="caret"></b></a>
+		<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+			<%
+				for(var i in ml){
+					var item = ml[i];
+			%>
+				<li><a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%><%if(fold){%>fdid=<%+fold.id%>&<%}%>&uid=<%+item.id%>"><%-item.nick%></a></li>
+			<%}%>
+		</ul>		
+	</li>
+	<%}%>
+	<li class="all-file file-type dropdown" id="changeFileType">
+		<a id="drop-type" "button" data-toggle="dropdown" >
+			<%-filetype[type]%>
+		<b class="caret"></b></a>
+		<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+			<%
+				for(var i in filetype){
+					var item = filetype[i];
+			%>
+				<li><a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%><%if(fold){%>fdid=<%+fold.id%>&<%}%>type=<%+i%>"><%-item%></a></li>
+			<%}%>
+		</ul>
+	</li>
+</ul>

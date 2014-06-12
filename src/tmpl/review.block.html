@@ -1,0 +1,16 @@
+      <div class="action">
+        <div class="al-arrow"></div>
+        <div class="review-list-block">
+          <ul id="reviewFileList">
+            <%
+            	for(var i in list){
+            		var item = list[i];
+            %>
+            	<li data-id="<%+item._id%>" <%if(item._id === id){%>class="selected"<%}%> title="<%+item.name%>"></li>
+            <%}%>
+          </ul>
+        </div>
+        <div class="ar-arrow"></div>
+      </div>
+      
+      <div class="bg"></div>

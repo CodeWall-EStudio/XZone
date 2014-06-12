@@ -1,0 +1,39 @@
+<div id="allStatusBlock" class="manage-tabs manage-grade-tab data-tab">
+	<h3>数据汇总</h3>
+
+	<ul class="language-html javascript">
+		<li>当前共有 <code><%-totalUser%></code>个用户 共上传 <code><%-totalFile%></code>个文件,占用了<code><%-allsize%></code>空间</li>
+		<li>
+			当前共有 <code><%-totalGroup%></code>个小组 <code><%-totalDepartment%></code>个部门
+			<code><%-totalFolder%></code>个文件夹
+		</li>
+	</ul>
+	<h4>文件占用空间统计</h4>
+	<div id="allFilePre">
+		
+	</div>
+	<h4>文件数量统计</h4>
+	<div id="allFilePre1">
+		
+	</div>	
+	<h4>文件统计</h4>
+	<table class="table table-striped table-hover table-list table-files" width="100%">
+		<tr>
+			<th>文件类型</th>
+			<th>文件大小</th>
+			<th>文件数量</th>
+		</tr>
+		<% 
+			for(var i in fileStatistics){
+				var item = fileStatistics[i];
+		%>
+		<tr>
+			<td>
+				<%-filetype[item.type]%>
+			</td>
+			<td><%-item.nsize%></td>
+			<td><%-item.count%></td>
+		</tr>
+		<%}%>
+	</table>	
+</div>

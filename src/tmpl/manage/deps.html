@@ -1,0 +1,41 @@
+<div id="depsBlock" class="manage-tabs manage-grade-tab manage-list-zone">
+	<div>
+		<ul id="depsList" class="act-fold-list">
+			<li id="org<%-root%>" data-root="1">
+				<i cmd="next" class="minus" data-id="<%+root%>"></i> <a class="list-link" data-id="<%+root%>" data-root="1">根目录</a>				
+				<ul>	
+				<%
+				if(list.length){
+					for(var i=0,l=list.length;i<l;i++){
+						var item = list[i];
+						if(item.children){
+				%>
+					<li id="org<%-item._id%>"><%if(item.children.length){%><i cmd="next" class="plus" data-id="<%+item._id%>"></i><%}%> <a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <strong><%=item.name%></a></strong> 	
+						</a>
+					</li>
+					<%}%>
+				<%}%>
+				<%}else{%>
+					
+				<%}%>
+				</ul>
+			</li>
+
+		</ul>		
+	</div>
+</div>
+	<div class="manage-act-zone">
+		<div>
+			<div class="action-list">
+				<div class="action-btn-list">
+					<button class="btn btn-primary btn-org-create">添加组织</button>
+					<button class="btn btn-primary btn-org-adduser">添加用户</button>					
+					<button class="btn btn-primary btn-org-modify" disabled>修改组织</button>
+					<button class="btn btn-danger btn-org-del" disabled>删除组织</button>
+				</div>
+			</div>
+		</div>
+		<dl id="depModifyZone" class="clear">
+		</dl>
+	</div>
+<div class="clear"></div>
