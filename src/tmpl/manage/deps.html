@@ -10,7 +10,8 @@
 						var item = list[i];
 						if(item.children){
 				%>
-					<li id="org<%-item._id%>"><%if(item.children.length){%><i cmd="next" class="plus" data-id="<%+item._id%>"></i><%}%> <a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <strong><%=item.name%></a></strong> 	
+					<li id="org<%-item._id%>">
+						<i cmd="next" <%if(item.children.length){%>class="plus"<%}%> data-id="<%+item._id%>"></i> <strong><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></strong> 	
 						</a>
 					</li>
 					<%}%>
@@ -29,7 +30,7 @@
 			<div class="action-list">
 				<div class="action-btn-list">
 					<button class="btn btn-primary btn-org-create">添加组织</button>				
-					<button class="btn btn-primary btn-org-modify" disabled>修改组织</button>
+					<!--<button class="btn btn-primary btn-org-modify" disabled>修改组织</button>-->
 					<button class="btn btn-danger btn-org-del" disabled>删除组织</button>
 				</div>
 			</div>

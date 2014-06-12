@@ -32,10 +32,11 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			cgi : config.cgi.usersearch,
 			data : d
 		}
-		console.log(d.nowOg);
+
 		if(d.nowOg){
 			var nowOg = d.nowOg,
-				kl = d.kl;
+				kl = d.kl,
+				rid = d.rid;
 		}
 
 		var success = function(d){
@@ -47,7 +48,8 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 						list : list,
 						total : total,
 						nowOg : nowOg,
-						kl : kl
+						kl : kl,
+						rid : rid
 					});
 				}else{
 					handerObj.triggerHandler('user:listload',{
@@ -127,7 +129,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		// }
 		var opt = {
 			cgi : config.cgi.orglist //userlist
-		}		
+		};
 		var success = function(data){
 			if(data.err == 0){
 				var d2k = conventOrg(data.result.data.children);
@@ -236,7 +238,6 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		};
 		var success = function(data){
 			if(data.err === 0){
-				console.log(d);
 				handerObj.triggerHandler('user:addusersuc',d);
 			}
 			handerObj.triggerHandler('msg:error',data.err);

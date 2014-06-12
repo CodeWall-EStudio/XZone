@@ -2,6 +2,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 	var handerObj = $(Schhandler);
 	var isInit = {}, //初始化
 		userList = {},
+		o2key = {}, //组织hash
 		isLoading = false;
 		nowUin = 0,
 		nowPage = 0,
@@ -70,7 +71,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		$.extend(userList,d.list);
 
 		if(d.nowOg){
-			addOrgUser(d.nowOg,d.kl);
+			modifyOrg(d.nowOg,d.kl,d.rid);
 			return;
 		}
 
@@ -489,20 +490,31 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 	}
 
 	function modifyOrg(id,list,rid){
-		var view = new View({
-			target : $('#depModifyZone'),
-			tplid : 'manage/modify.dep',
-			data : {
-				data : list[id],
+		if($.isEmptyObject(userList)){		
+			var obj = {
+				page : 0,
+				nowOg : id,
 				kl : list,
 				rid : rid
-			},
-			after : function(){
-				$('#depsList .org-select').removeClass('hide');
-				$('.btn-org-save').attr('data-modify',1);
 			}
-		});
-		view.createPanel();
+			getUser(obj);			
+		}else{
+			var view = new View({
+				target : $('#depModifyZone'),
+				tplid : 'manage/modify.dep',
+				data : {
+					data : list[id],
+					kl : list,
+					rid : rid,
+					list : userList
+				},
+				after : function(){
+					$('#depsList .org-select').removeClass('hide');
+					$('.btn-org-save').attr('data-modify',1);
+				}
+			});
+			view.createPanel();
+		}
 	}
 
 	function delOrg(id){
@@ -593,6 +605,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 	function depsLoad(e,d){
 		var root = d.root;
 		var kl = d.kl;
+		o2key = kl;
 		var view = new View({
 			target : $('#deptreeMa'),
 			tplid : 'manage/deps',
@@ -632,25 +645,30 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 					'click' : function(e){
 						var id = $(this).attr('data-id');
 						var isRoot = $(this).attr('data-root');
+						nowOid = id;
 						if(isRoot){
-							$('.btn-org-adduser').prop('disabled',true);
 							$('.btn-org-create').prop('disabled',false);
-							$('#depModifyZone').html();
+							$('#depModifyZone').html('');
 							return;
 						}
-						nowOid = id;
-						if(kl[id].children && kl[id].children.length){
-							$('.btn-org-adduser').prop('disabled',true);
+						//有子组织
+						//console.log(kl[id].children.length);
+						if(kl[id].users.length === 0){
 							$('.btn-org-create').prop('disabled',false);
 						}else{
-							$('.btn-org-adduser').prop('disabled',false);
 							$('.btn-org-create').prop('disabled',true);
 						}
-						if(!kl[id].children.length && !kl[id].user){
-							$('.btn-org-del').prop('disabled',false);
-						}else{
-							$('.btn-org-del').prop('disabled',true);
-						}
+						$('.btn-org-del').prop('disabled',false);
+						// if(kl[id].children.length){
+						// 	$('.btn-org-create').prop('disabled',false);
+						// }else{
+						// 	$('.btn-org-create').prop('disabled',true);
+						// }
+						// if(!kl[id].children.length && !kl[id].user){
+						// 	$('.btn-org-del').prop('disabled',false);
+						// }else{
+						// 	$('.btn-org-del').prop('disabled',true);
+						// }
 						modifyOrg(id,kl,root);
 					}
 				},
@@ -658,21 +676,22 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 					'click' : function(){
 						var id = nowOid;
 						var name = '';
-						if(id){
+						if(id && kl[id]){
 							name = kl[id].name;
+						}else{
+							name =  '根目录';
 						}
 						createOrg(id,name);
 					}
 				},
 				'.btn-org-adduser' : {
 					'click' : function(){
-						addOrgUser(nowOid,kl);
+						//addOrgUser(nowOid,kl);
 					}
 				},
 				'.btn-org-search' : {
 					'keyup' : function(){
 						var v = $(this).val();
-						console.log(v);
 					}
 				},
 				'.btn-org-user-search' : {
@@ -797,7 +816,45 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 	}
 
 	function orgCreateSuc(e,d){
+		var pid = d.parent.$id;
 
+		d.children = [];
+		d.users = [];
+
+		o2key[d._id] = d;
+		o2key[pid].children.push(d);
+		var pdom = $('#org'+pid);
+		pdom.find('> i').addClass('plus minus');
+		var target = pdom.find('> ul');
+		if(target.length === 0){
+			target = $('<ul></ul>').appendTo(pdom);
+		}
+		var view = new View({
+			target : target,
+			tplid : 'manage/deps.one',
+			data : {
+				item : d
+			}
+		});
+		view.appendPanel();
+
+    // "data": {
+    //   "name": "test4",
+    //   "order": 1,
+    //   "parent": {
+    //     "$ref": "department",
+    //     "$id": "539654ff05bf294863d12612",
+    //     "$db": ""
+    //   },
+    //   "creator": {
+    //     "$ref": "user",
+    //     "$id": "539654ff05bf294863d12610",
+    //     "$db": ""
+    //   },
+    //   "createTime": 1402614010256,
+    //   "updateTime": 1402614010256,
+    //   "_id": "539a30fa05e9492972cd8214"
+    // }
 	}
 
 	function orgDelSuc(e,d){
@@ -826,11 +883,32 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		}	
 	}
 
+	function delOrgUserKey(d){
+		var user = o2key[d.organizationId].users;
+		var tmp = [];
+		for(var i=0,l=user.length;i<l;i++){
+			var item = user[i];
+			if(item._id !== d.userId){
+				tmp.push(item);
+			}
+		}
+		o2key[d.organizationId].users = tmp;
+		console.log(o2key,d.organizationId);
+	}
+
+	//添加组织用户成功
 	function addUserSuc(e,d){
+		o2key[d.organizationId].users.push({
+			nick : d.nick,
+			_id : d.userId
+		})
 		$('<li id="oguser'+d.userId+'">'+d.nick+' <i class="dep-close og-close" data-id="'+d.userId+'"></i></li>').appendTo('.org-user-list');
 		$('#ouser'+d.id).hide().attr('data-hide',1);
 	}
+
+	//删除组织用户成功
 	function delUserSuc(e,d){
+		delOrgUserKey(d);
 		$('#oguser'+d.userId).remove();
 		$('#ouser'+d.userId).show().removeAttr('data-hide');
 	}
