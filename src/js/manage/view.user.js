@@ -479,8 +479,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 			data : {
 				data : false,
 				pid : pid,
-				pname : name,
-				ulist : false
+				pname : name
 			},
 			after : function(){
 				$('#depsList .org-select').removeClass('hide');
@@ -503,8 +502,6 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 				$('.btn-org-save').attr('data-modify',1);
 			}
 		});
-		console.log(list);
-		console.log(data);
 		view.createPanel();
 	}
 
