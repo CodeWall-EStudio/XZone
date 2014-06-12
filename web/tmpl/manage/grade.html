@@ -1,0 +1,107 @@
+<div id="gradeMange" class="manage-tabs manage-grade-tab">
+	<div class="manage-list-zone">
+		<div class="grade-zone">
+		<table class="table table-striped table-hover table-list ">
+			<tr>
+				<th class="title">年级列表</th>
+			</tr>
+			<tbody class="grade-list-grade">
+			<%if(grade){%>
+				<%
+					for(var i in grade){
+						var item = grade[i];
+				%>
+					<tr data-id="<%+i%>" class="grade-tr" data-type="grade">
+						<td>
+							<%-item%>
+						</td>
+					</tr>
+				<%}%>
+			<%}else{%>
+				<tr><td>目前还没有年级<button class="btn btn-success add-grade">添加年级</button></td></tr>
+			<%}%>
+			</tbody>
+		</table>
+	</div>
+	<div class="grade-zone">
+		<table class="table table-striped table-hover table-list ">
+			<tr>
+				<th class="title">科目列表</th>
+			</tr>
+			<tbody class="grade-list-subject">
+			<%if(subject){%>
+				<%
+					for(var i in subject){
+						var item = subject[i];
+				%>
+					<tr data-id="<%+i%>" class="grade-tr" data-type="sub">
+						<td>
+							<%-item%>
+						</td>
+					</tr>
+				<%}%>
+			<%}else{%>
+				<tr><td>目前还没有科目<button class="btn btn-success add-subject">添加年级</button></td></tr>
+			<%}%>
+			</tbody>
+		</table>
+		</div>	
+	</div>
+	<div class="manage-act-zone">
+		<div class="action-btn-list">
+			<button class="btn btn-primary add-grade">添加年级</button>
+			<button class="btn btn-primary add-subject">添加科目</button>		
+		</div>
+		<dl id="addGrade" class="hide">
+			<dt>
+				<h4>年级信息</h4>
+			</dt>
+			<dd>
+				<table class="table table-striped table-hover table-list table-files">
+					<tr>
+						<td width="120">年级序号</td>
+						<td><input type="text" value="" id="gradeNo"  /></td>
+					</tr>					
+					<tr>
+						<td width="120">年级名称</td>
+						<td><input type="text" value="" id="gradeName"  /></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<button class="btn btn-primary btn-save-grade" >保存</button>
+							<button class="btn btn-primary btn-danger btn-del-grade hide">删除</button>
+							<button class="btn btn-primary btn-reset">取消</button>							
+						</td>
+					</tr>
+				</table>
+			</dd>
+		</dl>
+		<dl id="addSubject" class="hide">
+			<dt>
+				<h4>科目信息</h4>
+			</dt>
+			<dd>
+				<table class="table table-striped table-hover table-list table-files">
+					<tr>
+						<td width="120">科目序号</td>
+						<td><input type="text" value="" id="subjectNo"  /></td>
+					</tr>					
+					<tr>
+						<td width="120">科目名称</td>
+						<td><input type="text" value=""  id="subjectName"  /></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<button class="btn btn-primary btn-save-sub" >保存</button>
+							<button class="btn btn-primary btn-danger btn-del-sub hide">删除</button>
+							<button class="btn btn-primary btn-reset">取消</button>							
+						</td>
+					</tr>
+				</table>
+			</dd>
+		</dl>		
+	</div>
+	<div class="clear"></div>
+</div>

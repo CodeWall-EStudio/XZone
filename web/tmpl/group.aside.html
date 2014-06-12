@@ -1,0 +1,29 @@
+			<h3 class="selected"><%-name%></h3>
+			<%if(!pt){%>
+
+			<div class="group-desc" id="groupDesc">
+				<h6><%if(type==2){%>部门公告<%}else{%>小组公告<%}%>: &nbsp;&nbsp;<%if(auth){%><a class="group-desc-edit">编辑</a><%}%></h6> 
+				<p>
+					<%if(content==''){%>
+						暂无公告
+					<%}else{%>
+						<%*content%>
+					<%}%>
+				</p>
+			</div>
+			<div class="group-desc hide" id="groupEdit">
+				<h6>小组公告: &nbsp;&nbsp;<%if(auth){%><a class="group-desc-save">保存</a>  <a class="group-desc-esc">取消</a><%}%></h6> 
+				<p>
+					<textarea><%-content%></textarea>
+				</p>
+			</div>		
+			<%}%>
+			<div class="group-board" id="groupBoard">
+			</div>
+			<%if(!pt){%>
+			<ul>
+				<li><a href="#recy=1&gid=<%+id%>">回收站</a></li>
+				<li><a href="#mylog=1&gid=<%+id%>">日志</a></li>
+				<li><a href="#data=1&fdid=<%+rootFolder.id%>">数据汇总</a></li>
+			</ul>	
+			<%}%>

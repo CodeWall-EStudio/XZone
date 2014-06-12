@@ -1,0 +1,43 @@
+		<%
+			for(var i in list){
+				var item = list[i];
+		%>
+			<tr class="file mail<%+item.id%>">
+					<td width="30"><input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" /></td>
+					<td>
+						<a href="/review.html#id=<%+item.id%>&mail=1<%if(page){%>&page=<%-page%><%}%><%if(cate){%>&cate=<%-cate%><%}%>&key=<%=key%>&ods=<%=ods%>"  target="_blank" class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
+						<%if(item.type<7){%>
+							<i class="icon-type<%+item.type%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
+						<%}else{%>
+							<i class="icon-type" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
+						<%}%>
+						</a>
+						<dl>
+							<dt><a  href="/review.html#id=<%+item.id%>&mail=1<%if(page){%>&page=<%-page%><%}%><%if(cate){%>&cate=<%-cate%><%}%>&key=<%=key%>&ods=<%=ods%>"  target="_blank" class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
+								<%-item.content%>
+							</dt>
+						<dd>
+							<%if(!item.save && cate==1){%>
+							<a  class="mailsave<%+item.id%>" cmd="save"  data-fid="<%+item.fid%>" data-id="<%+item.id%>">保存</a>
+							<%}%>
+						</dd>							
+						</dl>
+					</td>
+					<td width="90">
+						<%if(cate==1){%>
+						<%-item.fname%>
+						<%}else if(cate ==2 ){%>
+						<%-item.tname%>
+						<%}else if(cate == 0){%>
+						<%-item.gname%>
+						<%}%>
+					</td>
+					<td width="90">
+						<%-filetype[item.type]%>
+					</td>
+					<td width="90"><%-item.size%></td>	
+					<td width="150">
+						<span><%-item.time%></span>
+					</td>
+			</tr>
+		<%}%>

@@ -1,0 +1,108 @@
+<div class="fold-list-link">
+  <a href="#groupprep=1" style="float:left">备课检查</a>&nbsp;
+<%if(!key){%>
+
+  <%if(fold){%>       
+    <%if(fold.idpath.length>1){%>
+      <a style="z-index:19">......</a>
+    <%}%>         
+    <%if(fold.pid){%>
+      <a href="#groupprep=1&<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>&uid=<%+uid%>" class="frist" style="z-index:19"  href="#"><%-fold.pname%></a>
+      <a class="end" style="z-index:18"><%-fold.name%></a>
+    <a class="second" style="z-index:17" class="end" href="#groupprep=1&<%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+fold.pid%>&uid=<%+uid%>">返回上级</a>
+    <%}else if(uid){%>
+      <%-ulist[uid].nick%>
+    <%}%>
+  <%}%>
+<%}else{%>  
+  <a >搜索结果</a>
+  <!-- <a class="end" href="/home?fid=<?=$fid?>&od=<?=$od?>&on=<?=$on?>">返回上级</a> -->
+  <a class="return" href="#groupprep=1&<%if(gid){%>gid=<%+gid%><%}%>&fdid=<%+fdid%>&uid=<%+uid%>">退出搜索结果</a>
+<%}%>  
+</div> 
+<div class="prep-list">
+        <ul class="act-zone">
+          <li class="all-file file-type dropdown" id="changeFileType">
+            <a id="drop-type" "button" data-toggle="dropdown" >
+             <%if(pid != 0){%>
+                <%-list[pid].name%>
+              <%}else{%>
+                所有学年
+              <%}%>
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+              <li><a href="#groupprep=1&pid=0&grade=<%+grade%>&tag=<%+tag%>&uid=<%+uid%>">所有学年</a></li>
+              <%
+                for(var i in list){
+                  var item = list[i];
+              %>
+                <li><a href="#groupprep=1&pid=<%+item.id%>&grade=<%+grade%>&tag=<%+tag%>&uid=<%+uid%>"><%-item.name%></a></li>
+              <%}%>
+            </ul>
+          </li>
+        </ul> 
+
+        <ul class="act-zone">
+          <li class="all-file file-type dropdown" id="changeFileType">
+            <a id="drop-type" "button" data-toggle="dropdown" >
+              <%if(grade !=0){%>
+                <%-glist[grade]%>
+              <%}else{%>
+                所有年级
+              <%}%>
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+              <li><a href="#groupprep=1&pid=<%+pid%>&grade=0&tag=<%+tag%>&uid=<%+uid%>">所有年级</a></li>
+              <%
+                for(var i in glist){
+                  var item = glist[i];
+              %>
+                <li><a href="#groupprep=1&pid=<%+pid%>&grade=<%=i%>&tag=<%+tag%>&uid=<%+uid%>"><%-item%></a></li>
+              <%}%>
+            </ul>
+          </li>
+        </ul> 
+
+        <ul class="act-zone">
+          <li class="all-file file-type dropdown" id="changeFileType">
+            <a id="drop-type" "button" data-toggle="dropdown" >
+             <%if(tag != 0){%>
+                <%-tlist[tag]%>
+              <%}else{%>
+                所有学科
+              <%}%>
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+              <li><a href="#groupprep=1&pid=<%+pid%>&tag=0&grade=<%+grade%>&uid=<%+uid%>">所有学科</a></li>
+              <%
+                for(var i in tlist){
+                  var item = tlist[i];
+              %>
+                <li><a href="#groupprep=1&pid=<%+pid%>&tag=<%=i%>&grade=<%+grade%>&uid=<%+uid%>"><%-item%></a></li>
+              <%}%>
+            </ul>
+          </li>
+        </ul> 
+
+        <ul class="act-zone">
+          <li class="all-file file-type dropdown" id="changeFileType">
+            <a id="drop-type" "button" data-toggle="dropdown" >
+             <%if(uid != 0){%>
+                <%-ulist[uid].nick%>
+              <%}else{%>
+                所有用户
+              <%}%>
+              
+            <b class="caret"></b></a>
+            <ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+              <li><a href="#groupprep=1&pid=<%+pid%>&tag=<%+tag%>&grade=<%+grade%>">所有用户</a></li>
+              <%
+                for(var i in ulist){
+                  var item = ulist[i];
+              %>
+                <li><a href="#groupprep=1&pid=<%+pid%>&grade=<%+grade%>&tag=<%+tag%>&uid=<%=i%>"><%-item.nick%></a></li>
+              <%}%>
+            </ul>
+          </li>
+        </ul>  
+</div>

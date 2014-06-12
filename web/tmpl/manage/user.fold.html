@@ -1,0 +1,19 @@
+<%if(total){%>
+<table class="table table-striped table-hover table-list ">
+	<tr>
+		<th class="title">名称</th>
+		<th class="title">备注</th>
+	</tr>
+	<%
+		for(var i in list){
+			var item = list[i];
+	%>
+		<tr>
+			<td><%-item.name%><td>
+			<td><%-item.mark%><td>
+		</tr>
+	<%}%>
+</table>
+<%}else{%>
+	<div>该用户还没有创建文件夹</div>
+<%}%>

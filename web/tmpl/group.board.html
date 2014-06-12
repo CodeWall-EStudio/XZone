@@ -1,0 +1,18 @@
+				<h4>留言板</h4>
+				<div class="group-board-act"><a class="group-post-board">发留言</a> <a class="show-all-board">查看全部</a></div>
+				<ul class="group-board-list">
+					<%if(list.length>0){%>
+						<%
+							for(var i = 0,l=list.length;i<l;i++){
+								var item = list[i];
+						%>
+							<li class="boardmsg boardmsg<%+item.id%>">
+								<p class="board-time"><%-item.name%> <span><%-item.time%></span></p>
+								<p><%-item.content%></p>
+								<%if(auth){%><a class="delete-board" data-id="<%+item.id%>">删除</a><%}%>
+							</li>
+						<%}%>
+					<%}else{%>
+						<li class="board-empty">暂无留言</li>
+					<%}%>
+				</ul>

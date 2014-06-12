@@ -1,0 +1,24 @@
+<%
+	var od,on;
+	on = order[0];
+	od = order[1];
+%>
+<ul>
+	<%
+		for(var i in list){
+			var item = list[i];
+			if(gid){
+				if(school){
+					var url = '#school=1&gid='+gid+'&fdid='+item.id;
+				}else{
+					var url = '#gid='+gid+'&fdid='+item.id;
+				}
+			}else{
+				var url = '#fdid='+item.id;
+			}
+	%>
+		<li id="foldtreeli<%+item.id%>" class="list-li fold<%+item.id%> <%if(item.id === fdid){%>selected<%}%>">
+			<i id="foldtree<%+item.id%>" <%if(item.hasChild){%>cmd="next" class="plus"<%}%> data-id="<%+item.id%>"></i><a title="<%+item.name%>" class="list-link" href="<%+url%>" data-gid="<%+gid%>" data-id="<%+item.id%>"> <%=item.name%></a>							
+		</li>						
+	<%}%>
+</ul>

@@ -1,0 +1,46 @@
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">
+						选择用户
+					</h4>
+				</div>
+				<div class="modal-body" id="userModalZone">
+					<div>
+						<div>
+							<div class="share-user-list">选择的用户 
+								<span id="shareToUser">
+									<%
+										if(typeof members != 'undefined'){
+											for(var i in members){
+												var item = members[i];
+									%>
+										<%if(type && item.auth){%>
+											<span class="share-user-span shareUser<%+item.id%>"><%-item.nick%><i class="del-share-user" data-id="<%+item.id%>"></i></span>
+										<%}else if(!type && !item.auth){%>
+											<span class="share-user-span shareUser<%+item.id%>"><%-item.nick%><i class="del-share-user" data-id="<%+item.id%>"></i></span>										
+										<%}%>
+									<%
+											}
+										}
+									%>
+								</span>
+							</div>
+								<ul id="searchResult" class="act-fold-list" style="height:400px;overflow-y:auto;">
+								<%
+									for(var i=0,l=list.length;i<l;i++){
+										var item = list[i];
+										if(item.children || item.users){
+								%>
+									<li><i cmd="next" class="plus" data-id="<%+item._id%>"></i><input type="checkbox" class="dep-click" value="<%+item._id%>" /><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></li>
+									<%}%>
+								<%}%>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-primary btn-share"  data-dismiss="modal">确定</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					
+				</div>				
