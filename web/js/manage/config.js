@@ -41,6 +41,7 @@ define(function() {
 			filesave : CGI_PATH+'file/save'+EXT,
 			filereview : CGI_PATH+'file/preview'+EXT,	
 			filequery : CGI_PATH+'file/query'+EXT,//order page pageNum type 1 查询我分享给小组的  groupid
+			filestatus : CGI_PATH+'file/statistics'+EXT,
 			//batchDownload
 
 
@@ -51,6 +52,8 @@ define(function() {
 			foldlist : CGI_PATH+'folder/list'+EXT,
 			foldsearch : CGI_PATH+'folder/search'+EXT,
 			folddel : CGI_PATH+'folder/delete'+EXT,
+			foldstatus : CGI_PATH + 'folder/batchStatistics',
+
 
 			//文件收藏
 			favcreate : CGI_PATH+'fav/create'+EXT,
@@ -72,8 +75,15 @@ define(function() {
 			groupverlist : CGI_PATH+'group/verify/list'+EXT,
 
 			//消息
+			msgone : CGI_PATH+'message'+EXT,
 			msgcreate : CGI_PATH+'message/create'+EXT,
 			msgsearch : CGI_PATH+'message/search'+EXT,
+
+			//空间组
+			addsgroup : CGI_PATH+'sizegroup/create'+EXT,
+			modifysgroup : CGI_PATH+'sizegroup/modify'+EXT,
+			delsgroup : CGI_PATH+'sizegroup/delete'+EXT,
+			sgrouplist : CGI_PATH+'sizegroup/search'+EXT,
 
 			//留言板
 			boardcreate : CGI_PATH+'board/create'+EXT,
@@ -86,7 +96,20 @@ define(function() {
 			mappgroup :　CGI_PATH+'manage/approveGroup'+EXT,
 			mpreplist : CGI_PATH+'manage/listPrepares'+EXT,
 			mnewgroup : CGI_PATH+'manage/createGroup'+EXT,
-			mappfile : CGI_PATH+'manage/approveFile'+EXT
+			mappfile : CGI_PATH+'manage/approveFile'+EXT,
+			mstatic : CGI_PATH+'manage/statistics'+EXT,
+
+			//用户 
+			usersearch : CGI_PATH+'user/search'+EXT,
+			usermodify : CGI_PATH+'manage/modifyUser'+EXT,
+
+			//日志
+			logsearch : CGI_PATH+'log/search'+EXT,
+			
+
+			//存储
+			getstorge : CGI_PATH+'storage'+EXT,
+			setstorge : CGI_PATH+'storage/set'+EXT
 
 		},
 		grade : {
@@ -95,7 +118,7 @@ define(function() {
 			3 : '三年级',
 			4 : '四年级',
 			5 : '五年级',
-			6 : '六年级',						
+			6 : '六年级'					
 		},
 		tag : {
 			1 : '语文',
@@ -106,21 +129,29 @@ define(function() {
 			6 : '美术',
 			7 : '科学',
 			8 : '综合实践',
-			9 : '信息技术',
+			9 : '信息技术'
 		},
 		msg : {
 			0 : '操作成功!',
+			40 : '你选择的文件夹中还有文件或文件夹,清先删除子文件夹和文件再操作!',
+			50 : '你要上传的文件已经超过你的剩余空间!',
+			60 : '你还没有选择要共享的目录',
+			75 : '序号只能在1~99之间',
+			76 : '名称不能少于2个字',
 			77 : '参数不能为空',
-			100 : '后台出错拉!',
-			101 : '出错拉',
+			78 : '对不起，网络超时了，请稍后再试',
+			79 : '已经有同名的项目了',
+			100 : '对不起，您没有这个操作权限!',//后台出错啦!
+			101 : '出错啦',
 			1001 : '您还没有登录!',
 			1004 : '没有找到资源!',
 			1010 : '您没有查看该资源的权限!',
-			1011 : '参数出错拉!',
-			1013 : '出错拉',
-			1014 : '同名拉!',
-			1015 : '出错拉',
-			1016 : '该资源不能删除'
+			1011 : '参数出错啦!',
+			1013 : '出错啦',
+			1014 : '同名啦,请修改名称!',
+			1015 : '已经归档啦!',
+			1016 : '该资源不能删除',
+			1017 : '该目录下还有其他文件，无法删除!'
 		}
 	}
 // module.exports = exports = {

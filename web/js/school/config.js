@@ -26,22 +26,6 @@ define(function() {
 			userlist : CGI_PATH+'user/search'+EXT,
 			usearch : CGI_PATH+'user/search'+EXT,
 			departments : CGI_PATH+'user/departments'+EXT,
-			info : CGI_PATH + 'user/info',
-			umodify : CGI_PATH + 'user/modify',
-			login : CGI_PATH + 'user/login',
-			logout : CGI_PATH + 'user/logoff',
-			valid : CGI_PATH + 'user/validate',
-
-			create : CGI_PATH + 'manage/createUser',
-			modify : CGI_PATH + 'manage/modifyUser',
-			resetpwd : CGI_PATH + 'manage/resetUserPwd',
-
-			orglist : CGI_PATH + 'organization/tree',
-			createorgan : CGI_PATH + 'organization/create',
-			adduser : CGI_PATH + 'organization/addUser',
-			removeuser : CGI_PATH + 'organization/removeUser',
-			orgdelete : CGI_PATH + 'organization/delete',
-			organmodify : CGI_PATH + 'organization/modify',			
 
 			//文件操作
 			upload : '/upload'+EXT,
@@ -68,6 +52,7 @@ define(function() {
 			foldlist : CGI_PATH+'folder/list'+EXT,
 			foldsearch : CGI_PATH+'folder/search'+EXT,
 			folddel : CGI_PATH+'folder/delete'+EXT,
+			foldstatus : CGI_PATH + 'folder/batchStatistics',
 
 
 			//文件收藏
@@ -113,6 +98,7 @@ define(function() {
 			mnewgroup : CGI_PATH+'manage/createGroup'+EXT,
 			mappfile : CGI_PATH+'manage/approveFile'+EXT,
 			mstatic : CGI_PATH+'manage/statistics'+EXT,
+			mfilelist : CGI_PATH+'manage/listFiles',
 
 			//用户 
 			usersearch : CGI_PATH+'user/search'+EXT,
@@ -148,8 +134,7 @@ define(function() {
 		},
 		msg : {
 			0 : '操作成功!',
-			10: '排序序号必须填写',
-			11 : '组织名称必须填写',
+			40 : '你选择的文件夹中还有文件或文件夹,清先删除子文件夹和文件再操作!',
 			50 : '你要上传的文件已经超过你的剩余空间!',
 			60 : '你还没有选择要共享的目录',
 			75 : '序号只能在1~99之间',
