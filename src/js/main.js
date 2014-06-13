@@ -13,7 +13,8 @@
 
     
     if(!util.getCookie('skey')){
-      window.location = config.cgi.gotologin;
+      //window.location = config.cgi.gotologin;
+      handerObj.triggerHandler('nav:showlogin');
       return;
     }
 

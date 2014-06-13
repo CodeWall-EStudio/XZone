@@ -35,6 +35,35 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		handerObj.triggerHandler('nav:load',myinfo);
 	}
 
+	function showPwd(){
+		var view = new View({
+			target : $('#actWinZone'),
+			tplid : 'pwd',
+			after : function(){
+				$("#actWin").modal('show');
+			},
+			handlers : {
+				'.btn-save-pwd' : {
+					'click' : function(){
+						var op = $('#odpwd').val();
+						var np = $('#newpwd').val();
+						var rp = $('#rppwd').val();
+						if(np !== rp){
+							handerObj.triggerHandler('msg:error',20);
+							return;
+						}
+						var obj = {
+							pwd : op,
+							newPwd :  np
+						}
+						handerObj.triggerHandler('nav:changepwd',obj);
+					}
+				}
+			}
+		});
+		view.createPanel();
+	}
+
 	function navLoad(e,d){
 		var opt = {
 			target : navTarget,
@@ -43,7 +72,8 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 			handlers : {
 				'a.layout' : {
 					click : function(e){
-						window.location = config.cgi.logout;
+						console.log(333);
+						//window.location = config.cgi.logout;
 					}
 				},
 				'.manage-one-group' : {
@@ -80,7 +110,12 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 					click : function(e){
 						window.location = config.cgi.logout;
 					}
-				}
+				},
+				'a.changepwd' : {
+					click : function(e){
+						showPwd();
+					}
+				}					
 			}			
 		});
 		view.createPanel();
@@ -314,6 +349,39 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		$('.group-name-tit').text(d.name);
 	}
 
+	function showLogin(){
+		var view = new View({
+			target : $('#actWinZone'),
+			tplid : 'login',
+			after : function(){
+				$("#actWin").modal('show');
+			},
+			handlers : {
+				'.btn-login' : {
+					'click' : function(){
+						var name = $('#userName').val(),
+							pwd = $('#userPwd').val();
+						if(name !== '' && pwd !== ''){
+							var obj = {
+								name : name,
+								pwd : pwd,
+								json: true
+							};
+							handerObj.triggerHandler('nav:login',obj);
+						}else{
+							handerObj.triggerHandler('msg:error',21);
+						}
+					}
+				}
+			}
+		});
+		view.createPanel();
+	}
+
+	$('.show-login').bind('click',function(){
+		handerObj.triggerHandler('nav:showlogin');
+	});
+
 	var handlers = {
 		'nav:load' : navLoad,
 		'nav:newgroup' : newGroup,
@@ -321,7 +389,8 @@ define(['config','model.nav','helper/view','helper/util','cache','model.manage.n
 		'nav:userload' : userLoad,
 		'nav:createsuc' : createSuc,
 		'nav:infosuc' : infoSuc,
-		'nav:modifysuc' : modifySuc
+		'nav:modifysuc' : modifySuc,
+		'nav:showlogin' : showLogin
 	}
 
 	for(var i in handlers){

@@ -126,9 +126,39 @@ define(['config','helper/request','cache','helper/util'],function(config,request
 		request.get(opt,success);
 	}
 
+	function changePwd(e,d){
+
+		var opt = {
+			cgi : config.cgi.umodify,
+			data : d
+		}
+
+		var success = function(data){
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}
+
+	function login(e,d){
+
+		var opt = {
+			cgi : config.cgi.login,
+			data : d
+		}
+
+		var success = function(data){
+			if(data.err === 0){
+				window.location.reload();
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}	
+
 	var handlers = {
 		'nav:init' : init,
-
+		'nav:changepwd' : changePwd,
+		'nav:login' : login
 	}
 
 	for(var i in handlers){
