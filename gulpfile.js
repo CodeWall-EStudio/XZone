@@ -109,7 +109,9 @@ gulp.task('copy',function(){
   gulp.src('./src/js/lib/jquery/jquery-1.8.3.js')
     .pipe(gulp.dest('./web/js/lib/jquery')); 
   gulp.src('./src/js/lib/require/require.2.1.8.js')
-    .pipe(gulp.dest('./web/js/lib/require')); 
+    .pipe(gulp.dest('./web/js/lib/require'));
+  gulp.src('./src/js/lib/flex/*')
+    .pipe(gulp.dest('./web/js/lib/flex'));
 
   gulp.src('./src/css/imgs/**')
     .pipe(gulp.dest('./web/css/imgs'));

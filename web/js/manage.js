@@ -59,6 +59,7 @@ define('config',[],function() {
 			filereview : CGI_PATH+'file/preview'+EXT,	
 			filequery : CGI_PATH+'file/query'+EXT,//order page pageNum type 1 查询我分享给小组的  groupid
 			filestatus : CGI_PATH+'file/statistics'+EXT,
+			mfilelist : CGI_PATH+'manage/listFiles',
 			//batchDownload
 
 
@@ -4401,6 +4402,7 @@ define('../school/config',[],function() {
 			filereview : CGI_PATH+'file/preview'+EXT,	
 			filequery : CGI_PATH+'file/query'+EXT,//order page pageNum type 1 查询我分享给小组的  groupid
 			filestatus : CGI_PATH+'file/statistics'+EXT,
+			mfilelist : CGI_PATH+'manage/listFiles',
 			//batchDownload
 
 
