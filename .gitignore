@@ -1,11 +1,8 @@
 
 test/*
 
+config.js
+
 data/*
 
 logs/*
-
-*.log
-
-/config.js
-
