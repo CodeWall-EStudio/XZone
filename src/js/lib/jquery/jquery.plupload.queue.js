@@ -464,8 +464,8 @@ used as it is.
 				});
 
 				handerObj.bind('plup:sizechange',function(e,d){
-					uploader.allsize = d.size;
-					uploader.used = d.used;
+					uploader.allsize = d.size || d.info.size || 0;
+					uploader.used = d.used || d.info.used || 0;
 				});
 
 				handerObj.bind('plup:changeSet',function(e,d){
