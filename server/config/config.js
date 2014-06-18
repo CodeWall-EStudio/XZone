@@ -55,7 +55,7 @@ exports.AUTH_TYPE = 'self';// auto, sso, qq, self
 
 exports.INDEX_PAGE = '/index.html';
 
-exports.LOGIN_PAGE = '/index.html';
+exports.LOGIN_PAGE = '/login.html';
 
 exports.LOGIN_FAIL_PAGE = '/loginfail.html';
 
