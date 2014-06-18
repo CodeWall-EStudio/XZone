@@ -92,10 +92,11 @@ exports.getChildren = function(departmentId, options, callback) {
 
 exports.addUser = function(params, callback) {
 
-    db.departuser.findOne ({
+    db.departuser.findOne({
         'user.$id': params.userId,
         'department.$id': params.organizationId
     }, function(err, result){
+        // Logger.debug('[addUser]', result);
         if(result){
             return callback(err, result);
         }
@@ -103,7 +104,7 @@ exports.addUser = function(params, callback) {
             user: new DBRef('user', params.userId),
             department: new DBRef('department', params.organizationId)
         };
-        db.department.save(doc, function(err){
+        db.departuser.save(doc, function(err){
             callback(err, err || doc);
         });
     });

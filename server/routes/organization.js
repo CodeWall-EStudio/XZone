@@ -77,10 +77,12 @@ exports.addUser = function(req, res){
         }, ep.done('addUserDone'));
     });
 
-    ep.on('addUserDone', function(){
+    ep.on('addUserDone', function(result){
         res.json({
             err: ERR.SUCCESS,
-            msg: 'ok'
+            result: {
+                data: result
+            }
         });
     });
 
