@@ -59,6 +59,7 @@ define('config',[],function() {
 			filereview : CGI_PATH+'file/preview'+EXT,	
 			filequery : CGI_PATH+'file/query'+EXT,//order page pageNum type 1 查询我分享给小组的  groupid
 			filestatus : CGI_PATH+'file/statistics'+EXT,
+			mfilelist : CGI_PATH+'manage/listFiles',
 			//batchDownload
 
 
@@ -151,6 +152,8 @@ define('config',[],function() {
 			0 : '操作成功!',
 			10: '排序序号必须填写',
 			11 : '组织名称必须填写',
+			20 : '新密码和重复密码必须一致',
+			21 : '请填写用户名和密码!',
 			50 : '你要上传的文件已经超过你的剩余空间!',
 			60 : '你还没有选择要共享的目录',
 			75 : '序号只能在1~99之间',
@@ -168,7 +171,8 @@ define('config',[],function() {
 			1014 : '同名啦,请修改名称!',
 			1015 : '已经归档啦!',
 			1016 : '该资源不能删除',
-			1017 : '该目录下还有其他文件，无法删除!'
+			1017 : '该目录下还有其他文件，无法删除!',
+			1041 : '用户名或密码错误!'
 		}
 	}
 // module.exports = exports = {
@@ -1073,9 +1077,39 @@ define('model.nav',['config','helper/request','cache','helper/util'],function(co
 		request.get(opt,success);
 	}
 
+	function changePwd(e,d){
+
+		var opt = {
+			cgi : config.cgi.umodify,
+			data : d
+		}
+
+		var success = function(data){
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}
+
+	function login(e,d){
+
+		var opt = {
+			cgi : config.cgi.login,
+			data : d
+		}
+
+		var success = function(data){
+			if(data.err === 0){
+				window.location.reload();
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}	
+
 	var handlers = {
 		'nav:init' : init,
-
+		'nav:changepwd' : changePwd,
+		'nav:login' : login
 	}
 
 	for(var i in handlers){
@@ -1577,6 +1611,35 @@ define('view.nav',['config','model.nav','helper/view','helper/util','cache','mod
 		handerObj.triggerHandler('nav:load',myinfo);
 	}
 
+	function showPwd(){
+		var view = new View({
+			target : $('#actWinZone'),
+			tplid : 'pwd',
+			after : function(){
+				$("#actWin").modal('show');
+			},
+			handlers : {
+				'.btn-save-pwd' : {
+					'click' : function(){
+						var op = $('#odpwd').val();
+						var np = $('#newpwd').val();
+						var rp = $('#rppwd').val();
+						if(np !== rp){
+							handerObj.triggerHandler('msg:error',20);
+							return;
+						}
+						var obj = {
+							pwd : op,
+							newPwd :  np
+						}
+						handerObj.triggerHandler('nav:changepwd',obj);
+					}
+				}
+			}
+		});
+		view.createPanel();
+	}
+
 	function navLoad(e,d){
 		var opt = {
 			target : navTarget,
@@ -1585,7 +1648,8 @@ define('view.nav',['config','model.nav','helper/view','helper/util','cache','mod
 			handlers : {
 				'a.layout' : {
 					click : function(e){
-						window.location = config.cgi.logout;
+						console.log(333);
+						//window.location = config.cgi.logout;
 					}
 				},
 				'.manage-one-group' : {
@@ -1622,7 +1686,12 @@ define('view.nav',['config','model.nav','helper/view','helper/util','cache','mod
 					click : function(e){
 						window.location = config.cgi.logout;
 					}
-				}
+				},
+				'a.changepwd' : {
+					click : function(e){
+						showPwd();
+					}
+				}					
 			}			
 		});
 		view.createPanel();
@@ -1856,6 +1925,39 @@ define('view.nav',['config','model.nav','helper/view','helper/util','cache','mod
 		$('.group-name-tit').text(d.name);
 	}
 
+	function showLogin(){
+		var view = new View({
+			target : $('#actWinZone'),
+			tplid : 'login',
+			after : function(){
+				$("#actWin").modal('show');
+			},
+			handlers : {
+				'.btn-login' : {
+					'click' : function(){
+						var name = $('#userName').val(),
+							pwd = $('#userPwd').val();
+						if(name !== '' && pwd !== ''){
+							var obj = {
+								name : name,
+								pwd : pwd,
+								json: true
+							};
+							handerObj.triggerHandler('nav:login',obj);
+						}else{
+							handerObj.triggerHandler('msg:error',21);
+						}
+					}
+				}
+			}
+		});
+		view.createPanel();
+	}
+
+	$('.show-login').bind('click',function(){
+		handerObj.triggerHandler('nav:showlogin');
+	});
+
 	var handlers = {
 		'nav:load' : navLoad,
 		'nav:newgroup' : newGroup,
@@ -1863,7 +1965,8 @@ define('view.nav',['config','model.nav','helper/view','helper/util','cache','mod
 		'nav:userload' : userLoad,
 		'nav:createsuc' : createSuc,
 		'nav:infosuc' : infoSuc,
-		'nav:modifysuc' : modifySuc
+		'nav:modifysuc' : modifySuc,
+		'nav:showlogin' : showLogin
 	}
 
 	for(var i in handlers){
@@ -7509,7 +7612,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
     
     if(!util.getCookie('skey')){
-      window.location = config.cgi.gotologin;
+      //window.location = config.cgi.gotologin;
+      handerObj.triggerHandler('nav:showlogin');
       return;
     }
 
