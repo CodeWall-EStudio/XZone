@@ -19,7 +19,7 @@ define(['config','helper/request','cache'],function(config,request,Cache){
 			item.id = item._id;
 			list[item.id] = item;
 		}
-		handerObj.triggerHandler('Cache:set',{key: 'alluser2key',data: list});
+		handerObj.triggerHandler('cache:set',{key: 'alluser2key',data: list});
 	}
 
 	function conventGroup(data){
@@ -39,7 +39,7 @@ define(['config','helper/request','cache'],function(config,request,Cache){
 		
 		var success = function(data){
 			if(data.err == 0){
-				handerObj.triggerHandler('Cache:set',{key: 'departments',data: data.result.list});
+				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list});
 				handerObj.triggerHandler('nav:userload',{ type : d.type,data:d.data,list :data.result.list});
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
@@ -70,7 +70,7 @@ define(['config','helper/request','cache'],function(config,request,Cache){
 			if(d.err == 0){
 				var obj = convent(d.result.list);
 				conventUid2key(d.result.list);
-				handerObj.triggerHandler('Cache:set',{key: 'alluser',data: obj});
+				handerObj.triggerHandler('cache:set',{key: 'alluser',data: obj});
 				if(type != 'prep'){
 					handerObj.triggerHandler('nav:userload',{list:obj,type:type,data:data});
 				}else{

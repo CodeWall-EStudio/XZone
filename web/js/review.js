@@ -201,7 +201,7 @@ define('config',[],function() {
  * 常用公用方法
  */
 define('helper/util',['../config'], function(config) {
-
+	var handerObj = $(Schhandler);
 	var util = {};
 
 	/**
@@ -662,6 +662,12 @@ define('helper/util',['../config'], function(config) {
     	$('#pageNav .'+type+'space').addClass('selected');
     }
 
+	var getServerTime = function(str){
+		var tmp = str.split(/\r\n/);
+		var tmp1 = tmp[0].split('Date:');
+		var nowtime = + new Date(tmp1[1]);
+		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
+    }
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -680,6 +686,7 @@ define('helper/util',['../config'], function(config) {
 	util.getStatus = getStatus;
 	util.logType = showLogType;
 	util.showNav = showNav;
+	util.getServerTime = getServerTime;
 
 	return util;
 
@@ -833,7 +840,7 @@ define('helper/templateManager',[],function(){
 			}
 			var startTime = new Date().getTime();
 			template = $.ajax({
-				url: tmplPath+tplid+tmplName,
+				url: tmplPath+tplid+tmplName+'?t='+Math.random(),
 				async: false,
 				error : function(data){
 					return false;
@@ -1247,6 +1254,31 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
 	var at = 0;
 
+	function showConfig(e,d){
+		if(typeof d === 'undefined'){
+			return;
+		}
+		var obj = {
+			message : d.msg,
+			actions : {
+				sub : {
+					label : d.act.sub.label || '确定',
+					action : function(){
+						d.act.sub.action();
+						msg.hide();
+					}
+				},
+				cancel : {
+					label : d.act.canel.label || '取消',
+					action : function(){
+						msg.hide();
+					}
+				}
+			}
+		}
+		var msg = Messenger().post(obj);
+	}
+
 	function showErr(e,d){
 		if(d == 1001){
 			window.location = config.cgi.gotologin;
@@ -1260,23 +1292,7 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 			obj.type = 'error'
 		}
 
-		Messenger().post(obj);
-		// clearTimeout(at);
-
-		// var alertDiv = $('<div class="alert alert-success alert-msg fade in"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><span></span></div>');
-
-
-		// alertDiv.removeClass('alert-danger');
-		// if(parseInt(d)){
-		// 	alertDiv.addClass('alert-danger');
-		// }
-		// $('body').append(alertDiv);
-		
-		// alertDiv.find('span').html(msg[d]);
-		// alertDiv.alert();
-		// at = setTimeout(function(){
-		// 	alertDiv.alert('close');
-		// },2000);		
+		Messenger().post(obj);	
 	}
 
 	function showMsg(e,d){
@@ -1290,7 +1306,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
 	var handlers = {
 		'msg:error' : showErr,
-		'msg:show' : showMsg
+		'msg:show' : showMsg,
+		'msg:config' : showConfig
 	}
 
 	for(var i in handlers){

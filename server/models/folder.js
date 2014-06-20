@@ -98,7 +98,7 @@ function deleteFolderAndFiles(folder, callback){
             updateUsed: true
         };
 
-        mFile.batchDelete({ 'folder.$id': folder._id }, options, function(err, count){
+        mFile.batchDelete({ 'folder.$id': folder._id, del: false }, options, function(err, count){
                     
             if(err){
                 Logger.error('>>>folder.delete [file]', err);
@@ -247,7 +247,7 @@ exports.search = function(params, callback){
     });
 };
 
-exports.statistics = function(folderId, callback){
+exports.statistics = function(folderId, options, callback){
 
     var searchParams = {
         folderId: folderId,

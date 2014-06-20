@@ -169,9 +169,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				$('#foldList li').removeClass('selected');
 			},
 			after : function(){
-				if(!$("#foldList").attr('show')){
-					$('#foldTree').click();
-				}
+				// if(!$("#foldList").attr('show')){
+				// 	$('#foldTree').click();
+				// }
 				$('#foldtree'+nowFd).attr('data-load',1).addClass('minus');
 				$('#foldtreeli'+nowFd).addClass('selected').find('ul').show();
 				// if(!tree){
@@ -274,7 +274,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			nowPid = d.pid || 0;						
 		}
 
-		if(nowGid && !nowFd){
+		if(nowGid && !nowFd || (typeof nowData.now !== 'undefined' && !nowData.now)){
 			$('#btnZone').hide();
 		}else{
 			if(nowPrep == 'group'){
@@ -378,7 +378,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
                 	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'myfold',data:fl});                	
                 }else{
-                	if(d.list.length){
+                	if(d.list.length > 0){
 		            	var td = d.list[0];
 		            	var target = $('#foldList .fold'+td.pid);
 		            	//根目录下的文件夹
@@ -399,7 +399,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
                 	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:fl});
 				}else{
-					if(d.list.length){
+					if(d.list.length > 0){
 		            	var td = d.list[0];
 		            	var target = $('#foldList .fold'+td.pid);
 		            	//根目录下的文件夹
@@ -449,6 +449,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				list : d.list,
 				gid : nowGid,
 				pr : pr,
+				now : nowData.now,
 				prep : nowPrep,
 				grade : nowGrade,
 				school : nowSchool,

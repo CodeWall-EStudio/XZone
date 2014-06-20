@@ -145,6 +145,8 @@ a:hover{
 .header .menu li a{
 	display:inline-block;
 	width:100%;
+	display:inline-block;
+	width:100px;
 	overflow:hidden;
 	text-overflow:ellipsis;
 	white-space:nowrap;
@@ -472,6 +474,9 @@ a:hover{
 .section-tit-menu1{
 	min-width:100px;
 }
+.section-tit-menu1 > li > a{
+	padding:3px 0;
+}
 .section-tit-menu a{
 	color:#6a6a6a;
 }
@@ -779,4 +784,7 @@ strong.bold{
 #foldList .selected > a{
 	font-weight:bold;
 	background:#eee
+}
+.log-start-time,.log-end-time{
+	width:120px;
 }

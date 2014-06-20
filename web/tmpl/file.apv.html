@@ -7,10 +7,10 @@
 					<div style="padding:4px;">
 						审核评价: <input class="val-text" type="text" value="" />
 					</div>
-					<div>
+					<div <%if(!status){%>class="hide"<%}%>>
 						目标文件夹:<span></span>
 					</div>
-						<div id="schoolFoldResultUl" class="group-fold-result">
+						<div id="schoolFoldResultUl" class="group-fold-result <%if(!status){%>hide<%}%>">
 							<ul>
 									<%
 										for(var i in fold){
@@ -27,6 +27,6 @@
 					<div class="clear"></div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 					<button type="button" class="btn btn-primary btn-post" data-dismiss="modal">提交</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
 				</div>	

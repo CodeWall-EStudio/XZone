@@ -1,4 +1,4 @@
-define(['config','helper/view','cache','helper/util','model.file'],function(config,View,Cache,util){
+define(['config','helper/view','cache','helper/util','model.file'],function(config,View,Cache,util,Model){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
@@ -95,6 +95,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			if(d.order){
 				nowOrder = d.order;
 			}
+			
 			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 			nowUid = d.uid || 0;
 			nowKey = d.key || '';
@@ -117,7 +118,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			fdid : nowFd,
 			uid : nowUid,
 			prep : nowPrep,
-			auth : nowAuth			
+			auth : nowAuth,
+			school : nowSchool			
 		}
 		if(nowGid){
 			obj.ml = nowGroup.mlist;
@@ -166,7 +168,9 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			}
 			$("#fileActZone .movefile").hide();			
 		}
-
+		if(nowUid){
+			data.creatorId = nowUid;
+		}	
 		if(!d.info || nowSchool){
 			handerObj.triggerHandler('file:search',data);	
 		}else if((d.info && d.info.isMember) || d.open){
@@ -274,6 +278,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowAuth){
 			obj.status = 1;
 		}
+		console.log(obj);
 		handerObj.triggerHandler('file:search',obj);			
 	}
 
@@ -313,7 +318,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		handerObj.triggerHandler('file:search',obj);				
 	}
 
-	function fileDel(e,d){
+	function fileCheckSuc(e,d){
 		var view = new View({
 			target : actTarget,
 			tplid : 'del',
@@ -334,7 +339,49 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				}
 			}
 		});
-		view.createPanel();
+		view.createPanel();		
+	}
+
+	function fileDel(e,d){
+		if(d.cid.length){
+			handerObj.triggerHandler('msg:error',40);
+			return;
+		}		
+		if(!$.isEmptyObject(d.fd)){
+			var fl = [];
+			for(var i in d.fd){
+				fl.push(i);
+			}
+			var obj = {
+				folderId : fl,
+				fd : d.fd,
+				fl : d.fl
+			}
+			handerObj.triggerHandler('file:checkfold',obj);
+		}else{
+			var view = new View({
+				target : actTarget,
+				tplid : 'del',
+				data : d,
+				after : function(){
+					$("#actWin").modal('show');
+
+				},
+				handlers : {
+					'.btn-del' : {
+						'click' : function(){
+							if(!$.isEmptyObject(d.fl)){
+								handerObj.triggerHandler('file:delfiles',d.fl);
+							}
+							if(!$.isEmptyObject(d.fd)){
+								handerObj.triggerHandler('fold:delfolds',d.fd);
+							}
+						}
+					}
+				}
+			});
+			view.createPanel();
+		}
 	}
 
 	function delSuc(e,d){
@@ -1143,6 +1190,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		'model:change' : modelChange,
 		'search:start' : search,
 		'file:del' : fileDel,
+		'fild:checkSuc' : fileCheckSuc,
 		'file:init' : fileInit,
 		'file:load' : fileLoad,
 		'file:tocoll' : toColl,

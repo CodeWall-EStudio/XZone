@@ -31,6 +31,8 @@ define([], function() {
   // }
 
   /*
+  * @author: jarvisjiang
+  * @date: 2013-08-20
   * @desc: 从cgi拉数据，两种api调用方式，error处理函数不是必须的
   * @params: 
   *   option: {cgi: String[, method: String, type: String, timeout: Int, data: {}, success: Function, error: Function]}
@@ -43,6 +45,7 @@ define([], function() {
   */
   var request = function(option, onSuccess, onError, always) {
     var timer = new ReqTime();
+
     option = option || {};
 
     var method = option.method ? option.method.toUpperCase() : 'GET',

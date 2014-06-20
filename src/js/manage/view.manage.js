@@ -339,7 +339,9 @@ define(['config','cache','helper/view','helper/util'],function(config,Cache,View
 							var list = Cache.get('sizegroup');
 
 							var obj = list[id];
+
 							if(obj){
+								$('#defSizeGroup').prop('checked',obj.isDefault);
 								$('#sizeGroupName').val(obj.name);
 								if(obj.type == 0){
 									$('input[name=stype]').eq(0).prop({'checked':true});

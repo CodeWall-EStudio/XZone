@@ -2,7 +2,7 @@
  * 常用公用方法
  */
 define(['../config'], function(config) {
-
+	var handerObj = $(Schhandler);
 	var util = {};
 
 	/**
@@ -463,6 +463,12 @@ define(['../config'], function(config) {
     	$('#pageNav .'+type+'space').addClass('selected');
     }
 
+	var getServerTime = function(str){
+		var tmp = str.split(/\r\n/);
+		var tmp1 = tmp[0].split('Date:');
+		var nowtime = + new Date(tmp1[1]);
+		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
+    }
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -481,6 +487,7 @@ define(['../config'], function(config) {
 	util.getStatus = getStatus;
 	util.logType = showLogType;
 	util.showNav = showNav;
+	util.getServerTime = getServerTime;
 
 	return util;
 

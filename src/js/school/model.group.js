@@ -79,7 +79,8 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 	function groupInfo(e,d){
 		var deftype = 'group';
 		var gid,type = 0,
-			recy = false;
+			recy = false,
+			school = 0;
 		if(typeof d == 'object'){
 			gid = d.gid;
 			type = d.type;

@@ -21,6 +21,8 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 			tplid : 'recy.tit',
 			data : {
 				filetype : config.filetype,
+				gid : nowGid,
+				school : nowSchool,
 				type : nowType,
 				key : nowKey
 			}
@@ -32,7 +34,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 		var myInfo = Cache.get('myinfo');
 		action = 1;
 		tmpTarget.html('');
-		crTit();
+		
 
 		nextPage = 0;
 
@@ -47,18 +49,24 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		nowKey = d.key || '';
 
+		var name = 'myrecy';
+		if(nowSchool || nowGid){
+			name = 'recy';
+		}
 		var view = new View({
 			target : titTarget,
 			tplid : 'coll.table.tit',
 			data : {
 				order : nowOds,
-				name : 'myrecy',
+				name : name,
 				cate : 2,
-				type : nowType			
+				type : nowType,
+				gid : nowGid,
+				school : nowSchool		
 			}	
 		});
 		view.createPanel();
-
+		crTit();
 		var obj = {
 			keyword : nowKey,
 			page:nextPage,
@@ -91,6 +99,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 			target : tmpTarget,
 			tplid : 'recy.list',
 			data : {
+				gid : nowGid,
 				list : d.list,
 				filetype : config.filetype
 			}

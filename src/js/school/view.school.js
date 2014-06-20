@@ -5,6 +5,8 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
 		nowKey = '',
+		nowUid = 0,
+		nowType = 0,
 		rootFd = 0;
 
 	var actTarget = $('#actWinZone'),
@@ -28,7 +30,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		$("#fileActZone .sharefile").hide();
 		$("#fileActZone .copyfile").hide();
 
-		if(myinfo.auth < 15){
+		if(!school.auth){
 			$('#btnZone').hide();
 			$("#fileActZone").addClass('hide');
 			$('.tool-zone').removeClass('hide');
@@ -41,16 +43,24 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		}
 		handerObj.triggerHandler('bind:school',{
 			school : 1,
-			auth : myinfo.auth
+			auth : school.auth
 		});
 		nowGid = school.id;
 		nowFd = school.rootFolder.id;
+		nowUid = d.uid;
+		if(d.fdid){
+			nowFd = d.fdid;
+		}else{
+			d.fdid = nowFd;
+		}
+
 
 		var view = new View({
 			target : $("#groupAside"),
 			tplid : 'school.aside',
 			data : {
-				auth : school.auth
+				auth : school.auth,
+				type : nowType
 			},
 			handlers : {
 				'h3' : {
@@ -61,9 +71,11 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 						if(!$(e.target).hasClass('selected')){
 							$(e.target).addClass('selected');
 							if(cmd=='manage'){
-								d.auth = school.auth;	
+								d.auth = school.auth;
+								nowType = 1;	
 							}else{
 								d.auth = 0;
+								nowType = 0
 							}
 							d.school = 1;
 							if(cmd==='recy'){
@@ -91,17 +103,31 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		}		
 
 		d.gid = nowGid;
-		if(!d.fdid){
-			d.fdid = nowFd;
-		}
+
 		d.info = school;
 
 		d.school = 1;
-		d.auth = 0;
+		d.auth = nowType;
 
+		handerObj.triggerHandler('group:info',{
+			gid : nowGid,
+			type : 'school'	
+		});
         //handerObj.triggerHandler('file:init',d);
-        handerObj.triggerHandler('fold:init',d); 
         handerObj.triggerHandler('upload:param',d);		
+	}
+
+	function infoSuc(e,d){
+		var obj = {
+			auth : nowType,
+			school : 1,
+			gid : nowGid,
+			fdid : nowFd,
+			uid : nowUid,
+			order : nowOrder,
+			info : d
+		}
+		handerObj.triggerHandler('fold:init',obj); 
 	}
 
 	function showApv(e,d){
@@ -113,7 +139,8 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			data : {
 				name : d.name,
 				fold : fold,
-				gid : nowGid
+				gid : nowGid,
+				status : d.status
 			},
 			after : function(){
 				$("#actWin").modal('show');
@@ -178,6 +205,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 
 	var handlers = {
 		'school:init' : init,
+		'school:infosuc' : infoSuc,
 		'school:showapv' : showApv,
 		'school:apvsuc' : apvSuc
 	};

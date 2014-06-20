@@ -9,7 +9,7 @@ var mFolder = require('../models/folder');
 var mGroup = require('../models/group');
 
 
-exports.delete = function(req, res){
+exports.delete = function(req, res) {
     var params = req.parameter;
 
     var files = params.fileId;
@@ -19,11 +19,14 @@ exports.delete = function(req, res){
 
     var ep = new EventProxy();
 
-    ep.fail(function(err){
-        res.json({ err: ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err) {
+        res.json({
+            err: ERR.SERVER_ERROR,
+            msg: err
+        });
     });
 
-    ep.after('delete', files.length, function(){
+    ep.after('delete', files.length, function() {
         res.json({
             err: ERR.SUCCESS
         });
@@ -34,41 +37,25 @@ exports.delete = function(req, res){
         updateUsed: true
     };
 
-    files.forEach(function(file){
-        mFile.delete({ _id: file._id }, options, ep.group('delete', function(result){
+    files.forEach(function(file) {
+        mFile.delete({
+            _id: file._id
+        }, options, ep.group('delete', function(result) {
 
-            mFolder.getFolder({ _id: file.folder.oid }, function(err, parent){
+            mLog.create({
+                fromUser: loginUser,
 
+                file: file,
 
-                var obj = {
-                    fromUserId: loginUser._id,
-                    fromUserName: loginUser.nick,
+                //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
+                //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
+                //11: delete(移动到回收站) 12: 创建文件夹
+                operateType: 6,
 
-                    fileId: file._id,
-                    fileName: file.name,
+                srcFolderId: file.folder && file.folder.oid,
 
-                    //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
-                    //6: delete 7: 预览 8: 保存, 9: 分享给用户 10: 分享给小组, 
-                    //11: delete(移动到回收站) 12: 创建文件夹
-                    operateType: 6,
+                fromGroupId: file.folder && file.folder.group && file.folder.group.oid
 
-                    srcFolderId: file.folder && file.folder.oid,
-                    srcFolderName: parent && parent.name,
-                    
-                    // distFolderId: params.targetId,
-                    fromGroupId: file.folder && file.folder.group && file.folder.group.oid
-                    // toGroupId: toGroupId
-                };
-                if(!obj.fromGroupId){
-                    // 记录该操作
-                    mLog.create(obj);
-
-                }else{
-                    mGroup.getGroup({ _id: obj.fromGroupId }, function(err, group){
-                        obj.fromGroupName = group && group.name;
-                        mLog.create(obj);
-                    });
-                }
             });
             return result;
         }));
@@ -76,34 +63,77 @@ exports.delete = function(req, res){
 
 };
 
-exports.revert = function(req, res){
+
+function revertFile(user, file, callback) {
+
+    // 检查源目录是否存在, 不存在则放在用户根目录
+    mFolder.getFolder({
+        _id: file.folder.oid
+    }, function(err, folder) {
+        if (err) {
+            return callback(err);
+        }
+        var folderId = null;
+        if (folder) {
+            folderId = folder._id;
+        } else {
+            folderId = user.rootFolder.oid;
+        }
+
+        mFile.modify({
+            _id: file._id
+        }, {
+            del: false,
+            'folder.$id': folderId
+        }, function(err) {
+            if (err) {
+                return callback(err);
+            }
+            if (folderId === user.rootFolder.oid){
+                callback(null, { code: 1, msg: 'revert to rootFolder'}); // 1 表示源文件夹已经被删, 还原到了根目录
+            } else {
+                callback(null, { code: 0, msg: 'success' });
+            }
+        });
+    });
+
+}
+
+exports.revert = function(req, res) {
 
     var params = req.parameter;
 
     var files = params.fileId;
 
-    // var loginUser = req.loginUser;
+    var loginUser = req.loginUser;
 
     var ep = new EventProxy();
 
-    ep.fail(function(err){
-        res.json({ err: ERR.SERVER_ERROR, msg: err});
-    });
-
-    ep.after('revert', files.length, function(){
+    ep.fail(function(err) {
         res.json({
-            err: ERR.SUCCESS
+            err: ERR.SERVER_ERROR,
+            msg: err
         });
     });
 
-    files.forEach(function(file){
+    ep.after('revert', files.length, function(list) {
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                list: list
+            }
+        });
+    });
 
-        mFile.modify({ _id: file._id }, { del: false }, ep.group('revert'));
+    files.forEach(function(file) {
+
+        revertFile(loginUser, file, ep.group('revert'));
+
     });
 };
 
 
-exports.search = function(req, res){
+exports.search = function(req, res) {
     var parameter = req.parameter;
     var loginUser = req.loginUser;
     var group = parameter.groupId;
@@ -111,9 +141,9 @@ exports.search = function(req, res){
     var searchParams = us.extend({}, parameter);
 
     searchParams.extendQuery = {
-        del: true,
-        isDeref: true
+        del: true
     };
+    searchParams.isDeref = true;
 
     delete searchParams.groupId;
 
@@ -128,10 +158,13 @@ exports.search = function(req, res){
         searchParams.creator = loginUser._id;
     }
 
-    mFile.search(searchParams, function(err, total, docs){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
+    mFile.search(searchParams, function(err, total, docs) {
+        if (err) {
+            res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
+        } else {
             res.json({
                 err: ERR.SUCCESS,
                 result: {

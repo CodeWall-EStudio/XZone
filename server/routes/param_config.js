@@ -434,6 +434,16 @@ module.exports = {
             }
         ]
     },
+    '/api/folder/batchStatistics': { // 批量统计制定文件夹下面又多少个子文件夹
+        method: 'GET,POST',
+        params: [
+            {
+                name: 'folderId',
+                type: '[folder]',
+                required: true
+            }
+        ]
+    },
 
     // fav
     '/api/fav/create': {
@@ -597,6 +607,17 @@ module.exports = {
             {
                 name: 'status', // 状态: 0 已审核, 1 审核中, 2 已归档, 3 已关闭, 4 已删除; 需要 group 管理员以上权限
                 type: 'number'
+            },
+            {
+                name: 'order', // 排序号, 默认 0, 优先排序
+                type: 'number',
+                'default': 0
+            },
+            {
+                name: 'tag'
+            },
+            {
+                name: 'grade'
             }
         ]
     },
@@ -1206,7 +1227,11 @@ module.exports = {
                 name: 'endTime',
                 type: 'number'
             },
-			//加上来源用户和来源小组 一次只需要用一个
+            {
+                name: 'fileName',
+                type: 'string'
+            },
+            //加上来源用户和来源小组 一次只需要用一个
             {
                 name: 'fromUserId',
                 type: 'string'
@@ -1221,6 +1246,10 @@ module.exports = {
                 //11: delete(移动到回收站) 12: 创建文件夹
                 name: 'type',
                 type: '[number]'
+            },
+            {
+                name: 'fromGroupType',
+                type: 'number'
             }
         ]
     },

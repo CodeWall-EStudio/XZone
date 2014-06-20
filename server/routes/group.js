@@ -305,12 +305,25 @@ exports.modify = function(req, res){
         if('status' in params){
             doc.status = params.status;
         }
+
+        if('order' in params){
+            doc.order = params.order;
+        }
+
 		if(startTime){
 			doc.startTime = startTime;
 		}
 		if(endTime){
 			doc.endTime = endTime;
 		}
+
+        if(params.tag){
+            doc.tag = params.tag;
+        }
+
+        if(params.grade){
+            doc.grade = params.grade;
+        }
 
         if(sizegroup){
             doc.sizegroup = new DBRef('sizegroup', sizegroup._id);

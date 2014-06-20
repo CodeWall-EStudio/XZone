@@ -13,6 +13,8 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				size : util.getSize(item.size),
 				osize : item.size,
 				type : item.type,
+				src : item.src || 0,
+				nick : item.creator.nick,				
 				time : util.time(item.createTime),
 				coll : item.coll
 			})

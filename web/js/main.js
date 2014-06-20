@@ -305,7 +305,7 @@ define('helper/router',[],function(){
  * 常用公用方法
  */
 define('helper/util',['../config'], function(config) {
-
+	var handerObj = $(Schhandler);
 	var util = {};
 
 	/**
@@ -766,6 +766,12 @@ define('helper/util',['../config'], function(config) {
     	$('#pageNav .'+type+'space').addClass('selected');
     }
 
+	var getServerTime = function(str){
+		var tmp = str.split(/\r\n/);
+		var tmp1 = tmp[0].split('Date:');
+		var nowtime = + new Date(tmp1[1]);
+		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
+    }
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -784,6 +790,7 @@ define('helper/util',['../config'], function(config) {
 	util.getStatus = getStatus;
 	util.logType = showLogType;
 	util.showNav = showNav;
+	util.getServerTime = getServerTime;
 
 	return util;
 
@@ -949,12 +956,12 @@ define('cache',['config'],function(config){
 		get : getCache
 	}
 });
-define('model.nav',['config','helper/request','cache','helper/util'],function(config,request,cache,util){
+define('model.nav',['config','helper/request','cache','helper/util'],function(config,request,Cache,util){
 
 	var	handerObj = $(Schhandler);
 
 	function convent(data){
-
+		var ntime = Cache.get('nowtime');
 		var o = {};
 		o.id = data.user._id;
 		o.nick = data.user.nick;
@@ -1027,6 +1034,9 @@ define('model.nav',['config','helper/request','cache','helper/util'],function(co
 				item.rootFolder.id = item.rootFolder._id || item.rootFolder.$id;
 			}				
 			item.isMember = true;	
+			if(item.parent && item.parent.startTime && (ntime <= item.parent.endTime && ntime >= item.parent.startTime)){
+				item.isNow = true;
+			}
 			o.prep.push(item);
 			o.prep2key[item.id] = item;
 			o.group2key[item.id] = item;
@@ -1066,6 +1076,8 @@ define('model.nav',['config','helper/request','cache','helper/util'],function(co
 		}
 
 		var success = function(d){
+			var headers  = $.ajax({async:false}).getAllResponseHeaders();
+			util.getServerTime(headers);			
 			if(d.err == 0){
 				var obj = convent(d.result);
 				handerObj.triggerHandler('cache:set',{key: 'myinfo',data: obj});
@@ -1146,7 +1158,7 @@ define('helper/templateManager',[],function(){
 			}
 			var startTime = new Date().getTime();
 			template = $.ajax({
-				url: tmplPath+tplid+tmplName,
+				url: tmplPath+tplid+tmplName+'?t='+Math.random(),
 				async: false,
 				error : function(data){
 					return false;
@@ -1463,7 +1475,7 @@ define('model.manage.nav',['config','helper/request','cache'],function(config,re
 			item.id = item._id;
 			list[item.id] = item;
 		}
-		handerObj.triggerHandler('Cache:set',{key: 'alluser2key',data: list});
+		handerObj.triggerHandler('cache:set',{key: 'alluser2key',data: list});
 	}
 
 	function conventGroup(data){
@@ -1483,7 +1495,7 @@ define('model.manage.nav',['config','helper/request','cache'],function(config,re
 		
 		var success = function(data){
 			if(data.err == 0){
-				handerObj.triggerHandler('Cache:set',{key: 'departments',data: data.result.list});
+				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list});
 				handerObj.triggerHandler('nav:userload',{ type : d.type,data:d.data,list :data.result.list});
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
@@ -1514,7 +1526,7 @@ define('model.manage.nav',['config','helper/request','cache'],function(config,re
 			if(d.err == 0){
 				var obj = convent(d.result.list);
 				conventUid2key(d.result.list);
-				handerObj.triggerHandler('Cache:set',{key: 'alluser',data: obj});
+				handerObj.triggerHandler('cache:set',{key: 'alluser',data: obj});
 				if(type != 'prep'){
 					handerObj.triggerHandler('nav:userload',{list:obj,type:type,data:data});
 				}else{
@@ -1641,6 +1653,20 @@ define('view.nav',['config','model.nav','helper/view','helper/util','cache','mod
 	}
 
 	function navLoad(e,d){
+		var headers  = $.ajax({async:false}).getAllResponseHeaders();
+		util.getServerTime(headers);
+/*
+Date: Sat, 07 Jun 2014 15:52:49 GMT
+Cache-Control: max-age=0, must-revalidate
+Content-Length: 9016
+Content-Type: text/html
+*/
+		// var reg = new RegExp("Date:(\s*?) GMT", "g");
+		// console.log(reg);
+		// var ret = headers.match(reg);
+		// console.log(ret);
+
+
 		var opt = {
 			target : navTarget,
 			tplid : 'nav',
@@ -2158,8 +2184,13 @@ define('model.file',['config','helper/request','helper/util','cache','helper/tes
 	}
 
 	function searchFile(e,d){
+		var url = config.cgi.filesearch;
+		if(d.status){
+			url = config.cgi.mfilelist;
+		}
+		
 		var opt = {
-			cgi : config.cgi.filesearch,
+			cgi : url,
 			data : d
 		}
 		var success = function(d){
@@ -2492,10 +2523,46 @@ define('model.file',['config','helper/request','helper/util','cache','helper/tes
 		request.post(opt,success);			
 	}	
 
+	function checkFold(e,d){
+		var opt = {
+			cgi : config.cgi.foldstatus,
+			data : {
+				folderId : d.folderId
+			}
+		}	
+		var fl = d.fl,
+			fd = d.fd;
+		var success = function(d){
+			if(d.err == 0){
+				var cl = {};
+				var check = false;
+				for(var i in d.list){
+					var item = d.list[i];
+					if(item.fileStat.totalCount>0){
+						cl[item.folderId] = true;
+						check = true;
+					}else{
+						cl[item.folderId] = false;
+					}
+				};
+				if(!check){
+					handerObj.triggerHandler('fild:checkSuc',{
+						check: check,cl: cl,fl:fl,fd:fd
+					});
+				}else{
+					handerObj.triggerHandler('msg:error',40);
+				}
+			}
+			//handerObj.triggerHandler('msg:error',d.err);
+		}	
+		request.post(opt,success);	
+	}
+
 	var handlers = {
 		'file:recyref' : recyRef,
 		'file:recydel' : recyDel,
 		'file:savetomy' : fileSave,
+		'file:checkfold' : checkFold,
 		//'file:get' : getFile,
 		'file:copyto' : fileCopy,
 		'file:moveto' : fileMove,
@@ -2511,9 +2578,13 @@ define('model.file',['config','helper/request','helper/util','cache','helper/tes
 
 	for(var i in handlers){
 		handerObj.bind(i,handlers[i]);
+	}
+
+	return {
+		checkFold : checkFold
 	}	
 });
-define('view.file',['config','helper/view','cache','helper/util','model.file'],function(config,View,Cache,util){
+define('view.file',['config','helper/view','cache','helper/util','model.file'],function(config,View,Cache,util,Model){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
@@ -2610,6 +2681,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			if(d.order){
 				nowOrder = d.order;
 			}
+			
 			nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 			nowUid = d.uid || 0;
 			nowKey = d.key || '';
@@ -2632,7 +2704,8 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			fdid : nowFd,
 			uid : nowUid,
 			prep : nowPrep,
-			auth : nowAuth			
+			auth : nowAuth,
+			school : nowSchool			
 		}
 		if(nowGid){
 			obj.ml = nowGroup.mlist;
@@ -2681,7 +2754,9 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			}
 			$("#fileActZone .movefile").hide();			
 		}
-
+		if(nowUid){
+			data.creatorId = nowUid;
+		}	
 		if(!d.info || nowSchool){
 			handerObj.triggerHandler('file:search',data);	
 		}else if((d.info && d.info.isMember) || d.open){
@@ -2789,6 +2864,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		if(nowAuth){
 			obj.status = 1;
 		}
+		console.log(obj);
 		handerObj.triggerHandler('file:search',obj);			
 	}
 
@@ -2828,7 +2904,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		handerObj.triggerHandler('file:search',obj);				
 	}
 
-	function fileDel(e,d){
+	function fileCheckSuc(e,d){
 		var view = new View({
 			target : actTarget,
 			tplid : 'del',
@@ -2849,7 +2925,49 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 				}
 			}
 		});
-		view.createPanel();
+		view.createPanel();		
+	}
+
+	function fileDel(e,d){
+		if(d.cid.length){
+			handerObj.triggerHandler('msg:error',40);
+			return;
+		}		
+		if(!$.isEmptyObject(d.fd)){
+			var fl = [];
+			for(var i in d.fd){
+				fl.push(i);
+			}
+			var obj = {
+				folderId : fl,
+				fd : d.fd,
+				fl : d.fl
+			}
+			handerObj.triggerHandler('file:checkfold',obj);
+		}else{
+			var view = new View({
+				target : actTarget,
+				tplid : 'del',
+				data : d,
+				after : function(){
+					$("#actWin").modal('show');
+
+				},
+				handlers : {
+					'.btn-del' : {
+						'click' : function(){
+							if(!$.isEmptyObject(d.fl)){
+								handerObj.triggerHandler('file:delfiles',d.fl);
+							}
+							if(!$.isEmptyObject(d.fd)){
+								handerObj.triggerHandler('fold:delfolds',d.fd);
+							}
+						}
+					}
+				}
+			});
+			view.createPanel();
+		}
 	}
 
 	function delSuc(e,d){
@@ -3658,6 +3776,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		'model:change' : modelChange,
 		'search:start' : search,
 		'file:del' : fileDel,
+		'fild:checkSuc' : fileCheckSuc,
 		'file:init' : fileInit,
 		'file:load' : fileLoad,
 		'file:tocoll' : toColl,
@@ -4105,9 +4224,9 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 				$('#foldList li').removeClass('selected');
 			},
 			after : function(){
-				if(!$("#foldList").attr('show')){
-					$('#foldTree').click();
-				}
+				// if(!$("#foldList").attr('show')){
+				// 	$('#foldTree').click();
+				// }
 				$('#foldtree'+nowFd).attr('data-load',1).addClass('minus');
 				$('#foldtreeli'+nowFd).addClass('selected').find('ul').show();
 				// if(!tree){
@@ -4210,7 +4329,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			nowPid = d.pid || 0;						
 		}
 
-		if(nowGid && !nowFd){
+		if(nowGid && !nowFd || (typeof nowData.now !== 'undefined' && !nowData.now)){
 			$('#btnZone').hide();
 		}else{
 			if(nowPrep == 'group'){
@@ -4314,7 +4433,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
                 	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'myfold',data:fl});                	
                 }else{
-                	if(d.list.length){
+                	if(d.list.length > 0){
 		            	var td = d.list[0];
 		            	var target = $('#foldList .fold'+td.pid);
 		            	//根目录下的文件夹
@@ -4335,7 +4454,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
                 	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'rootFolder'+nowGid,data:fl});
 				}else{
-					if(d.list.length){
+					if(d.list.length > 0){
 		            	var td = d.list[0];
 		            	var target = $('#foldList .fold'+td.pid);
 		            	//根目录下的文件夹
@@ -4385,6 +4504,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 				list : d.list,
 				gid : nowGid,
 				pr : pr,
+				now : nowData.now,
 				prep : nowPrep,
 				grade : nowGrade,
 				school : nowSchool,
@@ -4736,7 +4856,8 @@ define('model.group',['config','helper/request','helper/util'],function(config,r
 	function groupInfo(e,d){
 		var deftype = 'group';
 		var gid,type = 0,
-			recy = false;
+			recy = false,
+			school = 0;
 		if(typeof d == 'object'){
 			gid = d.gid;
 			type = d.type;
@@ -4925,7 +5046,7 @@ define('model.groupprep',['config','helper/request','helper/util','cache'],funct
 		handerObj.bind(i,handlers[i]);
 	}	
 });
-define('view.groupprep',['config','helper/view','cache','helper/util','model.groupprep'],function(config,View,Cache,Util){
+define('view.groupprep',['config','helper/view','cache','helper/util','model.groupprep'],function(config,View,Cache,util){
 	var	handerObj = $(Schhandler);
 
 	var	stitTarget = $('#sectionTit'),
@@ -4986,7 +5107,7 @@ define('view.groupprep',['config','helper/view','cache','helper/util','model.gro
 
 	function init(e,d){
 		d.prep = 'group';
-		Util.showNav('dep');
+		util.showNav('dep');
 		if(d){
 			nowD = d;
 			nowGrade = d.grade || 0;
@@ -6058,6 +6179,8 @@ define('model.recy',['config','helper/request','helper/util'],function(config,re
 				size : util.getSize(item.size),
 				osize : item.size,
 				type : item.type,
+				src : item.src || 0,
+				nick : item.creator.nick,				
 				time : util.time(item.createTime),
 				coll : item.coll
 			})
@@ -6115,6 +6238,8 @@ define('view.recy',['config','helper/view','cache','model.recy'],function(config
 			tplid : 'recy.tit',
 			data : {
 				filetype : config.filetype,
+				gid : nowGid,
+				school : nowSchool,
 				type : nowType,
 				key : nowKey
 			}
@@ -6126,7 +6251,7 @@ define('view.recy',['config','helper/view','cache','model.recy'],function(config
 		var myInfo = Cache.get('myinfo');
 		action = 1;
 		tmpTarget.html('');
-		crTit();
+		
 
 		nextPage = 0;
 
@@ -6141,18 +6266,24 @@ define('view.recy',['config','helper/view','cache','model.recy'],function(config
 		nowOds = '{'+nowOrder[0]+':'+nowOrder[1]+'}';
 		nowKey = d.key || '';
 
+		var name = 'myrecy';
+		if(nowSchool || nowGid){
+			name = 'recy';
+		}
 		var view = new View({
 			target : titTarget,
 			tplid : 'coll.table.tit',
 			data : {
 				order : nowOds,
-				name : 'myrecy',
+				name : name,
 				cate : 2,
-				type : nowType			
+				type : nowType,
+				gid : nowGid,
+				school : nowSchool		
 			}	
 		});
 		view.createPanel();
-
+		crTit();
 		var obj = {
 			keyword : nowKey,
 			page:nextPage,
@@ -6185,6 +6316,7 @@ define('view.recy',['config','helper/view','cache','model.recy'],function(config
 			target : tmpTarget,
 			tplid : 'recy.list',
 			data : {
+				gid : nowGid,
 				list : d.list,
 				filetype : config.filetype
 			}
@@ -6292,6 +6424,8 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
 		nowKey = '',
+		nowUid = 0,
+		nowType = 0,
 		rootFd = 0;
 
 	var actTarget = $('#actWinZone'),
@@ -6315,7 +6449,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		$("#fileActZone .sharefile").hide();
 		$("#fileActZone .copyfile").hide();
 
-		if(myinfo.auth < 15){
+		if(!school.auth){
 			$('#btnZone').hide();
 			$("#fileActZone").addClass('hide');
 			$('.tool-zone').removeClass('hide');
@@ -6328,16 +6462,24 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		}
 		handerObj.triggerHandler('bind:school',{
 			school : 1,
-			auth : myinfo.auth
+			auth : school.auth
 		});
 		nowGid = school.id;
 		nowFd = school.rootFolder.id;
+		nowUid = d.uid;
+		if(d.fdid){
+			nowFd = d.fdid;
+		}else{
+			d.fdid = nowFd;
+		}
+
 
 		var view = new View({
 			target : $("#groupAside"),
 			tplid : 'school.aside',
 			data : {
-				auth : school.auth
+				auth : school.auth,
+				type : nowType
 			},
 			handlers : {
 				'h3' : {
@@ -6348,9 +6490,11 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 						if(!$(e.target).hasClass('selected')){
 							$(e.target).addClass('selected');
 							if(cmd=='manage'){
-								d.auth = school.auth;	
+								d.auth = school.auth;
+								nowType = 1;	
 							}else{
 								d.auth = 0;
+								nowType = 0
 							}
 							d.school = 1;
 							if(cmd==='recy'){
@@ -6378,17 +6522,31 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		}		
 
 		d.gid = nowGid;
-		if(!d.fdid){
-			d.fdid = nowFd;
-		}
+
 		d.info = school;
 
 		d.school = 1;
-		d.auth = 0;
+		d.auth = nowType;
 
+		handerObj.triggerHandler('group:info',{
+			gid : nowGid,
+			type : 'school'	
+		});
         //handerObj.triggerHandler('file:init',d);
-        handerObj.triggerHandler('fold:init',d); 
         handerObj.triggerHandler('upload:param',d);		
+	}
+
+	function infoSuc(e,d){
+		var obj = {
+			auth : nowType,
+			school : 1,
+			gid : nowGid,
+			fdid : nowFd,
+			uid : nowUid,
+			order : nowOrder,
+			info : d
+		}
+		handerObj.triggerHandler('fold:init',obj); 
 	}
 
 	function showApv(e,d){
@@ -6400,7 +6558,8 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			data : {
 				name : d.name,
 				fold : fold,
-				gid : nowGid
+				gid : nowGid,
+				status : d.status
 			},
 			after : function(){
 				$("#actWin").modal('show');
@@ -6465,6 +6624,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 
 	var handlers = {
 		'school:init' : init,
+		'school:infosuc' : infoSuc,
 		'school:showapv' : showApv,
 		'school:apvsuc' : apvSuc
 	};
@@ -6485,10 +6645,17 @@ define('view.log',['config','cache','helper/view','helper/request','helper/util'
 		logType = 0,
 		logSt = 0,
 		logEt = 0,
+		nowType = -1;
+		nowKey = '',
 		myInfo = null;
 
 	function loadLog(obj){
-		
+		if(nowKey != ''){
+			obj.fileName = nowKey;
+		}
+		if(nowType>=0){
+			obj.fromGroupType = nowType;
+		}
 		var opt = {
 			cgi : config.cgi.logsearch,
 			data : obj
@@ -6498,8 +6665,10 @@ define('view.log',['config','cache','helper/view','helper/request','helper/util'
 			if(data.err==0){
 				var view = new View({
 					target : $('#logList'),
-					tplid : 'manage/log.list',
+					tplid : 'log.list',
 					data : {
+						filetype : config.filetype,
+						size : Util.getSize,
 						list : data.result.list,
 						logType : Util.logType,
 						time : Util.time
@@ -6520,7 +6689,15 @@ define('view.log',['config','cache','helper/view','helper/request','helper/util'
 	}
 
 	function init(e,d){
+		$('#logGroupType').val(-1);
 		nowPage = 0;
+		nowGid = 0;
+		isLoad = false;
+		logType = 0;
+		logSt = 0;
+		logEt = 0;
+		nowType = -1;
+		nowKey = '';
 		myInfo = Cache.get('myinfo');
 		$('#logType').attr('data-type',0).text('全部');
 		var obj = {
@@ -6572,8 +6749,10 @@ define('view.log',['config','cache','helper/view','helper/request','helper/util'
 			});
 			
 			$('.btn-log-search').bind('click',function(){
-				st = $('.log-start-time').pickmeup('get_date').getTime();
-				et = $('.log-end-time').pickmeup('get_date').getTime();
+				nowKey = $('#logSearchKey').val();
+				nowType = $('#logGroupType').val();
+				var st = $('.log-start-time').pickmeup('get_date').getTime();
+				var et = $('.log-end-time').pickmeup('get_date').getTime();
 				var type = parseInt($('#logType').attr('data-type'));
 				if(st == nowDate){
 					st = 0;
@@ -6589,7 +6768,7 @@ define('view.log',['config','cache','helper/view','helper/request','helper/util'
 					alert('开始时间不能小于结束时间!');
 					return;								
 				}
-				if(type || st || et){
+				if(type || st || et || nowKey != '' || nowType >= 0){
 					$('#logList').html('');
 					$('.next-log-page').removeAttr('data-next');
 					var obj = {
@@ -6803,6 +6982,8 @@ define('bind',['config'],function(config){
 	var loading = 0,
 		nowFd = 0,   //当前文件夹id
 		nowGid = 0,  //当前小组id
+		isPrep = 0,
+		nowPrep = 0,
 		nowSchool = 0,
 		isMember = 0,
 		nowAuth = 0,
@@ -7064,6 +7245,10 @@ define('bind',['config'],function(config){
     	var l = $('.table-files .fclick:checked').length;
     	var n = $('.table-files .fdclick:checked').length;
 
+    	if(isPrep && !nowPrep){
+    		return;
+    	}
+
 		if(n == 0){
 			if(!nowSchool){
 		    	$('#fileActZone .sharefile').show();
@@ -7144,18 +7329,23 @@ define('bind',['config'],function(config){
     //删除文件和文件夹
     function deleteObj(){
     	var fid = {},
-    		fdid = {};
+    		fdid = {}
+    		cid = [];
 		$('.table-files .fclick:checked').each(function(e){
 			var id = $(this).val();
 			fid[id] = $('.fdname'+id).text();
 		});    	
 		$('.table-files .fdclick:checked').each(function(e){
 			var id = $(this).val();
+			if($(this).attr('data-child')){
+				cid.push(cid);
+			}
 			fdid[id] = $('.fdname'+id).text();
 		});		
 		handerObj.triggerHandler('file:del',{
 			fl : fid,
-			fd : fdid
+			fd : fdid,
+			cid : cid
 		});
     }
 
@@ -7427,9 +7617,20 @@ define('bind',['config'],function(config){
     	}
     }
 
+    function prepChange(e,d){
+    	if(typeof d === 'object'){
+    		isPrep = 1;
+    		nowPrep = d.now;
+    	}else{
+    		isPrep = 0;
+    		nowPrep = 0;
+    	}
+    }
+
     var handlers = {
     	'page:change' : pageChange,
-    	'bind:school' : schoolChange
+    	'bind:school' : schoolChange,
+    	'bind:prep' : prepChange
     }
 
     for(var i in handlers){
@@ -7547,6 +7748,31 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
 	var at = 0;
 
+	function showConfig(e,d){
+		if(typeof d === 'undefined'){
+			return;
+		}
+		var obj = {
+			message : d.msg,
+			actions : {
+				sub : {
+					label : d.act.sub.label || '确定',
+					action : function(){
+						d.act.sub.action();
+						msg.hide();
+					}
+				},
+				cancel : {
+					label : d.act.canel.label || '取消',
+					action : function(){
+						msg.hide();
+					}
+				}
+			}
+		}
+		var msg = Messenger().post(obj);
+	}
+
 	function showErr(e,d){
 		if(d == 1001){
 			window.location = config.cgi.gotologin;
@@ -7560,23 +7786,7 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 			obj.type = 'error'
 		}
 
-		Messenger().post(obj);
-		// clearTimeout(at);
-
-		// var alertDiv = $('<div class="alert alert-success alert-msg fade in"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><span></span></div>');
-
-
-		// alertDiv.removeClass('alert-danger');
-		// if(parseInt(d)){
-		// 	alertDiv.addClass('alert-danger');
-		// }
-		// $('body').append(alertDiv);
-		
-		// alertDiv.find('span').html(msg[d]);
-		// alertDiv.alert();
-		// at = setTimeout(function(){
-		// 	alertDiv.alert('close');
-		// },2000);		
+		Messenger().post(obj);	
 	}
 
 	function showMsg(e,d){
@@ -7590,7 +7800,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
 	var handlers = {
 		'msg:error' : showErr,
-		'msg:show' : showMsg
+		'msg:show' : showMsg,
+		'msg:config' : showConfig
 	}
 
 	for(var i in handlers){
@@ -7770,12 +7981,14 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
       school : function(data){
         showModel('school');
         var gid = data.gid,
+            uid = data.uid || 0,
             fdid = data.fdid || 0;
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
             type = data.type || 0;
         var d = {
+          uid : uid,
           fdid : fdid,
           type : type
         }
@@ -7787,6 +8000,7 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
         }  
         handerObj.triggerHandler('page:change'); 
         handerObj.triggerHandler('school:init',d);              
+        handerObj.triggerHandler('bind:prep',0);
       },
       mailbox : function(data){
         showModel('mailbox');
@@ -7810,7 +8024,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
         }               
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('mail:init',d);
-        handerObj.triggerHandler('bind:school',0);   
+        handerObj.triggerHandler('bind:school',0);  
+        handerObj.triggerHandler('bind:prep',0);
         handerObj.triggerHandler('model:change','mail');
       },
       share : function(data){
@@ -7903,7 +8118,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('group:init',d);  
-        handerObj.triggerHandler('bind:school',0);   
+        handerObj.triggerHandler('bind:school',0);  
+        handerObj.triggerHandler('bind:prep',0); 
         handerObj.triggerHandler('model:change','file'); 
         //handerObj.triggerHandler('upload:param',d);    
       },
@@ -7931,7 +8147,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('my:init',d);
-        handerObj.triggerHandler('bind:school',0);   
+        handerObj.triggerHandler('bind:school',0); 
+        handerObj.triggerHandler('bind:prep',0);  
         handerObj.triggerHandler('model:change','file');  
         //.triggerHandler('upload:param',d);
       },

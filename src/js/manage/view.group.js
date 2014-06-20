@@ -114,9 +114,11 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 				if(nowType == 'prep' || nowType == 'pschool'){
 					var prep = Cache.get('preps');
 					var grade = Cache.get('grade');
-					var subject = Cache.get('subject');					
+					var subject = Cache.get('subject');	
+					var ntime = Cache.get('nowtime');
+					data.ntime = ntime;
 					data.prep = prep.g2key;
-					data.grade = grade;
+					data.grades = grade;
 					data .subject = subject;
 				}else if(nowType == 'group'){
 					var prep = Cache.get('preps');
@@ -125,7 +127,21 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
-					data : data
+					data : data,
+					after : function(){
+						if(nowType == 'pschool'){
+							$('.start-time').pickmeup({
+								format  : 'Y-m-d',
+								hide_on_select : true
+							});
+
+
+							$('.end-time').pickmeup({
+								format  : 'Y-m-d',
+								hide_on_select	: true
+							});			
+						}						
+					}
 				});
 				view.createPanel();
 			}
@@ -270,8 +286,6 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 					obj.managers = managelist;
 				}
 
-
-
 				if(nowType == 'group'){
 					obj.archivable = archivable;
 					if(parseInt(archivable)){
@@ -304,6 +318,9 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 						obj.status = 3;
 					}else{
 						obj.status = 0;
+					}
+					if(obj.name == nowGroup.name){
+						delete obj.name;
 					}
 					handerObj.triggerHandler('group:modify',obj);	
 				}else{
@@ -586,7 +603,7 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 		//}
 		if(nowType == 'prep' || nowType == 'pschool'){
 			d.subject = Cache.get('subject');;
-			d.grade = Cache.get('grade');
+			d.grades = Cache.get('grade');
 		}
 		var slist = Cache.get('sizegroup');
 		d.sglist = slist;
@@ -617,7 +634,9 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 						format  : 'Y-m-d',
 						hide_on_select : true
 					}).val(Util.time(st));
+
 					$('.start-time').pickmeup('set_date', st);
+
 					$('.end-time').pickmeup({
 						format  : 'Y-m-d',
 						hide_on_select	: true
@@ -901,7 +920,6 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 			d.pre = Math.round(Util.getNums(d.osize/d.allsize)*100);			
 		}
 
-		console.log(d);
 		var view = new View({
 			target : $("#groupModifyZone"),
 			tplid : 'manage/status',

@@ -132,6 +132,7 @@ exports.approveGroup = function(req, res) {
 exports.approveFile = function(req, res) {
     var params = req.parameter;
     var file = params.fileId;
+    var school = params.school;
 
     var loginUser = req.loginUser;
     // 这里的文件只有个人提交到学校的
@@ -156,47 +157,38 @@ exports.approveFile = function(req, res) {
         return;
     }
 
-    mGroup.getGroup({
-        type: 0
-    }, function(err, school) {
+    
+    //这里应该增加学校的空间使用
+    mGroup.updateUsed(school._id, file.size, function() {});
+
+    var doc = {
+        status: 0,
+        validateText: params.validateText || '', //审核评语
+        validateStatus: validateStatus, //0 不通过 1 通过
+        validateTime: Date.now(), //审核时间
+        validator: new DBRef('user', loginUser._id)
+    };
+
+    mFile.modify({
+        _id: file._id
+    }, doc, function(err, doc) {
         if (err) {
-            return res.json({
+            res.json({
                 err: ERR.SERVER_ERROR,
                 msg: err
             });
+        } else if (!doc) {
+            res.json({
+                err: ERR.NOT_FOUND,
+                msg: 'no such group'
+            });
+        } else {
+            res.json({
+                err: ERR.SUCCESS
+            });
         }
-
-        //这里应该增加学校的空间使用
-        mGroup.updateUsed(school._id, file.size, function() {});
-
-        var doc = {
-            status: 0,
-            validateText: params.validateText || '', //审核评语
-            validateStatus: validateStatus, //0 不通过 1 通过
-            validateTime: Date.now(), //审核时间
-            validator: new DBRef('user', loginUser._id)
-        };
-
-        mFile.modify({
-            _id: file._id
-        }, doc, function(err, doc) {
-            if (err) {
-                res.json({
-                    err: ERR.SERVER_ERROR,
-                    msg: err
-                });
-            } else if (!doc) {
-                res.json({
-                    err: ERR.NOT_FOUND,
-                    msg: 'no such group'
-                });
-            } else {
-                res.json({
-                    err: ERR.SUCCESS
-                });
-            }
-        });
     });
+
 };
 
 function fetchGroupMembers(group, callback) {
@@ -206,7 +198,7 @@ function fetchGroupMembers(group, callback) {
         } else {
             group.members = list;
 
-            mFolder.statistics(group.rootFolder.oid, function(err, result) {
+            mFolder.statistics(group.rootFolder.oid, {}, function(err, result) {
                 if (!err) {
                     group.folderCount = result.total;
                 }
@@ -265,7 +257,10 @@ exports.listPrepares = function(req, res) {
     db.group.find({
         type: 3, // type=3 是备课学年
         parent: null
-    }, function(result) {
+    }, ep.doneLater('findPrepare'));
+
+    ep.on('findPrepare', function(result) {
+        Logger.debug('[listPrepares] {type: 3, parent: null }.length ', result && result.length);
         if (result && result.length) {
             if (fetchChild) {
                 ep.after('fetchGroupDetail', result.length, function( /*list*/ ) {
@@ -287,6 +282,7 @@ exports.listPrepares = function(req, res) {
         res.json({
             err: ERR.SUCCESS,
             result: {
+                total: list.length,
                 list: list
             }
         });
@@ -301,36 +297,29 @@ exports.listPrepares = function(req, res) {
  */
 exports.listFiles = function(req, res) {
     // var loginUser = req.loginUser;
-    // var params = req.parameter;
+    var parameter = req.parameter;
 
-    var ep = new EventProxy();
-    ep.fail(function(err, errCode) {
-        res.json({
-            err: errCode || ERR.SERVER_ERROR,
-            msg: err
-        });
+    var school = parameter.school;
+
+    var searchParams = us.extend({}, parameter, {
+        folderId: school.rootFolder.oid,
+        recursive: true,
+        isDeref: true
     });
 
-    mGroup.getGroup({
-        type: 0
-    }, ep.doneLater('getSchoolDone'));
+    searchParams.extendQuery = {
+        status: 1
+    };
 
-    ep.on('getSchoolDone', function(school) {
-        if (!school) {
-            return ep.emit('error', 'system error: no school');
+    mFile.search(searchParams, function(err, total, docs) {
+        
+        if(err){
+            return res.json({
+                err: total || ERR.SERVER_ERROR,
+                msg: err
+            });
         }
-        var query = {
-            'group.$id': school._id,
-            status: 1
-        };
 
-        mFile.search({
-            extendQuery: query,
-            isDeref: true
-        }, ep.done('search'));
-
-    });
-    ep.on('search', function(total, docs) {
         res.json({
             err: ERR.SUCCESS,
             result: {

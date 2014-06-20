@@ -7,3 +7,5 @@ config.js
 data/*
 
 logs/*
+
+node_modules/*

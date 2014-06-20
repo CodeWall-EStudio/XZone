@@ -9,6 +9,31 @@ define(['config','cache','helper/view'],function(config,Cache,View){
 
 	var at = 0;
 
+	function showConfig(e,d){
+		if(typeof d === 'undefined'){
+			return;
+		}
+		var obj = {
+			message : d.msg,
+			actions : {
+				sub : {
+					label : d.act.sub.label || '确定',
+					action : function(){
+						d.act.sub.action();
+						msg.hide();
+					}
+				},
+				cancel : {
+					label : d.act.canel.label || '取消',
+					action : function(){
+						msg.hide();
+					}
+				}
+			}
+		}
+		var msg = Messenger().post(obj);
+	}
+
 	function showErr(e,d){
 		if(d == 1001){
 			window.location = config.cgi.gotologin;
@@ -22,23 +47,7 @@ define(['config','cache','helper/view'],function(config,Cache,View){
 			obj.type = 'error'
 		}
 
-		Messenger().post(obj);
-		// clearTimeout(at);
-
-		// var alertDiv = $('<div class="alert alert-success alert-msg fade in"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button><span></span></div>');
-
-
-		// alertDiv.removeClass('alert-danger');
-		// if(parseInt(d)){
-		// 	alertDiv.addClass('alert-danger');
-		// }
-		// $('body').append(alertDiv);
-		
-		// alertDiv.find('span').html(msg[d]);
-		// alertDiv.alert();
-		// at = setTimeout(function(){
-		// 	alertDiv.alert('close');
-		// },2000);		
+		Messenger().post(obj);	
 	}
 
 	function showMsg(e,d){
@@ -52,7 +61,8 @@ define(['config','cache','helper/view'],function(config,Cache,View){
 
 	var handlers = {
 		'msg:error' : showErr,
-		'msg:show' : showMsg
+		'msg:show' : showMsg,
+		'msg:config' : showConfig
 	}
 
 	for(var i in handlers){

@@ -149,7 +149,7 @@ exports.getFile = function(query, callback){
 exports.countFile = function(query, callback){
     
     db.file.count(query, callback);
-}
+};
 
 exports.search = function(params, callback){
     var folderId = params.folderId;
@@ -242,13 +242,19 @@ exports.search = function(params, callback){
     });
 };
 
-exports.statistics = function(folderId, callback){
+exports.statistics = function(folderId, options, callback){
 
     var searchParams = {
         folderId: folderId,
         recursive: true,
         searchAll: true
     };
+
+    if (options.ignoreDel) {
+        searchParams.extendQuery = {
+            del: false
+        };
+    }
 
     exports.search(searchParams, function(err, total, docs){
         if(err){

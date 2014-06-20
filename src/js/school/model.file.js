@@ -23,8 +23,13 @@ define(['config','helper/request','helper/util','cache','helper/test'],function(
 	}
 
 	function searchFile(e,d){
+		var url = config.cgi.filesearch;
+		if(d.status){
+			url = config.cgi.mfilelist;
+		}
+		
 		var opt = {
-			cgi : config.cgi.filesearch,
+			cgi : url,
 			data : d
 		}
 		var success = function(d){
@@ -357,10 +362,46 @@ define(['config','helper/request','helper/util','cache','helper/test'],function(
 		request.post(opt,success);			
 	}	
 
+	function checkFold(e,d){
+		var opt = {
+			cgi : config.cgi.foldstatus,
+			data : {
+				folderId : d.folderId
+			}
+		}	
+		var fl = d.fl,
+			fd = d.fd;
+		var success = function(d){
+			if(d.err == 0){
+				var cl = {};
+				var check = false;
+				for(var i in d.list){
+					var item = d.list[i];
+					if(item.fileStat.totalCount>0){
+						cl[item.folderId] = true;
+						check = true;
+					}else{
+						cl[item.folderId] = false;
+					}
+				};
+				if(!check){
+					handerObj.triggerHandler('fild:checkSuc',{
+						check: check,cl: cl,fl:fl,fd:fd
+					});
+				}else{
+					handerObj.triggerHandler('msg:error',40);
+				}
+			}
+			//handerObj.triggerHandler('msg:error',d.err);
+		}	
+		request.post(opt,success);	
+	}
+
 	var handlers = {
 		'file:recyref' : recyRef,
 		'file:recydel' : recyDel,
 		'file:savetomy' : fileSave,
+		'file:checkfold' : checkFold,
 		//'file:get' : getFile,
 		'file:copyto' : fileCopy,
 		'file:moveto' : fileMove,
@@ -376,5 +417,9 @@ define(['config','helper/request','helper/util','cache','helper/test'],function(
 
 	for(var i in handlers){
 		handerObj.bind(i,handlers[i]);
+	}
+
+	return {
+		checkFold : checkFold
 	}	
 });

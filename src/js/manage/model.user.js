@@ -12,7 +12,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			}else{
 				item.size = 0;
 			}
-			
+
 			if(item.used){
 				item.used = util.getSize(item.used);
 			}else{

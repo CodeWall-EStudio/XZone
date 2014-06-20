@@ -128,11 +128,23 @@
 						</ul>
 					</div>
 					<div class="lv">
+						<select id="logGroupType">
+							<option value="-1">全部</option>
+							<option value="1">小组</option>
+							<option value="2">部门</option>
+							<option value="3">备课</option>
+							<option value="0">学校</option>
+						</select>
+					</div>					
+					<div class="lv">
 						开始时间 : <input type="text" class="log-start-time"  />
 					</div>
 					<div class="lv">
 						结束时间 : <input type="text" class="log-end-time"  />
 					</div>
+					<div class="lv">
+						<input type="text" id="logSearchKey" placeholder="搜索文件名" />
+					</div>					
 					<div class="lv">
 						<button class="btn btn-primary btn-log-search">开始搜索</button>
 					</div>
@@ -142,6 +154,14 @@
 						<th width="120">日志类型</th>
 						<th>日志内容</th>
 						<th>操作时间</th>
+						<th>名称</th>
+						<th width="90">类型</th>
+						<th width="90">大小</th>
+						<th width="140">日志类型</th>
+						<th width="90">来源</th>
+						<th width="90">源位置</th>
+						<th width="90">目标位置</th>
+						<th width="120">操作时间</th>
 					</tr>
 					<tbody id="logList">
 					</tbody>

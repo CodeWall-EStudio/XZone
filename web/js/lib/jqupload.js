@@ -13235,8 +13235,14 @@ used as it is.
 				});
 
 				handerObj.bind('plup:sizechange',function(e,d){
-					uploader.allsize = d.size;
-					uploader.used = d.used;
+					uploader.allsize = d.size || 0;
+					uploader.used = d.used || 0;
+					if(d.info && !uploader.allsize){
+						uploader.allsize = d.info.size;
+					}
+					if(d.info && !uploader.used){
+						uploader.used = d.info.used;
+					}					
 				});
 
 				handerObj.bind('plup:changeSet',function(e,d){

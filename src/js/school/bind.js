@@ -5,6 +5,8 @@ define(['config'],function(config){
 	var loading = 0,
 		nowFd = 0,   //当前文件夹id
 		nowGid = 0,  //当前小组id
+		isPrep = 0,
+		nowPrep = 0,
 		nowSchool = 0,
 		isMember = 0,
 		nowAuth = 0,
@@ -266,6 +268,10 @@ define(['config'],function(config){
     	var l = $('.table-files .fclick:checked').length;
     	var n = $('.table-files .fdclick:checked').length;
 
+    	if(isPrep && !nowPrep){
+    		return;
+    	}
+
 		if(n == 0){
 			if(!nowSchool){
 		    	$('#fileActZone .sharefile').show();
@@ -346,18 +352,23 @@ define(['config'],function(config){
     //删除文件和文件夹
     function deleteObj(){
     	var fid = {},
-    		fdid = {};
+    		fdid = {}
+    		cid = [];
 		$('.table-files .fclick:checked').each(function(e){
 			var id = $(this).val();
 			fid[id] = $('.fdname'+id).text();
 		});    	
 		$('.table-files .fdclick:checked').each(function(e){
 			var id = $(this).val();
+			if($(this).attr('data-child')){
+				cid.push(cid);
+			}
 			fdid[id] = $('.fdname'+id).text();
 		});		
 		handerObj.triggerHandler('file:del',{
 			fl : fid,
-			fd : fdid
+			fd : fdid,
+			cid : cid
 		});
     }
 
@@ -629,9 +640,20 @@ define(['config'],function(config){
     	}
     }
 
+    function prepChange(e,d){
+    	if(typeof d === 'object'){
+    		isPrep = 1;
+    		nowPrep = d.now;
+    	}else{
+    		isPrep = 0;
+    		nowPrep = 0;
+    	}
+    }
+
     var handlers = {
     	'page:change' : pageChange,
-    	'bind:school' : schoolChange
+    	'bind:school' : schoolChange,
+    	'bind:prep' : prepChange
     }
 
     for(var i in handlers){

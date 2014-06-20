@@ -1186,6 +1186,8 @@ define('helper/request',[], function() {
   // }
 
   /*
+  * @author: jarvisjiang
+  * @date: 2013-08-20
   * @desc: 从cgi拉数据，两种api调用方式，error处理函数不是必须的
   * @params: 
   *   option: {cgi: String[, method: String, type: String, timeout: Int, data: {}, success: Function, error: Function]}
@@ -1198,6 +1200,7 @@ define('helper/request',[], function() {
   */
   var request = function(option, onSuccess, onError, always) {
     var timer = new ReqTime();
+
     option = option || {};
 
     var method = option.method ? option.method.toUpperCase() : 'GET',
@@ -1680,9 +1683,11 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 				if(nowType == 'prep' || nowType == 'pschool'){
 					var prep = Cache.get('preps');
 					var grade = Cache.get('grade');
-					var subject = Cache.get('subject');					
+					var subject = Cache.get('subject');	
+					var ntime = Cache.get('nowtime');
+					data.ntime = ntime;
 					data.prep = prep.g2key;
-					data.grade = grade;
+					data.grades = grade;
 					data .subject = subject;
 				}else if(nowType == 'group'){
 					var prep = Cache.get('preps');
@@ -1691,7 +1696,21 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
-					data : data
+					data : data,
+					after : function(){
+						if(nowType == 'pschool'){
+							$('.start-time').pickmeup({
+								format  : 'Y-m-d',
+								hide_on_select : true
+							});
+
+
+							$('.end-time').pickmeup({
+								format  : 'Y-m-d',
+								hide_on_select	: true
+							});			
+						}						
+					}
 				});
 				view.createPanel();
 			}
@@ -1836,8 +1855,6 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 					obj.managers = managelist;
 				}
 
-
-
 				if(nowType == 'group'){
 					obj.archivable = archivable;
 					if(parseInt(archivable)){
@@ -1870,6 +1887,9 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 						obj.status = 3;
 					}else{
 						obj.status = 0;
+					}
+					if(obj.name == nowGroup.name){
+						delete obj.name;
 					}
 					handerObj.triggerHandler('group:modify',obj);	
 				}else{
@@ -2152,7 +2172,7 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 		//}
 		if(nowType == 'prep' || nowType == 'pschool'){
 			d.subject = Cache.get('subject');;
-			d.grade = Cache.get('grade');
+			d.grades = Cache.get('grade');
 		}
 		var slist = Cache.get('sizegroup');
 		d.sglist = slist;
@@ -2183,7 +2203,9 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 						format  : 'Y-m-d',
 						hide_on_select : true
 					}).val(Util.time(st));
+
 					$('.start-time').pickmeup('set_date', st);
+
 					$('.end-time').pickmeup({
 						format  : 'Y-m-d',
 						hide_on_select	: true
@@ -2467,7 +2489,6 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 			d.pre = Math.round(Util.getNums(d.osize/d.allsize)*100);			
 		}
 
-		console.log(d);
 		var view = new View({
 			target : $("#groupModifyZone"),
 			tplid : 'manage/status',
@@ -2645,7 +2666,7 @@ define('model.user',['config','helper/request','helper/util','cache'],function(c
 			}else{
 				item.size = 0;
 			}
-			
+
 			if(item.used){
 				item.used = util.getSize(item.used);
 			}else{
@@ -4189,7 +4210,9 @@ define('view.manage',['config','cache','helper/view','helper/util'],function(con
 							var list = Cache.get('sizegroup');
 
 							var obj = list[id];
+
 							if(obj){
+								$('#defSizeGroup').prop('checked',obj.isDefault);
 								$('#sizeGroupName').val(obj.name);
 								if(obj.type == 0){
 									$('input[name=stype]').eq(0).prop({'checked':true});
@@ -5211,7 +5234,8 @@ define('msg',['../school/config','cache','helper/view'],function(config,Cache,Vi
     });
 
     handerObj.triggerHandler('manage:userinfo');
-
+    var headers  = $.ajax({async:false}).getAllResponseHeaders();
+    util.getServerTime(headers);
 
     mModel.getKey('grade');
     mModel.getKey('subject');

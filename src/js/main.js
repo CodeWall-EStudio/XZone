@@ -171,12 +171,14 @@
       school : function(data){
         showModel('school');
         var gid = data.gid,
+            uid = data.uid || 0,
             fdid = data.fdid || 0;
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
             type = data.type || 0;
         var d = {
+          uid : uid,
           fdid : fdid,
           type : type
         }
@@ -188,6 +190,7 @@
         }  
         handerObj.triggerHandler('page:change'); 
         handerObj.triggerHandler('school:init',d);              
+        handerObj.triggerHandler('bind:prep',0);
       },
       mailbox : function(data){
         showModel('mailbox');
@@ -211,7 +214,8 @@
         }               
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('mail:init',d);
-        handerObj.triggerHandler('bind:school',0);   
+        handerObj.triggerHandler('bind:school',0);  
+        handerObj.triggerHandler('bind:prep',0);
         handerObj.triggerHandler('model:change','mail');
       },
       share : function(data){
@@ -304,7 +308,8 @@
 
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('group:init',d);  
-        handerObj.triggerHandler('bind:school',0);   
+        handerObj.triggerHandler('bind:school',0);  
+        handerObj.triggerHandler('bind:prep',0); 
         handerObj.triggerHandler('model:change','file'); 
         //handerObj.triggerHandler('upload:param',d);    
       },
@@ -332,7 +337,8 @@
 
         handerObj.triggerHandler('page:change');   
         handerObj.triggerHandler('my:init',d);
-        handerObj.triggerHandler('bind:school',0);   
+        handerObj.triggerHandler('bind:school',0); 
+        handerObj.triggerHandler('bind:prep',0);  
         handerObj.triggerHandler('model:change','file');  
         //.triggerHandler('upload:param',d);
       },

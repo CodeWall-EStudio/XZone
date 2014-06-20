@@ -9,10 +9,17 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 		logType = 0,
 		logSt = 0,
 		logEt = 0,
+		nowType = -1;
+		nowKey = '',
 		myInfo = null;
 
 	function loadLog(obj){
-		
+		if(nowKey != ''){
+			obj.fileName = nowKey;
+		}
+		if(nowType>=0){
+			obj.fromGroupType = nowType;
+		}
 		var opt = {
 			cgi : config.cgi.logsearch,
 			data : obj
@@ -22,8 +29,10 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 			if(data.err==0){
 				var view = new View({
 					target : $('#logList'),
-					tplid : 'manage/log.list',
+					tplid : 'log.list',
 					data : {
+						filetype : config.filetype,
+						size : Util.getSize,
 						list : data.result.list,
 						logType : Util.logType,
 						time : Util.time
@@ -44,7 +53,15 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 	}
 
 	function init(e,d){
+		$('#logGroupType').val(-1);
 		nowPage = 0;
+		nowGid = 0;
+		isLoad = false;
+		logType = 0;
+		logSt = 0;
+		logEt = 0;
+		nowType = -1;
+		nowKey = '';
 		myInfo = Cache.get('myinfo');
 		$('#logType').attr('data-type',0).text('全部');
 		var obj = {
@@ -96,8 +113,10 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 			});
 			
 			$('.btn-log-search').bind('click',function(){
-				st = $('.log-start-time').pickmeup('get_date').getTime();
-				et = $('.log-end-time').pickmeup('get_date').getTime();
+				nowKey = $('#logSearchKey').val();
+				nowType = $('#logGroupType').val();
+				var st = $('.log-start-time').pickmeup('get_date').getTime();
+				var et = $('.log-end-time').pickmeup('get_date').getTime();
 				var type = parseInt($('#logType').attr('data-type'));
 				if(st == nowDate){
 					st = 0;
@@ -113,7 +132,7 @@ define(['config','cache','helper/view','helper/request','helper/util'],function(
 					alert('开始时间不能小于结束时间!');
 					return;								
 				}
-				if(type || st || et){
+				if(type || st || et || nowKey != '' || nowType >= 0){
 					$('#logList').html('');
 					$('.next-log-page').removeAttr('data-next');
 					var obj = {

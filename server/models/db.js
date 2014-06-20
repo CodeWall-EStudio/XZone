@@ -1,4 +1,11 @@
 var MongoClient = require('mongodb').MongoClient;
+
+//window
+// var Mongo = require('mongodb');
+// var MongoServer = require('mongodb').Server;
+// var wserver  = new MongoServer('localhost', 27017, {auto_reconnect:true});
+// var wdb = new Mongo.Db('xzone', MongoServer, {safe:true});
+
 var EventProxy = require('eventproxy');
 var us = require('underscore');
 

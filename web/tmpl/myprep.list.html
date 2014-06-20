@@ -3,19 +3,22 @@
 				<a href="#myprep=1" class="selected">我的备课</a>
 			</div>			
 			<ul class="my-prep-list">
-				<%if(list.length>0){%>
+				<%if(plength>0){%>
 					<%
-						for(var i =0,l=list.length;i<l;i++){
+						for(var i in list){
 							var item = list[i];
-
 					%>
 					<li>
-						<%if(item.parent){%>
-						<a href="#myprep=1&gid=<%+item.id%>&fdid=<%+item.rootFolder.id%>"><%-item.name%></a>
-						<%}else{%>
-							<%-item.name%>
-						<%}%>
+							<%-item.name%>												
 					</li>
+						<%if(item.child){%>
+							<%
+								for(var i =0,l=item.child.length;i<l;i++){
+									var obj = item.child[i];
+							%>
+							<li><a href="#myprep=1&gid=<%+obj.id%>&fdid=<%+obj.rootFolder.id%>"><%-obj.name%></a></li>	
+							<%}%>
+						<%}%>
 					<%}%>
 				<%}else{%>
 					<li>你还没有加入教学组</li>

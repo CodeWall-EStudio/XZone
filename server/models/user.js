@@ -10,6 +10,7 @@ var mGroup = require('../models/group');
 var mFolder = require('../models/folder');
 var mMessage = require('../models/message');
 var U = require('../util');
+var Logger = require('../logger');
 
 exports.create = function(params, callback){
     var user = {
@@ -144,9 +145,13 @@ exports.getUserAllInfo = function(user, callback){
                 }
                 if(doc.pt === 1 && !(user.__role & config.ROLE_PREPARE_MEMBER)){
                     // 不是备课组的成员, 就不返回这个部门
+                    Logger.debug('[getUserAllInfo] current user is not prepare member');
                 }else{
                     result.departments.push(doc);
                 }
+            });
+            result.departments.sort(function(a, b){
+                return (Number(a.order) || 0) - (Number(b.order) || 0);
             });
             return result;
         }));

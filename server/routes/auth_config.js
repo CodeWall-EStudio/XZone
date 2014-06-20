@@ -517,8 +517,17 @@ exports.RULES = {
 
             if(group){
                 verifyGroup(user, group, function(err){
-                    if(err || !group.__editable){
-                        return callback(msg + 'MANY', ERR.NOT_AUTH);
+                    if(err){
+                        return callback(msg, ERR.NOT_AUTH);
+                    }else if(group.__editable){
+                        return callback(null);
+                    }else if(group.__writable){
+                        // 普通写权限的成员, 只能对自己创建的文件操作
+                        for(var i = 0; i < files.length; i++){
+                            if(files[i].creator.oid.toString() !== uid){
+                                return callback(msg + files[i]._id);
+                            }
+                        }
                     }
 
                     // 这里就不再检查这些文件是否是属于这个group的了
@@ -543,8 +552,17 @@ exports.RULES = {
             
             if(group){
                 verifyGroup(user, group, function(err){
-                    if(err || !group.__editable){
-                        return callback(msg + 'MANY', ERR.NOT_AUTH);
+                    if(err){
+                        return callback(msg, ERR.NOT_AUTH);
+                    }else if(group.__editable){
+                        return callback(null);
+                    }else if(group.__writable){
+                        // 普通写权限的成员, 只能对自己创建的文件操作
+                        for(var i = 0; i < files.length; i++){
+                            if(files[i].creator.oid.toString() !== uid){
+                                return callback(msg + files[i]._id);
+                            }
+                        }
                     }
 
                     // 这里就不再检查这些文件是否是属于这个group的了
@@ -675,6 +693,7 @@ exports.RULES = {
         }
     },
 
+<<<<<<< HEAD
     // '/api/storage': {
     //     verify: function(user, parameter, callback){
 
@@ -685,12 +704,50 @@ exports.RULES = {
     //     }
     // },
     '/api/storage/set': {
+=======
+            mGroup.getGroup({
+                type: 0
+            }, function(err, group){
+                if (err) {
+                    return callback(err);
+                }
+                if (!group) {
+                    return callback('system error, school has not init!');
+                }
+                parameter.school = group;
+                verifyGroup(user, group, function(err){
+                    if (group.__editable) {
+                        return callback(null);
+                    } else {
+                        return callback('no auth', ERR.NOT_AUTH);
+                    }
+                });
+            });
+
+        }
+    },
+    '/api/manage/listFiles': {
+>>>>>>> master
         verify: function(user, parameter, callback){
 
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            return callback('no auth');
+            mGroup.getGroup({
+                type: 0
+            }, function(err, group){
+                if (err) {
+                    return callback(err);
+                }
+                if (!group) {
+                    return callback('system error, school has not init!');
+                }
+                parameter.school = group;
+                verifyGroup(user, group, function(err){
+                    if (group.__editable) {
+                        return callback(null);
+                    } else {
+                        return callback('no auth', ERR.NOT_AUTH);
+                    }
+                });
+            });
         }
     },
 

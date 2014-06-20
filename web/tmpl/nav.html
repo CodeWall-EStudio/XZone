@@ -18,7 +18,7 @@
 								}
 						%>
 							<li>
-								<a <%if(item.auth){%>id="my-m-group<%+item.id%>"<%}%>href="#gid=<%+item.id%>" title="<%+item.name %>"><%-item.name %> </a>
+								<a <%if(item.auth){%>id="my-m-group<%+item.id%>"<%}%>href="#gid=<%+item.id%>" title="<%+item.name %>" class="text-limit"><%-item.name %> </a>
 								<%if(item.auth && item.status == 0){%>
 									<span><a data-id="<%+item.id%>" class="manage-one-group">管理</a></span>
 								<%}else if(item.auth && item.status == 1){%>

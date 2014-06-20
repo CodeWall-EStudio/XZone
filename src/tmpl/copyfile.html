@@ -28,7 +28,7 @@
 									<%
 										for(var i = 0,l=prep.length;i<l;i++){
 											var item = prep[i];
-											if(item.parent){
+											if(item.parent && item.isNow){
 									%>
 									<li>
 										<i cmd="next" class="plus" data-gid="<%+item.id%>" <%if(item.rootFolder){%>data-id="<%+item.rootFolder.id%>"<%}%>></i><a title="<%+item.name%>"  data-gid="<%+item.id%>" <%if(item.rootFolder){%>data-id="<%+item.rootFolder.id%>"<%}%> class="list-link"> <%=item.name%></a>				

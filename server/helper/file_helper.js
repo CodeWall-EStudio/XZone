@@ -145,22 +145,17 @@ exports.saveUploadFile = function(params, callback) {
         callback(null, file);
         // 打log
         mLog.create({
-            fromUserId: loginUser._id.toString(),
-            fromUserName: loginUser.nick,
+            fromUser: loginUser,
 
-            fileId: file._id.toString(),
-            fileName: file.name,
+            file: file,
 
             //操作类型 1: 上传, 2: 下载, 3: copy, 4: move, 5: modify
             //6: delete 7: 预览 8: 保存
             operateType: 1,
 
-            // srcFolderId: null,
-            distFolderId: folder._id.toString(),
-            distFolderName: folder.name,
+            distFolder: folder,
 
-            toGroupId: groupId,
-            toGroupName: folderGroup && folderGroup.name
+            toGroup: folderGroup
         });
 
     });
