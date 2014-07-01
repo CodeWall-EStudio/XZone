@@ -263,6 +263,10 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 							var name = $('#userName').val(),
 								nick = $('#userNick').val(),
 								sg = $('#userSizeGroup').val();
+							if(name === '' || nick === ''){
+								handerObj.triggerHandler('msg:error',22);
+								return;
+							}
 							var obj = {
 								name : name,
 								nick : nick,
