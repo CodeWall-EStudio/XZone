@@ -2677,6 +2677,7 @@ define('model.user',['config','helper/request','helper/util','cache'],function(c
 			item.osize = item.size;
 			item.oused = item.used;	
 			list[item.id] = item;
+			console.log(item);
 			//list.push(item);
 		}
 		return list;
@@ -2942,7 +2943,7 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 		isLoading = false;
 		nowUin = 0,
 		nowPage = 0,
-		nowOrder = '{name:1}',
+		nowOrder = '{status:1}',
 		nowOd = 1,
 		nowOn = 'name',
 		nowKey = '',

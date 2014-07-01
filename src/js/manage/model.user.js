@@ -22,6 +22,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			item.osize = item.size;
 			item.oused = item.used;	
 			list[item.id] = item;
+			console.log(item);
 			//list.push(item);
 		}
 		return list;
