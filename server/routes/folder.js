@@ -404,20 +404,7 @@ exports.statistics = function(req, res){
         return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
     });
 
-<<<<<<< HEAD
-    mFolder.statistics(folder._id, ep.doneLater('statFolder'));
-
-    mFile.statistics(folder._id, ep.doneLater('statFile'));
-
-    ep.all('statFolder', 'statFile', function(folderResult, fileResult){
-
-        var result = folderResult;
-        result.fileStat = fileResult;
-=======
-    statisticsFolder(folder, ep.doneLater('statisticsFolder'));
-
     ep.on('statisticsFolder', function(result){
->>>>>>> master
 
         res.json({
             err: ERR.SUCCESS,
@@ -426,8 +413,6 @@ exports.statistics = function(req, res){
 
     });
 
-<<<<<<< HEAD
-=======
 };
 
 exports.batchStatistics = function(req, res){
@@ -452,5 +437,4 @@ exports.batchStatistics = function(req, res){
         statisticsFolder(folder, ep.group('statisticsFolder'));
     });
 
->>>>>>> master
 };
