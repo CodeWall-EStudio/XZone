@@ -693,18 +693,9 @@ exports.RULES = {
         }
     },
 
-<<<<<<< HEAD
-    // '/api/storage': {
-    //     verify: function(user, parameter, callback){
+    '/api/manage/approveFile': {
+        verify: function(user, parameter, callback){
 
-    //         if(user.__role & config.ROLE_MANAGER){
-    //             return callback(null);
-    //         }
-    //         return callback('no auth');
-    //     }
-    // },
-    '/api/storage/set': {
-=======
             mGroup.getGroup({
                 type: 0
             }, function(err, group){
@@ -726,8 +717,9 @@ exports.RULES = {
 
         }
     },
+
     '/api/manage/listFiles': {
->>>>>>> master
+
         verify: function(user, parameter, callback){
 
             mGroup.getGroup({
@@ -748,6 +740,25 @@ exports.RULES = {
                     }
                 });
             });
+        }
+    },
+
+    // '/api/storage': {
+    //     verify: function(user, parameter, callback){
+
+    //         if(user.__role & config.ROLE_MANAGER){
+    //             return callback(null);
+    //         }
+    //         return callback('no auth');
+    //     }
+    // },
+    '/api/storage/set': {
+        verify: function(user, parameter, callback){
+
+            if(user.__role & config.ROLE_MANAGER){
+                return callback(null);
+            }
+            return callback('no auth');
         }
     },
 
