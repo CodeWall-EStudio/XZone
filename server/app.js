@@ -44,6 +44,7 @@ app.use(express.static(path.join(__dirname, '../web'), { maxAge: config.STATIC_F
 // 检查是否登录, 如果没有登录, 跳转到登录页
 //app.all('/', routes.checkAuthAndLogin);
 //app.all(config.INDEX_PAGE, routes.checkAuthAndLogin);
+app.all('/', routes.index);
 
 // 设置跨域请求头
 app.all('/*', routes.setXHR2Headers);

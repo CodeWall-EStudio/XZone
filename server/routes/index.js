@@ -98,4 +98,7 @@ exports.mediaDownload = function(req, res, next){
     Logger.debug('[mediaDownload]', 'skey: ', skey, 'fileId: ', fileId);
 };
 
-
+exports.index = function(req, res){
+    
+    res.redirect(config.INDEX_PAGE);
+};
