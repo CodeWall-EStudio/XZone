@@ -5,7 +5,7 @@
 			var item = list[i];
 	%>
 		<li><i <%if(item.children.length>0 || item.users.length>0){%>cmd="next" class="plus"<%}%> data-id="<%+item._id%>"></i><strong><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></strong></li>
-		
+
 	<%
 		}
 	}

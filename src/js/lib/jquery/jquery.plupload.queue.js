@@ -145,7 +145,7 @@ used as it is.
 			this.each(function() {
 				var uploader, target, id, contents_bak;
 
-				
+
 
 				target = $(this);
 				id = target.attr('id');
@@ -218,13 +218,19 @@ used as it is.
 
 							inputHTML += '<input type="hidden" name="' + id + '_' + inputCount + '_name" value="' + plupload.xmlEncode(file.name) + '" />';
 							inputHTML += '<input type="hidden" name="' + id + '_' + inputCount + '_status" value="' + (file.status == plupload.DONE ? 'done' : 'failed') + '" />';
-	
+
 							inputCount++;
 
 							$('#' + id + '_count').val(inputCount);
 						}
 						nowsize += file.size;
 
+						if(file.size >= 1024*1024*1024*3){
+							handerObj.triggerHandler('msg:show',{
+								type:'error',
+								msg:file.name+'大于3G!'
+							});
+						}
 						fileList.append(
 							'<li id="' + file.id + '">' +
 								'<div class="plupload_file_name"><span>' + file.name + '</span></div>' +
@@ -371,7 +377,7 @@ used as it is.
 						if (err.code == plupload.FILE_EXTENSION_ERROR) {
 							alert(_("Error: Invalid file extension:") + " " + file.name);
 						}
-						
+
 						file.hint = message;
 						$('#' + file.id).attr('class', 'plupload_failed').find('a').css('display', 'block').attr('title', message);
 					}
@@ -466,6 +472,7 @@ used as it is.
 				handerObj.bind('plup:sizechange',function(e,d){
 					uploader.allsize = d.size || d.info.size || 0;
 					uploader.used = d.used || d.info.used || 0;
+					console.log('allsize:',uploader.allsize,'used:',uploader.used);
 				});
 
 				handerObj.bind('plup:changeSet',function(e,d){
