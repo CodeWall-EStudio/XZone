@@ -1281,7 +1281,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
 	function showErr(e,d){
 		if(d == 1001){
-			window.location = config.cgi.gotologin;
+			//window.location = config.cgi.gotologin;
+			handerObj.triggerHandler('nav:showlogin');
 			return;
 		}
 
