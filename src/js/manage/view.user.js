@@ -825,7 +825,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		d.children = [];
 		d.users = [];
 		console.log(o2key);
-		console.log(o2key[pid]);
+		console.log(o2key[pid],pid);
 		o2key[d._id] = d;
 		if(o2key[pid].children){
 			o2key[pid].children.push(d);

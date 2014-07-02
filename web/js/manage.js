@@ -306,7 +306,7 @@ define('helper/router',[],function(){
  * 常用公用方法
  */
 define('helper/util',['../config'], function(config) {
-
+	var handerObj = $(Schhandler);
 	var util = {};
 
 	/**
@@ -767,6 +767,13 @@ define('helper/util',['../config'], function(config) {
     	$('#pageNav .'+type+'space').addClass('selected');
     }
 
+	var getServerTime = function(str){
+		var tmp = str.split(/\r\n/);
+		var tmp1 = tmp[0].split('Date:');
+		var nowtime = + new Date(tmp1[1]);
+		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
+    }
+
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -785,6 +792,7 @@ define('helper/util',['../config'], function(config) {
 	util.getStatus = getStatus;
 	util.logType = showLogType;
 	util.showNav = showNav;
+	util.getServerTime = getServerTime;
 
 	return util;
 
@@ -3763,7 +3771,7 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 		d.children = [];
 		d.users = [];
 		console.log(o2key);
-		console.log(o2key[pid]);
+		console.log(o2key[pid],pid);
 		o2key[d._id] = d;
 		if(o2key[pid].children){
 			o2key[pid].children.push(d);
