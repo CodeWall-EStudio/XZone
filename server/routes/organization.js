@@ -9,6 +9,7 @@ var ERR = require('../errorcode');
 var mUser = require('../models/user');
 var mOrganization = require('../models/organization');
 var Util = require('../util');
+var Logger = require('../logger');
 
 exports.create = function(req, res){
     var params = req.parameter;
@@ -143,6 +144,9 @@ exports.delete = function(req, res){
 
     var organ = params.organizationId;
     var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err });
+    });
 
     mOrganization.getChildren(organ._id, {}, ep.doneLater('getChildrenDone'));
 
@@ -150,6 +154,9 @@ exports.delete = function(req, res){
 
 
     ep.all('getChildrenDone', 'getUsersDone', function(deps, users){
+
+        Logger.debug('[delete org] ', deps.length, users.length);
+        
         if(deps && deps.length){
             return ep.emit('error', 'this organization has child', ERR.NOT_EMPTY);
         }
@@ -159,7 +166,7 @@ exports.delete = function(req, res){
 
         mOrganization.delete({
             _id: organ._id
-        }, ep.done('deleteDone'));
+        }, ep.doneLater('deleteDone'));
     });
 
     ep.on('deleteDone', function(){

@@ -45,7 +45,16 @@ exports.delete = function(query, callback) {
 
 
 
-    db.department.remove(query, callback);
+    db.department.remove(query, function(err){
+        if(err){
+            return callback(err);
+        }
+        db.departuser.remove({
+            'department.$id': query._id
+        }, {
+            multi: true
+        }, callback);
+    });
 
 };
 
