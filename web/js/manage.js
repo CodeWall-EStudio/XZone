@@ -2677,7 +2677,7 @@ define('model.user',['config','helper/request','helper/util','cache'],function(c
 			item.osize = item.size;
 			item.oused = item.used;	
 			list[item.id] = item;
-			console.log(item);
+			//console.log(item);
 			//list.push(item);
 		}
 		return list;
@@ -2693,8 +2693,9 @@ define('model.user',['config','helper/request','helper/util','cache'],function(c
 			var nowOg = d.nowOg,
 				kl = d.kl,
 				rid = d.rid;
+			delete d.kl;
+			opt.data = d;
 		}
-
 		var success = function(d){
 			if(d.err == 0){
 				var list = convent(d.result.list);
@@ -3761,9 +3762,15 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 
 		d.children = [];
 		d.users = [];
-
+		console.log(o2key);
+		console.log(o2key[pid]);
 		o2key[d._id] = d;
-		o2key[pid].children.push(d);
+		if(o2key[pid].children){
+			o2key[pid].children.push(d);
+		}else{
+			o2key[pid].children = [];
+			o2key[pid].children.push(d);
+		}
 		var pdom = $('#org'+pid);
 		pdom.find('> i').addClass('plus minus');
 		var target = pdom.find('> ul');
