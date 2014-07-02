@@ -824,9 +824,15 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 
 		d.children = [];
 		d.users = [];
-
+		console.log(o2key);
+		console.log(o2key[pid]);
 		o2key[d._id] = d;
-		o2key[pid].children.push(d);
+		if(o2key[pid].children){
+			o2key[pid].children.push(d);
+		}else{
+			o2key[pid].children = [];
+			o2key[pid].children.push(d);
+		}
 		var pdom = $('#org'+pid);
 		pdom.find('> i').addClass('plus minus');
 		var target = pdom.find('> ul');

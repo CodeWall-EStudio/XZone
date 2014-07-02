@@ -22,7 +22,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			item.osize = item.size;
 			item.oused = item.used;	
 			list[item.id] = item;
-			console.log(item);
+			//console.log(item);
 			//list.push(item);
 		}
 		return list;
@@ -38,8 +38,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			var nowOg = d.nowOg,
 				kl = d.kl,
 				rid = d.rid;
+			delete d.kl;
+			opt.data = d;
 		}
-
 		var success = function(d){
 			if(d.err == 0){
 				var list = convent(d.result.list);

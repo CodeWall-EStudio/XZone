@@ -14,6 +14,7 @@
     
     if(!util.getCookie('skey')){
       //window.location = config.cgi.gotologin;
+      alert(1);
       handerObj.triggerHandler('nav:showlogin');
       return;
     }
