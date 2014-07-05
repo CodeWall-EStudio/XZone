@@ -773,6 +773,13 @@ define('helper/util',['../config'], function(config) {
 		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
     }
 
+	var getServerTime = function(str){
+		var tmp = str.split(/\r\n/);
+		var tmp1 = tmp[0].split('Date:');
+		var nowtime = + new Date(tmp1[1]);
+		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
+    }
+
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;

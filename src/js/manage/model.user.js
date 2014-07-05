@@ -3,9 +3,11 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 
 	function convent(obj){
 		var list = {};
+		//console.log(obj);
 		for(var i in obj){
 			var item = obj[i];
 			item.id = item._id;
+
 			item.pre = Math.round(util.getNums(item.used/item.size)*100);
 			if(item.size){
 				item.size = util.getSize(item.size);
@@ -23,7 +25,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			item.oused = item.used;	
 			list[item.id] = item;
 			//list.push(item);
+			//console.log(item);
 		}
+
 		return list;
 	}
 

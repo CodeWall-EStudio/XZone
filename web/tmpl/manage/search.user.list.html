@@ -1,6 +1,7 @@
 <%
 	for(var i in list){
 		var item = list[i];
+		console.log(item);
 %>
 	<tr class="tr-user tr-user<%-item.id%>" data-id="<%-item.id%>" id="tr-user<%-item.id%>" data-status="<%-item.status%>">
 		<td><a class="user-fold" data-id="<%-item.rootFolder.$id%>"><%-item.nick%></a></td>
@@ -13,6 +14,6 @@
 			<%}%>
 		</td>
 		<td><%-item.size%></td>
-		<td><a class="user-data" data-id="<%-item.rootFolder.$id%>" <%if(item.sizegroup){%>data-sid="<%-item.sizegroup.$id%>"<%}%><%-item.pre%>%</a></td>
+		<td><a class="user-data" data-id="<%-item.rootFolder.$id%>" <%if(item.sizegroup){%>data-sid="<%-item.sizegroup.$id%>"<%}%>><%-item.pre%>%</a></td>
 	</tr>
 <%}%>

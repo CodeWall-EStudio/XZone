@@ -470,8 +470,15 @@ used as it is.
 				});
 
 				handerObj.bind('plup:sizechange',function(e,d){
-					uploader.allsize = d.size || d.info.size || 0;
-					uploader.used = d.used || d.info.used || 0;
+					if(typeof d.info !== 'undefined'){
+						uploader.allsize = d.info.size || 0;
+						uploader.used = d.info.used || 0;
+					}else{
+						uploader.allsize = d.size || 0;
+						uploader.used = d.used || 0;
+					}
+					// uploader.allsize = d.size || d.info.size || 0;
+					// uploader.used = d.used || d.info.used || 0;
 					console.log('allsize:',uploader.allsize,'used:',uploader.used);
 				});
 
