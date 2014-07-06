@@ -477,6 +477,11 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		view.appendPanel();
 	}
 
+	//检查层级
+	function checkDeps(id){
+
+	}
+
 	function createOrg(pid,name){
 		var view = new View({
 			target : $('#depModifyZone'),
