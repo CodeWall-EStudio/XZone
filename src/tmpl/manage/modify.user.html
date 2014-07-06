@@ -39,6 +39,13 @@
 					</td>
 				</tr>
 				<tr>
+					<td>权限</td>
+					<td>
+						<input <%if(typeof data.auth != 'undefined' && data.auth === 15){%>checked<%}%> type="checkbox" id="adminAuth" />
+						系统管理员
+					</td>
+				</tr>
+				<tr>
 					<td></td>
 					<td>
 						<button class="btn btn-primary <%if(data){%>btn-user-save<%}else{%>btn-user-newsub<%}%>" <%if(data.name){%>data-modify="1"<%}%> >保存</button>

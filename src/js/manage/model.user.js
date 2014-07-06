@@ -261,6 +261,19 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		request.post(opt,success);
 	}	
 
+	function depSearch(e,d){
+		var key = d.key,
+			list = d.list;
+		var result = {};
+		for(var i in list){
+			var item = list[i];
+			if(item.name.indexOf(key) >= 0){
+				result[item._id] = item;
+			}
+		}
+		handerObj.triggerHandler('user:depsearchreturn',result);
+	}
+
 	var handlers = {
 		'user:orgdel' : delOrg,
 		'user:orgmodify' : modifyOrg,
@@ -272,6 +285,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		'user:folderstatus' : folderStatus,
 		'user:getfolder' : getFolder,
 		'user:deps' : loadUser,
+		'user:depsearch' : depSearch,
 		'user:orguseradd' : orgUserAdd,
 		'user:orguserdel' : orgUserDel		
 	}

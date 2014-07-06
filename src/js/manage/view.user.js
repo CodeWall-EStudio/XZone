@@ -262,14 +262,19 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 						'click' : function(){
 							var name = $('#userName').val(),
 								nick = $('#userNick').val(),
+								auth = 0;
 								sg = $('#userSizeGroup').val();
 							if(name === '' || nick === ''){
 								handerObj.triggerHandler('msg:error',22);
 								return;
 							}
+							if($("#adminAuth:checked").length){
+								auth = 15;
+							}
 							var obj = {
 								name : name,
 								nick : nick,
+								auth : auth,
 								sizegroupId : sg
 							}
 							handerObj.triggerHandler('user:create',obj);
@@ -479,10 +484,37 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 
 	//检查层级
 	function checkDeps(id){
+		//console.log(o2key[id]);
+		//根组织
+		if(!o2key[id]){
+			return false;
+		}else{
+			var loop = 1;
+			var td = o2key[id];
+			id = td.parent.$id;
+			do{
+				
+				if(!o2key[id]){
+					return false;
+				}else{
+					td = o2key[id];
+					id = td.parent.$id;
+					loop++;
+				}
+
+			}while(loop<3);
+			return true;
+		}
 
 	}
 
 	function createOrg(pid,name){
+
+		if(checkDeps(pid)){
+			handerObj.triggerHandler('msg:error',30);
+			return;
+		}
+
 		var view = new View({
 			target : $('#depModifyZone'),
 			tplid : 'manage/modify.dep',
@@ -681,6 +713,43 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 						modifyOrg(id,kl,root);
 					}
 				},
+				'.quit-dep-search' : {
+					'click' : function(){
+						$('#deptreeMa').html('');
+						handerObj.triggerHandler('user:deps');	
+					}
+				},
+				'.deps-search-key' : {
+					'focus' : function(){
+						var t = $(this),
+							v = t.val(),
+							def = t.attr('data-def');
+						if(v == def){
+							t.val('');
+						}
+					},
+					'blur' : function(){
+						var t = $(this),
+							v = t.val(),
+							def = t.attr('data-def');
+						if(v == ''){
+							t.val(def);
+						}
+					}
+				},	
+				'.deps-search-btn' : {
+					'click' : function(){
+							var v = $('.deps-search-key').val(),
+								def = $('.deps-search-key').attr('data-def');
+							if(v != '' && v != def){
+								 var obj = {
+								 	key : v,
+								 	list : o2key
+								 }
+								 handerObj.triggerHandler('user:depsearch',obj);
+							}						
+					}
+				},		
 				'.btn-org-create' : {
 					'click' : function(){
 						var id = nowOid;
@@ -829,8 +898,6 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 
 		d.children = [];
 		d.users = [];
-		console.log(o2key);
-		console.log(o2key[pid],pid);
 		o2key[d._id] = d;
 		if(o2key[pid].children){
 			o2key[pid].children.push(d);
@@ -898,6 +965,17 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		}	
 	}
 
+	function depSearch(e,d){
+		var view = new View({
+			target : $('#depsBlock'),
+			tplid : 'manage/deps.search',
+			data : {
+				list : d
+			}
+		});
+		view.createPanel();
+	}
+
 	function delOrgUserKey(d){
 		var user = o2key[d.organizationId].users;
 		var tmp = [];
@@ -938,7 +1016,8 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		'user:depsload' : depsLoad,
 		'user:foldload' : foldLoad,
 		'user:addusersuc' : addUserSuc,
-		'user:delusersuc' : delUserSuc
+		'user:delusersuc' : delUserSuc,
+		'user:depsearchreturn' : depSearch
 	}
 
 	for(var i in handlers){
