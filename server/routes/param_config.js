@@ -278,7 +278,7 @@ module.exports = {
             },
             {
                 name: 'activityTime',
-                type: 'number'
+                type: 'string'
             },
             {
                 name: 'file_path'

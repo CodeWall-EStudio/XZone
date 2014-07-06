@@ -42,7 +42,9 @@ function getFolder(params, callback){
         }else{ // 没有, 新建一个
             mFolder.create({
                 name: params.name,
+                mark: params.mark,
                 deletable: false,
+                editable: false,
                 creator: params.creator,
                 folder: params.parent
             }, callback);
@@ -96,6 +98,7 @@ exports.upload = function(req, res){
     ep.on('getMediaFolderSucc', function(mediaFolder){
         getFolder({
             name: activityId + '',
+            mark: activityTime + activityName,
             creator: loginUser._id,
             parent: mediaFolder
         }, ep.done('getActFolderSucc'));
