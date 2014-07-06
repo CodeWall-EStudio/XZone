@@ -57,6 +57,8 @@ exports.upload = function(req, res){
     var skey = req.skey;
     console.log('>>>media upload, skey:',skey);
     var activityId = parameter.activityId;
+    var activityName = parameter.activityName;
+    var activityTime = parameter.activityTime;
 
     var ep = new EventProxy();
     ep.fail(function(err, code){
