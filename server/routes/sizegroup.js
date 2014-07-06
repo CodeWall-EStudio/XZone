@@ -74,8 +74,8 @@ exports.modify = function(req, res){
         ep.emitLater('checkNameDone', null);
     }
 
-    ep.on('checkNameDone', function(doc){
-        if(doc){
+    ep.on('checkNameDone', function(exists){
+        if(exists){
             return res.json({ err: ERR.DUPLICATE, msg: 'name duplicate'});
         }
 
