@@ -124,6 +124,7 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 					var prep = Cache.get('preps');
 					data.prep = prep.g2key;
 				}
+				console.log(data);
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
