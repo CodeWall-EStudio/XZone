@@ -71,6 +71,10 @@ module.exports = {
             {
                 name: 'messageId',
                 type: 'message'
+            },
+            {
+                name: 'size', // 指定图片的预览图大小, 只有格式为图片时有用
+                type: 'string'
             }
         ]
     },

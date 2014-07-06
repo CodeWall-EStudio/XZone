@@ -6,6 +6,7 @@ var EventProxy = require('eventproxy');
 var process = require('child_process');
 var archiver = require('archiver');
 var us = require('underscore');
+var images = require('images');
 
 var db = require('../models/db');
 var config = require('../config');
@@ -174,6 +175,19 @@ exports.preview = function(req, res){
 
     var file = parameter.fileId;
     var message = parameter.messageId;
+    var size = parameter.size;
+    var imgSize;
+
+    if(size){ // 如果类型是图片, 可以指定图片的预览图大小
+        imgSize = size.split('_');
+        if(imgSize.length === 2){
+            imgSize[0] = Number(imgSize[0]);
+            imgSize[1] = Number(imgSize[1]);
+            if(!imgSize[0] || !imgSize[1]){
+                imgSize = null;
+            }
+        }
+    }
     var loginUser = req.loginUser;
 
     var resource, folder;
@@ -229,7 +243,7 @@ exports.preview = function(req, res){
                 res.send();
             }
             break;
-        case 1://image
+        
         case 3://audio
         case 4://video
         case 5://stream
@@ -240,6 +254,23 @@ exports.preview = function(req, res){
             });
             res.send();
             break;
+
+        case 1://image
+            if(imgSize){
+                
+                filePath += '.' + size;
+                if(!fs.existsSync(filePath)){
+                    Logger.info('[preview] image ' + filePath + ' is not exists, try create');
+                    images(filePath).size(imgSize[0], imgSize[1]).save(filePath);
+                }
+            }
+            res.set({
+                'Content-Type': resource.type,
+                'X-Accel-Redirect': filePath
+            });
+            res.send();
+            break;
+
         default:
             res.json({ err: ERR.NOT_SUPPORT, msg: 'not support mimes' });
         }
