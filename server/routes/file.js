@@ -258,10 +258,11 @@ exports.preview = function(req, res){
         case 1://image
             if(imgSize){
                 
-                filePath += '.' + size;
-                if(!fs.existsSync(filePath)){
-                    Logger.info('[preview] image ' + filePath + ' is not exists, try create');
-                    images(filePath).size(imgSize[0], imgSize[1]).save(path.join(config.FILE_SAVE_ROOT, filePath));
+                var absPath = path.join(config.FILE_SAVE_ROOT, filePath + '.' + size);
+                if(!fs.existsSync(absPath)){
+                    Logger.info('[preview] image ' + absPath + ' is not exists, try create');
+                    images(path.join(config.FILE_SAVE_ROOT, filePath))
+                            .size(imgSize[0], imgSize[1]).save(absPath);
                 }
             }
             res.set({
