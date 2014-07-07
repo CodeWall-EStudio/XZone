@@ -43,6 +43,7 @@ function getFolder(params, callback){
             mFolder.create({
                 name: params.name,
                 mark: params.mark,
+                type: 1,
                 deletable: false,
                 editable: false,
                 creator: params.creator,
@@ -55,7 +56,7 @@ function getFolder(params, callback){
 exports.upload = function(req, res){
 
     var parameter = req.parameter;
-    var loginUser;
+    var loginUser = req.loginUser;
     var skey = req.skey;
     console.log('>>>media upload, skey:',skey);
     var activityId = parameter.activityId;
@@ -69,22 +70,29 @@ exports.upload = function(req, res){
         res.json({ code: code || ERR.SERVER_ERROR, msg: err });
     });
 
-    if(!skey){
-        ep.emit('error', 'need login', ERR.NOT_LOGIN);
-        return;
-    }else if(!parameter.file_path){
-        ep.emit('error', 'upload file fail');
-        return;
+    if(!loginUser){
+        if(!skey){
+            ep.emit('error', 'need login', ERR.NOT_LOGIN);
+            return;
+        }else if(!parameter.file_path){
+            ep.emit('error', 'upload file fail');
+            return;
+        }
+
+        userHelper.findAndUpdateUserInfo(skey, config.AUTH_TYPE, ep.doneLater('getUserInfoSuccess'));
+
+        ep.on('getUserInfoSuccess', function(user){
+            loginUser = user;
+            // TODO 这里应该有个 session 保存起来, 不要每次都去请求服务器
+            mFolder.getFolder({ _id: loginUser.rootFolder.oid }, ep.done('getRootFolder'));
+
+        });
+    }else{
+
+        mFolder.getFolder({ _id: loginUser.rootFolder.oid }, ep.doneLater('getRootFolder'));
     }
 
-    userHelper.findAndUpdateUserInfo(skey, config.AUTH_TYPE, ep.doneLater('getUserInfoSuccess'));
-
-    ep.on('getUserInfoSuccess', function(user){
-        loginUser = user;
-        // TODO 这里应该有个 session 保存起来, 不要每次都去请求服务器
-        mFolder.getFolder({ _id: user.rootFolder.oid }, ep.done('getRootFolder'));
-
-    });
+    
 
     ep.on('getRootFolder', function(rootFolder){
         getFolder({
@@ -169,6 +177,7 @@ exports.download = function(req, res){
 
     var file = parameter.fileId;
     var skey = req.skey;
+    var loginUser = req.loginUser;
     
     var ep = new EventProxy();
     ep.fail(function(err, code){
@@ -210,6 +219,8 @@ exports.download = function(req, res){
         res.send();
 
         mLog.create({
+
+            fromUser: loginUser,
 
             fromUserId: null,
             fromUserName: 'media download',

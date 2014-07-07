@@ -22,7 +22,7 @@ exports.create = function(params, callback){
         mark: params.mark || '',
         createTime: Date.now(),
         updateTime: Date.now(),
-        type: 0,
+        type: params.type || 0,
         parent: null,
         deletable: ('deletable' in params) ? params.deletable : true,
         isOpen: isOpen === 1, // 0 非公开, 1 公开

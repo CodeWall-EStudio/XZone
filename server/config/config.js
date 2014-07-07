@@ -40,7 +40,8 @@ exports.DEFAULT_USER_SPACE = 3 * 1024 * 1024 * 1024;
 
 // 允许新媒体跨域上传和下载资源的 host
 exports.XHR2_ALLOW_ORIGIN = [
-    'http://media.71xiaoxue.com'
+    'http://media.71xiaoxue.com',
+    'http://media.codewalle.com'
 ];
 
 // 下载的接口列表
@@ -48,6 +49,13 @@ exports.DOWNLOAD_APIS = [
     '/api/file/download',
     '/api/file/batchDownload'
 ];
+
+// 多媒体的上传接口
+exports.MEDIA_UPLOAD_CGI = '/api/media/upload';
+
+// 多媒体下载接口
+exports.MEDIA_DOWNLOAD_CGI = '/api/media/download';
+
 
 exports.AUTH_TYPE = 'self';// auto, sso, qq, self
 

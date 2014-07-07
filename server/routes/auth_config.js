@@ -23,8 +23,8 @@ exports.AUTH_WHITE_LIST = [
     '/api/user/loginSuccess',
     '/api/user/loginWithQQ',
     '/api/user/loginSuccessWithQQ',
-    '/api/media/upload',
-    '/api/media/download',
+    // '/api/media/upload',
+    // '/api/media/download',
     '/api/system/init' // 系统初始化接口, 只会运行一次
 ];
 
