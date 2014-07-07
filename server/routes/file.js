@@ -257,12 +257,12 @@ exports.preview = function(req, res){
 
         case 1://image
             if(imgSize){
+                var oldPath = path.join(config.FILE_SAVE_ROOT, filePath);
                 filePath += '.' + size + path.extname(filePath);
-                var absPath = path.join(config.FILE_SAVE_ROOT, filePath);
-                if(!fs.existsSync(absPath)){
-                    Logger.info('[preview] image ' + absPath + ' is not exists, try create');
-                    images(path.join(config.FILE_SAVE_ROOT, filePath))
-                            .size(imgSize[0], imgSize[1]).save(absPath);
+                var newPath = path.join(config.FILE_SAVE_ROOT, filePath);
+                if(!fs.existsSync(newPath)){
+                    Logger.info('[preview] image ' + newPath + ' is not exists, try create');
+                    images(oldPath).size(imgSize[0], imgSize[1]).save(newPath);
                 }
             }
             res.set({
