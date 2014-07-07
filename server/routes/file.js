@@ -261,7 +261,7 @@ exports.preview = function(req, res){
                 filePath += '.' + size;
                 if(!fs.existsSync(filePath)){
                     Logger.info('[preview] image ' + filePath + ' is not exists, try create');
-                    images(filePath).size(imgSize[0], imgSize[1]).save(filePath);
+                    images(filePath).size(imgSize[0], imgSize[1]).save(path.join(config.FILE_SAVE_ROOT, filePath));
                 }
             }
             res.set({
