@@ -69,7 +69,7 @@ exports.mediaUpload = function(req, res, next){
 
     var media = Number(req.param('media', 0));
 
-    Logger.debug('[mediaUpload]', 'type: ', type);
+    Logger.debug('[mediaUpload]', 'media: ', media);
 
     if (media === 1) {
 
