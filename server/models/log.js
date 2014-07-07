@@ -87,7 +87,7 @@ exports.create = function(params, callback) {
                 doc.fromGroupType = fromGroup.type;
             }
 
-            Logger.debug('[log] create: ', doc);
+            // Logger.debug('[log] create: ', doc);
             db.log.save(doc, function(err, result) {
                 if (callback) {
                     callback(err, result && doc);
