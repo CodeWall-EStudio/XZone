@@ -684,6 +684,15 @@ module.exports = {
         ]
     },
 
+    '/api/user/validate': {
+        method: 'GET',
+        params: [
+            {
+                name: 'skey'
+            }
+        ]
+    },
+
     '/api/user/loginSuccess': {
         method: 'GET',
         params: [
