@@ -21,10 +21,12 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowType = 0,
 		nowSchool = 0,
 		nowAuth = 0,
+		nowOtype = 'list',
 		isMember = {},		
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		icoTarget = $("#fileIcoList"),
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),
 		tabletitTarget = $("#tableTit");
@@ -190,9 +192,16 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowPrep){
 			pr = nowPrep;
 		}
+		var target = tmpTarget,
+			tplid = 'file.user.list';
+
+		if(nowOtype === 'ico'){
+			target = icoTarget;
+			tplid = 'file.ico';
+		}
 		var view = new View({
-			target : tmpTarget,
-			tplid : 'file.user.list',
+			target : target,
+			tplid : tplid,
 			data : {
 				list : d.list,
 				filetype : config.filetype,
@@ -690,6 +699,22 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			},
 			after : function(){
 				$("#actWin").modal('show');
+
+				//拉学校文件夹
+				if(d.type === 'school'){
+						var myinfo = Cache.get('myinfo');
+						var school = myinfo.school;
+						var obj = {
+							target : $('#groupFoldResultUl'),
+							tplid : 'share.fold.li',
+							groupId : school.id,
+							folderId : school.rootFolder.$id,
+							type : 2,
+							root : 1
+						}
+						$('#groupFoldResultUl').html('');
+						handerObj.triggerHandler('fold:get',obj);					
+				}
 
 				$('.act-search-input').focus(function(){
 					var target = $(this),

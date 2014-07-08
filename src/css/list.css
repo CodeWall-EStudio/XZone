@@ -160,6 +160,30 @@
 	background:url(imgs/star1.png) no-repeat;
 }
 
+.dis-list-type i.share,.dis-ico-type i.share{
+	width:20px;
+	height:16px;
+	border:1px solid #B9B8B8;
+	border-radius:3px;
+	margin-left:0;
+	background:url(imgs/share.png) no-repeat center;
+}
+.dis-list-type i.down,.dis-ico-type i.down{
+	width:20px;
+	height:16px;
+	border:1px solid #B9B8B8;
+	border-radius:3px;
+	border-radius:3px;	
+	background:url(imgs/down.png) no-repeat center;
+}
+.dis-list-type i.more,.dis-ico-type i.more{
+	width:20px;
+	height:16px;
+	border:1px solid #B9B8B8;
+	border-radius:3px;
+	border-radius:3px;	
+	background:url(imgs/point.png) no-repeat center;
+}
 
 .dis-list-type li:hover,.dis-ico-type li:hover{
 	background:#e4e3e3;
@@ -178,40 +202,56 @@
 	line-height:60px;
 }
 
-
-
-
-.dis-ico-type li.tit{
-	background:#fbfbfb;
-	width:100%;
-	height:28px;
-	line-height:28px;
+#foldIcoList ul,#fileIcoList ul,#pageZone{
 	clear:both;
-	float:none;
-	font-weight:bold;
 }
-.dis-ico-type li.tit .td1,.dis-ico-type li.tit .td2,.dis-ico-type li.tit .td3{
-	float:left;
-	width:38px;
-}
-.dis-ico-type li.tit .td2{
-	width:450px;
-}
-.dis-ico-type li.tit .td3{
-	width:130px;
-	line-height:60px;
-}
-.dis-ico-type{
-	/*overflow:hidden;*/
-}
+
+
+
 .dis-ico-type li{
 	position:relative;
 	float:left;
 	width:130px;
-	height:180px;
+	height:210px;
 	margin:0 5px;
 	padding-bottom:5px;
 	transition:.25s linear;
+}
+.dis-ico-type img{
+	margin: 19px 0 0 15px;
+}
+
+.dis-ico-type dl{
+	text-align:center;
+	margin:0;
+}
+.dis-ico-type dt{
+	padding:4px 10px;
+	width: 100px;
+	display:inline-block;
+	overflow:hidden;
+	white-space:nowrap;
+	text-overflow:ellipsis;
+}
+.dis-ico-type dd{
+	padding:0 10px;
+	display:none;
+}
+.dis-ico-type dd.show{
+	padding:0 0 10px 0;
+	font-size:12px;
+	display:block;
+}
+/*
+.dis-ico-type .td2 dd span{
+	width:30px;
+	height:24px;
+	float:left;
+	background:url(imgs/pat-bg.png) no-repeat;
+	color:#fff;
+	margin-right:3px;
+	font-size:0;
+	line-height:0;
 }
 .dis-ico-type li .td1{
 	position:absolute;
@@ -229,12 +269,7 @@
 .dis-ico-type i{
 	display:inline-block;
 }
-.dis-ico-type .td2 i.fold{
-	margin:19px 0 0 15px;
-	width:100px;
-	height:100px;
-	background:url(imgs/file.png) 0 2px no-repeat;
-}
+
 .dis-ico-type .td2 img{
 	margin:19px 0 0 15px;
 	width:100px;
@@ -246,29 +281,6 @@
 	margin:19px 0 0 15px;
 	background:url(imgs/gife1.png) no-repeat;
 }
-.dis-ico-type .td2 dl{
-	text-align:center;
-	margin:0;
-}
-.dis-ico-type .td2 dt{
-	padding:4px 10px;
-}
-.dis-ico-type .td2 dd{
-	padding:0 10px;
-	display:none;
-}
-/*
-.dis-ico-type .td2 dd span{
-	width:30px;
-	height:24px;
-	float:left;
-	background:url(imgs/pat-bg.png) no-repeat;
-	color:#fff;
-	margin-right:3px;
-	font-size:0;
-	line-height:0;
-}
-*/
 .dis-ico-type .td3{
 	display:none;
 }
@@ -290,7 +302,14 @@
 	background:#fbfbfb;
 	border:none;
 }
+*/
 
+.dis-ico-type i.fold{
+	margin:19px 0 0 15px;
+	width:100px;
+	height:100px;
+	background:url(imgs/file.png) 0 2px no-repeat;
+}
 
 .dis-ico-type li:hover{
 	border:2px solid #4682d9;
@@ -299,14 +318,22 @@
 .dis-ico-type li:hover .td1{
 	display:block;
 }
-.dis-ico-type li:hover .td2 dd{
+.dis-ico-type li:hover dd{
 	display:block;
 }
 .dis-ico-type li:hover .td4 span{
 	display:none;
 }
-.dis-ico-type li:hover .td4 i{
-	display:block;
+.dis-ico-type li:hover .editmark{
+	padding:0;
+	width:100%;
+}
+.dis-ico-type li:hover input{
+	padding:0;
+	width:100%;
+}
+.dis-ico-type li:hover i{
+	display:inline-block;
 }
 .dis-ico-type li.last,.dis-list-type li.last{
 	float:none;
@@ -348,6 +375,7 @@ i.ad{
 	background:url(imgs/arrow-up.png) no-repeat;
 	
 }
+
 .dis-list-type .td-time i.au{
 	position:static;
 	background:url(imgs/arrow-up.png) no-repeat;

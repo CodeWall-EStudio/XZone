@@ -86,4 +86,18 @@
 			<%}%>
 		</ul>
 	</li>
+	<li>
+		<a id="drop-type" "button" data-toggle="dropdown" >
+			<%if(otype==='list'){%>
+				列表
+			<%}else{%>
+				缩略图
+			<%}%>
+			<b class="caret"></b></a>
+		</a>
+		<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+			<li><a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%><%if(fold){%>fdid=<%+fold.id%>&<%}%>type=<%+type%>&otype=list">列表</a></li>
+			<li><a href="#<%if(school){%>school=1&<%}%><%if(gid){%>gid=<%+gid%>&<%}%><%if(fold){%>fdid=<%+fold.id%>&<%}%>type=<%+type%>&otype=ico">缩略图</a></li>
+		</ul>
+	</li>
 </ul>

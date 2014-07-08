@@ -2609,10 +2609,12 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		nowType = 0,
 		nowSchool = 0,
 		nowAuth = 0,
+		nowOtype = 'list',
 		isMember = {},		
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		icoTarget = $("#fileIcoList"),
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),
 		tabletitTarget = $("#tableTit");
@@ -2778,9 +2780,16 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		if(nowPrep){
 			pr = nowPrep;
 		}
+		var target = tmpTarget,
+			tplid = 'file.user.list';
+
+		if(nowOtype === 'ico'){
+			target = icoTarget;
+			tplid = 'file.ico';
+		}
 		var view = new View({
-			target : tmpTarget,
-			tplid : 'file.user.list',
+			target : target,
+			tplid : tplid,
 			data : {
 				list : d.list,
 				filetype : config.filetype,
@@ -3278,6 +3287,22 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			},
 			after : function(){
 				$("#actWin").modal('show');
+
+				//拉学校文件夹
+				if(d.type === 'school'){
+						var myinfo = Cache.get('myinfo');
+						var school = myinfo.school;
+						var obj = {
+							target : $('#groupFoldResultUl'),
+							tplid : 'share.fold.li',
+							groupId : school.id,
+							folderId : school.rootFolder.$id,
+							type : 2,
+							root : 1
+						}
+						$('#groupFoldResultUl').html('');
+						handerObj.triggerHandler('fold:get',obj);					
+				}
 
 				$('.act-search-input').focus(function(){
 					var target = $(this),
@@ -4075,6 +4100,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		nowUid = 0,
 		nowType = 0,
 		nowGrade = 0,
+		nowOtype = 'list',
 		nowTag = 0,	
 		nowPid = 0,	
 		isOpen = 0,
@@ -4084,6 +4110,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		icoTarget = $('#fileIcoList'),
 		foldTarget = $('#foldList'),
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),	
@@ -4099,6 +4126,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			gname : nowGinfo.name || '',
 			school : nowSchool,
 			filetype : config.filetype,
+			otype : nowOtype,
 			root : rootFd,
 			type : nowType,
 			key : nowKey,
@@ -4317,6 +4345,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			nowUid = d.uid || 0;
 			rootFd = d.rootfdid || 0;
 			nowType = d.type;
+			nowOtype = d.otype;
 			if(d.order){
 				nowOrder = d.order;
 			}
@@ -4329,6 +4358,12 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			nowTag = d.tag || 0;
 			nowUid = d.uid || 0;
 			nowPid = d.pid || 0;						
+		}
+
+		if(nowOtype === 'ico'){
+			$('#fileList').attr('class','dis-ico-type');
+		}else{
+			$('#fileList').attr('class','dis-list-type');
 		}
 
 		if(nowGid && !nowFd || (typeof nowData.now !== 'undefined' && !nowData.now)){
@@ -4499,9 +4534,19 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		if(nowPrep){
 			pr = nowPrep;
 		}
+		console.log(d.list);
+
+		var target = tmpTarget,
+			tplid = 'file.user.list';
+
+		if(nowOtype === 'ico'){
+			target = icoTarget;
+			tplid = 'fold.ico';
+		}
+
 		var view = new View({
-			target : tmpTarget,
-			tplid : 'fold.user.list',
+			target : target,
+			tplid : tplid,
 			data : {
 				list : d.list,
 				gid : nowGid,
@@ -4513,7 +4558,8 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 				ginfo : nowGinfo,
 				auth : nowAuth,
 				tag : nowTag,
-				uid : nowUid
+				uid : nowUid,
+				fdid : nowFd
 			}
 		});
 		view.beginPanel();		
@@ -7985,7 +8031,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
         showModel('school');
         var gid = data.gid,
             uid = data.uid || 0,
-            fdid = data.fdid || 0;
+            fdid = data.fdid || 0,
+            otype = data.otype || 'list';
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
@@ -7993,7 +8040,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
         var d = {
           uid : uid,
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -8101,7 +8149,9 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
         var gid = data.gid,
             uid = data.uid || 0,
-            fdid = data.fdid || 0;
+            fdid = data.fdid || 0,
+            otype = data.otype || 'list';
+
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
@@ -8110,7 +8160,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
           gid : gid,
           uid : uid,
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -8136,10 +8187,13 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
-            type = data.type || 0;
+            type = data.type || 0,
+            otype = data.otype || 'list';
+
         var d = {
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];

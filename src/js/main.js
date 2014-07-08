@@ -172,7 +172,8 @@
         showModel('school');
         var gid = data.gid,
             uid = data.uid || 0,
-            fdid = data.fdid || 0;
+            fdid = data.fdid || 0,
+            otype = data.otype || 'list';
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
@@ -180,7 +181,8 @@
         var d = {
           uid : uid,
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -288,7 +290,9 @@
 
         var gid = data.gid,
             uid = data.uid || 0,
-            fdid = data.fdid || 0;
+            fdid = data.fdid || 0,
+            otype = data.otype || 'list';
+
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
@@ -297,7 +301,8 @@
           gid : gid,
           uid : uid,
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -323,10 +328,13 @@
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
-            type = data.type || 0;
+            type = data.type || 0,
+            otype = data.otype || 'list';
+
         var d = {
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
