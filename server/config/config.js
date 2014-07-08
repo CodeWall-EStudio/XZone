@@ -25,13 +25,13 @@ exports.JOD_CONVERTER = '/var/run/jodconverter/lib/jodconverter-core-3.0-beta-4.
 // ==== 应用自身相关的配置 ====================================================
 
 // 应用运行的域名
-exports.APP_DOMAIN = 'http://xzone.codewalle.com';
+exports.APP_DOMAIN = ;'http://xzone.codewalle.com'
 
 // cookie 的加密key
 exports.COOKIE_SECRET= 'xzone_HeMHFxTAMPAjlRVH_secret';
 
 // cookie 的有效时间
-exports.COOKIE_TIME = 2 * 60 * 60 * 1000; // 2 小时
+exports.COOKIE_TIME = 24 * 60 * 60 * 1000; // 24 小时
 
 exports.STATIC_FILE_EXPIRES = 7 * 24 * 60 * 60 * 1000; // 静态文件的过期时间
 
@@ -41,7 +41,7 @@ exports.DEFAULT_USER_SPACE = 3 * 1024 * 1024 * 1024;
 // 允许新媒体跨域上传和下载资源的 host
 exports.XHR2_ALLOW_ORIGIN = [
     'http://media.71xiaoxue.com',
-    'http://media.codewalle.com'
+    'http://swall.codewalle.com'
 ];
 
 // 下载的接口列表
