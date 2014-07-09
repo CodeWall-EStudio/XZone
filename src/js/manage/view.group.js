@@ -124,7 +124,6 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 					var prep = Cache.get('preps');
 					data.prep = prep.g2key;
 				}
-				console.log(data);
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
@@ -365,8 +364,9 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 		'.del-share-user' : {
 			'click' : function(){
 				var t = $(this),
-					id = t.attr('data-id');
-				delShareUser({_id:id});				
+					id = t.attr('data-id'),
+					type = t.attr('data-type') || false;
+				delShareUser({_id:id,type:type});				
 			}
 		},
 		//排序
@@ -724,13 +724,13 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 
 	//添加
 	function addShareUser(obj,type){
-		//console.log(obj);
 		var id = 'memberUser';
 		//管理员
 		if(type){
 			id = 'manageUser';
 		}
 		obj.tid = id;
+		$('.'+id+obj._id).remove();
 		if($('.'+id+obj._id).length==0){
 			var view = new View({
 				target : $('#shareToUser'),
@@ -798,7 +798,8 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 	function userLoaded(e,d){
 		isLoading = false;
 		var data = {
-			list : d.list
+			list : d.list,
+			type : d.type
 		}
 		if(d.modify){
 			data.members = nowGroup.members;
@@ -828,9 +829,9 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 							addShareUser({
 								_id : id,
 								nick : nick
-							});
+							},d.type);
 						}else{
-							delShareUser({_id:id});	
+							delShareUser({_id:id},d.type);	
 						}
 
 					}
@@ -902,9 +903,11 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 						//管理员
 						if(d.type){
 							$('#groupManageList').html($('#shareToUser').html());
+							$('#groupManageList i.del-share-user').attr('data-type',1);
 						//成员
 						}else{
 							$('#groupMemberList').html($('#shareToUser').html());
+							$('#groupManageList i.del-share-user').attr('data-type',0);
 						}
 					}
 				}
