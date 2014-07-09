@@ -302,9 +302,14 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 						'click' : function(){
 							var sizeid = $('.user-size-group').val();
 							var nick = $('#userNick').val();
+							var auth = 0;
+							if($("#adminAuth:checked").length){
+								auth = 15;
+							}							
 							var obj = {
 								userId : nowUin,
 								nick : nick,
+								auth : auth,
 								sizegroupId : sizeid
 							}
 							handerObj.triggerHandler('user:modify',obj);
