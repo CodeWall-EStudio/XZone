@@ -261,8 +261,7 @@ exports.login = function(req, res) {
 
     mUser.getUser({
         name: name,
-        pwd: pwd,
-        status: 0
+        pwd: pwd
     }, function(err, user) {
 
         if (err) {
@@ -282,6 +281,17 @@ exports.login = function(req, res) {
                 });
             }
             return res.redirect(config.LOGIN_FAIL_PAGE + '?err=' + ERR.ACCOUNT_ERROR);
+        }
+        if (user.status === 1) {
+
+            // status = 1 的用户是被关闭的, 不允许调用
+            if (json) {
+                return res.json({
+                    err: ERR.ACCOUNT_CLOSE,
+                    msg: 'account has closed'
+                });
+            }
+            return res.redirect(config.LOGIN_FAIL_PAGE + '?err=' + ERR.ACCOUNT_CLOSE);
         }
 
         var skey = Util.md5(user.name + ':' + user.pwd + ':' + Date.now());
