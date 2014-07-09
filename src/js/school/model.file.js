@@ -385,7 +385,7 @@ define(['config','helper/request','helper/util','cache','helper/test'],function(
 					}
 				};
 				if(!check){
-					handerObj.triggerHandler('fild:checkSuc',{
+					handerObj.triggerHandler('file:checkSuc',{
 						check: check,cl: cl,fl:fl,fd:fd
 					});
 				}else{

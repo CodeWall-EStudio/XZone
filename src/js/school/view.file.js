@@ -1190,7 +1190,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		'model:change' : modelChange,
 		'search:start' : search,
 		'file:del' : fileDel,
-		'fild:checkSuc' : fileCheckSuc,
+		'file:checkSuc' : fileCheckSuc,
 		'file:init' : fileInit,
 		'file:load' : fileLoad,
 		'file:tocoll' : toColl,
