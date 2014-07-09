@@ -58,6 +58,7 @@ define(function() {
 			filereview : CGI_PATH+'file/preview'+EXT,	
 			filequery : CGI_PATH+'file/query'+EXT,//order page pageNum type 1 查询我分享给小组的  groupid
 			filestatus : CGI_PATH+'file/statistics'+EXT,
+			mfilelist : CGI_PATH+'manage/listFiles',
 			//batchDownload
 
 
@@ -68,6 +69,7 @@ define(function() {
 			foldlist : CGI_PATH+'folder/list'+EXT,
 			foldsearch : CGI_PATH+'folder/search'+EXT,
 			folddel : CGI_PATH+'folder/delete'+EXT,
+			foldstatus : CGI_PATH+'folder/batchStatistics',
 
 
 			//文件收藏

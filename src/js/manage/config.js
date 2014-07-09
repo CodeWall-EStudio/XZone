@@ -58,6 +58,7 @@ define(function() {
 			filereview : CGI_PATH+'file/preview'+EXT,	
 			filequery : CGI_PATH+'file/query'+EXT,//order page pageNum type 1 查询我分享给小组的  groupid
 			filestatus : CGI_PATH+'file/statistics'+EXT,
+			mfilelist : CGI_PATH+'manage/listFiles',
 			//batchDownload
 
 
@@ -68,6 +69,7 @@ define(function() {
 			foldlist : CGI_PATH+'folder/list'+EXT,
 			foldsearch : CGI_PATH+'folder/search'+EXT,
 			folddel : CGI_PATH+'folder/delete'+EXT,
+			foldstatus : CGI_PATH+'folder/batchStatistics',
 
 
 			//文件收藏
@@ -150,6 +152,8 @@ define(function() {
 			0 : '操作成功!',
 			10: '排序序号必须填写',
 			11 : '组织名称必须填写',
+			20 : '新密码和重复密码必须一致',
+			21 : '请填写用户名和密码!',
 			50 : '你要上传的文件已经超过你的剩余空间!',
 			60 : '你还没有选择要共享的目录',
 			75 : '序号只能在1~99之间',
@@ -167,7 +171,8 @@ define(function() {
 			1014 : '同名啦,请修改名称!',
 			1015 : '已经归档啦!',
 			1016 : '该资源不能删除',
-			1017 : '该目录下还有其他文件，无法删除!'
+			1017 : '该目录下还有其他文件，无法删除!',
+			1041 : '用户名或密码错误!'
 		}
 	}
 // module.exports = exports = {
