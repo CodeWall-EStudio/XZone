@@ -3,3 +3,4 @@ test/*
 data/*
 logs/*
 /config.js
+server/helper/getOrgTree.htm.text
