@@ -55,7 +55,7 @@ function createDepart(parent, dep, callback){
             if(user){ // db已经有该用户, 更新资料
                 user.nick = nick;
                 user.name = loginName;
-                db.user.save(user, ep.done('updateUserSuccess'));
+                mUser.save(user, ep.done('updateUserSuccess'));
             }else{
                 user = {
                     openid: openid,

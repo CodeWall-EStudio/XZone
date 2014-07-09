@@ -235,6 +235,9 @@ function checkTeacherDepartment(userId, callback){
         if(err){
             return callback(err, doc);
         }
+        if(!doc){
+            return callback(null, false);
+        }
         db.departuser.findOne( { 'department.$id': doc._id, 'user.$id': userId }, function(err, doc){
             if(doc){
                 return callback(null, true, doc);
