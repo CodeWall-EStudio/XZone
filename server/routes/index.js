@@ -46,6 +46,9 @@ exports.setXHR2Headers = function(req, res, next){
     var method = req.method;
     var index;
 
+            Logger.info('[setXHR2Headers]', 'origin: ', origin, 'method: ', method);
+
+
     if ( (index = config.XHR2_ALLOW_ORIGIN.indexOf(origin) ) > -1) {
         
         res.setHeader('Access-Control-Allow-Origin', config.XHR2_ALLOW_ORIGIN[index]);
@@ -53,8 +56,6 @@ exports.setXHR2Headers = function(req, res, next){
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Headers', 'origin,content-type');
         res.setHeader('Access-Control-Max-Age', '30');
-
-        Logger.info('[setXHR2Headers]', 'origin: ', origin, 'method: ', method);
 
     }
     if (method === 'OPTIONS') {
