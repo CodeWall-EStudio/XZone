@@ -7778,9 +7778,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
   });
 
   require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','bind','upload','msg'], function(config,router,util,nav) {
-
+  
     var handerObj = $(Schhandler);
-
     
     if(!util.getCookie('skey')){
       window.location = config.cgi.gotologin;
