@@ -25,7 +25,7 @@ exports.JOD_CONVERTER = '/var/run/jodconverter/lib/jodconverter-core-3.0-beta-4.
 // ==== 应用自身相关的配置 ====================================================
 
 // 应用运行的域名
-exports.APP_DOMAIN = ;'http://xzone.codewalle.com'
+exports.APP_DOMAIN = 'http://xzone.codewalle.com';
 
 // cookie 的加密key
 exports.COOKIE_SECRET= 'xzone_HeMHFxTAMPAjlRVH_secret';
