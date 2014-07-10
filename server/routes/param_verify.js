@@ -132,6 +132,7 @@ function getChecker(type) {
                 checkMethod = function(value, pcfg, callback) {
                     findArray(type, value, pcfg, callback);
                 };
+                checkers[type] = checkMethod;
             } else {
                 checkMethod = checkers['array'];
             }
@@ -139,6 +140,7 @@ function getChecker(type) {
             checkMethod = function(value, pcfg, callback) {
                 findOne(type, value, pcfg, callback);
             };
+            checkers[type] = checkMethod;
         }
     }
     return checkMethod;
