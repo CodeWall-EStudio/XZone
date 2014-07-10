@@ -39,6 +39,8 @@ function findArray(coll, value, pcfg, callback) {
         return callback(null, value);
     }
 
+    value = us.compact(value);
+
     var ep = new EventProxy();
     ep.fail(callback);
 
