@@ -10,6 +10,7 @@ define(['config'],function(config){
 		nowSchool = 0,
 		isMember = 0,
 		nowAuth = 0,
+		isSwall = 0,
 		nowPage = 'user';
 
     $("#newFolds").validate({
@@ -279,9 +280,19 @@ define(['config'],function(config){
 	    	}else if(nowAuth){
 		    	$('#fileActZone .movefile').show(); 
 	    	}
+	    	if(isSwall){
+		    	$('#fileActZone .collfile').hide();
+		    	$('#fileActZone .renamefile').hide();
+		    	$('#fileActZone .copyfile').hide();
+		    	$('#fileActZone .delfile').hide();
+	    	}else{
+		    	$('#fileActZone .collfile').show();
+		    	$('#fileActZone .renamefile').show();	 
+		    	$('#fileActZone .copyfile').show();
+		    	$('#fileActZone .delfile').show();		    	   		
+	    	}
 	    	$('#fileActZone .downfile').show();
-	    	$('#fileActZone .collfile').show();
-	    	$('#fileActZone .renamefile').show();
+
 	    }
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
@@ -315,7 +326,7 @@ define(['config'],function(config){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
     	}else{
-    		if(n>0){   			
+    		if(n>0){  
 		    	$('#fileActZone .sharefile').hide();
 		    	$('#fileActZone .downfile').hide();
 		    	$('#fileActZone .collfile').hide();    		
@@ -328,6 +339,19 @@ define(['config'],function(config){
 		    	}else if(nowAuth){
 		    		$('#fileActZone .movefile').show();  
 		    	}
+		    	//新媒体验证
+		    	if(isSwall){
+			    	$('#fileActZone .collfile').hide();
+			    	$('#fileActZone .renamefile').hide();
+			    	$('#fileActZone .copyfile').hide();
+			    	$('#fileActZone .delfile').hide();
+		    	}else{
+			    	$('#fileActZone .collfile').show();
+			    	$('#fileActZone .renamefile').show();	 
+			    	$('#fileActZone .copyfile').show();
+			    	$('#fileActZone .delfile').show();		    	   		
+		    	}	
+
 		    	$('#fileActZone .downfile').show();
 		    	$('#fileActZone .collfile').show();    		
 		    		    		
@@ -476,6 +500,14 @@ define(['config'],function(config){
 			file = 1;
 		}
 		switch(cmd){
+			case 'review':
+				var id = target.attr('data-id');
+				var type = target.attr('data-type');
+				handerObj.triggerHandler("review:show",{
+					id:id,
+					type : type
+				});
+				break;
 			case 'other':
 			case 'group':
 			case 'dep':
@@ -650,10 +682,15 @@ define(['config'],function(config){
     	}
     }
 
+    function swallChange(e,d){
+    	isSwall = d;
+    }
+
     var handlers = {
     	'page:change' : pageChange,
     	'bind:school' : schoolChange,
-    	'bind:prep' : prepChange
+    	'bind:prep' : prepChange,
+    	'bind:swall' : swallChange
     }
 
     for(var i in handlers){

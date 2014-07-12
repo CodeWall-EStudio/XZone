@@ -99,3 +99,68 @@ td i.s{
 	height:16px;
 	background:url(imgs/star1.png) no-repeat;
 }
+
+
+
+.dis-ico-type i.icon-type1{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;*/
+	width:100px;
+	height:100px;
+	background:url(imgs/type-img1.png) no-repeat;
+}
+
+.dis-ico-type i.icon-type2{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;	*/
+	width:100px;
+	height:100px;
+	background:url(imgs/type-doc1.png) no-repeat;
+}
+
+.dis-ico-type i.icon-type3{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;	*/
+	width:100px;
+	height:100px;
+	background:url(imgs/type-music1.png) no-repeat;
+}
+
+.dis-ico-type i.icon-type4{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;*/	
+	width:100px;
+	height:100px;
+	background:url(imgs/type-vedio1.png) no-repeat;
+}
+
+.dis-ico-type i.icon-type5{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;*/	
+	width:100px;
+	height:100px;
+	background:url(imgs/type-exe1.png) no-repeat;
+}
+
+.dis-ico-type i.icon-type6{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;*/	
+	width:100px;
+	height:100px;
+	background:url(imgs/type-zip1.png) no-repeat;
+}
+
+.dis-ico-type i.icon-type,.dis-ico-type i.icon-type,.dis-ico-type i.icon-type0{
+	display:inline-block;
+	float:left;
+	/*margin-top:14px;*/	
+	width:100px;
+	height:100px;
+	background:url(imgs/type-other1.png) no-repeat;
+}

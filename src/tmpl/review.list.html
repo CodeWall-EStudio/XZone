@@ -1,6 +1,19 @@
-          <%
-          	for(var i in list){
-          		var item = list[i];
-          %>
-          	<li data-id="<%+item._id%>" <%if(item._id === id){%>class="selected"<%}%> title="<%+item.name%>"></li>
-          <%}%>
+	<div class="al-arrow"></div>
+	<div class="review-list-block">
+		<ul id="reviewFileList">
+
+		<%
+		for(var i in list){
+		var item = list[i];
+		%>
+			<li id="review<%+item.id%>" data-id="<%+item.id%>" <%if(item.id === id){%>class="selected"<%}%> title="<%+item.name%>">
+			<%if(item.type===1){%>
+				<img src="/api/file/preview?<%if(mail){%>messageId<%}else{%>fileId<%}%>=<%+item.id%>&size=40_40" />
+			<%}else{%>
+				<i class="fdname<%+item.id%> icon-type" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
+			<%}%>
+			</li>
+		<%}%>
+		</ul>
+	</div>
+	<div class="ar-arrow"></div>

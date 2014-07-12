@@ -23,6 +23,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowAuth = 0,
 		nowOtype = 'list',
 		isMember = {},		
+		fileList = {},
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
@@ -78,6 +79,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	function fileInit(e,d){
 		nowTotal = 0;
 		nextPage = 0;
+		fileList = {};
 		action = 1;
 
 		if(depnum < 0){
@@ -192,6 +194,11 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowPrep){
 			pr = nowPrep;
 		}
+
+		for(var i = 0,l=d.list.length;i<l;i++){
+			fileList[d.list[i].id] = d.list[i];
+		}
+
 		var target = tmpTarget,
 			tplid = 'file.user.list';
 
@@ -1194,6 +1201,14 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		handerObj.triggerHandler('file:edit',d);
 	}	
 
+	//返回列表
+	function returnList(){
+		handerObj.triggerHandler('review:return',{
+			list : fileList,
+			total : nowTotal
+		});
+	}
+
 	var handlers = {
 		//'order:change' : orderChange,
 		'file:sharefoldload' : shareFoldLoad,
@@ -1226,7 +1241,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		'page:next' : pageNext,
 		'file:sharesuc' : sharesuc,
 		'file:editmark' : editMark,
-		'file:uploadsuc' : uploadSuc
+		'file:uploadsuc' : uploadSuc,
+		'file:getlist' : returnList
 	}
 
 	for(var i in handlers){

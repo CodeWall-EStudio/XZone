@@ -5,7 +5,7 @@
 		<tr class="fold fold<%+item.id%>">
 			<td width="30">
 				<%if(pr != 'group'){%>
-					<input type="checkbox" name="file" class="fdclick liclick" value="<%+item.id%>" data-type="fold" <%if(item.hasChild || item.hasFile){%>data-child="1"<%}%> /><%}%>
+					<input type="checkbox" name="file" data-ftype="<%+item.type%>" class="fdclick liclick" value="<%+item.id%>" data-type="fold" <%if(item.hasChild || item.hasFile){%>data-child="1"<%}%> /><%}%>
 				</td>
 			<td>
 				<%if(gid){%>
@@ -22,7 +22,7 @@
 						<%}%>
 
 						<%
-							if(pr != 'group' && !school){
+							if(pr != 'group' && !school && item.type !== 1){
 								if($.isEmptyObject(ginfo)){
 						%>
 						<span class="f-mark" cmd="edit" data-id="<%+item.id%>">

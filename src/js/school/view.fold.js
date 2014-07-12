@@ -253,6 +253,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 
 		// foldTarget.html('')
 		tmpTarget.html('');
+		$("#fileIcoList").html('');
 		nowFdInfo = {};
 		if(d){
 			nowGid = d.gid || 0;
@@ -276,6 +277,14 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			nowTag = d.tag || 0;
 			nowUid = d.uid || 0;
 			nowPid = d.pid || 0;						
+		}
+
+		if(nowOtype === 'list'){
+			$('#fileInfoTable').show();
+			$("#fileIcoList").hide();
+		}else{
+			$('#fileInfoTable').hide();
+			$("#fileIcoList").show();			
 		}
 
 		if(nowOtype === 'ico'){
@@ -351,10 +360,16 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		}
 	}
 
+	//取一个文件夹的信息
 	function foldOne(e,d){
-
 		if(d.isOpen){
 			nowData.open = 1;
+		}
+
+		if(d.type === 1){
+			handerObj.triggerHandler('bind:swall',1);
+		}else{
+			handerObj.triggerHandler('bind:swall',0);
 		}
 		if(nowData.info){
 			handerObj.triggerHandler('file:init',nowData);
@@ -452,10 +467,10 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(nowPrep){
 			pr = nowPrep;
 		}
-		console.log(d.list);
+		//console.log(d.list);
 
 		var target = tmpTarget,
-			tplid = 'file.user.list';
+			tplid = 'fold.user.list';
 
 		if(nowOtype === 'ico'){
 			target = icoTarget;

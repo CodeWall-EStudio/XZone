@@ -30,6 +30,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 			if(d.err == 0){
 				handerObj.triggerHandler('coll:load',{
 					list : convent(d.result.list),
+					total : d.result.total,
 					next : d.result.next
 				});
 			}else{

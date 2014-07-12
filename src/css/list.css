@@ -303,7 +303,9 @@
 	border:none;
 }
 */
-
+.dis-ico-type li .check-box{
+	display:none;
+}
 .dis-ico-type i.fold{
 	margin:19px 0 0 15px;
 	width:100px;
@@ -315,8 +317,13 @@
 	border:2px solid #4682d9;
 	background:url(imgs/pat.png) left top no-repeat;
 }
-.dis-ico-type li:hover .td1{
+.dis-ico-type li:hover .check-box{
 	display:block;
+	position:absolute;
+	top:5px;
+	left:5px;
+	width:20px;
+	height:20px;
 }
 .dis-ico-type li:hover dd{
 	display:block;
@@ -341,6 +348,20 @@
 	height:0;
 	line-height:0;
 }
+.dis-ico-type .dropdown-menu li,.dis-ico-type .dropdown-menu li:hover{
+	float:none;
+	width:130px;
+	height:20px;
+	margin:0;
+	padding-bottom:0;
+	background:transparent;
+}
+.dis-ico-type .dropdown-menu li:hover{
+	border:none;
+	background:transparent;
+}
+
+
 .drog-light{
 	background:##e6e6e6;
 }

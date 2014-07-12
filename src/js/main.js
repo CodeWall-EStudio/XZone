@@ -7,7 +7,7 @@
     }    
   });
 
-  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','bind','upload','msg'], function(config,router,util,nav) {
+  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','view.review','bind','upload','msg'], function(config,router,util,nav) {
 
     var handerObj = $(Schhandler);
 
@@ -152,6 +152,7 @@
     var opt = {
       routes : {
         "mailbox=:id" : 'mailbox',
+        "act=:act" : 'review',
         'mycoll=:id' : 'coll',
         'myshare' : 'share',
         'myrecy=:id' : 'recy',
@@ -167,6 +168,9 @@
         "key=:id" : 'myFile',     //个人文件
         "" : 'myFile', // 无hash的情况，首页
         "fdid=:id" : 'myFile'
+      },
+      review : function(data){
+        console.log(data);
       },
       school : function(data){
         showModel('school');

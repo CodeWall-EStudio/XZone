@@ -3256,7 +3256,7 @@ input[type="button"].btn-block {
 
 .dropdown-menu > li > a {
   display: block;
-  padding: 3px 20px;
+  padding: 3px 0 3px 10px;
   clear: both;
   font-weight: normal;
   line-height: 1.428571429;

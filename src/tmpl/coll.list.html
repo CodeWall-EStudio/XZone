@@ -17,7 +17,7 @@
 								
 							</dt>
 						<dd>
-							<a href="/review.html#id=<%+item.fileid%>&coll=1<%if(page){%>&page=<%-page%><%}%>&key=<%=key%>&ods=<%=ods%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>" >预览</a>
+							<a class="prev-file file-name" cmd="review" data-type="coll" data-fid="<%+item.fid%>" data-id="<%+item.id%>" >预览</a>
 							<a href="/api/file/download?fileId=<%+item.fileid%>" target="_blank">下载</a>
 							<a cmd="uncoll" data-id="<%+item.fileid%>" data-favid="<%+item.id%>">取消收藏</a>
 						</dd>							

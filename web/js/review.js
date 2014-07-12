@@ -1488,7 +1488,7 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
     var id = util.getParam('id');
     var mail = util.getParam('mail');
     var cate = util.getParam('cate');
-    var coll = util.getParam('coll')
+    var coll = util.getParam('coll');
     var gid = util.getParam('gid');
     var fdid = util.getParam('fdid');
     var page = parseInt(util.getParam('page')) || 0;

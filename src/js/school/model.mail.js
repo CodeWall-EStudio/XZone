@@ -4,6 +4,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 
 	function convent(data){
 		var list = [];
+		console.log(data);
 		for(var i=0,l=data.length;i<l;i++){
 			var item = data[i];
 			list.push({
@@ -11,7 +12,7 @@ define(['config','helper/request','helper/util'],function(config,request,util){
 				rid : item.resource._id,
 				tname : item.toUser.nick,
 				fname : item.fromUser.nick,
-				fid : item.fid,
+				fid : item.resource._id,
 				name : item.name,
 				content : item.content,
 				time : util.time(item.createTime),
