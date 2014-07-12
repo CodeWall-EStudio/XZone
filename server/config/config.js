@@ -31,7 +31,7 @@ exports.APP_DOMAIN = 'http://xzone.codewalle.com';
 exports.COOKIE_SECRET= 'xzone_HeMHFxTAMPAjlRVH_secret';
 
 // cookie 的有效时间
-exports.COOKIE_TIME = 2 * 60 * 60 * 1000; // 2 小时
+exports.COOKIE_TIME = 24 * 60 * 60 * 1000; // 24 小时
 
 exports.STATIC_FILE_EXPIRES = 7 * 24 * 60 * 60 * 1000; // 静态文件的过期时间
 
@@ -40,7 +40,8 @@ exports.DEFAULT_USER_SPACE = 3 * 1024 * 1024 * 1024;
 
 // 允许新媒体跨域上传和下载资源的 host
 exports.XHR2_ALLOW_ORIGIN = [
-    'http://media.71xiaoxue.com'
+    'http://media.71xiaoxue.com',
+    'http://swall.codewalle.com'
 ];
 
 // 下载的接口列表
@@ -48,6 +49,13 @@ exports.DOWNLOAD_APIS = [
     '/api/file/download',
     '/api/file/batchDownload'
 ];
+
+// 多媒体的上传接口
+exports.MEDIA_UPLOAD_CGI = '/api/media/upload';
+
+// 多媒体下载接口
+exports.MEDIA_DOWNLOAD_CGI = '/api/media/download';
+
 
 exports.AUTH_TYPE = 'self';// auto, sso, qq, self
 

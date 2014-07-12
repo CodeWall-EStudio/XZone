@@ -41,8 +41,8 @@ exports.create = function(params, callback) {
         ['srcFolder', 'folder', 'srcFolderId', 'srcFolderName'],
         ['distFolder', 'folder', 'distFolderId', 'distFolderName'],
 
-        ['fromGroup', 'group', 'fromGroupId', 'fromGroupId'],
-        ['toGroup', 'group', 'toGroupId', 'fromGroupName']
+        ['fromGroup', 'group', 'fromGroupId', 'fromGroupName'],
+        ['toGroup', 'group', 'toGroupId', 'toGroupName']
 
     ];
 
@@ -87,7 +87,7 @@ exports.create = function(params, callback) {
                 doc.fromGroupType = fromGroup.type;
             }
 
-            Logger.debug('[log] create: ', doc);
+            // Logger.debug('[log] create: ', doc);
             db.log.save(doc, function(err, result) {
                 if (callback) {
                     callback(err, result && doc);

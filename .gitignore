@@ -2,10 +2,12 @@ node_modules/*
 
 test/*
 
-config.js
+/config.js
 
 data/*
 
 logs/*
 
-node_modules/*
+
+
+server/helper/getOrgTree.htm.text

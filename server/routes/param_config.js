@@ -71,6 +71,10 @@ module.exports = {
             {
                 name: 'messageId',
                 type: 'message'
+            },
+            {
+                name: 'size', // 指定图片的预览图大小, 只有格式为图片时有用
+                type: 'string'
             }
         ]
     },
@@ -267,6 +271,14 @@ module.exports = {
                 name: 'activityId',
                 type: 'string',
                 required: true
+            },
+            {
+                name: 'activityName',
+                type: 'string'
+            },
+            {
+                name: 'activityTime',
+                type: 'string'
             },
             {
                 name: 'file_path'
@@ -668,6 +680,15 @@ module.exports = {
         params: [
             {
                 name: 'type'
+            }
+        ]
+    },
+
+    '/api/user/validate': {
+        method: 'GET',
+        params: [
+            {
+                name: 'skey'
             }
         ]
     },

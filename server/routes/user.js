@@ -29,14 +29,14 @@ var oauth = new OAuth2(
     config.QQ_CONNECT_TOKEN_PATH
 );
 
-exports.gotoLogin = function(req, res){
+exports.gotoLogin = function(req, res) {
     var type = req.type || req.param('type') || 'self';
     var url;
-    if(config.AUTH_TYPE !== 'auto'){
+    if (config.AUTH_TYPE !== 'auto') {
         type = config.AUTH_TYPE;
     }
     Logger.info('[gotoLogin] login with ' + type);
-    if(type === 'qq'){
+    if (type === 'qq') {
         var state = Date.now();
         req.session[state] = 'qq';
         url = oauth.getAuthorizeUrl({
@@ -44,9 +44,9 @@ exports.gotoLogin = function(req, res){
             'redirect_uri': config.APP_DOMAIN + config.QQ_CONNECT_CALLBACK,
             state: state
         });
-    }else if(type === 'sso'){
+    } else if (type === 'sso') {
         url = cas.getLoginUrl();
-    }else{
+    } else {
         url = config.LOGIN_PAGE;
     }
     Logger.info('[gotoLogin] redirect to: ' + url);
@@ -54,14 +54,17 @@ exports.gotoLogin = function(req, res){
 };
 
 
-exports.get = function(req, res){
+exports.get = function(req, res) {
 
     var loginUser = req.loginUser;
 
-    mUser.getUserAllInfo(loginUser, function(err, data){
-        if(err){
-            res.json({ err: data || ERR.SERVER_ERROR, msg: err});
-        }else{
+    mUser.getUserAllInfo(loginUser, function(err, data) {
+        if (err) {
+            res.json({
+                err: data || ERR.SERVER_ERROR,
+                msg: err
+            });
+        } else {
             var user = us.extend({}, data.user);
             Util.removePrivateMethods(user);
             delete user.pwd;
@@ -71,12 +74,12 @@ exports.get = function(req, res){
                 err: ERR.SUCCESS,
                 result: data
             });
-        }// end of else 
+        } // end of else 
     });
 };
 
-exports.info = function(req, res){
-    
+exports.info = function(req, res) {
+
     var user = req.parameter.userId;
     delete user.pwd;
 
@@ -88,12 +91,12 @@ exports.info = function(req, res){
     });
 };
 
-var validateTicket = function(ticket, callback){
+var validateTicket = function(ticket, callback) {
     var ep = new EventProxy();
 
     ep.fail(callback);
 
-    cas.validate(ticket, function(err, status, response){
+    cas.validate(ticket, function(err, status, response) {
 
         if (err) {
             return ep.emit('error', err);
@@ -105,61 +108,66 @@ var validateTicket = function(ticket, callback){
         ep.emit('validate', data);
     }); // end validate
 
-    ep.on('validate', function(data){
+    ep.on('validate', function(data) {
         var skey = data.encodeKey;
 
         userHelper.findAndUpdateUserInfo(skey, 'sso', ep.done('userInfo'));
     });
 
-    ep.all('validate', 'userInfo', function(valData, user){
+    ep.all('validate', 'userInfo', function(valData, user) {
         callback(null, valData, user);
     });
 };
 
-exports.loginSuccess = function(req, res, next){
+exports.loginSuccess = function(req, res, next) {
     req.redirectUrl = config.INDEX_PAGE;
 
     var ticket = req.param('ticket');
 
     // console.log('s sssss:',ticket);
 
-    if(!ticket){
-        res.json({err: ERR.NOT_LOGIN});
+    if (!ticket) {
+        res.json({
+            err: ERR.NOT_LOGIN
+        });
         return;
     }
-    validateTicket(ticket, function(err, valData, user){
-        if(err){
+    validateTicket(ticket, function(err, valData, user) {
+        if (err) {
             // res.json({err: valData || ERR.NOT_LOGIN, msg: err});
             res.redirect(LOGIN_FAIL_PAGE + '?err=' + (valData || ERR.NOT_LOGIN) + '&msg=' + String(err));
-            console.log(err,valData,user);
+            console.log(err, valData, user);
             console.log('>>>validateTicket error:', err);
-        }else{
+        } else {
             req.session[valData.encodeKey] = user._id.toString();
-            res.cookie('skey', valData.encodeKey, { });
+            res.cookie('skey', valData.encodeKey, {});
             // console.log('>>>validateTicket success', req.session);
-            if(req.redirectUrl){
+            if (req.redirectUrl) {
                 res.redirect(req.redirectUrl);
-            }else{
+            } else {
                 res.json({
                     err: ERR.SUCCESS,
                     result: {
                         user: user
                     }
                 });
-            }// end redirectUrl
+            } // end redirectUrl
         }
     });
 };
 
-exports.loginSuccessWithQQ = function(req, res, next){
+exports.loginSuccessWithQQ = function(req, res, next) {
     var code = req.param('code');
     var state = req.param('state');
     var type = req.session[state];
 
     req.redirectUrl = config.INDEX_PAGE;
 
-    if(type !== 'qq'){ // server-side 
-        res.json({ err: ERR.TICKET_ERROR, msg: 'not a valid request' });
+    if (type !== 'qq') { // server-side 
+        res.json({
+            err: ERR.TICKET_ERROR,
+            msg: 'not a valid request'
+        });
         return;
     }
     req.session[state] = null;
@@ -167,55 +175,67 @@ exports.loginSuccessWithQQ = function(req, res, next){
     var ep = new EventProxy();
 
     oauth.getOAuthAccessToken(code, {
-                'grant_type': 'authorization_code',
-                'redirect_uri': config.APP_DOMAIN + config.QQ_CONNECT_CALLBACK
-            },
-            function (err, access_token, refresh_token, data){
+            'grant_type': 'authorization_code',
+            'redirect_uri': config.APP_DOMAIN + config.QQ_CONNECT_CALLBACK
+        },
+        function(err, access_token, refresh_token, data) {
 
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err });
-            return;
-        }else if(!access_token){
-            res.json({ err: ERR.TICKET_ERROR, msg: 'get accessToken error'});
-            return;
-        }
-        ep.emitLater('getAccessTokenSucc', access_token);
+            if (err) {
+                res.json({
+                    err: ERR.SERVER_ERROR,
+                    msg: err
+                });
+                return;
+            } else if (!access_token) {
+                res.json({
+                    err: ERR.TICKET_ERROR,
+                    msg: 'get accessToken error'
+                });
+                return;
+            }
+            ep.emitLater('getAccessTokenSucc', access_token);
 
-    });
+        });
 
-    ep.on('getAccessTokenSucc', function(accessToken){
+    ep.on('getAccessTokenSucc', function(accessToken) {
         console.log('>>>getAccessTokenSucc: ' + accessToken);
-        userHelper.findAndUpdateUserInfo(accessToken, 'qq', function(err, user){
-            if(err){
-                res.json({err: user || ERR.NOT_LOGIN, msg: err});
+        userHelper.findAndUpdateUserInfo(accessToken, 'qq', function(err, user) {
+            if (err) {
+                res.json({
+                    err: user || ERR.NOT_LOGIN,
+                    msg: err
+                });
                 console.log('>>>qq findAndUpdateUserInfo error:', err);
-            }else{
+            } else {
                 req.session[accessToken] = user._id.toString();
-                res.cookie('skey', accessToken, { });
+                res.cookie('skey', accessToken, {});
 
-                if(req.redirectUrl){
+                if (req.redirectUrl) {
                     res.redirect(req.redirectUrl);
-                }else{
+                } else {
                     res.json({
                         err: ERR.SUCCESS,
                         result: {
                             user: user
                         }
                     });
-                }// end redirectUrl
+                } // end redirectUrl
             }
         });
     });
 
 };
 
-exports.departments = function(req, res){
+exports.departments = function(req, res) {
     var params = req.parameter;
 
-    mOrganization.getOrganizationTree(params, function(err, data){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
+    mOrganization.getOrganizationTree(params, function(err, data) {
+        if (err) {
+            res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
+        } else {
             var departs = data.children;
             delete data.children;
             res.json({
@@ -229,7 +249,7 @@ exports.departments = function(req, res){
     });
 };
 
-exports.login = function(req, res){
+exports.login = function(req, res) {
     var parameter = req.parameter;
     var name = parameter.name;
     var pwd = parameter.pwd;
@@ -239,27 +259,47 @@ exports.login = function(req, res){
 
     var type = req.type || req.parameter.type || 'self';
 
-    mUser.getUser({ name: name, pwd: pwd, status: 0 }, function(err, user){
+    mUser.getUser({
+        name: name,
+        pwd: pwd
+    }, function(err, user) {
 
-        if(err){
-            if(json){
-                return res.json({ err: ERR.LOGIN_FAILURE, msg: 'server error'});
+        if (err) {
+            if (json) {
+                return res.json({
+                    err: ERR.LOGIN_FAILURE,
+                    msg: 'server error'
+                });
             }
-            return res.redirect( config.LOGIN_FAIL_PAGE + '?err=' + ERR.LOGIN_FAILURE);
+            return res.redirect(config.LOGIN_FAIL_PAGE + '?err=' + ERR.LOGIN_FAILURE);
         }
-        if(!user){
-            if(json){
-                return res.json({ err: ERR.ACCOUNT_ERROR, msg: 'account or password is wrong'});
+        if (!user) {
+            if (json) {
+                return res.json({
+                    err: ERR.ACCOUNT_ERROR,
+                    msg: 'account or password is wrong'
+                });
             }
             return res.redirect(config.LOGIN_FAIL_PAGE + '?err=' + ERR.ACCOUNT_ERROR);
+        }
+        if (user.status === 1) {
+
+            // status = 1 的用户是被关闭的, 不允许调用
+            if (json) {
+                return res.json({
+                    err: ERR.ACCOUNT_CLOSE,
+                    msg: 'account has closed'
+                });
+            }
+            return res.redirect(config.LOGIN_FAIL_PAGE + '?err=' + ERR.ACCOUNT_CLOSE);
         }
 
         var skey = Util.md5(user.name + ':' + user.pwd + ':' + Date.now());
 
         req.session[skey] = user._id.toString();
-        res.cookie('skey', skey, { });
+        res.cookie('skey', skey, {});
 
-        if(json){
+        if (json) {
             res.json({
                 err: ERR.SUCCESS,
                 result: {
@@ -269,19 +309,19 @@ exports.login = function(req, res){
                     nick: user.nick
                 }
             });
-        }else if(req.redirectUrl){
+        } else if (req.redirectUrl) {
             res.redirect(req.redirectUrl);
-        }else{
+        } else {
             res.redirect('/');
-        }// end redirectUrl
+        } // end redirectUrl
     });
 };
 
-exports.logoff = function(req, res){
+exports.logoff = function(req, res) {
     var type = req.type || req.parameter.type || 'self';
     var json = req.parameter.json;
 
-    if(config.AUTH_TYPE !== 'auto'){
+    if (config.AUTH_TYPE !== 'auto') {
         type = config.AUTH_TYPE;
     }
 
@@ -290,41 +330,64 @@ exports.logoff = function(req, res){
     res.clearCookie('skey');
     res.clearCookie('connect.sid');
 
-    if(json){
-        res.json({ err: ERR.SUCCESS, msg: 'ok' });
-    }else if(type === 'qq'){
+    if (json) {
+        res.json({
+            err: ERR.SUCCESS,
+            msg: 'ok'
+        });
+    } else if (type === 'qq') {
         res.redirect('/');
-    }else if(type === 'sso'){
+    } else if (type === 'sso') {
         res.redirect(cas.getLogoutUrl());
-    }else{
+    } else {
         res.redirect('/');
     }
 };
 
-exports.modify = function(req, res){
+exports.validate = function(req, res) {
+    var loginUser = req.loginUser;
+    res.json({
+        err: ERR.SUCCESS,
+        result: {
+            userId: loginUser._id,
+            name: loginUser.name,
+            nick: loginUser.nick
+        }
+    });
+};
+
+exports.modify = function(req, res) {
     var params = req.parameter;
     var loginUser = req.loginUser;
     var pwd = params.pwd;
     var newPwd = params.newPwd;
 
     var doc = {};
-    if(params.nick){
+    if (params.nick) {
         doc.nick = params.nick;
     }
 
-    if(pwd && newPwd && pwd !== newPwd){
-        if(Util.md5(pwd) !== loginUser.pwd){
-            return res.json({ err: ERR.PASSWORD_ERROR, msg: 'pwd is wrong' });
+    if (pwd && newPwd && pwd !== newPwd) {
+        if (Util.md5(pwd) !== loginUser.pwd) {
+            return res.json({
+                err: ERR.PASSWORD_ERROR,
+                msg: 'pwd is wrong'
+            });
         }
         doc.pwd = Util.md5(newPwd);
     }
 
-    mUser.update({ _id: loginUser._id }, doc, function(err, doc){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
+    mUser.update({
+        _id: loginUser._id
+    }, doc, function(err, doc) {
+        if (err) {
+            res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
+        } else {
             delete doc.pwd;
-            
+
             res.json({
                 err: ERR.SUCCESS
             });
@@ -332,13 +395,16 @@ exports.modify = function(req, res){
     });
 };
 
-exports.search = function(req, res){
+exports.search = function(req, res) {
     var params = req.parameter;
 
-    mUser.search(params, function(err, total, docs){
-        if(err){
-            res.json({ err: ERR.SERVER_ERROR, msg: err});
-        }else{
+    mUser.search(params, function(err, total, docs) {
+        if (err) {
+            res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
+        } else {
             res.json({
                 err: ERR.SUCCESS,
                 result: {
@@ -349,5 +415,3 @@ exports.search = function(req, res){
         }
     });
 };
-
-    
