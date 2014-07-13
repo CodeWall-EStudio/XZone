@@ -1,0 +1,67 @@
+	<%
+		for(var i in list){
+			var item = list[i];
+	%>	
+	<li title="<%-item.name%> : <%-item.size%>">
+		<div  class="check-box">
+			<%if(pr != 'group'){%>	
+				<input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" />
+			<%}%>			
+		</div>
+		<a class="prev-file file-name"  cmd="review" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
+			<%if(item.type===1){%>
+				<img src="/api/file/preview?fileId=<%+item.id%>&size=100_100" />
+			<%}else if(item.type < 7){%>	
+				<i class="fdname<%+item.id%> icon-type<%+item.type%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>		
+			<%}else{%>
+				<i class="icon-type" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
+			<%}%>		
+		</a>
+		<dl>
+			<dt><a class="file-name fdname<%+item.id%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
+				<%if(pr != 'group' && !school && (ginfo && ginfo.isMember)){%>
+					<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
+						<%if(item.mark==''){%>
+							编辑备注
+						<%}else{%>
+							<%-item.mark%>
+						<%}%>
+					</span>
+					<span class="editmark hide">
+						<input class="name-edit" type="text" value="<%+item.mark%>" />
+						<i class="edit-comp" cmd="editComp" data-type="file" data-id="<%+item.id%>"></i>
+						<i class="edit-close" data-value="<%+item.mark%>" cmd="editClose"></i>
+					</span>
+				<%}%>
+				<%if(school && auth){%>
+				<span>
+					<a data-id="<%+item.id%>" data-name="<%+item.name%>" cmd="pass">审核通过</a>
+					<a data-id="<%+item.id%>" data-name="<%+item.name%>" cmd="notpass">审核不通过</a>
+				</span>
+				<%}%>
+			</dt>
+			<dd class="show"><%-item.time%></dd>
+			<dd>
+				
+				<%if(!pr && !school){%>	
+				<span><a class="share-file" data-toggle="dropdown" href="#" data-id="1"><i class="share" title="分享"></i></a>
+				<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+					<li class="no-act"><a class="no-act" cmd="other" data-id="<%+item.id%>" data-name="<%+item.name%>">发送给别人</a></li>
+					
+					<li class="no-act"><a class="no-act" cmd="group" data-id="<%+item.id%>" data-name="<%+item.name%>">到小组空间</a></li>
+					
+					<%if(dep){%>
+					<li class="no-act"><a class="no-act" cmd="dep" data-id="<%+item.id%>" data-name="<%+item.name%>">到部门空间</a></li>
+					<%}%>
+					<li class="no-act"><a class="no-act" cmd="school" data-id="<%+item.id%>" data-name="<%+item.name%>">到学校空间</a></li>		
+				</ul>
+				<%}%>
+				</span>	
+				<%if(gid){%>									
+					<span class="filesave<%+item.id%>"><a data-id="<%+item.id%>" data-fid="<%+item.fid%>" data-name="<%+item.name%>" cmd="savetomy"><i class="point" title="保存"></i></a></span>
+				<%}%>
+				<span><a href="<%+down%>?fileId=<%+item.id%>" data-id="<%+item.id%>" data-fid="<%+item.fid%>" target="_blank"><i class="down" title="下载"></i></a></span>
+			</dd>
+		</dl>
+	</li>
+	<%}%>

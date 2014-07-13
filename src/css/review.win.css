@@ -1,0 +1,199 @@
+#reviewBgs{
+	display:none;
+	background:#000;
+	opacity: 0.5;
+	width:100%;
+	height:100%;
+	position:absolute;
+	top:0;
+	left:0;
+	z-index:200;
+}
+
+#reviewWin{
+	position:absolute;
+	z-index:201;
+	width:100%;
+	height:100%;
+	display:none;
+	top:0;
+	color:#fff;
+}
+
+.review-close{
+	width:24px;
+	height:24px;
+	position:absolute;
+	top:10px;
+	right:10px;
+	background:url(imgs/close1.png) no-repeat;
+	z-index:202;
+	cursor:pointer;
+}
+
+    #reviewDiv div.al-arrow{
+      background:url(/css/imgs/icon-prev.png) no-repeat;
+      width:36px;
+      height:54px;
+      position:absolute;
+      left:0;
+      top:50%;
+      cursor:pointer;
+    }
+    #reviewDiv div.ar-arrow{
+      background:url(/css/imgs/icon-next.png) no-repeat;
+      width:36px;
+      height:54px; 
+      top:50%;    
+      position:absolute;
+      right:0;      
+      cursor:pointer;
+    }
+
+  	.file-review{
+  		text-align:center;
+  	}
+  	.playerZone{
+  		margin:10px auto;
+  		width:640px;
+  	}
+  	.text{
+  		width:640px;
+  		margin:0 auto;
+  		text-align:left;
+  	}
+  	#reviewWin dl{
+  		padding: 10px;
+  		width:500px;
+  		margin:0 auto;
+  		text-align:left;
+  	}
+    #reviewWin ul{
+      margin:0;
+      padding:0;
+    }
+  	.file-reivew-act{
+  		width:1000px;
+  		text-align : center;
+  		margin:0 auto;
+      text-align:center;
+      position:fixed;
+      bottom:140px;
+  	}
+
+	#reviewWin .file-act{
+		position: absolute;
+		right: 0;
+		top: 10px;
+		padding:10px 0;
+	}
+  	.file-reivew-act span{
+  		display:inline-block;
+  		width:55px;
+  		text-align:left;
+  		line-height:24px;
+  		height:24px;  		
+  		cursor:pointer;
+  	}
+  	.flexpaper_viewer{
+  		width:960px;height:700px;
+  		padding-top:10px;
+  		margin:0 auto;
+  	}
+  	.to-left{
+
+  		background:url(/css/imgs/ll.png) no-repeat right;
+  	}
+  	.to-right{
+
+  		background:url(/css/imgs/rl.png) no-repeat right; 		
+  	}
+  	.zoom-in{
+ 
+  		background:url(/css/imgs/jjj.png) no-repeat; 				
+  	}
+  	.zoom-out{
+  
+  		background:url(/css/imgs/jj.png) no-repeat;
+  	}  
+
+    .text-review{
+      width:90%;
+      height:500px;
+      overflow-y:auto;
+      background-color:#fff;
+      color:#000;
+      text-align:left;
+      margin:0 auto;
+    }	
+    .file-select-block{
+      position:fixed;
+      bottom:40px;
+      width:90%;
+      height:74px;
+      padding:10px 40px;
+      left:5%;
+    }
+    .file-select-block div{
+      float:left;
+    }
+    .file-select-block ul{
+      float:left;
+    }
+    .file-select-block li{
+      float:left;
+      width:40px;
+      height:40px;
+      border:2px solid #ddd;
+      margin:4px;
+      background-position:center;
+    }
+    .file-select-block .selected{
+      width:40px;
+      height:40px;
+      border:2px solid #428bca;
+    }
+    .file-select-block .selected img{
+      width:40px;
+      height:40px;
+      
+    }    
+    .file-select-block div.al-arrow-p{
+      background:url(/css/imgs/icon-prev.png) no-repeat;
+      width:60px;
+      height:54px;
+      position:absolute;
+      left:-24px;
+    }
+    .file-select-block div.ar-arrow-p{
+      background:url(/css/imgs/icon-next.png) no-repeat;
+      width:60px;
+      height:54px; 
+      float:right;     
+      position:absolute;
+      right:-24px;      
+    }
+    .file-select-block .action{
+      position:absolute;
+      z-index:2;
+      width:100%;
+    }
+    .file-select-block .bg{
+      position:absolute;
+      padding:10px;
+      height:100%;
+      width:580px;
+      top:0;
+      left:0;
+      z-index:1;
+      background:#000;
+      opacity:0.5;
+    }
+    .review-list-block{
+      width:100%;
+      height:50px;
+      overflow-x:auto;
+    }
+    #reviewFileList{
+
+    }
