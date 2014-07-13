@@ -297,7 +297,9 @@ exports.login = function(req, res) {
         var skey = Util.md5(user.name + ':' + user.pwd + ':' + Date.now());
 
         req.session[skey] = user._id.toString();
-        res.cookie('skey', skey, {});
+        var mainDomain = config.APP_DOMAIN.split('.').slice(1).join('.');
+
+        res.cookie('skey', skey, { domain: '.' + mainDomain });
 
         if (json) {
             res.json({
@@ -328,6 +330,7 @@ exports.logoff = function(req, res) {
     req.session.destroy();
 
     res.clearCookie('skey');
+    // res.clearCookie('sid');
     res.clearCookie('connect.sid');
 
     if (json) {
