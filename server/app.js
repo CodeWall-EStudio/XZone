@@ -30,9 +30,9 @@ app.use(express.cookieParser());
 var mainDomain = config.APP_DOMAIN.split('.').slice(1).join('.');
 
 app.use(express.session({
-    key: 'sid',
+    // key: 'sid',
     secret: config.COOKIE_SECRET,
-    cookie: { maxAge:  config.COOKIE_TIME, httpOnly: true/*, domain: '.' + mainDomain*/ }, // 2 hour
+    cookie: { maxAge:  config.COOKIE_TIME, httpOnly: true, domain: '.' + mainDomain }, // 2 hour
     store: new MongoStore({
         url: config.DB_URI
     }, function () {
