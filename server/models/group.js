@@ -185,7 +185,7 @@ exports.getGroupMembers = function(groupId, needDetail, callback){
         if(docs && docs.length){
             var ep = new EventProxy();
             ep.after('fetchUser', docs.length, function(list){
-                callback(null, list);
+                callback(null, us.compact(list));
             });
             ep.fail(callback);
             docs.forEach(function(doc){
