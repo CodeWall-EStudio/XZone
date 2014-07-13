@@ -7258,7 +7258,7 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 		listTarget = null;
 
     //节流
-    function lookMove(){
+    function lockMove(){
       isMove = true;
       setTimeout(function(){
         isMove = false;
@@ -7389,11 +7389,78 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 						'click' : function(){
 							hideTarget();
 						}
-					}
+					},
+			          '.ar-arrow' : {
+			          	'click' : function(){
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              var id = getNextId();
+			              if(id){
+			              	getFile(id);
+			              	$("#reviewBlock li").removeClass('selected');
+			              	$('#review'+id).addClass('selected');
+			              }else{
+			              	// if(nowLength < nowTotal){
+
+			              	// }else{
+			                  	handerObj.triggerHandler('msg:show',{
+				                    type: 'error',
+				                    msg : '已经是最后文件了!'
+				                });	              		
+			              	//}
+			              }
+
+			          	}
+			          },
+			          '.al-arrow' : {
+			          	'click' : function(){
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              var id = getPrevId();
+			              if(id){
+			              	getFile(id);
+			              	$("#reviewBlock li").removeClass('selected');
+			              	$('#review'+id).addClass('selected');
+			              }else{
+			              	// if(nowLength < nowTotal){
+
+			              	// }else{
+			                  	handerObj.triggerHandler('msg:show',{
+				                    type: 'error',
+				                    msg : '已经是第一个文件了!'
+				                });	              		
+			              	//}
+
+			              }	              
+			          	}
+			          },
+			        '.al-arrow-p' : {
+			        	'click' : function(){
+
+			        	}
+			        },
+			        '.ar-arrow-p' : {
+			        	'click' : function(){
+			        		
+			        	}
+			        }
 				}
 			});
 			view.createPanel();
 		}
+	}
+
+	//下一个文件
+	function nextDom(){
+
+	}
+	//上一个文件
+	function prevDom(){
+
 	}
 
 	function renderList(){
@@ -7406,7 +7473,7 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 	              if(isMove){
 	                return;
 	              }
-	              lookMove();
+	              lockMove();
 	              var t = $(this);
 	              var id = t.attr('data-id');
 	              if(id){
@@ -7416,54 +7483,6 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 	                getFile(id);
 	              }
 	            }
-	          },
-	          '.ar-arrow' : {
-	          	'click' : function(){
-	              if(isMove){
-	                return;
-	              }
-	              lookMove();
-	              var id = getNextId();
-	              if(id){
-	              	getFile(id);
-	              	$("#reviewBlock li").removeClass('selected');
-	              	$('#review'+id).addClass('selected');
-	              }else{
-	              	// if(nowLength < nowTotal){
-
-	              	// }else{
-	                  	handerObj.triggerHandler('msg:show',{
-		                    type: 'error',
-		                    msg : '已经是最后文件了!'
-		                });	              		
-	              	//}
-	              }
-
-	          	}
-	          },
-	          '.al-arrow' : {
-	          	'click' : function(){
-	              if(isMove){
-	                return;
-	              }
-	              lookMove();
-	              var id = getPrevId();
-	              if(id){
-	              	getFile(id);
-	              	$("#reviewBlock li").removeClass('selected');
-	              	$('#review'+id).addClass('selected');
-	              }else{
-	              	// if(nowLength < nowTotal){
-
-	              	// }else{
-	                  	handerObj.triggerHandler('msg:show',{
-		                    type: 'error',
-		                    msg : '已经是第一个文件了!'
-		                });	              		
-	              	//}
-
-	              }	              
-	          	}
 	          }
 			}
 		}
@@ -7529,17 +7548,35 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 
 			$('#reviewImg').load(function(e){
 				var obj = e.target;
-				if(obj.width >= obj.height){
-					if(obj.width>640){
-						obj.width= 640;
-					}     
-						obj.style.marginTop = (640-obj.height)/2+'px';
+				console.log(obj);
+				var w = $('body').width(),
+					h = $('body').height();
+				if(obj.width > w){
+					if(obj.width/obj.height > w/h){
+						obj.style.width = '90%';
+					}else{
+						obj.style.height = '90%';
+					}
+				}else if(obj.height > h){
+					if(obj.width/obj.height > w/h){
+						obj.style.width = '90%';
+					}else{
+						obj.style.height = '90%';
+					}
 				}else{
-					if(obj.height>640){
-						obj.height= 640;
-					}   
-				//obj.style.marginTop = (640-obj.width)/2+'px';
+					obj.style.marginTop = (h-obj.height)/2+'px';
 				}
+				// if(obj.width >= obj.height){
+				// 	if(obj.width>640){
+				// 		obj.width= 640;
+				// 	}     
+				// 		obj.style.marginTop = (640-obj.height)/2+'px';
+				// }else{
+				// 	if(obj.height>640){
+				// 		obj.height= 640;
+				// 	}   
+				// //obj.style.marginTop = (640-obj.width)/2+'px';
+				// }
 			});
             $('.to-left').bind('click',function(){
               $('#reviewImg').rotate({
