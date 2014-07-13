@@ -328,7 +328,7 @@ exports.logoff = function(req, res) {
     req.session.destroy();
 
     res.clearCookie('skey');
-    res.clearCookie('connect.sid');
+    res.clearCookie('sid');
 
     if (json) {
         res.json({
