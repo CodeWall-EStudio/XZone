@@ -21,6 +21,7 @@ exports.create = function(params, callback){
         
         auth: params.auth || 0,
         status: 0,
+        type: params.type || 0,
 
         sizegroup: params.sizegroupId ? new DBRef('sizegroup', params.sizegroupId) : null,
         size: params.size || config.DEFAULT_USER_SPACE,
