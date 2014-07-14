@@ -2596,10 +2596,10 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		isLoading = false;
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
-		nowOds = '',
-		nowUid = 0,
+		nowOds = '', //当前排序
+		nowUid = 0,  //当前uin
 		nowPrep = 0, //当前是否是备课
-		rootFd = 0,
+		rootFd = 0,  //根目录id
 		depnum = -1,
 		nowTotal = 0,
 		nowUid = 0,
@@ -2610,6 +2610,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		nowSchool = 0,
 		nowAuth = 0,
 		nowOtype = 'list',
+		inReview = false, //是否在预览中
 		isMember = {},		
 		fileList = {},
 		nextPage = 0;
@@ -2785,6 +2786,10 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 
 		for(var i = 0,l=d.list.length;i<l;i++){
 			fileList[d.list[i].id] = d.list[i];
+		}
+
+		if(inReview){
+			returnList();
 		}
 
 		var target = tmpTarget,
@@ -3790,11 +3795,19 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 	}	
 
 	//返回列表
-	function returnList(){
-		handerObj.triggerHandler('review:return',{
-			list : fileList,
-			total : nowTotal
-		});
+	function returnList(e,d){
+		//console.log(d);
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}
 	}
 
 	var handlers = {
@@ -4366,7 +4379,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			nowUid = d.uid || 0;
 			rootFd = d.rootfdid || 0;
 			nowType = d.type;
-			nowOtype = d.otype;
+			nowOtype = d.otype || 'list';
 			if(d.order){
 				nowOrder = d.order;
 			}
@@ -5870,6 +5883,7 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 		action = 0,//活动状态
 		nextPage = 0,
 		nowTotal = 0,
+		inReview = false,
 		nowCate = 0,//我的贡献 ,1 收件 2 发件
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
@@ -5950,6 +5964,10 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 			fileList[item.id] = item;
 		}
 
+		if(inReview){
+			returnList();
+		}		
+
 		if($(".file").length < nowTotal){
 			nextPage += 1;
 		}else{
@@ -6009,12 +6027,26 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 		$('.mailsave'+d).remove();
 	}
 
-	function getList(){
-		handerObj.triggerHandler('review:return',{
-			list : fileList,
-			total : nowTotal
-		});		
-	}	
+
+	function getList(d){
+
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}		
+		// handerObj.triggerHandler('review:return',{
+		// 	list : fileList,
+		// 	total : nowTotal,
+		// 	page : nextPage
+		// });		
+	}
 
 	var handlers = {
 		'page:next' : pageNext,
@@ -6088,6 +6120,7 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 		nowOrder  = ['createTime',-1], 
 		nowType = 0;
 		nowOds = '',
+		inReview = false,
 		fileList = {},
 		nowTotal = 0;
 		nowKey = '';
@@ -6155,6 +6188,10 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 			fileList[item.fileid] = item;
 		}
 
+		if(inReview){
+			returnList();
+		}		
+
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'coll.list',
@@ -6201,11 +6238,24 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 		});		
 	}
 
-	function getList(){
-		handerObj.triggerHandler('review:return',{
-			list : fileList,
-			total : nowTotal
-		});		
+	function getList(d){
+
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}		
+		// handerObj.triggerHandler('review:return',{
+		// 	list : fileList,
+		// 	total : nowTotal,
+		// 	page : nextPage
+		// });		
 	}
 
 	var handlers = {
@@ -6347,6 +6397,7 @@ define('view.recy',['config','helper/view','cache','model.recy'],function(config
 	var nextPage = 0,
 		action = 0,
 		nowGid = 0,
+		inReview = false,
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
 		nowType = 0,
@@ -7249,6 +7300,8 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
     var isInit = false; //是否已经初始化		
 	var nowId = null;
 	var nowTotal = 0,
+		nowPage = 0,
+		isLoading = false,
 		nowLength = 0;
 	var nowType = null;
 	var mail = null,
@@ -7286,6 +7339,7 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 	function show(e,d){
 		//console.log(d);
 		nowId = d.id;
+		nowPage = 0;
 		mail = false;
 		cate = false;
 		coll = false;
@@ -7372,9 +7426,12 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 		}
     }	
 
+    //从各个模块拿到数据了.
 	function listLoad(e,d){
-		nowList = d.list;
-		nowTotal = d.total;
+		isLoading = false;
+		nowList = d.list;   //文件列表
+		nowTotal = d.total; //文件总数
+		nowPage = d.page;  //当前在第几页了.
 		if(isInit){
 			render(nowList[nowId]);
 			renderList();
@@ -7407,14 +7464,10 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 			              	$("#reviewBlock li").removeClass('selected');
 			              	$('#review'+id).addClass('selected');
 			              }else{
-			              	// if(nowLength < nowTotal){
-
-			              	// }else{
 			                  	handerObj.triggerHandler('msg:show',{
 				                    type: 'error',
 				                    msg : '已经是最后文件了!'
 				                });	              		
-			              	//}
 			              }
 
 			          	}
@@ -7431,26 +7484,29 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 			              	$("#reviewBlock li").removeClass('selected');
 			              	$('#review'+id).addClass('selected');
 			              }else{
-			              	// if(nowLength < nowTotal){
-
-			              	// }else{
 			                  	handerObj.triggerHandler('msg:show',{
 				                    type: 'error',
 				                    msg : '已经是第一个文件了!'
-				                });	              		
-			              	//}
-
+				                });
 			              }	              
 			          	}
 			          },
 			        '.al-arrow-p' : {
 			        	'click' : function(){
-
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              prevPage();
 			        	}
 			        },
 			        '.ar-arrow-p' : {
 			        	'click' : function(){
-			        		
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              nextPage();			        		
 			        	}
 			        }
 				}
@@ -7460,14 +7516,85 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 	}
 
 	//下一个文件
-	function nextDom(){
+	function nextPage(){
+		if(isLoading){
+          	handerObj.triggerHandler('msg:show',{
+                type: 'error',
+                msg : '正在努力加载中,请稍等!'
+            });	  			
+			return;
+		}
+		//还有下一页数据
+		if(nowLength < nowTotal){
+			isLoading = true;
+			handerObj.triggerHandler(nowType+':getlist',true);
+		//已经有全部数据了.
+		}else{
+			var t = $('#reviewFileList');
+			var w = $('.review-list-block').width();
 
+			var tn = Math.ceil(w/48);
+
+			var rw = t.width();
+			var ml = t.css('marginLeft');
+			ml = parseInt(ml.replace('px',''));
+			if(w<rw){
+				if(ml <= 0 && Math.abs(ml-tn*48)<rw){
+					t.css('marginLeft',ml-tn*48+'px');
+				}else{
+
+				}
+			}
+
+		}
 	}
+
 	//上一个文件
-	function prevDom(){
+	function prevPage(){
+		console.log('prev');
+		var t = $('#reviewFileList');
+		var w = $('.review-list-block').width();
+		var rw = t.width();
+		var ml = t.css('marginLeft');
+		ml = parseInt(ml.replace('px',''));
+		if(w<rw){
+			var t = $('#reviewFileList');
+			var w = $('.review-list-block').width();
 
+			var tn = Math.ceil(w/48);
+
+			var rw = t.width();
+			var ml = t.css('marginLeft');
+			ml = parseInt(ml.replace('px',''));
+			console.log(ml,Math.abs(ml-tn*48)<rw);
+			if(ml < -tn*48){
+				t.css('marginLeft',ml+tn*48+'px');
+			}else{
+				t.css('marginLeft','0px');
+			}
+
+		}
 	}
 
+	//计算是否有下一页等等
+	function checkPage(){
+		var w = $('.review-list-block').width();
+		//var nowFileLength = $('#reviewFileList li').length;
+		//if(w>=48*nowLength){
+			var idx = getIdx();
+			if(idx*48>w){
+
+			}else{
+				$('.al-arrow-p').attr('disable','disable');
+				$('.ar-arrow-p').attr('disable','disable');				
+			}
+		// }else{
+		// 	$('.al-arrow-p').attr('disable','disable');
+		// 	$('.ar-arrow-p').attr('disable','disable');
+		// }
+	}
+
+	//生成缩略图列表
 	function renderList(){
 		var handlers = {};
 		if(!isInit){
@@ -7497,7 +7624,8 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 	        target : $('#reviewBlock'),
 	        after : function(){
 	          nowLength = $('#reviewFileList li').length;
-	          $('#reviewFileList').width(48*nowLength); 	        	
+	          $('#reviewFileList').width(48*nowLength); 
+	          checkPage();	        	
 	        },
 	        data : {
 	          list : nowList,

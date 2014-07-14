@@ -5,6 +5,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 		action = 0,//活动状态
 		nextPage = 0,
 		nowTotal = 0,
+		inReview = false,
 		nowCate = 0,//我的贡献 ,1 收件 2 发件
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
@@ -85,6 +86,10 @@ define(['config','helper/view','model.mail'],function(config,View){
 			fileList[item.id] = item;
 		}
 
+		if(inReview){
+			returnList();
+		}		
+
 		if($(".file").length < nowTotal){
 			nextPage += 1;
 		}else{
@@ -144,12 +149,26 @@ define(['config','helper/view','model.mail'],function(config,View){
 		$('.mailsave'+d).remove();
 	}
 
-	function getList(){
-		handerObj.triggerHandler('review:return',{
-			list : fileList,
-			total : nowTotal
-		});		
-	}	
+
+	function getList(d){
+
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}		
+		// handerObj.triggerHandler('review:return',{
+		// 	list : fileList,
+		// 	total : nowTotal,
+		// 	page : nextPage
+		// });		
+	}
 
 	var handlers = {
 		'page:next' : pageNext,

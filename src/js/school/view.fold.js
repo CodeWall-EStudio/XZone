@@ -264,7 +264,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			nowUid = d.uid || 0;
 			rootFd = d.rootfdid || 0;
 			nowType = d.type;
-			nowOtype = d.otype;
+			nowOtype = d.otype || 'list';
 			if(d.order){
 				nowOrder = d.order;
 			}

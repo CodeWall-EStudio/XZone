@@ -8,10 +8,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		isLoading = false;
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
-		nowOds = '',
-		nowUid = 0,
+		nowOds = '', //当前排序
+		nowUid = 0,  //当前uin
 		nowPrep = 0, //当前是否是备课
-		rootFd = 0,
+		rootFd = 0,  //根目录id
 		depnum = -1,
 		nowTotal = 0,
 		nowUid = 0,
@@ -22,6 +22,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowSchool = 0,
 		nowAuth = 0,
 		nowOtype = 'list',
+		inReview = false, //是否在预览中
 		isMember = {},		
 		fileList = {},
 		nextPage = 0;
@@ -197,6 +198,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 
 		for(var i = 0,l=d.list.length;i<l;i++){
 			fileList[d.list[i].id] = d.list[i];
+		}
+
+		if(inReview){
+			returnList();
 		}
 
 		var target = tmpTarget,
@@ -1202,11 +1207,19 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	}	
 
 	//返回列表
-	function returnList(){
-		handerObj.triggerHandler('review:return',{
-			list : fileList,
-			total : nowTotal
-		});
+	function returnList(e,d){
+		//console.log(d);
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}
 	}
 
 	var handlers = {

@@ -5,6 +5,7 @@ define(['config','helper/view','cache','model.recy'],function(config,View,Cache)
 	var nextPage = 0,
 		action = 0,
 		nowGid = 0,
+		inReview = false,
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
 		nowType = 0,

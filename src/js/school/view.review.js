@@ -8,6 +8,8 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
     var isInit = false; //是否已经初始化		
 	var nowId = null;
 	var nowTotal = 0,
+		nowPage = 0,
+		isLoading = false,
 		nowLength = 0;
 	var nowType = null;
 	var mail = null,
@@ -45,6 +47,7 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 	function show(e,d){
 		//console.log(d);
 		nowId = d.id;
+		nowPage = 0;
 		mail = false;
 		cate = false;
 		coll = false;
@@ -131,9 +134,12 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 		}
     }	
 
+    //从各个模块拿到数据了.
 	function listLoad(e,d){
-		nowList = d.list;
-		nowTotal = d.total;
+		isLoading = false;
+		nowList = d.list;   //文件列表
+		nowTotal = d.total; //文件总数
+		nowPage = d.page;  //当前在第几页了.
 		if(isInit){
 			render(nowList[nowId]);
 			renderList();
@@ -166,14 +172,10 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 			              	$("#reviewBlock li").removeClass('selected');
 			              	$('#review'+id).addClass('selected');
 			              }else{
-			              	// if(nowLength < nowTotal){
-
-			              	// }else{
 			                  	handerObj.triggerHandler('msg:show',{
 				                    type: 'error',
 				                    msg : '已经是最后文件了!'
 				                });	              		
-			              	//}
 			              }
 
 			          	}
@@ -190,26 +192,29 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 			              	$("#reviewBlock li").removeClass('selected');
 			              	$('#review'+id).addClass('selected');
 			              }else{
-			              	// if(nowLength < nowTotal){
-
-			              	// }else{
 			                  	handerObj.triggerHandler('msg:show',{
 				                    type: 'error',
 				                    msg : '已经是第一个文件了!'
-				                });	              		
-			              	//}
-
+				                });
 			              }	              
 			          	}
 			          },
 			        '.al-arrow-p' : {
 			        	'click' : function(){
-
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              prevPage();
 			        	}
 			        },
 			        '.ar-arrow-p' : {
 			        	'click' : function(){
-			        		
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              nextPage();			        		
 			        	}
 			        }
 				}
@@ -219,14 +224,85 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 	}
 
 	//下一个文件
-	function nextDom(){
+	function nextPage(){
+		if(isLoading){
+          	handerObj.triggerHandler('msg:show',{
+                type: 'error',
+                msg : '正在努力加载中,请稍等!'
+            });	  			
+			return;
+		}
+		//还有下一页数据
+		if(nowLength < nowTotal){
+			isLoading = true;
+			handerObj.triggerHandler(nowType+':getlist',true);
+		//已经有全部数据了.
+		}else{
+			var t = $('#reviewFileList');
+			var w = $('.review-list-block').width();
 
+			var tn = Math.ceil(w/48);
+
+			var rw = t.width();
+			var ml = t.css('marginLeft');
+			ml = parseInt(ml.replace('px',''));
+			if(w<rw){
+				if(ml <= 0 && Math.abs(ml-tn*48)<rw){
+					t.css('marginLeft',ml-tn*48+'px');
+				}else{
+
+				}
+			}
+
+		}
 	}
+
 	//上一个文件
-	function prevDom(){
+	function prevPage(){
+		console.log('prev');
+		var t = $('#reviewFileList');
+		var w = $('.review-list-block').width();
+		var rw = t.width();
+		var ml = t.css('marginLeft');
+		ml = parseInt(ml.replace('px',''));
+		if(w<rw){
+			var t = $('#reviewFileList');
+			var w = $('.review-list-block').width();
 
+			var tn = Math.ceil(w/48);
+
+			var rw = t.width();
+			var ml = t.css('marginLeft');
+			ml = parseInt(ml.replace('px',''));
+			console.log(ml,Math.abs(ml-tn*48)<rw);
+			if(ml < -tn*48){
+				t.css('marginLeft',ml+tn*48+'px');
+			}else{
+				t.css('marginLeft','0px');
+			}
+
+		}
 	}
 
+	//计算是否有下一页等等
+	function checkPage(){
+		var w = $('.review-list-block').width();
+		//var nowFileLength = $('#reviewFileList li').length;
+		//if(w>=48*nowLength){
+			var idx = getIdx();
+			if(idx*48>w){
+
+			}else{
+				$('.al-arrow-p').attr('disable','disable');
+				$('.ar-arrow-p').attr('disable','disable');				
+			}
+		// }else{
+		// 	$('.al-arrow-p').attr('disable','disable');
+		// 	$('.ar-arrow-p').attr('disable','disable');
+		// }
+	}
+
+	//生成缩略图列表
 	function renderList(){
 		var handlers = {};
 		if(!isInit){
@@ -256,7 +332,8 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 	        target : $('#reviewBlock'),
 	        after : function(){
 	          nowLength = $('#reviewFileList li').length;
-	          $('#reviewFileList').width(48*nowLength); 	        	
+	          $('#reviewFileList').width(48*nowLength); 
+	          checkPage();	        	
 	        },
 	        data : {
 	          list : nowList,

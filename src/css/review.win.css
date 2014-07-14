@@ -159,18 +159,20 @@
       
     }    
     .file-select-block div.al-arrow-p{
-      background:url(/css/imgs/icon-prev.png) no-repeat;
+      background:url(/css/imgs/page-prev.png) no-repeat;
       width:60px;
       height:54px;
       position:absolute;
+      cursor:pointer;
       left:-24px;
     }
     .file-select-block div.ar-arrow-p{
-      background:url(/css/imgs/icon-next.png) no-repeat;
+      background:url(/css/imgs/page-next.png) no-repeat;
       width:60px;
       height:54px; 
       float:right;     
       position:absolute;
+      cursor:pointer;
       right:-24px;      
     }
     .file-select-block .action{
@@ -192,7 +194,7 @@
     .review-list-block{
       width:100%;
       height:50px;
-      overflow-x:auto;
+      overflow:hidden;
     }
     #reviewFileList{
 

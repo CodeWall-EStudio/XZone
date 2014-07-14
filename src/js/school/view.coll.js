@@ -6,6 +6,7 @@ define(['config','helper/view','model.coll'],function(config,View){
 		nowOrder  = ['createTime',-1], 
 		nowType = 0;
 		nowOds = '',
+		inReview = false,
 		fileList = {},
 		nowTotal = 0;
 		nowKey = '';
@@ -73,6 +74,10 @@ define(['config','helper/view','model.coll'],function(config,View){
 			fileList[item.fileid] = item;
 		}
 
+		if(inReview){
+			returnList();
+		}		
+
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'coll.list',
@@ -119,11 +124,24 @@ define(['config','helper/view','model.coll'],function(config,View){
 		});		
 	}
 
-	function getList(){
-		handerObj.triggerHandler('review:return',{
-			list : fileList,
-			total : nowTotal
-		});		
+	function getList(d){
+
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}		
+		// handerObj.triggerHandler('review:return',{
+		// 	list : fileList,
+		// 	total : nowTotal,
+		// 	page : nextPage
+		// });		
 	}
 
 	var handlers = {
