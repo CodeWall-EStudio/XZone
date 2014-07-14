@@ -298,7 +298,6 @@ exports.login = function(req, res) {
 
         req.session[skey] = user._id.toString();
         var mainDomain = config.APP_DOMAIN.split('.').slice(1).join('.');
-
         res.cookie('skey', skey, { domain: '.' + mainDomain });
 
         if (json) {
