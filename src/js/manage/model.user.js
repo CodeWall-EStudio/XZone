@@ -274,7 +274,24 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		handerObj.triggerHandler('user:depsearchreturn',result);
 	}
 
+	function getOne(e,d){
+		var opt = {
+			cgi : config.cgi.info,
+			data : {
+				userId : d
+			}
+		};
+		var success = function(data){
+			if(data.err === 0){
+				handerObj.triggerHandler('user:oneload',data.result);
+			}
+			handerObj.triggerHandler('msg:error',data.err);			
+		}
+		request.get(opt,success);		
+	}
+
 	var handlers = {
+		'user:getone' : getOne,
 		'user:orgdel' : delOrg,
 		'user:orgmodify' : modifyOrg,
 		'user:orgcreate' : createOrg,

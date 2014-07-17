@@ -2939,7 +2939,24 @@ define('model.user',['config','helper/request','helper/util','cache'],function(c
 		handerObj.triggerHandler('user:depsearchreturn',result);
 	}
 
+	function getOne(e,d){
+		var opt = {
+			cgi : config.cgi.info,
+			data : {
+				userId : d
+			}
+		};
+		var success = function(data){
+			if(data.err === 0){
+				handerObj.triggerHandler('user:oneload',data.result);
+			}
+			handerObj.triggerHandler('msg:error',data.err);			
+		}
+		request.get(opt,success);		
+	}
+
 	var handlers = {
+		'user:getone' : getOne,
 		'user:orgdel' : delOrg,
 		'user:orgmodify' : modifyOrg,
 		'user:orgcreate' : createOrg,
@@ -3004,6 +3021,8 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 	//修改用户
 	function modifyUser(uin){
 		if(userList[uin]){
+			handerObj.triggerHandler('user:getone',uin);
+
 			var sglist = Cache.get('sizegroup');
 
 			var view = new View({
@@ -3973,7 +3992,20 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 		$('#ouser'+d.userId).show().removeAttr('data-hide');
 	}
 
+	//加载用户资料
+	function oneLoad(e,d){
+		var view = new View({
+			target : $('#userInOrgs'),
+			tplid : 'manage/user.org.li',			
+			data :{
+				list : d.organizations
+			}
+		});
+		view.createPanel();
+	}
+
 	var handlers = {
+		'user:oneload' : oneLoad,
 		'user:orgdelsuc' : orgDelSuc,
 		'user:orgmodifysuc' : orgModifySuc,
 		'user:orgcreatesuc' : orgCreateSuc,

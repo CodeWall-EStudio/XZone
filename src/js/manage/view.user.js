@@ -42,6 +42,8 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 	//修改用户
 	function modifyUser(uin){
 		if(userList[uin]){
+			handerObj.triggerHandler('user:getone',uin);
+
 			var sglist = Cache.get('sizegroup');
 
 			var view = new View({
@@ -1011,7 +1013,20 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		$('#ouser'+d.userId).show().removeAttr('data-hide');
 	}
 
+	//加载用户资料
+	function oneLoad(e,d){
+		var view = new View({
+			target : $('#userInOrgs'),
+			tplid : 'manage/user.org.li',			
+			data :{
+				list : d.organizations
+			}
+		});
+		view.createPanel();
+	}
+
 	var handlers = {
+		'user:oneload' : oneLoad,
 		'user:orgdelsuc' : orgDelSuc,
 		'user:orgmodifysuc' : orgModifySuc,
 		'user:orgcreatesuc' : orgCreateSuc,
