@@ -39,6 +39,8 @@ function findArray(coll, value, pcfg, callback) {
         return callback(null, value);
     }
 
+    value = us.compact(value);
+
     var ep = new EventProxy();
     ep.fail(callback);
 
@@ -127,11 +129,12 @@ function getChecker(type) {
     if (!checkMethod) {
 
         if (ARRAY_REGEXP.test(type)) { // 数组类型
-            type = type.substring(1, type.length - 1);
-            if (type in db) { // 验证 db 的数据值
+            var subType = type.substring(1, type.length - 1);
+            if (subType in db) { // 验证 db 的数据值
                 checkMethod = function(value, pcfg, callback) {
-                    findArray(type, value, pcfg, callback);
+                    findArray(subType, value, pcfg, callback);
                 };
+                checkers[type] = checkMethod;
             } else {
                 checkMethod = checkers['array'];
             }
@@ -139,6 +142,7 @@ function getChecker(type) {
             checkMethod = function(value, pcfg, callback) {
                 findOne(type, value, pcfg, callback);
             };
+            checkers[type] = checkMethod;
         }
     }
     return checkMethod;
