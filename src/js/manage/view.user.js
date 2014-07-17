@@ -83,14 +83,19 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		var sglist = Cache.get('sizegroup');
 
 		if(d.sizegroupId){
-			userList[d.userId].size = sglist[d.sizegroupId].size;
+			userList[d.userId].size = sglist[d.sizegroupId].nsize;
+			userList[d.userId].osize = sglist[d.sizegroupId].size;
+
 			userList[d.userId].sizegroup.$id = d.sizegroupId;
-			userList[d.userId].pre = Util.getNums(userList[d.userId].used/userList[d.userId].size)*100;
-			if(userList[d.userId].size){
-				userList[d.userId].size = Util.getSize(userList[d.userId].size);
-			}else{
-				userList[d.userId].size = 0;
-			}			
+			userList[d.userId].pre = Util.getNums(userList[d.userId].oused/userList[d.userId].osize)*100;
+
+			$('#userSizeUsed').text(userList[d.userId].pre+'%');
+
+			// if(userList[d.userId].size){
+			// 	userList[d.userId].size = Util.getSize(userList[d.userId].size);
+			// }else{
+			// 	userList[d.userId].size = 0;
+			// }			
 		}
 		if(typeof d.status != 'undefined'){
 			$('#tr-user'+d.userId).attr('data-status',d.status);

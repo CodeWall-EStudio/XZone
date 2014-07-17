@@ -11,7 +11,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			list[i] = conventGroup(list[i]);
 			g2key[list[i].id] = list[i];
 		}
-
+		console.log(list);
 		return {
 			list : list,
 			g2key : g2key,
@@ -21,7 +21,10 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 
 	function conventGroup(data){
 		data.id = data._id;
-		data.pre = util.getNums(data.used/data.size)*100;
+		data.pre = Math.round(util.getNums(data.used/data.size)*100);
+		data.osize = data.size;
+		data.oused = data.used;		
+
 		if(data.size){
 			data.size = util.getSize(data.size);
 		}else{
@@ -33,8 +36,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			data.used = 0;
 		}		
 		data.stname = util.getStatus(data.status,data.validateStatus);
-		data.osize = data.size;
-		data.oused = data.used;
+
 		data.st = data.startTime;
 		//容错	
 		if(!data.archivable){
@@ -162,6 +164,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		var success = function(d){
 			if(d.err == 0){
 				var obj = conventGroup(d.result.data);
+				console.log(obj);
 				// var g2obj = {};
 				// g2obj[obj.id] = obj;
 				handerObj.triggerHandler('group:createsuc',obj);

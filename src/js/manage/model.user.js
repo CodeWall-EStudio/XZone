@@ -9,6 +9,8 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			item.id = item._id;
 
 			item.pre = Math.round(util.getNums(item.used/item.size)*100);
+			item.osize = item.size;
+			item.oused = item.used;				
 			if(item.size){
 				item.size = util.getSize(item.size);
 			}else{
@@ -21,8 +23,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				item.used = 0;
 			}
 
-			item.osize = item.size;
-			item.oused = item.used;	
+
 			list[item.id] = item;
 			//list.push(item);
 			//console.log(item);

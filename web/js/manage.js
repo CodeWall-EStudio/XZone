@@ -1295,7 +1295,7 @@ define('model.group',['config','helper/request','helper/util','cache'],function(
 			list[i] = conventGroup(list[i]);
 			g2key[list[i].id] = list[i];
 		}
-
+		console.log(list);
 		return {
 			list : list,
 			g2key : g2key,
@@ -1305,7 +1305,10 @@ define('model.group',['config','helper/request','helper/util','cache'],function(
 
 	function conventGroup(data){
 		data.id = data._id;
-		data.pre = util.getNums(data.used/data.size)*100;
+		data.pre = Math.round(util.getNums(data.used/data.size)*100);
+		data.osize = data.size;
+		data.oused = data.used;		
+
 		if(data.size){
 			data.size = util.getSize(data.size);
 		}else{
@@ -1317,8 +1320,7 @@ define('model.group',['config','helper/request','helper/util','cache'],function(
 			data.used = 0;
 		}		
 		data.stname = util.getStatus(data.status,data.validateStatus);
-		data.osize = data.size;
-		data.oused = data.used;
+
 		data.st = data.startTime;
 		//容错	
 		if(!data.archivable){
@@ -1446,6 +1448,7 @@ define('model.group',['config','helper/request','helper/util','cache'],function(
 		var success = function(d){
 			if(d.err == 0){
 				var obj = conventGroup(d.result.data);
+				console.log(obj);
 				// var g2obj = {};
 				// g2obj[obj.id] = obj;
 				handerObj.triggerHandler('group:createsuc',obj);
@@ -2676,6 +2679,8 @@ define('model.user',['config','helper/request','helper/util','cache'],function(c
 			item.id = item._id;
 
 			item.pre = Math.round(util.getNums(item.used/item.size)*100);
+			item.osize = item.size;
+			item.oused = item.used;				
 			if(item.size){
 				item.size = util.getSize(item.size);
 			}else{
@@ -2688,8 +2693,7 @@ define('model.user',['config','helper/request','helper/util','cache'],function(c
 				item.used = 0;
 			}
 
-			item.osize = item.size;
-			item.oused = item.used;	
+
 			list[item.id] = item;
 			//list.push(item);
 			//console.log(item);
@@ -2896,14 +2900,19 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 		var sglist = Cache.get('sizegroup');
 
 		if(d.sizegroupId){
-			userList[d.userId].size = sglist[d.sizegroupId].size;
+			userList[d.userId].size = sglist[d.sizegroupId].nsize;
+			userList[d.userId].osize = sglist[d.sizegroupId].size;
+
 			userList[d.userId].sizegroup.$id = d.sizegroupId;
-			userList[d.userId].pre = Util.getNums(userList[d.userId].used/userList[d.userId].size)*100;
-			if(userList[d.userId].size){
-				userList[d.userId].size = Util.getSize(userList[d.userId].size);
-			}else{
-				userList[d.userId].size = 0;
-			}			
+			userList[d.userId].pre = Util.getNums(userList[d.userId].oused/userList[d.userId].osize)*100;
+
+			$('#userSizeUsed').text(userList[d.userId].pre+'%');
+
+			// if(userList[d.userId].size){
+			// 	userList[d.userId].size = Util.getSize(userList[d.userId].size);
+			// }else{
+			// 	userList[d.userId].size = 0;
+			// }			
 		}
 		if(typeof d.status != 'undefined'){
 			$('#tr-user'+d.userId).attr('data-status',d.status);
