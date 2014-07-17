@@ -82,13 +82,26 @@ exports.info = function(req, res) {
 
     var user = req.parameter.userId;
     delete user.pwd;
+    Util.removePrivateMethods(user);
 
-    res.json({
-        err: ERR.SUCCESS,
-        result: {
-            user: user
+    mOrganization.getOrgsByUserId(user._id, function(err, result) {
+
+        if (!err) {
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    user: user,
+                    organizations: result
+                }
+            });
+        } else {
+            res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
         }
     });
+
 };
 
 var validateTicket = function(ticket, callback) {
@@ -298,7 +311,9 @@ exports.login = function(req, res) {
 
         req.session[skey] = user._id.toString();
         var mainDomain = config.APP_DOMAIN.split('.').slice(1).join('.');
-        res.cookie('skey', skey, { domain: '.' + mainDomain });
+        res.cookie('skey', skey, {
+            domain: '.' + mainDomain
+        });
 
         if (json) {
             res.json({

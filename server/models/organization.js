@@ -211,3 +211,25 @@ exports.getOrganizationTree = function(params, callback){
         });
     });
 };
+
+exports.getOrgsByUserId = function(userId, callback){
+
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    db.departuser.find({ 'user.$id': userId }, ep.doneLater('getOrgs'));
+
+    ep.on('getOrgs', function(depUsers){
+        
+        ep.after('fetchDepartments', depUsers.length, function(list){
+
+            callback(null, us.compact(list));
+        });
+
+        depUsers.forEach(function(doc){
+
+            db.department.findOne({ _id: doc.department.oid }, ep.group('fetchDepartments'));
+        });
+    });
+
+};
