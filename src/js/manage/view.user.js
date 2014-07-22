@@ -191,24 +191,6 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 								sid : sid
 							});
 						}
-					},
-					'.user-search-key' : {
-						'focus' : function(){
-							var t = $(this),
-								v = t.val(),
-								def = t.attr('data-def');
-							if(v == def){
-								t.val('');
-							}
-						},
-						'blur' : function(){
-							var t = $(this),
-								v = t.val(),
-								def = t.attr('data-def');
-							if(v == ''){
-								t.val(def);
-							}
-						}
 					},	
 					'.tr-user' : {
 						'click' : function(e){
@@ -267,7 +249,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 								auth = 0;
 								sg = $('#userSizeGroup').val();
 							if(name === '' || nick === ''){
-								handerObj.triggerHandler('msg:error',22);
+								handerObj.triggerHandler('msg:error',21);
 								return;
 							}
 							if($("#adminAuth:checked").length){
@@ -327,6 +309,39 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 							}
 						}
 					},
+					'.user-search-key' : {
+						'keyup' : function(e){
+							if(e.keyCode === 13){
+								var v = $('.user-search-key').val(),
+									def = $('.user-search-key').attr('data-def');
+								if(v != '' && v != def){
+									nowKey = v;
+									reloadUser();
+									var obj = {
+										keyword : v,
+										page : 0
+									}
+									getUser(obj);
+								}								
+							}
+						},
+						'focus' : function(){
+							var t = $(this),
+								v = t.val(),
+								def = t.attr('data-def');
+							if(v == def){
+								t.val('');
+							}
+						},
+						'blur' : function(){
+							var t = $(this),
+								v = t.val(),
+								def = t.attr('data-def');
+							if(v == ''){
+								t.val(def);
+							}
+						}
+					},					
 					'.user-search-btn' : {
 						'click' : function(){
 							var v = $('.user-search-key').val(),
@@ -727,6 +742,19 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 					}
 				},
 				'.deps-search-key' : {
+					'keyup' : function(e){
+						if(e.keyCode === 13){
+							var v = $('.deps-search-key').val(),
+								def = $('.deps-search-key').attr('data-def');
+							if(v != '' && v != def){
+								 var obj = {
+								 	key : v,
+								 	list : o2key
+								 }
+								 handerObj.triggerHandler('user:depsearch',obj);
+							}							
+						}
+					},
 					'focus' : function(){
 						var t = $(this),
 							v = t.val(),
@@ -779,15 +807,35 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 						var v = $(this).val();
 					}
 				},
+				'.org-user-search' : {
+					'keyup' : function(e){
+						if(e.keyCode === 13){
+							var val = $('#searchOrgUser').val();
+							$("#orgUserSelectList li").show();
+							for(var i in userList){
+								var item = userList[i];
+								if(item.nick.indexOf(val)<0 && item.name.indexOf(val)<0){
+									$('#ouser'+item.id).hide();
+								}
+							}
+						}
+					}
+				},
 				'.btn-org-user-search' : {
 					'click' : function(){
 						var val = $('#searchOrgUser').val();
+						$("#orgUserSelectList li").show();
 						for(var i in userList){
 							var item = userList[i];
 							if(item.nick.indexOf(val)<0 && item.name.indexOf(val)<0){
 								$('#ouser'+item.id).hide();
 							}
 						}
+					}
+				},
+				'.btn-org-user-serach-reset' : {
+					'click' : function(){
+						$("#orgUserSelectList li").show();
 					}
 				},
 				'.btn-org-user-save' : {
@@ -850,7 +898,11 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 				'.btn-org-del' : {
 					'click' : function(){
 						var id = nowOid;
-						delOrg(id);
+						if(o2key[id] && o2key[id].users && o2key[id].users.length > 0){
+							handerObj.triggerHandler('msg:error',23);
+						}else{
+							delOrg(id);
+						}
 					}
 				},
 				'.btn-org-save' : {
@@ -903,12 +955,16 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 	function orgCreateSuc(e,d){
 		var pid = d.parent.$id;
 
+		$('#depModifyZone').html('');
 		d.children = [];
 		d.users = [];
 		o2key[d._id] = d;
-		if(o2key[pid].children){
+		if(o2key[pid] && o2key[pid].children){
 			o2key[pid].children.push(d);
 		}else{
+			if(!o2key[pid]){
+				o2key[pid] = {};
+			}
 			o2key[pid].children = [];
 			o2key[pid].children.push(d);
 		}
@@ -948,6 +1004,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 
 	function orgDelSuc(e,d){
 		$('#org'+d).remove();
+		$('#depModifyZone').html('');
 	}
 
 	function orgModifySuc(e,d){

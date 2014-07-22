@@ -298,3 +298,7 @@ table.jqplot-table-legend{
 .org-user-selected li{
 	cursor:pointer;
 }
+.quit-dep-search{
+	cursor:pointer;
+	padding:10px;
+}
