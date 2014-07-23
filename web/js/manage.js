@@ -2950,8 +2950,9 @@ define('model.user',['config','helper/request','helper/util','cache'],function(c
 		var success = function(data){
 			if(data.err === 0){
 				handerObj.triggerHandler('user:oneload',data.result);
+			}else{
+				handerObj.triggerHandler('msg:error',data.err);			
 			}
-			handerObj.triggerHandler('msg:error',data.err);			
 		}
 		request.get(opt,success);		
 	}
@@ -3042,7 +3043,7 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 	function reloadUser(){
 		nowUin = 0;
 		nowPage = 0;
-		nowKey = '';
+		//nowKey = '';
 		isLoading = false;
 		userList = {};
 		$('#userList').html('');
@@ -3063,6 +3064,10 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 		}else{
 			$('th.order-'+nowOn).attr('data-od',1);
 			$('th.order-'+nowOn+' i').attr('class','ad');
+		}
+		console.log(nowKey);
+		if(nowKey !== ''){
+			$('.quit-user-search').show();
 		}
 
 		var view = new View({
@@ -3111,6 +3116,7 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 
 	//用户列表初始化
 	function userInit(){
+		nowKey = '';
 		if(isInit.user){
 			nowPage = 0;
 			$('#userMa').removeClass('hide');
@@ -3321,7 +3327,16 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 								t.val(def);
 							}
 						}
-					},					
+					},	
+					'.quit-user-search' : {
+						'click' : function(){
+							nowKey = '';
+							reloadUser();
+							getUser({
+								page : 0
+							});							
+						}
+					},
 					'.user-search-btn' : {
 						'click' : function(){
 							var v = $('.user-search-key').val(),

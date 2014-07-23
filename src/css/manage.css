@@ -302,3 +302,8 @@ table.jqplot-table-legend{
 	cursor:pointer;
 	padding:10px;
 }
+.quit-user-search{
+	cursor:pointer;
+	padding:10px;
+	display:none;	
+}

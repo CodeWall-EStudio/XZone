@@ -371,6 +371,22 @@ Content-Type: text/html
 				$("#actWin").modal('show');
 			},
 			handlers : {
+				'#userPwd' : {
+					'keyup' : function(e){
+						if(e.keyCode === 13){
+							var name = $('#userName').val(),
+								pwd = $('#userPwd').val();
+							if(name !== '' && pwd !== ''){
+								var obj = {
+									name : name,
+									pwd : pwd,
+									json: true
+								};
+								handerObj.triggerHandler('nav:login',obj);
+							}
+						}
+					}
+				},
 				'.btn-login' : {
 					'click' : function(){
 						var name = $('#userName').val(),

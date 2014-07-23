@@ -284,8 +284,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		var success = function(data){
 			if(data.err === 0){
 				handerObj.triggerHandler('user:oneload',data.result);
+			}else{
+				handerObj.triggerHandler('msg:error',data.err);			
 			}
-			handerObj.triggerHandler('msg:error',data.err);			
 		}
 		request.get(opt,success);		
 	}

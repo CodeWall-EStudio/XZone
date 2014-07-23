@@ -23,6 +23,8 @@
 						<%-pname%>
 					<%}else if(data && data.parent.$id && kl[data.parent.$id]){	%>
 						<%-kl[data.parent.$id].name %>
+					<%}else{%>
+						根组织
 					<%}%>
 <!-- 					<%if(data && data.parent.$id !== rid){%>
 						<%-kl[data.parent.$id].name %>

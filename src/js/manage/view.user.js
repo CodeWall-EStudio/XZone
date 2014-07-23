@@ -62,7 +62,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 	function reloadUser(){
 		nowUin = 0;
 		nowPage = 0;
-		nowKey = '';
+		//nowKey = '';
 		isLoading = false;
 		userList = {};
 		$('#userList').html('');
@@ -83,6 +83,10 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		}else{
 			$('th.order-'+nowOn).attr('data-od',1);
 			$('th.order-'+nowOn+' i').attr('class','ad');
+		}
+		console.log(nowKey);
+		if(nowKey !== ''){
+			$('.quit-user-search').show();
 		}
 
 		var view = new View({
@@ -131,6 +135,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 
 	//用户列表初始化
 	function userInit(){
+		nowKey = '';
 		if(isInit.user){
 			nowPage = 0;
 			$('#userMa').removeClass('hide');
@@ -341,7 +346,16 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 								t.val(def);
 							}
 						}
-					},					
+					},	
+					'.quit-user-search' : {
+						'click' : function(){
+							nowKey = '';
+							reloadUser();
+							getUser({
+								page : 0
+							});							
+						}
+					},
 					'.user-search-btn' : {
 						'click' : function(){
 							var v = $('.user-search-key').val(),
