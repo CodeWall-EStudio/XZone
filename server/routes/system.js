@@ -122,6 +122,7 @@ function createDepart(parent, dep, callback) {
                 user.nick = nick;
                 user.name = loginName;
                 mUser.save(user, ep.done('updateUserSuccess'));
+                console.log('has user', user.name);
             } else {
                 user = {
                     openid: openid,
@@ -131,17 +132,18 @@ function createDepart(parent, dep, callback) {
                     size: config.DEFAULT_USER_SPACE,
                 };
                 mUser.create(user, ep.done('updateUserSuccess'));
+                console.log('create user', user.name);
             }
         });
 
         ep.on('updateUserSuccess', function(user) {
-            console.log('create user', user.name);
+            
             // 把用户跟部门关联
             db.departuser.save({
                 department: DBRef('department', parent._id),
                 user: DBRef('user', user._id)
             }, callback);
-            console.log('>>>union department:', parent._id, user._id);
+            console.log('>>>union department:', parent.name, user.name);
         });
     }
 }
