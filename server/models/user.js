@@ -225,7 +225,7 @@ function fetchDepartments(dep, callback){
         depUsers.forEach(function(doc){
 
             // 过滤掉测试用户
-            db.user.findOne({ _id: doc.user.oid, test: null }, ep.group('fetchDepartUsers'));
+            db.user.findOne({ _id: doc.user.oid }, ep.group('fetchDepartUsers'));
 
         });
 
