@@ -1,0 +1,1439 @@
+{
+  "resultMsg": "ok",
+  "departmentTree": {
+    "id": "8de80599-9295-46b4-902e-8695c0d9c5c4",
+    "classes": "department",
+    "title": "七一小学",
+    "children": [
+      {
+        "id": "c8c9b313-2049-4e4d-8ef0-b17309641e10",
+        "classes": "department",
+        "title": "校长室",
+        "children": [
+          {
+            "id": "3cda6ba7-bcd4-44f1-ad06-d22d189929a5",
+            "classes": "user",
+            "title": "张建芬",
+            "name": "张建芬",
+            "loginName": "zhangjianfen"
+          },
+          {
+            "id": "65af0003-8e17-49e2-9818-459ea87de628",
+            "classes": "user",
+            "title": "苏立",
+            "name": "苏立",
+            "loginName": "suli"
+          },
+          {
+            "id": "47662d27-6681-41c7-b744-77d7bd0206af",
+            "classes": "user",
+            "title": "宋旭东",
+            "name": "宋旭东",
+            "loginName": "songxudong"
+          }
+        ]
+      },
+      {
+        "id": "72dfdbad-e697-409b-aa28-fdb70672717f",
+        "classes": "department",
+        "title": "办公室",
+        "children": [
+          {
+            "id": "0ad0dadb-d45f-41ff-88fe-1372fa12ac97",
+            "classes": "user",
+            "title": "包鹏远",
+            "name": "包鹏远",
+            "loginName": "baopengyuan"
+          },
+          {
+            "id": "c4930a89-6811-447d-a537-664c163c984d",
+            "classes": "user",
+            "title": "李佳",
+            "name": "李佳",
+            "loginName": "lijia"
+          },
+          {
+            "id": "718f69a4-3471-49bd-8f9c-373c8ef70ccc",
+            "classes": "user",
+            "title": "杨俊",
+            "name": "杨俊",
+            "loginName": "yangjun"
+          }
+        ]
+      },
+      {
+        "id": "2ad073d3-efe0-4209-99e3-c5a419265ddf",
+        "classes": "department",
+        "title": "教学处",
+        "children": [
+          {
+            "id": "cbbec284-9d5d-4402-af65-bed1dd7cce3f",
+            "classes": "user",
+            "title": "朱凤英",
+            "name": "朱凤英",
+            "loginName": "zhufengying"
+          },
+          {
+            "id": "63d433c8-8cf1-4b9e-9f42-b2b99180de5b",
+            "classes": "user",
+            "title": "朱凤书",
+            "name": "朱凤书",
+            "loginName": "zhufengshu"
+          },
+          {
+            "id": "d977d938-40be-4d88-bfb2-e374fd850f2b",
+            "classes": "user",
+            "title": "谢海红",
+            "name": "谢海红",
+            "loginName": "xiehaihong"
+          },
+          {
+            "id": "6b661f1d-2f64-4fff-ac87-af58d613aa47",
+            "classes": "user",
+            "title": "常秀杰",
+            "name": "常秀杰",
+            "loginName": "changxiujie"
+          }
+        ]
+      },
+      {
+        "id": "7fff425e-1258-4faf-b69e-ea4be1e8b063",
+        "classes": "department",
+        "title": "德育处",
+        "children": [
+          {
+            "id": "7df80d07-0493-49d2-824f-29467b192ee4",
+            "classes": "user",
+            "title": "齐丹红",
+            "name": "齐丹红",
+            "loginName": "qidanhong"
+          },
+          {
+            "id": "097d92f3-9fe2-4d3f-8b7c-e290e8c8d035",
+            "classes": "user",
+            "title": "邢艳",
+            "name": "邢艳",
+            "loginName": "xingyan"
+          },
+          {
+            "id": "cd63d02d-9503-4ba3-ab1b-77d782976ca2",
+            "classes": "user",
+            "title": "杜文雯",
+            "name": "杜文雯",
+            "loginName": "duwenwen"
+          }
+        ]
+      },
+      {
+        "id": "7de57c71-3f37-4482-a2df-d5054199e114",
+        "classes": "department",
+        "title": "总务处",
+        "children": [
+          {
+            "id": "ea76f505-2a5e-403a-be2a-1c703ca16bf0",
+            "classes": "user",
+            "title": "王学栋",
+            "name": "王学栋",
+            "loginName": "wangxuedong"
+          },
+          {
+            "id": "067b298a-ffc0-4873-ad9d-0cf7019f25bc",
+            "classes": "user",
+            "title": "赵永红",
+            "name": "赵永红",
+            "loginName": "zhaoyonghong"
+          },
+          {
+            "id": "bfd1d5df-63f2-4b1e-9db7-76f119c09bb3",
+            "classes": "user",
+            "title": "唐述宽",
+            "name": "唐述宽",
+            "loginName": "tangshukuan"
+          },
+          {
+            "id": "c76244ff-8e9a-4e10-b918-fff95c06e093",
+            "classes": "user",
+            "title": "李玉奇",
+            "name": "李玉奇",
+            "loginName": "liyuqi"
+          }
+        ]
+      },
+      {
+        "id": "5cdd13ee-8ffd-4e7a-be90-d07900bf2517",
+        "classes": "department",
+        "title": "教务处",
+        "children": [
+          {
+            "id": "a2fb821c-7dd1-4912-b74c-324f09df132f",
+            "classes": "user",
+            "title": "韩煜晶",
+            "name": "韩煜晶",
+            "loginName": "hanyujing"
+          },
+          {
+            "id": "9b4ae1b4-1f39-4f2e-8428-e0a68da80b3c",
+            "classes": "user",
+            "title": "刘婷",
+            "name": "刘婷",
+            "loginName": "liuting"
+          },
+          {
+            "id": "5ac19e30-c320-4584-bbe2-f87a5a8e8599",
+            "classes": "user",
+            "title": "杨玉华",
+            "name": "杨玉华",
+            "loginName": "yangyuhua"
+          },
+          {
+            "id": "72ec9d50-6ff7-4cd1-9d23-25989ee39b77",
+            "classes": "user",
+            "title": "张玉萍",
+            "name": "张玉萍",
+            "loginName": "zhangyuping"
+          }
+        ]
+      },
+      {
+        "id": "d0273386-d778-48e8-8781-f6f59e3f8c8e",
+        "classes": "department",
+        "title": "电教处",
+        "children": [
+          {
+            "id": "5fc587b2-7d44-4b36-8762-b51d169038f5",
+            "classes": "user",
+            "title": "赵丽英",
+            "name": "赵丽英",
+            "loginName": "zhaoliying"
+          },
+          {
+            "id": "b49d37f3-f2e8-457c-8bd5-5225dccdb96d",
+            "classes": "user",
+            "title": "付斌",
+            "name": "付斌",
+            "loginName": "fubin"
+          },
+          {
+            "id": "62f888eb-9d76-46ce-850f-2a5aecd2c8d2",
+            "classes": "user",
+            "title": "张舰",
+            "name": "张舰",
+            "loginName": "zhangjian"
+          },
+          {
+            "id": "c55ca5cb-5403-43ac-8fda-9e3ff70b3dba",
+            "classes": "user",
+            "title": "李强",
+            "name": "李强",
+            "loginName": "liqiang"
+          },
+          {
+            "id": "ecd74d2d-40bf-444a-9f9e-99b8febcf646",
+            "classes": "user",
+            "title": "由娜",
+            "name": "由娜",
+            "loginName": "youna"
+          },
+          {
+            "id": "19b72ffa-381c-42e2-8c40-265284bf73df",
+            "classes": "user",
+            "title": "吴楠",
+            "name": "吴楠",
+            "loginName": "wunan"
+          },
+          {
+            "id": "706f20fc-e1ae-4751-b264-39e7e3d2b06d",
+            "classes": "user",
+            "title": "周正聪",
+            "name": "周正聪",
+            "loginName": "jdl"
+          }
+        ]
+      },
+      {
+        "id": "0cfd808f-0e12-4c16-9285-f94c756fd98b",
+        "classes": "department",
+        "title": "住宿部",
+        "children": [
+          {
+            "id": "8e3dba83-eaa8-44de-a5c0-15812040806b",
+            "classes": "user",
+            "title": "宋崇兰",
+            "name": "宋崇兰",
+            "loginName": "songchonglan"
+          }
+        ]
+      },
+      {
+        "id": "95783705-9979-45ef-b153-8b52e7f1e2d6",
+        "classes": "department",
+        "title": "食堂",
+        "children": [
+          {
+            "id": "4dad2938-5549-4cb9-b61a-96118fb9f493",
+            "classes": "user",
+            "title": "孔京",
+            "name": "孔京",
+            "loginName": "kongjing"
+          },
+          {
+            "id": "477475c2-00b5-400c-85d5-475aab183a22",
+            "classes": "user",
+            "title": "魏志超",
+            "name": "魏志超",
+            "loginName": "weizhichao"
+          }
+        ]
+      },
+      {
+        "id": "566a8e14-1957-45be-bf64-dc552196cc10",
+        "classes": "department",
+        "title": "国际部",
+        "children": [
+          {
+            "id": "43dacd26-54c9-46b3-8e88-fa78be38c28e",
+            "classes": "user",
+            "title": "王雪瑞",
+            "name": "王雪瑞",
+            "loginName": "wangxuerui"
+          }
+        ]
+      },
+      {
+        "id": "ba5dc52f-d056-4303-a28f-4c84c0e5c828",
+        "classes": "department",
+        "title": "会计室",
+        "children": [
+          {
+            "id": "2bb21319-40d8-4f4f-a190-2bcf9694dcf8",
+            "classes": "user",
+            "title": "于芳",
+            "name": "于芳",
+            "loginName": "yufang"
+          },
+          {
+            "id": "b23d82c0-3427-4bbd-b81d-d8a5e3b35dbe",
+            "classes": "user",
+            "title": "崔璇",
+            "name": "崔璇",
+            "loginName": "cuixuan"
+          },
+          {
+            "id": "a72d6fc3-0704-45c1-aea6-edfdc0d2220c",
+            "classes": "user",
+            "title": "李旭",
+            "name": "李旭",
+            "loginName": "lixu"
+          }
+        ]
+      },
+      {
+        "id": "c70836df-47ec-4dd3-9e72-b8c6ded1e5d4",
+        "classes": "department",
+        "title": "一年级组",
+        "children": [
+          {
+            "id": "1cbe0e41-2f82-40e4-8435-4af64ca286b1",
+            "classes": "user",
+            "title": "关喜凤",
+            "name": "关喜凤",
+            "loginName": "guanxifeng"
+          },
+          {
+            "id": "eabca7f3-f757-4b12-abe7-12972c2f9e22",
+            "classes": "user",
+            "title": "付姝慧",
+            "name": "付姝慧",
+            "loginName": "fushuhui"
+          },
+          {
+            "id": "4e165b30-eec6-4558-9a43-6a98591b262b",
+            "classes": "user",
+            "title": "路长征",
+            "name": "路长征",
+            "loginName": "luchangzheng"
+          },
+          {
+            "id": "27e93977-74a3-4384-8e66-6d5e375b6e27",
+            "classes": "user",
+            "title": "张红伟",
+            "name": "张红伟",
+            "loginName": "zhanghongwei"
+          },
+          {
+            "id": "c83f15f8-bf96-4e60-922b-aa37fa6d0f1c",
+            "classes": "user",
+            "title": "宗雪",
+            "name": "宗雪",
+            "loginName": "zongxue"
+          },
+          {
+            "id": "20da0d64-cb3f-4885-84a2-f93d37fecb0b",
+            "classes": "user",
+            "title": "杨瑞金",
+            "name": "杨瑞金",
+            "loginName": "yangruijin"
+          },
+          {
+            "id": "f08070c9-0ea8-4269-b7f4-af1ffd0b9821",
+            "classes": "user",
+            "title": "张淑媛",
+            "name": "张淑媛",
+            "loginName": "zhangshuyuan"
+          },
+          {
+            "id": "b9338be4-a808-493f-ba11-9006dadb0012",
+            "classes": "user",
+            "title": "古珊",
+            "name": "古珊",
+            "loginName": "gushan"
+          }
+        ]
+      },
+      {
+        "id": "7271798d-b622-4ae0-ae3a-862cd1a21ba3",
+        "classes": "department",
+        "title": "二年级组",
+        "children": [
+          {
+            "id": "60baea3d-f412-4a3f-b002-efb36da00b0d",
+            "classes": "user",
+            "title": "郭春梅",
+            "name": "郭春梅",
+            "loginName": "guochunmei"
+          },
+          {
+            "id": "a4d45de9-9a62-49c4-a51b-06806b0b557e",
+            "classes": "user",
+            "title": "梁宏",
+            "name": "梁宏",
+            "loginName": "lianghong"
+          },
+          {
+            "id": "cac7dffc-b8b6-40d4-9e9b-ab80cd80ef8d",
+            "classes": "user",
+            "title": "梁素霞",
+            "name": "梁素霞",
+            "loginName": "liangsuxia"
+          },
+          {
+            "id": "3a2d44e0-0187-4aa5-9f71-178c4e4b9974",
+            "classes": "user",
+            "title": "李琰",
+            "name": "李琰",
+            "loginName": "liyan"
+          },
+          {
+            "id": "347f7e73-bd48-4efa-97da-8c32be5ad1b3",
+            "classes": "user",
+            "title": "潘淑丽",
+            "name": "潘淑丽",
+            "loginName": "panshuli"
+          },
+          {
+            "id": "83218f93-a721-4ece-96dd-71b4c1fc199a",
+            "classes": "user",
+            "title": "石俊杰",
+            "name": "石俊杰",
+            "loginName": "shijunjie"
+          },
+          {
+            "id": "188b853e-02a4-4dc0-8910-f03f5c2b41a9",
+            "classes": "user",
+            "title": "宋茹",
+            "name": "宋茹",
+            "loginName": "songru"
+          },
+          {
+            "id": "57e9ca3f-fee1-4f35-97c0-ff2b7e2f90a8",
+            "classes": "user",
+            "title": "喻琼",
+            "name": "喻琼",
+            "loginName": "yuqiong"
+          },
+          {
+            "id": "77995aaa-ea37-4b71-93c0-f764cde59bf1",
+            "classes": "user",
+            "title": "张艳红",
+            "name": "张艳红",
+            "loginName": "zhangyanhong"
+          },
+          {
+            "id": "47eb64fe-c2ed-4b77-8b7b-021c45cbf1a2",
+            "classes": "user",
+            "title": "朱冠楠",
+            "name": "朱冠楠",
+            "loginName": "zhuguannan"
+          },
+          {
+            "id": "97fef89c-7507-4146-9c4c-ca425d9cd0db",
+            "classes": "user",
+            "title": "朱艳娇",
+            "name": "朱艳娇",
+            "loginName": "zhuyanjiao"
+          },
+          {
+            "id": "e2151f40-21e3-4fe1-9313-7f9c72c3dac9",
+            "classes": "user",
+            "title": "童媛",
+            "name": "童媛",
+            "loginName": "tongyuan"
+          },
+          {
+            "id": "0ea95a4e-fc01-417c-bb18-bf88b35ee4bb",
+            "classes": "user",
+            "title": "杨静蕊",
+            "name": "杨静蕊",
+            "loginName": "yangjingrui"
+          },
+          {
+            "id": "73dae65a-f5ae-4903-a4d6-765a111d5919",
+            "classes": "user",
+            "title": "张晶",
+            "name": "张晶",
+            "loginName": "zhangjing"
+          }
+        ]
+      },
+      {
+        "id": "737f6985-f27e-4a5a-908b-82a1da2a2e50",
+        "classes": "department",
+        "title": "三年级组",
+        "children": [
+          {
+            "id": "b8e4c497-abba-4323-a584-11d5f904db4a",
+            "classes": "user",
+            "title": "曹微",
+            "name": "曹微",
+            "loginName": "caowei"
+          },
+          {
+            "id": "91ff1a1c-c9f0-4849-b015-664cf45d5c4a",
+            "classes": "user",
+            "title": "侯晓梅",
+            "name": "侯晓梅",
+            "loginName": "houxiaomei"
+          },
+          {
+            "id": "049f9241-dc7d-42a6-a154-7afc6fb324f6",
+            "classes": "user",
+            "title": "亢碧馨",
+            "name": "亢碧馨",
+            "loginName": "kangbixin"
+          },
+          {
+            "id": "a133caa3-ba27-4c32-958f-635bb2afb2ec",
+            "classes": "user",
+            "title": "李莲莲",
+            "name": "李莲莲",
+            "loginName": "lilianlian"
+          },
+          {
+            "id": "7ae5f6c3-7a4d-4ba5-b7a4-4cdc39ac8330",
+            "classes": "user",
+            "title": "刘冬霞",
+            "name": "刘冬霞",
+            "loginName": "liudongxia"
+          },
+          {
+            "id": "30a08039-d47d-4c74-b0d6-b2f39e1af95c",
+            "classes": "user",
+            "title": "吕福梅",
+            "name": "吕福梅",
+            "loginName": "lvfumei"
+          },
+          {
+            "id": "168cc97b-c2b5-4eff-887d-c8fb28805e0d",
+            "classes": "user",
+            "title": "孙红艳",
+            "name": "孙红艳",
+            "loginName": "sunhongyan"
+          },
+          {
+            "id": "73af262a-580a-4818-a8dd-1aad0beecfaf",
+            "classes": "user",
+            "title": "张星",
+            "name": "张星",
+            "loginName": "zhangxing"
+          },
+          {
+            "id": "6f7b834d-27ce-4b2a-a2f2-0d2988d498dc",
+            "classes": "user",
+            "title": "张艳龙",
+            "name": "张艳龙",
+            "loginName": "zhangyanlong"
+          },
+          {
+            "id": "35f565c9-587a-466e-b854-dadf5baaca95",
+            "classes": "user",
+            "title": "高岩",
+            "name": "高岩",
+            "loginName": "gaoyan"
+          },
+          {
+            "id": "cd89bb65-fa09-454b-a1cb-37cfd569c407",
+            "classes": "user",
+            "title": "王晶晶",
+            "name": "王晶晶",
+            "loginName": "wangjingjing"
+          },
+          {
+            "id": "d045dcfa-d663-474d-a713-d0ad629e11d4",
+            "classes": "user",
+            "title": "马珂",
+            "name": "马珂",
+            "loginName": "make"
+          }
+        ]
+      },
+      {
+        "id": "b54125a0-2936-449c-9615-a92e387a725d",
+        "classes": "department",
+        "title": "四年级组",
+        "children": [
+          {
+            "id": "09281802-1d70-4d55-9db1-14054d371f66",
+            "classes": "user",
+            "title": "李宝瑜",
+            "name": "李宝瑜",
+            "loginName": "libaoyu"
+          },
+          {
+            "id": "72c3e8b4-f8b5-42c6-829c-205e742ef924",
+            "classes": "user",
+            "title": "大刘畅",
+            "name": "大刘畅",
+            "loginName": "daliuchang"
+          },
+          {
+            "id": "ed206761-62fd-4ca2-85d8-f684cf7830a9",
+            "classes": "user",
+            "title": "刘畅",
+            "name": "刘畅",
+            "loginName": "liuchang"
+          },
+          {
+            "id": "2cda6521-bb4d-41ef-9388-cca6a23bbd62",
+            "classes": "user",
+            "title": "刘小飞",
+            "name": "刘小飞",
+            "loginName": "liuxiaofei"
+          },
+          {
+            "id": "1c3817b0-9d71-4eaa-a861-57b1816a825a",
+            "classes": "user",
+            "title": "李勇",
+            "name": "李勇",
+            "loginName": "liyong"
+          },
+          {
+            "id": "dcc7e144-1dc1-4534-a699-64b1a03f86e7",
+            "classes": "user",
+            "title": "李云炎",
+            "name": "李云炎",
+            "loginName": "liyunyan"
+          },
+          {
+            "id": "d251e672-8c06-4e9c-9f51-830cd52576a0",
+            "classes": "user",
+            "title": "苏士宽",
+            "name": "苏士宽",
+            "loginName": "sushikuan"
+          },
+          {
+            "id": "1008facf-4e88-40c4-98d7-fddacf0a815d",
+            "classes": "user",
+            "title": "徐进鹏",
+            "name": "徐进鹏",
+            "loginName": "xujinpeng"
+          },
+          {
+            "id": "acbab374-9e65-44bd-9e2a-2f5459e1d6b4",
+            "classes": "user",
+            "title": "张瑞",
+            "name": "张瑞",
+            "loginName": "zhangrui"
+          },
+          {
+            "id": "9db3da5e-bde1-4a3e-aa4e-14db4071e6d0",
+            "classes": "user",
+            "title": "陈颖",
+            "name": "陈颖",
+            "loginName": "chenying"
+          },
+          {
+            "id": "b1b71cb7-4b51-4645-8e63-3793cac87a0b",
+            "classes": "user",
+            "title": "杜杰新",
+            "name": "杜杰新",
+            "loginName": "dujiexin"
+          },
+          {
+            "id": "823a6fce-299c-442e-8ea2-120afda206e1",
+            "classes": "user",
+            "title": "李艳辉",
+            "name": "李艳辉",
+            "loginName": "liyanhui"
+          }
+        ]
+      },
+      {
+        "id": "ef59e6dd-41a3-4f7a-b7ca-f8b5382daa06",
+        "classes": "department",
+        "title": "五年级组",
+        "children": [
+          {
+            "id": "cf859d6f-3649-4901-8284-6bad4c6474ed",
+            "classes": "user",
+            "title": "高强",
+            "name": "高强",
+            "loginName": "gaoqiang"
+          },
+          {
+            "id": "d74fc522-56fc-4fb6-8576-593265fe479f",
+            "classes": "user",
+            "title": "李铁生",
+            "name": "李铁生",
+            "loginName": "litiesheng"
+          },
+          {
+            "id": "faf80bbb-ba65-4bc9-aa5d-894e13b25d75",
+            "classes": "user",
+            "title": "刘国英",
+            "name": "刘国英",
+            "loginName": "liuguoying"
+          },
+          {
+            "id": "3074bb11-9ae0-4397-9582-cbb69420c507",
+            "classes": "user",
+            "title": "罗长红",
+            "name": "罗长红",
+            "loginName": "luochanghong"
+          },
+          {
+            "id": "6f55ff11-601f-4d46-b8b8-57662d8e697a",
+            "classes": "user",
+            "title": "史晓宁",
+            "name": "史晓宁",
+            "loginName": "shixiaoning"
+          },
+          {
+            "id": "462cb647-0eb2-4893-8f7d-6990671d7305",
+            "classes": "user",
+            "title": "宋娟",
+            "name": "宋娟",
+            "loginName": "songjuan"
+          },
+          {
+            "id": "7bd2b1ea-6bb9-43d0-b62f-001d04c77ec7",
+            "classes": "user",
+            "title": "王长弟",
+            "name": "王长弟",
+            "loginName": "wangchangdi"
+          },
+          {
+            "id": "0a41e6c7-b798-48ca-8db4-b2adf75395ac",
+            "classes": "user",
+            "title": "赵博蕊",
+            "name": "赵博蕊",
+            "loginName": "zhaoborui"
+          },
+          {
+            "id": "540ab1cf-4488-4591-8db8-53d75b3d2384",
+            "classes": "user",
+            "title": "万玲",
+            "name": "万玲",
+            "loginName": "wanling"
+          },
+          {
+            "id": "cfb594d6-a596-4736-aaeb-88c1f94b5ecb",
+            "classes": "user",
+            "title": "杨蓓",
+            "name": "杨蓓",
+            "loginName": "yangbei"
+          },
+          {
+            "id": "bda91ee9-61a6-44a7-b290-9d855a902427",
+            "classes": "user",
+            "title": "沈建华",
+            "name": "沈建华",
+            "loginName": "shenjianhua"
+          },
+          {
+            "id": "d7547368-8979-4d27-bfbb-01885cec1210",
+            "classes": "user",
+            "title": "孙凤娜",
+            "name": "孙凤娜",
+            "loginName": "sunfengna"
+          },
+          {
+            "id": "fe8ea4f9-0372-494e-b8b2-031796354870",
+            "classes": "user",
+            "title": "闻琪",
+            "name": "闻琪",
+            "loginName": "wenqi"
+          },
+          {
+            "id": "ace57051-3f5c-4417-abe1-aab7e77e9e18",
+            "classes": "user",
+            "title": "尚宇琦",
+            "name": "尚宇琦",
+            "loginName": "shangyuqi"
+          }
+        ]
+      },
+      {
+        "id": "80b218e4-e8e5-4782-827c-cbb89a62d02a",
+        "classes": "department",
+        "title": "六年级组",
+        "children": [
+          {
+            "id": "c2e59b3e-0f79-4a7c-b495-3983a3957f69",
+            "classes": "user",
+            "title": "崔俊红",
+            "name": "崔俊红",
+            "loginName": "cuijunhong"
+          },
+          {
+            "id": "c24005fc-3110-4110-a736-37015467d7ef",
+            "classes": "user",
+            "title": "纪金玲",
+            "name": "纪金玲",
+            "loginName": "jijinling"
+          },
+          {
+            "id": "46d5738e-f917-4419-a615-857745a29051",
+            "classes": "user",
+            "title": "李爱利",
+            "name": "李爱利",
+            "loginName": "liaili"
+          },
+          {
+            "id": "1684212d-eabe-44f8-badc-b3cd9de407da",
+            "classes": "user",
+            "title": "刘凤霞",
+            "name": "刘凤霞",
+            "loginName": "liufengxia"
+          },
+          {
+            "id": "a214934c-b945-43a8-aca5-98bd3602ff4a",
+            "classes": "user",
+            "title": "王淑红",
+            "name": "王淑红",
+            "loginName": "wangshuhong"
+          },
+          {
+            "id": "5874a6c8-808f-418c-abcb-d0e4fd04a214",
+            "classes": "user",
+            "title": "王媛媛",
+            "name": "王媛媛",
+            "loginName": "wangyuanyuan"
+          },
+          {
+            "id": "ef7e7549-2487-4c4d-b7c8-0908ecde0c10",
+            "classes": "user",
+            "title": "邢林",
+            "name": "邢林",
+            "loginName": "xinglin"
+          },
+          {
+            "id": "83cb5af9-be43-4acc-bde7-7799e295bc62",
+            "classes": "user",
+            "title": "许婷",
+            "name": "许婷",
+            "loginName": "xuting"
+          },
+          {
+            "id": "890d10a5-cf90-4e07-81eb-a78b536a0008",
+            "classes": "user",
+            "title": "张殿军",
+            "name": "张殿军",
+            "loginName": "zhangdianjun"
+          },
+          {
+            "id": "115c9e30-d463-49f0-a2f5-99175f2457ca",
+            "classes": "user",
+            "title": "胡志辉",
+            "name": "胡志辉",
+            "loginName": "huzhihui"
+          },
+          {
+            "id": "aa6d79fc-0f6e-4222-9f03-c1edc90c4805",
+            "classes": "user",
+            "title": "宋迎春",
+            "name": "宋迎春",
+            "loginName": "songyingchun"
+          },
+          {
+            "id": "d527037b-32b3-403b-ab90-76cc1aac0132",
+            "classes": "user",
+            "title": "张迎秋",
+            "name": "张迎秋",
+            "loginName": "zhangyingqiu"
+          }
+        ]
+      },
+      {
+        "id": "dade505d-e372-4062-bd99-0dc58623cfa4",
+        "classes": "department",
+        "title": "英语组",
+        "children": [
+          {
+            "id": "72e40ca2-b825-42e8-b916-28192e63f581",
+            "classes": "user",
+            "title": "陈翔",
+            "name": "陈翔",
+            "loginName": "chenxiang"
+          },
+          {
+            "id": "3defb651-a48b-43bb-abde-9fa08df5aae9",
+            "classes": "user",
+            "title": "侯玉娟",
+            "name": "侯玉娟",
+            "loginName": "houyujuan"
+          },
+          {
+            "id": "9ea86627-2f82-40b4-9d00-21d903abde85",
+            "classes": "user",
+            "title": "纪瑞敏",
+            "name": "纪瑞敏",
+            "loginName": "jiruimin"
+          },
+          {
+            "id": "3b92d110-0c62-4007-9635-5503c37ac044",
+            "classes": "user",
+            "title": "李红霞",
+            "name": "李红霞",
+            "loginName": "lihongxia"
+          },
+          {
+            "id": "154b3fce-2de5-4b9b-ab80-79cd53fbf30f",
+            "classes": "user",
+            "title": "刘美英",
+            "name": "刘美英",
+            "loginName": "liumeiying"
+          },
+          {
+            "id": "e860d8a6-ddbb-4aee-99d6-4dfe52b31bd7",
+            "classes": "user",
+            "title": "彭娟",
+            "name": "彭娟",
+            "loginName": "pengjuan"
+          },
+          {
+            "id": "d9f2b9bb-496c-4d1c-bc6c-be83849494d9",
+            "classes": "user",
+            "title": "宋菊",
+            "name": "宋菊",
+            "loginName": "songju"
+          },
+          {
+            "id": "b307f7c0-d198-4fe7-bf66-3c5c5629fc4e",
+            "classes": "user",
+            "title": "孙霞",
+            "name": "孙霞",
+            "loginName": "sunxia"
+          },
+          {
+            "id": "6cbffd21-6410-4197-bf01-d1166f620833",
+            "classes": "user",
+            "title": "张雯静",
+            "name": "张雯静",
+            "loginName": "zhangwenjing"
+          },
+          {
+            "id": "d91919b0-e1e7-4479-a352-4add84c999a5",
+            "classes": "user",
+            "title": "朱伶俐",
+            "name": "朱伶俐",
+            "loginName": "zhulingli"
+          },
+          {
+            "id": "636040c9-5e34-4a72-aad5-8386ab818e77",
+            "classes": "user",
+            "title": "张惠",
+            "name": "张惠",
+            "loginName": "zhanghui"
+          }
+        ]
+      },
+      {
+        "id": "b0550e3e-d67d-4015-8def-8139acb46762",
+        "classes": "department",
+        "title": "体育组",
+        "children": [
+          {
+            "id": "2fd602cb-b42a-4956-88f5-355d382e1b10",
+            "classes": "user",
+            "title": "邓嘉",
+            "name": "邓嘉",
+            "loginName": "dengjia"
+          },
+          {
+            "id": "12116b4d-f690-4ffc-82ed-00c654a181a7",
+            "classes": "user",
+            "title": "高建军",
+            "name": "高建军",
+            "loginName": "gaojianjun"
+          },
+          {
+            "id": "fb886ec7-3501-4723-ba5d-f27c0466a03a",
+            "classes": "user",
+            "title": "顾莘",
+            "name": "顾莘",
+            "loginName": "gushen"
+          },
+          {
+            "id": "518368f5-9a7e-4dbc-b44e-914bbaa5bc35",
+            "classes": "user",
+            "title": "贾波",
+            "name": "贾波",
+            "loginName": "jiabo"
+          },
+          {
+            "id": "9e8273c6-a498-479e-871d-95961a8a53d0",
+            "classes": "user",
+            "title": "隗龙",
+            "name": "隗龙",
+            "loginName": "weilong"
+          },
+          {
+            "id": "a9d970c2-0b0f-40fe-af99-c9d2052f7b60",
+            "classes": "user",
+            "title": "李为华",
+            "name": "李为华",
+            "loginName": "liweihua"
+          },
+          {
+            "id": "2e158a78-8656-43ba-baef-b4ffe48d777d",
+            "classes": "user",
+            "title": "卢存海",
+            "name": "卢存海",
+            "loginName": "lucunhai"
+          },
+          {
+            "id": "5d263578-54f6-4264-be91-bf4d9850e182",
+            "classes": "user",
+            "title": "王冠",
+            "name": "王冠",
+            "loginName": "wangguan"
+          },
+          {
+            "id": "f8034c40-67b1-427e-bebc-bf0d83034413",
+            "classes": "user",
+            "title": "王勇",
+            "name": "王勇",
+            "loginName": "wangyong"
+          },
+          {
+            "id": "a1f03ce4-ce05-4484-8078-68fdcfafb128",
+            "classes": "user",
+            "title": "徐凯",
+            "name": "徐凯",
+            "loginName": "xukai"
+          },
+          {
+            "id": "8f04817e-dc62-4c15-90ea-dcf73775ce84",
+            "classes": "user",
+            "title": "张淋",
+            "name": "张淋",
+            "loginName": "zhanglin"
+          },
+          {
+            "id": "6b3b540a-87fb-474f-92ae-14391a9de98f",
+            "classes": "user",
+            "title": "王晶",
+            "name": "王晶",
+            "loginName": "wangjing"
+          }
+        ]
+      },
+      {
+        "id": "edbb3705-d7b5-413b-91bc-011e01701db1",
+        "classes": "department",
+        "title": "科学组",
+        "children": [
+          {
+            "id": "d147d481-76d3-4d6f-a6eb-94ea2888c250",
+            "classes": "user",
+            "title": "刘杨",
+            "name": "刘杨",
+            "loginName": "liuyang"
+          },
+          {
+            "id": "e8becb82-86e5-4379-a817-5354e739f3b7",
+            "classes": "user",
+            "title": "王京楠",
+            "name": "王京楠",
+            "loginName": "wangjingnan"
+          },
+          {
+            "id": "c19b8e0f-779f-4ef7-85b7-820c14fd0991",
+            "classes": "user",
+            "title": "刘晓辉",
+            "name": "刘晓辉",
+            "loginName": "liuxiaohui"
+          },
+          {
+            "id": "f52632e8-1f45-4bea-bdf1-6237ea836564",
+            "classes": "user",
+            "title": "吕春玲",
+            "name": "吕春玲",
+            "loginName": "lvchunling"
+          },
+          {
+            "id": "79d2d042-74b1-4bf6-abee-6c72a8a6ea22",
+            "classes": "user",
+            "title": "毛艳萍",
+            "name": "毛艳萍",
+            "loginName": "maoyanping"
+          },
+          {
+            "id": "367535cb-dd66-4041-8f72-a101fdf23f55",
+            "classes": "user",
+            "title": "钟英菊",
+            "name": "钟英菊",
+            "loginName": "zhongyingju"
+          },
+          {
+            "id": "a993539f-2d0c-45a0-be8e-973bc66c546f",
+            "classes": "user",
+            "title": "李然",
+            "name": "李然",
+            "loginName": "liran"
+          }
+        ]
+      },
+      {
+        "id": "1fb2a8de-7c5b-4c2d-a6d1-432c33dd7b9b",
+        "classes": "department",
+        "title": "音乐舞蹈组",
+        "children": [
+          {
+            "id": "8be20c07-3bb2-4897-a219-f3b9c4dadd4c",
+            "classes": "user",
+            "title": "黄巍",
+            "name": "黄巍",
+            "loginName": "huangwei"
+          },
+          {
+            "id": "9f35e517-ac6f-4470-81ef-ffca1dff0d09",
+            "classes": "user",
+            "title": "梁格辉",
+            "name": "梁格辉",
+            "loginName": "lianggehui"
+          },
+          {
+            "id": "4998e4b7-9d73-4e9f-93bb-09eac3c26244",
+            "classes": "user",
+            "title": "孙元春",
+            "name": "孙元春",
+            "loginName": "sunyuanchun"
+          },
+          {
+            "id": "63c2f3b9-aa69-4f7e-acbd-b8b8f0ab44de",
+            "classes": "user",
+            "title": "田雨",
+            "name": "田雨",
+            "loginName": "tianyu"
+          },
+          {
+            "id": "a7e46eba-b549-4aac-ac64-4a9b426df645",
+            "classes": "user",
+            "title": "王丹",
+            "name": "王丹",
+            "loginName": "wangdan"
+          },
+          {
+            "id": "dcc8098e-8cb9-4f20-a05a-2b5cab9ab9b2",
+            "classes": "user",
+            "title": "王立军",
+            "name": "王立军",
+            "loginName": "wanglijun"
+          },
+          {
+            "id": "14b7f3d1-1cbb-439e-a2c7-d6fbdbf7b0ed",
+            "classes": "user",
+            "title": "张雪",
+            "name": "张雪",
+            "loginName": "zhangxue"
+          },
+          {
+            "id": "46bc6c16-2e08-47e8-942f-2d6894ef6a41",
+            "classes": "user",
+            "title": "赵楠",
+            "name": "赵楠",
+            "loginName": "zhaonan"
+          },
+          {
+            "id": "5dcd89a6-d54d-4e8b-93cd-a548f5f1b972",
+            "classes": "user",
+            "title": "朱立",
+            "name": "朱立",
+            "loginName": "zhuli"
+          },
+          {
+            "id": "a64d4471-8335-4f92-8489-128bdb0ae736",
+            "classes": "user",
+            "title": "曾媛",
+            "name": "曾媛",
+            "loginName": "zengyuan"
+          },
+          {
+            "id": "da280505-d99a-4805-a415-b8a8d4b4b6f6",
+            "classes": "user",
+            "title": "赵子威",
+            "name": "赵子威",
+            "loginName": "zhaoziwei"
+          }
+        ]
+      },
+      {
+        "id": "c7fc7e1e-04fd-4efa-82ba-625849fe934d",
+        "classes": "department",
+        "title": "美术写字组",
+        "children": [
+          {
+            "id": "073f7646-4321-4801-b025-74199feee734",
+            "classes": "user",
+            "title": "黄迪",
+            "name": "黄迪",
+            "loginName": "huangdi"
+          },
+          {
+            "id": "28008c35-1042-4a23-8f7e-85067b8e90f4",
+            "classes": "user",
+            "title": "惠卉",
+            "name": "惠卉",
+            "loginName": "huihui"
+          },
+          {
+            "id": "6c4bde78-5dea-4075-95e2-0a7e18c6e415",
+            "classes": "user",
+            "title": "焦阳",
+            "name": "焦阳",
+            "loginName": "jiaoyang"
+          },
+          {
+            "id": "990e8a7a-b25c-4de2-bc8c-b2ddffc1ca94",
+            "classes": "user",
+            "title": "梁海英",
+            "name": "梁海英",
+            "loginName": "lianghaiying"
+          },
+          {
+            "id": "63a26c85-c287-4102-b10b-19a706d12003",
+            "classes": "user",
+            "title": "路新艳",
+            "name": "路新艳",
+            "loginName": "luxinyan"
+          },
+          {
+            "id": "4b9a07a4-d974-4a81-ba24-b0703596c89b",
+            "classes": "user",
+            "title": "任新成",
+            "name": "任新成",
+            "loginName": "renxincheng"
+          },
+          {
+            "id": "b13b8562-34a4-44cc-bb19-4136fd9ced7f",
+            "classes": "user",
+            "title": "孙浩洋",
+            "name": "孙浩洋",
+            "loginName": "sunhaoyang"
+          },
+          {
+            "id": "fe8333c0-3ff3-40f2-918d-0f8e1aed5ecb",
+            "classes": "user",
+            "title": "王迪",
+            "name": "王迪",
+            "loginName": "wangdi"
+          },
+          {
+            "id": "b8a197bd-180a-4ee8-8ad1-b14c9b21bd4a",
+            "classes": "user",
+            "title": "张京峪",
+            "name": "张京峪",
+            "loginName": "zhangjingyu"
+          }
+        ]
+      },
+      {
+        "id": "c165f600-31f4-4312-8b65-a6532c52530d",
+        "classes": "department",
+        "title": "其他组",
+        "children": [
+          {
+            "id": "6ec42649-fded-47ed-bca7-3f12ea860e28",
+            "classes": "user",
+            "title": "邢蕴琦",
+            "name": "邢蕴琦",
+            "loginName": "xingyunqi"
+          },
+          {
+            "id": "a4221b93-f850-4b5d-9e70-d5e1a1eb72ee",
+            "classes": "user",
+            "title": "马丽",
+            "name": "马丽",
+            "loginName": "mali"
+          },
+          {
+            "id": "70b9ae0c-6f04-4cc7-b61f-2e4518ba59cd",
+            "classes": "user",
+            "title": "孙晓凤",
+            "name": "孙晓凤",
+            "loginName": "sunxiaofeng"
+          },
+          {
+            "id": "a5ac4800-f751-4e8c-8ef5-8660a5e9b2ad",
+            "classes": "user",
+            "title": "陈春艳",
+            "name": "陈春艳",
+            "loginName": "陈春艳"
+          },
+          {
+            "id": "07039848-7cfd-45b6-9ed4-1fb06c91bd83",
+            "classes": "user",
+            "title": "姚耀",
+            "name": "姚耀",
+            "loginName": "yaoyao"
+          },
+          {
+            "id": "beff958f-acf3-44f0-b484-f36177b5a034",
+            "classes": "user",
+            "title": "孙爱萍",
+            "name": "孙爱萍",
+            "loginName": "sunaiping"
+          },
+          {
+            "id": "d0e2a794-8667-4659-bce0-53019ac611db",
+            "classes": "user",
+            "title": "李莉",
+            "name": "李莉",
+            "loginName": "lili"
+          },
+          {
+            "id": "4cc5aef3-333f-4f71-93ec-faff0d0e2a3b",
+            "classes": "user",
+            "title": "郎维微",
+            "name": "郎维微",
+            "loginName": "langweiwei"
+          }
+        ]
+      },
+      {
+        "id": "a6a849f4-ea52-4482-97d8-7f811104e828",
+        "classes": "department",
+        "title": "保安队",
+        "children": [
+          {
+            "id": "66092806-6db7-4373-9055-12f60b363033",
+            "classes": "user",
+            "title": "保安1",
+            "name": "保安1",
+            "loginName": "baoan1"
+          },
+          {
+            "id": "69a5eb6a-a757-4de1-888e-87ced0af5cd6",
+            "classes": "user",
+            "title": "保安2",
+            "name": "保安2",
+            "loginName": "baoan2"
+          }
+        ]
+      },
+      {
+        "id": "336b5e57-c787-4783-97f0-c0a7518d2791",
+        "classes": "department",
+        "title": "云校园项目组",
+        "children": [
+          {
+            "id": "b1e6d023-666b-443c-b451-9179ca0a9fa1",
+            "classes": "user",
+            "title": "泓远联创",
+            "name": "泓远联创",
+            "loginName": "hongyuan"
+          },
+          {
+            "id": "8b7266d5-530f-4d33-850f-3a8f7db5cddc",
+            "classes": "user",
+            "title": "缐多勇",
+            "name": "缐多勇",
+            "loginName": "xianduoyong"
+          },
+          {
+            "id": "fbe5843f-c2cc-4ac5-bb7f-7d4bdd826a9e",
+            "classes": "user",
+            "title": "周世江",
+            "name": "周世江",
+            "loginName": "zhoushijiang"
+          },
+          {
+            "id": "fddb102d-b55e-4409-a497-0c98c9e20a7a",
+            "classes": "user",
+            "title": "周文杰",
+            "name": "周文杰",
+            "loginName": "zhouwenjie"
+          },
+          {
+            "id": "4fcbcf11-cd6f-41cf-929d-c8e004cb484e",
+            "classes": "user",
+            "title": "周志超",
+            "name": "周志超",
+            "loginName": "zhouzhichao"
+          },
+          {
+            "id": "0c5ef4e7-c2ab-48bc-890a-f25f85ab9712",
+            "classes": "user",
+            "title": "蔡镕光",
+            "name": "蔡镕光",
+            "loginName": "cairongguang"
+          },
+          {
+            "id": "5102a9a6-b722-4345-8f30-2f6eefa0184a",
+            "classes": "user",
+            "title": "刘臻",
+            "name": "刘臻",
+            "loginName": "liuzhen"
+          },
+          {
+            "id": "30f88d23-c202-4fb1-a767-b09c7e510841",
+            "classes": "user",
+            "title": "唐启宏",
+            "name": "唐启宏",
+            "loginName": "tangqihong"
+          },
+          {
+            "id": "6ad7bae4-6c87-4bf3-a7cd-50f6bb6b8b50",
+            "classes": "user",
+            "title": "潘祥智",
+            "name": "潘祥智",
+            "loginName": "panxiangzhi"
+          },
+          {
+            "id": "a3e63ba4-09bc-46f4-993b-5de5780144a5",
+            "classes": "user",
+            "title": "龙福康",
+            "name": "龙福康",
+            "loginName": "longfukang"
+          },
+          {
+            "id": "d17820df-5855-4d3e-97f7-65a6a9291841",
+            "classes": "user",
+            "title": "于浩",
+            "name": "于浩",
+            "loginName": "yuhao"
+          }
+        ]
+      },
+      {
+        "id": "org_user1",
+        "classes": "user",
+        "title": "管理员",
+        "name": "管理员",
+        "loginName": "admin@cserver.com"
+      }
+    ]
+  },
+  "success": true
+}

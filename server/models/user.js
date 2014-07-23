@@ -13,6 +13,11 @@ var U = require('../util');
 var Logger = require('../logger');
 
 exports.create = function(params, callback){
+
+    var ep = new EventProxy();
+
+    ep.fail(callback);
+
     var user = {
         openid: params.openid,
         nick: params.nick || '',
@@ -27,10 +32,24 @@ exports.create = function(params, callback){
         from: params.from,
         lastGroup: null
     };
-    db.user.save(user, function(err, result){
-        if(err){
-            return callback(err);
+
+    if(!user.sizegroup){
+        db.sizegroup.findOne({ type: 0, isDefault: true }, function(err, doc){
+            ep.emit('sizegroupReady', doc);
+        });
+    }else{
+        ep.emitLater('sizegroupReady', null);
+    }
+
+    ep.on('sizegroupReady', function(sizegroup){
+        if(sizegroup){
+            user.sizegroup = new DBRef('sizegroup', sizegroup._id);
         }
+
+        db.user.save(user, ep.done('saveUser'));
+    });
+
+    ep.on('saveUser', function(result){
         mFolder.create({
             creator: user._id,
             name: '根目录'
@@ -44,6 +63,7 @@ exports.create = function(params, callback){
             });
         });
     });
+
 };
 
 exports.getUser = function(query, callback){
