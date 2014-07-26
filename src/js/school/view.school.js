@@ -7,6 +7,8 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		nowKey = '',
 		nowUid = 0,
 		nowType = 0,
+		nowManage = 0,
+		nowSchool = null,
 		rootFd = 0;
 
 	var actTarget = $('#actWinZone'),
@@ -19,6 +21,15 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		$('#userAside').hide();
 		$("#groupAside").show();
 
+		nowManage = d.manage;
+
+		// $('.school-link').removeClass('selected');
+		// if(nowManage){
+		// 	$('.school-link').eq(1).addClass('selected');
+		// }else{
+		// 	$('.school-link').eq(0).addClass('selected');
+		// }
+
 		util.showNav('school');
 		userAsideTarget.hide();
 		userPrepAsideTarget.hide();
@@ -26,6 +37,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
+		nowSchool = school;
 
 		$("#fileActZone .sharefile").hide();
 		$("#fileActZone .copyfile").hide();
@@ -59,7 +71,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			target : $("#groupAside"),
 			tplid : 'school.aside',
 			data : {
-				auth : school.auth,
+				auth : nowManage,
 				type : nowType
 			},
 			handlers : {
@@ -127,6 +139,11 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			order : nowOrder,
 			info : d
 		}
+		if(nowManage){
+			obj.auth = nowSchool.auth;
+			obj.nowType = 1;			
+		}
+		console.log(obj);
 		handerObj.triggerHandler('fold:init',obj); 
 	}
 

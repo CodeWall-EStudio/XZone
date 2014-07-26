@@ -181,11 +181,13 @@
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
+            manage = data.manage || 0,
             type = data.type || 0;
         var d = {
           uid : uid,
           fdid : fdid,
           type : type,
+          manage : manage,
           otype : otype
         }
         if(Math.abs(od)){

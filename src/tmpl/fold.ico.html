@@ -11,16 +11,16 @@
 
 				</div>
 				<%if(gid){%>
-				<a href="#<%if(school){%>school=1&<%}%><%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold<%if(item.open && !item.read){%>-open<%}else if(item.open && item.read){%>-read<%}%>"></i></a>
+				<a href="#<%if(school){%>school=1&<%}%><%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>&otype=ico" data-id="<%+item.id%>"><i class="fold<%if(item.open && !item.read){%>-open<%}else if(item.open && item.read){%>-read<%}%>"></i></a>
 				<%}else{%>
-				<a href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>" data-id="<%+item.id%>"><i class="fold"></i></a>
+				<a href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>&otype=ico" data-id="<%+item.id%>"><i class="fold"></i></a>
 				<%}%>
 				<dl>
 					<dt>
 						<%if(gid){%>
-							<a class="fdname<%+item.id%>" href="#<%if(school){%>school=1&<%}%><%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
+							<a class="fdname<%+item.id%>" href="#<%if(school){%>school=1&<%}%><%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>&otype=ico" data-id="<%+item.id%>"><%-item.name%></a>
 						<%}else{%>
-							<a class="fdname<%+item.id%>" href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>" data-id="<%+item.id%>"><%-item.name%></a>
+							<a class="fdname<%+item.id%>" href="#<%if(pr){%><%+prep%>prep=1&uid=<%+uid%>&<%}%><%if(gid){%>gid=<%+gid%>&<%}%>fdid=<%+item.id%>&otype=ico" data-id="<%+item.id%>"><%-item.name%></a>
 						<%}%>
 
 						

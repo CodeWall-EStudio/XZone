@@ -3,7 +3,9 @@
 <%
 	if(data.type == 1){
 %>
-	<img id="reviewImg" src="/api/file/preview?<%if(data.mail){%>messageId=<%+data.id%><%}else{%>fileId=<%+data.id%><%}%>" align="absmiddle" />
+	<div class="review-img-block">
+		<img id="reviewImg" src="/api/file/preview?<%if(data.mail){%>messageId=<%+data.id%><%}else{%>fileId=<%+data.id%><%}%>" align="absmiddle" />
+	</div>
 		<div class="file-reivew-act">
 			<dl>
 				<dt>文件名:<%-data.name%></dt>

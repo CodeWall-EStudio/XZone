@@ -264,7 +264,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			nowUid = d.uid || 0;
 			rootFd = d.rootfdid || 0;
 			nowType = d.type;
-			nowOtype = d.otype || 'list';
+			nowOtype = d.otype || nowOtype;
 			if(d.order){
 				nowOrder = d.order;
 			}
@@ -365,6 +365,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(d.isOpen){
 			nowData.open = 1;
 		}
+
+		//type1 新媒体
 
 		if(d.type === 1){
 			handerObj.triggerHandler('bind:swall',1);

@@ -10,15 +10,15 @@
 		</div>
 		<a class="prev-file file-name"  cmd="review" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
 			<%if(item.type===1){%>
-				<img src="/api/file/preview?fileId=<%+item.id%>&size=100_100" />
+				<img  cmd="review" data-fid="<%+item.fid%>" data-id="<%+item.id%>" src="/api/file/preview?fileId=<%+item.id%>&size=100_100" />
 			<%}else if(item.type < 7){%>	
-				<i class="fdname<%+item.id%> icon-type<%+item.type%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>		
+				<i  cmd="review" data-fid="<%+item.fid%>" data-id="<%+item.id%>" class="fdname<%+item.id%> icon-type<%+item.type%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>		
 			<%}else{%>
-				<i class="icon-type" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
+				<i  cmd="review" data-fid="<%+item.fid%>" data-id="<%+item.id%>" class="icon-type" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
 			<%}%>		
 		</a>
 		<dl>
-			<dt><a class="file-name fdname<%+item.id%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
+			<dt><a class="file-name fdname<%+item.id%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>" cmd="review"><%-item.name%></a>
 				<%if(pr != 'group' && !school && (ginfo && ginfo.isMember)){%>
 					<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
 						<%if(item.mark==''){%>

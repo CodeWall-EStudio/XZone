@@ -127,6 +127,21 @@ define(['config'],function(config){
 			}
 	}
 
+	//公共文件复制到个人空间
+	function copytoMy(){
+		if($('.table-files .fclick:checked').length>0){
+			var fl  = [];
+			$('.table-files .fclick:checked').each(function(){
+				var id = $(this).val(),
+					fid = $(this).attr('data-fid'),
+					name = $('.fdname'+id).text();
+				fl.push(id);
+			})
+
+			handerObj.triggerHandler('file:copytomy',{fl:fl});
+		}
+	}
+
 	//移动文件到备课
 	function copyFile(){
 			if($('.table-files .fclick:checked').length>0){
@@ -266,13 +281,12 @@ define(['config'],function(config){
 
     //显示或者隐藏重命名和评论
     var checkAct = function(){
-    	var l = $('.table-files .fclick:checked').length;
+    	var l = $('.table-files .fclick:checked').length; 
     	var n = $('.table-files .fdclick:checked').length;
 
     	if(isPrep && !nowPrep){
     		return;
     	}
-
 		if(n == 0){
 			if(!nowSchool){
 		    	$('#fileActZone .sharefile').show();
@@ -280,20 +294,27 @@ define(['config'],function(config){
 	    	}else if(nowAuth){
 		    	$('#fileActZone .movefile').show(); 
 	    	}
-	    	if(isSwall){
-		    	$('#fileActZone .collfile').hide();
-		    	$('#fileActZone .renamefile').hide();
-		    	$('#fileActZone .copyfile').hide();
-		    	$('#fileActZone .delfile').hide();
-	    	}else{
-		    	$('#fileActZone .collfile').show();
-		    	$('#fileActZone .renamefile').show();	 
-		    	$('#fileActZone .copyfile').show();
-		    	$('#fileActZone .delfile').show();		    	   		
-	    	}
 	    	$('#fileActZone .downfile').show();
-
 	    }
+    	if(isSwall){
+	    	$('#fileActZone .collfile').hide();
+	    	$('#fileActZone .renamefile').hide();
+	    	$('#fileActZone .copyfile').hide();
+	    	$('#fileActZone .movefile').hide();
+	    	$('#fileActZone .delfile').hide();
+	    	if(!n){
+	    		$('#fileActZone .copytomy').removeClass('hide');
+	    	}else{
+	    		$('#fileActZone .copytomy').addClass('hide');	   
+	    	}
+    	}else{
+	    	$('#fileActZone .collfile').show();
+	    	$('#fileActZone .renamefile').show();	 
+	    	$('#fileActZone .copyfile').show();
+	    	$('#fileActZone .delfile').show();	
+	    	$('#fileActZone .movefile').show();
+	    	$('#fileActZone .copytomy').addClass('hide');	    	   		
+    	}	    
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
@@ -345,11 +366,16 @@ define(['config'],function(config){
 			    	$('#fileActZone .renamefile').hide();
 			    	$('#fileActZone .copyfile').hide();
 			    	$('#fileActZone .delfile').hide();
+					$('#fileActZone .movefile').hide();
+			    	$('#fileActZone .copytomy').removeClass('hide');
+
 		    	}else{
 			    	$('#fileActZone .collfile').show();
 			    	$('#fileActZone .renamefile').show();	 
 			    	$('#fileActZone .copyfile').show();
-			    	$('#fileActZone .delfile').show();		    	   		
+			    	$('#fileActZone .delfile').show();	
+			    	$('#fileActZone .movefile').show();
+			    	$('#fileActZone .copytomy').addClass('hide');	    	   		
 		    	}	
 
 		    	$('#fileActZone .downfile').show();
@@ -430,6 +456,9 @@ define(['config'],function(config){
 			case 'downfile':
 				downFile();
 				break;
+			case 'copytomy':
+				copytoMy();
+				break;
 			case 'move':
 				moveFile();
 				break;
@@ -503,6 +532,7 @@ define(['config'],function(config){
 			case 'review':
 				var id = target.attr('data-id');
 				var type = target.attr('data-type');
+
 				handerObj.triggerHandler("review:show",{
 					id:id,
 					type : type

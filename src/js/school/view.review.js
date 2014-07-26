@@ -152,6 +152,12 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 					blockTarget = $('#reviewDiv');
 					listTarget = $('#reviewBlock');
 				
+					$('body').bind('keyup',function(e){
+						if(e.keyCode===27){
+							hideTarget();
+						}
+					});				
+
 					getFile(nowId);
 				},
 				handlers : {
@@ -345,6 +351,18 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 		view.createPanel();
 	}
 
+	function change(num){
+		//0 横,1竖
+		var w = $('#reviewImg').width();
+		var h = $('#reviewImg').height();
+		// if(num){
+		// 	$('#reviewImg').width(h);
+		// }else{
+
+		// }
+		// console.log(num%2,$('#reviewImg').width(),$('#reviewImg').height());
+	}
+
     function render(data){
       //图片
       data.mail = mail;
@@ -389,7 +407,6 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 
 			$('#reviewImg').load(function(e){
 				var obj = e.target;
-				console.log(obj);
 				var w = $('body').width(),
 					h = $('body').height();
 				if(obj.width > w){
@@ -424,8 +441,8 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
                 angle: (num)*90,
                 animateTo: (num-1)*90,
               });
-              num--;              
-
+              num--;
+              change(num);
             });
             $('.to-right').bind('click',function(){
             
@@ -433,7 +450,8 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
                     angle: num*90,
                     animateTo: (num+1)*90,
                   });
-              num++;              
+              num++;   
+              change(num);  
             }); 
             $('.zoom-in').bind('click',function(){
               $('#reviewImg').css('width',function(i,v){

@@ -2713,6 +2713,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			nowGroup = d.info || null;
 			nowSchool = d.school || 0;
 			nowAuth = d.auth || 0;
+			nowOtype = d.otype || nowOtype;
 			//rootFd = d.rootfdid || 0;
 		}
 
@@ -3536,6 +3537,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		view.createPanel();
 	};
 
+	//复制文件
 	function fileCopy(e,d){
 		var myinfo = Cache.get('myinfo');
 		var prep = myinfo['prep'];
@@ -3610,6 +3612,18 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		view.createPanel();		
 	}	
 
+	//复制媒体文件
+	function copytoMy(e,d){
+		var myInfo = Cache.get('myinfo');
+		var obj = {
+			fileId : d.fl,
+			targetId : myInfo.rootFolder.id,
+			savetomy : 1
+		}
+		handerObj.triggerHandler('file:savetomy',obj);
+	}	
+
+	//小组保存到个人
 	function fileSave(e,d){
 		var myInfo = Cache.get('myinfo');
 		var obj = {
@@ -3833,6 +3847,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		'recy:recysuc' : recySuc,	
 		'recy:ref' : recyRef,
 		'recy:del' : recyDel,
+		'file:copytomy' : copytoMy,
 		'file:save' : fileSave,	
 		'file:savesuc' : fileSaveSuc,	
 		'file:movesuc' : moveSuc,
@@ -4396,7 +4411,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			nowUid = d.uid || 0;
 			rootFd = d.rootfdid || 0;
 			nowType = d.type;
-			nowOtype = d.otype || 'list';
+			nowOtype = d.otype || nowOtype;
 			if(d.order){
 				nowOrder = d.order;
 			}
@@ -4497,6 +4512,8 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		if(d.isOpen){
 			nowData.open = 1;
 		}
+
+		//type1 新媒体
 
 		if(d.type === 1){
 			handerObj.triggerHandler('bind:swall',1);
@@ -6619,6 +6636,8 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		nowKey = '',
 		nowUid = 0,
 		nowType = 0,
+		nowManage = 0,
+		nowSchool = null,
 		rootFd = 0;
 
 	var actTarget = $('#actWinZone'),
@@ -6631,6 +6650,15 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		$('#userAside').hide();
 		$("#groupAside").show();
 
+		nowManage = d.manage;
+
+		// $('.school-link').removeClass('selected');
+		// if(nowManage){
+		// 	$('.school-link').eq(1).addClass('selected');
+		// }else{
+		// 	$('.school-link').eq(0).addClass('selected');
+		// }
+
 		util.showNav('school');
 		userAsideTarget.hide();
 		userPrepAsideTarget.hide();
@@ -6638,6 +6666,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
+		nowSchool = school;
 
 		$("#fileActZone .sharefile").hide();
 		$("#fileActZone .copyfile").hide();
@@ -6671,7 +6700,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			target : $("#groupAside"),
 			tplid : 'school.aside',
 			data : {
-				auth : school.auth,
+				auth : nowManage,
 				type : nowType
 			},
 			handlers : {
@@ -6739,6 +6768,11 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			order : nowOrder,
 			info : d
 		}
+		if(nowManage){
+			obj.auth = nowSchool.auth;
+			obj.nowType = 1;			
+		}
+		console.log(obj);
 		handerObj.triggerHandler('fold:init',obj); 
 	}
 
@@ -7461,6 +7495,12 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 					blockTarget = $('#reviewDiv');
 					listTarget = $('#reviewBlock');
 				
+					$('body').bind('keyup',function(e){
+						if(e.keyCode===27){
+							hideTarget();
+						}
+					});				
+
 					getFile(nowId);
 				},
 				handlers : {
@@ -7654,6 +7694,18 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 		view.createPanel();
 	}
 
+	function change(num){
+		//0 横,1竖
+		var w = $('#reviewImg').width();
+		var h = $('#reviewImg').height();
+		// if(num){
+		// 	$('#reviewImg').width(h);
+		// }else{
+
+		// }
+		// console.log(num%2,$('#reviewImg').width(),$('#reviewImg').height());
+	}
+
     function render(data){
       //图片
       data.mail = mail;
@@ -7698,7 +7750,6 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 
 			$('#reviewImg').load(function(e){
 				var obj = e.target;
-				console.log(obj);
 				var w = $('body').width(),
 					h = $('body').height();
 				if(obj.width > w){
@@ -7733,8 +7784,8 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
                 angle: (num)*90,
                 animateTo: (num-1)*90,
               });
-              num--;              
-
+              num--;
+              change(num);
             });
             $('.to-right').bind('click',function(){
             
@@ -7742,7 +7793,8 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
                     angle: num*90,
                     animateTo: (num+1)*90,
                   });
-              num++;              
+              num++;   
+              change(num);  
             }); 
             $('.zoom-in').bind('click',function(){
               $('#reviewImg').css('width',function(i,v){
@@ -7908,6 +7960,21 @@ define('bind',['config'],function(config){
 			}
 	}
 
+	//公共文件复制到个人空间
+	function copytoMy(){
+		if($('.table-files .fclick:checked').length>0){
+			var fl  = [];
+			$('.table-files .fclick:checked').each(function(){
+				var id = $(this).val(),
+					fid = $(this).attr('data-fid'),
+					name = $('.fdname'+id).text();
+				fl.push(id);
+			})
+
+			handerObj.triggerHandler('file:copytomy',{fl:fl});
+		}
+	}
+
 	//移动文件到备课
 	function copyFile(){
 			if($('.table-files .fclick:checked').length>0){
@@ -8047,13 +8114,12 @@ define('bind',['config'],function(config){
 
     //显示或者隐藏重命名和评论
     var checkAct = function(){
-    	var l = $('.table-files .fclick:checked').length;
+    	var l = $('.table-files .fclick:checked').length; 
     	var n = $('.table-files .fdclick:checked').length;
 
     	if(isPrep && !nowPrep){
     		return;
     	}
-
 		if(n == 0){
 			if(!nowSchool){
 		    	$('#fileActZone .sharefile').show();
@@ -8061,20 +8127,27 @@ define('bind',['config'],function(config){
 	    	}else if(nowAuth){
 		    	$('#fileActZone .movefile').show(); 
 	    	}
-	    	if(isSwall){
-		    	$('#fileActZone .collfile').hide();
-		    	$('#fileActZone .renamefile').hide();
-		    	$('#fileActZone .copyfile').hide();
-		    	$('#fileActZone .delfile').hide();
-	    	}else{
-		    	$('#fileActZone .collfile').show();
-		    	$('#fileActZone .renamefile').show();	 
-		    	$('#fileActZone .copyfile').show();
-		    	$('#fileActZone .delfile').show();		    	   		
-	    	}
 	    	$('#fileActZone .downfile').show();
-
 	    }
+    	if(isSwall){
+	    	$('#fileActZone .collfile').hide();
+	    	$('#fileActZone .renamefile').hide();
+	    	$('#fileActZone .copyfile').hide();
+	    	$('#fileActZone .movefile').hide();
+	    	$('#fileActZone .delfile').hide();
+	    	if(!n){
+	    		$('#fileActZone .copytomy').removeClass('hide');
+	    	}else{
+	    		$('#fileActZone .copytomy').addClass('hide');	   
+	    	}
+    	}else{
+	    	$('#fileActZone .collfile').show();
+	    	$('#fileActZone .renamefile').show();	 
+	    	$('#fileActZone .copyfile').show();
+	    	$('#fileActZone .delfile').show();	
+	    	$('#fileActZone .movefile').show();
+	    	$('#fileActZone .copytomy').addClass('hide');	    	   		
+    	}	    
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
@@ -8126,11 +8199,16 @@ define('bind',['config'],function(config){
 			    	$('#fileActZone .renamefile').hide();
 			    	$('#fileActZone .copyfile').hide();
 			    	$('#fileActZone .delfile').hide();
+					$('#fileActZone .movefile').hide();
+			    	$('#fileActZone .copytomy').removeClass('hide');
+
 		    	}else{
 			    	$('#fileActZone .collfile').show();
 			    	$('#fileActZone .renamefile').show();	 
 			    	$('#fileActZone .copyfile').show();
-			    	$('#fileActZone .delfile').show();		    	   		
+			    	$('#fileActZone .delfile').show();	
+			    	$('#fileActZone .movefile').show();
+			    	$('#fileActZone .copytomy').addClass('hide');	    	   		
 		    	}	
 
 		    	$('#fileActZone .downfile').show();
@@ -8211,6 +8289,9 @@ define('bind',['config'],function(config){
 			case 'downfile':
 				downFile();
 				break;
+			case 'copytomy':
+				copytoMy();
+				break;
 			case 'move':
 				moveFile();
 				break;
@@ -8284,6 +8365,7 @@ define('bind',['config'],function(config){
 			case 'review':
 				var id = target.attr('data-id');
 				var type = target.attr('data-type');
+
 				handerObj.triggerHandler("review:show",{
 					id:id,
 					type : type
@@ -8761,11 +8843,13 @@ define('upload',['config','cache'],function(config,Cache){
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
+            manage = data.manage || 0,
             type = data.type || 0;
         var d = {
           uid : uid,
           fdid : fdid,
           type : type,
+          manage : manage,
           otype : otype
         }
         if(Math.abs(od)){

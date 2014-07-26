@@ -108,6 +108,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			nowGroup = d.info || null;
 			nowSchool = d.school || 0;
 			nowAuth = d.auth || 0;
+			nowOtype = d.otype || nowOtype;
 			//rootFd = d.rootfdid || 0;
 		}
 
@@ -931,6 +932,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		view.createPanel();
 	};
 
+	//复制文件
 	function fileCopy(e,d){
 		var myinfo = Cache.get('myinfo');
 		var prep = myinfo['prep'];
@@ -1005,6 +1007,18 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		view.createPanel();		
 	}	
 
+	//复制媒体文件
+	function copytoMy(e,d){
+		var myInfo = Cache.get('myinfo');
+		var obj = {
+			fileId : d.fl,
+			targetId : myInfo.rootFolder.id,
+			savetomy : 1
+		}
+		handerObj.triggerHandler('file:savetomy',obj);
+	}	
+
+	//小组保存到个人
 	function fileSave(e,d){
 		var myInfo = Cache.get('myinfo');
 		var obj = {
@@ -1228,6 +1242,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		'recy:recysuc' : recySuc,	
 		'recy:ref' : recyRef,
 		'recy:del' : recyDel,
+		'file:copytomy' : copytoMy,
 		'file:save' : fileSave,	
 		'file:savesuc' : fileSaveSuc,	
 		'file:movesuc' : moveSuc,
