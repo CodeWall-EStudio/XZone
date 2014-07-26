@@ -8839,7 +8839,7 @@ define('upload',['config','cache'],function(config,Cache){
         var gid = data.gid,
             uid = data.uid || 0,
             fdid = data.fdid || 0,
-            otype = data.otype || 'list';
+            otype = data.otype;
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
@@ -8959,7 +8959,7 @@ define('upload',['config','cache'],function(config,Cache){
         var gid = data.gid,
             uid = data.uid || 0,
             fdid = data.fdid || 0,
-            otype = data.otype || 'list';
+            otype = data.otype;// || 'list';
 
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
@@ -8997,7 +8997,7 @@ define('upload',['config','cache'],function(config,Cache){
             on = data.on || 0,
             key = data.key || 0,
             type = data.type || 0,
-            otype = data.otype || 'list';
+            otype = data.otype;// || 'list';
 
         var d = {
           fdid : fdid,
