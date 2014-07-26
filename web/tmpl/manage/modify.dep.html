@@ -57,9 +57,10 @@
 								<%
 									for(var i in list){
 										var item = list[i];
+										if(!item.status){
 								%>
 									<li id="ouser<%+item.id%>" class="org-user" data-id="<%+item.id%>"><%-item.nick%></li>
-								<%}%>
+								<%}}%>
 							</ul>				
 						</td>
 						<td width="50%">

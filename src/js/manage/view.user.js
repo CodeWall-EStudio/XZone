@@ -84,7 +84,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 			$('th.order-'+nowOn).attr('data-od',1);
 			$('th.order-'+nowOn+' i').attr('class','ad');
 		}
-		console.log(nowKey);
+		//console.log(nowKey);
 		if(nowKey !== ''){
 			$('.quit-user-search').show();
 		}
@@ -191,6 +191,9 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 						'click' : function(){
 							var id = $(this).attr('data-id');
 							var sid = $(this).attr('data-sid');
+							var p = $(this).parents('.tr-user');
+							var uid = p.attr('data-id');
+							nowUin = uid;
 							handerObj.triggerHandler('user:folderstatus',{
 								id : id,
 								sid : sid
@@ -254,7 +257,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 								auth = 0;
 								sg = $('#userSizeGroup').val();
 							if(name === '' || nick === ''){
-								handerObj.triggerHandler('msg:error',21);
+								handerObj.triggerHandler('msg:error',24);
 								return;
 							}
 							if($("#adminAuth:checked").length){
@@ -383,6 +386,8 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		var sglist = Cache.get('sizegroup');
 		d.allsize = sglist[d.sid].size;
 		d.pre = Math.round(Util.getNums(d.osize/d.allsize)*100);
+		var nick = userList[nowUin].nick;
+		d.nick = nick;
 		var view = new View({
 			target : $("#userModifyBlock"),
 			tplid : 'manage/status.user',
@@ -534,6 +539,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 					return false;
 				}else{
 					td = o2key[id];
+					console.log(td);
 					id = td.parent.$id;
 					loop++;
 				}
@@ -1017,12 +1023,19 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 	}
 
 	function orgDelSuc(e,d){
+		delete o2key[d];
 		$('#org'+d).remove();
 		$('#depModifyZone').html('');
 	}
 
 	function orgModifySuc(e,d){
-		$("#org"+d._id + ' strong').text(d.name);
+		var old = o2key[d._id];
+		if(d.order != old.order){
+			handerObj.triggerHandler('user:deps');
+		}else{
+			o2key[d._id] = d;
+			$("#org"+d._id + ' strong a').text(d.name);	
+		}	
 	}
 
 	function foldLoad(e,d){
@@ -1073,13 +1086,30 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 			nick : d.nick,
 			_id : d.userId
 		})
+
 		$('<li id="oguser'+d.userId+'">'+d.nick+' <i class="dep-close og-close" data-id="'+d.userId+'"></i></li>').appendTo('.org-user-list');
 		$('#ouser'+d.id).hide().attr('data-hide',1);
+	}
+
+	function userSuc(e,d){
+		$('#userModifyBlock').html('');
+
+		userList[d.id] = d;
+
+		var view = new View({
+			target : $('#userList'),
+			tplid : 'manage/search.user.list',
+			data : {
+				list : [d]
+			}
+		});
+		view.appendPanel();		
 	}
 
 	//删除组织用户成功
 	function delUserSuc(e,d){
 		delOrgUserKey(d);
+
 		$('#oguser'+d.userId).remove();
 		$('#ouser'+d.userId).show().removeAttr('data-hide');
 	}
@@ -1102,6 +1132,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		'user:orgmodifysuc' : orgModifySuc,
 		'user:orgcreatesuc' : orgCreateSuc,
 		'user:listload' : userLoad,
+		'user:createsuc' : userSuc,
 		'user:modifysuc' : userModifySuc,
 		'user:statusload' : statusLoad,
 		'user:depsload' : depsLoad,

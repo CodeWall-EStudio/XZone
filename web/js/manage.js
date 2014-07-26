@@ -156,6 +156,7 @@ define('config',[],function() {
 			21 : '请填写用户名和密码!',
 			22 : '用户不存在',
 			23 : '该组织中包含用户，无法删除！',
+			24 : '请填写用户名和姓名!',
 			30 : '组织最多支持3级!', 
 			50 : '你要上传的文件已经超过你的剩余空间!',
 			60 : '你还没有选择要共享的目录',
@@ -1705,6 +1706,7 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 					var prep = Cache.get('preps');
 					data.prep = prep.g2key;
 				}
+				console.log(data);
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
@@ -3065,7 +3067,7 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 			$('th.order-'+nowOn).attr('data-od',1);
 			$('th.order-'+nowOn+' i').attr('class','ad');
 		}
-		console.log(nowKey);
+		//console.log(nowKey);
 		if(nowKey !== ''){
 			$('.quit-user-search').show();
 		}
@@ -3172,6 +3174,9 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 						'click' : function(){
 							var id = $(this).attr('data-id');
 							var sid = $(this).attr('data-sid');
+							var p = $(this).parents('.tr-user');
+							var uid = p.attr('data-id');
+							nowUin = uid;
 							handerObj.triggerHandler('user:folderstatus',{
 								id : id,
 								sid : sid
@@ -3235,7 +3240,7 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 								auth = 0;
 								sg = $('#userSizeGroup').val();
 							if(name === '' || nick === ''){
-								handerObj.triggerHandler('msg:error',21);
+								handerObj.triggerHandler('msg:error',24);
 								return;
 							}
 							if($("#adminAuth:checked").length){
@@ -3364,6 +3369,8 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 		var sglist = Cache.get('sizegroup');
 		d.allsize = sglist[d.sid].size;
 		d.pre = Math.round(Util.getNums(d.osize/d.allsize)*100);
+		var nick = userList[nowUin].nick;
+		d.nick = nick;
 		var view = new View({
 			target : $("#userModifyBlock"),
 			tplid : 'manage/status.user',
@@ -3515,6 +3522,7 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 					return false;
 				}else{
 					td = o2key[id];
+					console.log(td);
 					id = td.parent.$id;
 					loop++;
 				}
@@ -3998,12 +4006,19 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 	}
 
 	function orgDelSuc(e,d){
+		delete o2key[d];
 		$('#org'+d).remove();
 		$('#depModifyZone').html('');
 	}
 
 	function orgModifySuc(e,d){
-		$("#org"+d._id + ' strong').text(d.name);
+		var old = o2key[d._id];
+		if(d.order != old.order){
+			handerObj.triggerHandler('user:deps');
+		}else{
+			o2key[d._id] = d;
+			$("#org"+d._id + ' strong a').text(d.name);	
+		}	
 	}
 
 	function foldLoad(e,d){
@@ -4054,13 +4069,30 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 			nick : d.nick,
 			_id : d.userId
 		})
+
 		$('<li id="oguser'+d.userId+'">'+d.nick+' <i class="dep-close og-close" data-id="'+d.userId+'"></i></li>').appendTo('.org-user-list');
 		$('#ouser'+d.id).hide().attr('data-hide',1);
+	}
+
+	function userSuc(e,d){
+		$('#userModifyBlock').html('');
+
+		userList[d.id] = d;
+
+		var view = new View({
+			target : $('#userList'),
+			tplid : 'manage/search.user.list',
+			data : {
+				list : [d]
+			}
+		});
+		view.appendPanel();		
 	}
 
 	//删除组织用户成功
 	function delUserSuc(e,d){
 		delOrgUserKey(d);
+
 		$('#oguser'+d.userId).remove();
 		$('#ouser'+d.userId).show().removeAttr('data-hide');
 	}
@@ -4083,6 +4115,7 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 		'user:orgmodifysuc' : orgModifySuc,
 		'user:orgcreatesuc' : orgCreateSuc,
 		'user:listload' : userLoad,
+		'user:createsuc' : userSuc,
 		'user:modifysuc' : userModifySuc,
 		'user:statusload' : statusLoad,
 		'user:depsload' : depsLoad,

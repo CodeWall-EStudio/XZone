@@ -95,9 +95,9 @@
 			<%}%>
 		</table>
 		<div>
-			<button class="btn btn-primary btn-save" <%if(name){%>data-modify="1"<%}%> <%if(!validateStatus){%>disabled<%}%> >保存</button>
+			<button class="btn btn-primary btn-save" <%if(name){%>data-modify="1"<%}%> <%if(typeof validateStatus === 'undefined'){%>disabled<%}%> >保存</button>
 			<button class="btn btn-primary btn-reset" <%if(typeof id !='undefined') {%>data-id="<%+id%>"<%}%>>取消</button>
-			 <%if(!validateStatus){%><div>该小组还没有审批过,请先审批然后再修改</div><%}%> 
+			 <%if(typeof validateStatus === 'undefined'){%><div>该小组还没有审批过,请先审批然后再修改</div><%}%> 
 		</div>
 	</dd>
 <%}else if(type=='school' || type===0){%>
@@ -309,6 +309,7 @@
 								for(var i in prep){
 									var item = prep[i];
 									if(!item.parent && !item.status){
+							%>
 								<option data-id="<%+item.id%>" value="<%+item.id%>" <%if(item.startTime <= ntime && item.endTime >= ntime){%>selected<%}%>><%-item.name%></option>
 							<%
 								}
