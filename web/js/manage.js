@@ -3712,8 +3712,8 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 							return;
 						}
 						//有子组织
-						//console.log(kl[id].children.length);
-						if(kl[id].users.length === 0){
+						console.log(o2key[id]);
+						if(o2key[id].users.length === 0){
 							$('.btn-org-create').prop('disabled',false);
 						}else{
 							$('.btn-org-create').prop('disabled',true);
@@ -3729,7 +3729,7 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 						// }else{
 						// 	$('.btn-org-del').prop('disabled',true);
 						// }
-						modifyOrg(id,kl,root);
+						modifyOrg(id,o2key,root);
 					}
 				},
 				'.quit-dep-search' : {
@@ -3920,13 +3920,15 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 							name : name,
 							order : parseInt(order)
 						}
-						if(parseInt(parent)){
+						if(parseInt(parent) && o2key[parent]){
 							obj.parentId = parent;
 						}else{
-							var id = $("#orgName").attr('data-id');
+							
 							obj.parentId = root;
 						}
+						console.log(root,parent,obj);
 						if(modify){
+							var id = $("#orgName").attr('data-id');
 							obj.organizationId = id;
 							handerObj.triggerHandler('user:orgmodify',obj);
 						}else{
