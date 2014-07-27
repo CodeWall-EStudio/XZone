@@ -687,6 +687,7 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 		d.subject = subject;
 		d.prep = prep;
 
+		console.log(d);
 		var view = new View({
 			target : $('#tableBody'),
 			tplid : 'manage/group.list',
