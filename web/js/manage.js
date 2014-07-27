@@ -3946,7 +3946,6 @@ define('view.user',['config','cache','helper/view','helper/util','model.user'],f
 				}	
 			}
 		}
-		
 
 		var view = new View({
 			target : $('#deptreeMa'),
