@@ -69,6 +69,7 @@ define(function() {
 			foldlist : CGI_PATH+'folder/list'+EXT,
 			foldsearch : CGI_PATH+'folder/search'+EXT,
 			folddel : CGI_PATH+'folder/delete'+EXT,
+			foldstatus : CGI_PATH+'folder/batchStatistics',
 
 
 			//文件收藏

@@ -381,6 +381,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			}
 			handerObj.triggerHandler('file:checkfold',obj);
 		}else{
+			console.log(d);
 			var view = new View({
 				target : actTarget,
 				tplid : 'del',

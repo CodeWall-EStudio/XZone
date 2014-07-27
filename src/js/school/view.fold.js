@@ -401,6 +401,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
             	//新建文件夹
                 if(d.pid == rootFd){
                 	var fl = Cache.get('myfold');
+                	if(!fl){
+                		fl = [];
+                	}
                 	fl.push(d.list[0]);
                 	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'myfold',data:fl});                	

@@ -70,6 +70,7 @@ define('config',[],function() {
 			foldlist : CGI_PATH+'folder/list'+EXT,
 			foldsearch : CGI_PATH+'folder/search'+EXT,
 			folddel : CGI_PATH+'folder/delete'+EXT,
+			foldstatus : CGI_PATH+'folder/batchStatistics',
 
 
 			//文件收藏
@@ -77,6 +78,7 @@ define('config',[],function() {
 			favlist : CGI_PATH+'fav/list'+EXT,
 			favdel : CGI_PATH+'fav/delete'+EXT,
 			favsearch : CGI_PATH+'fav/search'+EXT,
+
 
 			//回收站
 			reclist : CGI_PATH+'recycle/list'+EXT,
@@ -2551,6 +2553,7 @@ define('model.file',['config','helper/request','helper/util','cache','helper/tes
 		}	
 		var fl = d.fl,
 			fd = d.fd;
+		console.log(opt);
 		var success = function(d){
 			if(d.err == 0){
 				var cl = {};
@@ -2986,6 +2989,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			}
 			handerObj.triggerHandler('file:checkfold',obj);
 		}else{
+			console.log(d);
 			var view = new View({
 				target : actTarget,
 				tplid : 'del',
@@ -4548,6 +4552,9 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
             	//新建文件夹
                 if(d.pid == rootFd){
                 	var fl = Cache.get('myfold');
+                	if(!fl){
+                		fl = [];
+                	}
                 	fl.push(d.list[0]);
                 	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'myfold',data:fl});                	
