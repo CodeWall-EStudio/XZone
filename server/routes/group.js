@@ -61,7 +61,7 @@ function checkStartEndTime(params, callback) {
             if(groupId && group._id.toString() === groupId.toString()){
 
             }else{
-                return callback('group time cross with ' + group.name + '( ' + group._id + ' )', ERR.PARAM_ERROR);
+                return callback('group time cross with ' + group.name + '( ' + group._id + ' )', ERR.TIME_DUPLICATE);
             }
             
         }
