@@ -165,8 +165,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		}
 		var success = function(data){
 			if(data.err===0){
-				var obj = data.result.data;
-				obj.id = obj._id;
+				var obj = convent([data.result.data]);
+
+
 				handerObj.triggerHandler('user:createsuc',obj);
 			}
 			handerObj.triggerHandler('msg:error',data.err);

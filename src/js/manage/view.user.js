@@ -685,22 +685,15 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		view.createPanel();
 	}
 
+	//组织加载成功
 	function depsLoad(e,d){
 		var root = d.root;
 		var kl = d.kl;
 		o2key = kl;
-		var view = new View({
-			target : $('#deptreeMa'),
-			tplid : 'manage/deps',
-			after : function(){
-				$('#deptreeMa').removeClass('hide');
-				isInit.deps = true;
-			},
-			data : {
-				list : d.list,
-				root : d.root
-			},
-			handlers : {
+
+		var handers = {};
+		if(!isInit.deps){
+			handers =  {
 				'.plus' : {
 					'click' : function(e){
 						var target = $(this),
@@ -968,8 +961,23 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 					}
 				}	
 			}
+		}
+		
+
+		var view = new View({
+			target : $('#deptreeMa'),
+			tplid : 'manage/deps',
+			after : function(){
+				$('#deptreeMa').removeClass('hide');
+				isInit.deps = true;
+			},
+			data : {
+				list : d.list,
+				root : d.root
+			},
+			handlers : handers
 		});
-		view.appendPanel();
+		view.createPanel();
 	}
 
 	function orgCreateSuc(e,d){
@@ -1091,6 +1099,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		$('#ouser'+d.id).hide().attr('data-hide',1);
 	}
 
+	//添加用户成功
 	function userSuc(e,d){
 		$('#userModifyBlock').html('');
 
@@ -1100,7 +1109,7 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 			target : $('#userList'),
 			tplid : 'manage/search.user.list',
 			data : {
-				list : [d]
+				list : d
 			}
 		});
 		view.appendPanel();		
