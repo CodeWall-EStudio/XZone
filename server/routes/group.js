@@ -11,7 +11,11 @@ var db = require('../models/db');
 var mGroup = require('../models/group');
 var mSizegroup = require('../models/sizegroup');
 
-function checkStartEndTime(startTime, endTime, callback) {
+function checkStartEndTime(params, callback) {
+    var startTime = params.startTime;
+    var endTime = params.endTime;
+    var groupId = params.groupId;
+
     if (endTime < startTime) {
         return callback('endTime must greater than startTime', ERR.PARAM_ERROR);
     }
@@ -54,7 +58,12 @@ function checkStartEndTime(startTime, endTime, callback) {
             return callback(err, group);
         }
         if (group) {
-            return callback('group time cross with ' + group.name + '( ' + group._id + ' )', ERR.PARAM_ERROR);
+            if(groupId && group._id.toString() === groupId.toString()){
+
+            }else{
+                return callback('group time cross with ' + group.name + '( ' + group._id + ' )', ERR.PARAM_ERROR);
+            }
+            
         }
         callback(null);
     });
@@ -111,7 +120,10 @@ exports.create = function(req, res) {
 
     if (startTime && endTime) {
 
-        checkStartEndTime(startTime, endTime, function(err, errCode) {
+        checkStartEndTime({
+            startTime: startTime,
+            endTime: endTime
+        }, function(err, errCode) {
             if (err) {
                 return ep.emit('error', err, errCode);
             }
@@ -372,7 +384,11 @@ exports.modify = function(req, res) {
 
     if (startTime && endTime) {
 
-        checkStartEndTime(startTime, endTime, function(err, errCode) {
+        checkStartEndTime({
+            startTime: startTime,
+            endTime: endTime,
+            groupId: group._id
+        }, function(err, errCode) {
             if (err) {
                 return ep.emit('error', err, errCode);
             }
