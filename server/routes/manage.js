@@ -419,10 +419,10 @@ exports.modifyUser = function(req, res) {
 
 exports.resetUserPwd = function(req, res) {
 
-    var loginUser = req.loginUser;
+    var user = req.parameter.userId;
 
     mUser.update({
-        _id: loginUser._id
+        _id: user._id
     }, {
         pwd: Util.md5(config.DEFAULT_USER_PWD)
     }, function(err, doc) {
