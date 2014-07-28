@@ -2554,7 +2554,6 @@ define('model.file',['config','helper/request','helper/util','cache','helper/tes
 		}	
 		var fl = d.fl,
 			fd = d.fd;
-		console.log(opt);
 		var success = function(d){
 			if(d.err == 0){
 				var cl = {};
@@ -2990,7 +2989,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			}
 			handerObj.triggerHandler('file:checkfold',obj);
 		}else{
-			console.log(d);
+			
 			var view = new View({
 				target : actTarget,
 				tplid : 'del',
@@ -4395,7 +4394,6 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 	}
 
 	function foldInit(e,d){
-		console.log(d);
 		action = 1;
 		foldTarget.hide().removeAttr('show');
 		foldTarget.css('float','none').css('width','100%');
@@ -6783,7 +6781,6 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			obj.auth = nowSchool.auth;
 			obj.nowType = 1;			
 		}
-		console.log(obj);
 		handerObj.triggerHandler('fold:init',obj); 
 	}
 

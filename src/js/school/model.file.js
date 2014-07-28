@@ -371,7 +371,6 @@ define(['config','helper/request','helper/util','cache','helper/test'],function(
 		}	
 		var fl = d.fl,
 			fd = d.fd;
-		console.log(opt);
 		var success = function(d){
 			if(d.err == 0){
 				var cl = {};

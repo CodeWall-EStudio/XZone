@@ -145,7 +145,6 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			obj.auth = nowSchool.auth;
 			obj.nowType = 1;			
 		}
-		console.log(obj);
 		handerObj.triggerHandler('fold:init',obj); 
 	}
 
