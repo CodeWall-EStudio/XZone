@@ -4395,6 +4395,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 	}
 
 	function foldInit(e,d){
+		console.log(d);
 		action = 1;
 		foldTarget.hide().removeAttr('show');
 		foldTarget.css('float','none').css('width','100%');
@@ -6644,6 +6645,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		nowKey = '',
 		nowUid = 0,
 		nowType = 0,
+		nowOtype = 'list',
 		nowManage = 0,
 		nowSchool = null,
 		rootFd = 0;
@@ -6659,6 +6661,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		$("#groupAside").show();
 
 		nowManage = d.manage;
+		nowOtype = d.otype || nowOtype;
 
 		// $('.school-link').removeClass('selected');
 		// if(nowManage){
@@ -6703,13 +6706,12 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			d.fdid = nowFd;
 		}
 
-
 		var view = new View({
 			target : $("#groupAside"),
 			tplid : 'school.aside',
 			data : {
-				auth : nowManage,
-				type : nowType
+				auth : school.auth,
+				type : nowManage
 			},
 			handlers : {
 				'h3' : {
@@ -6774,6 +6776,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			fdid : nowFd,
 			uid : nowUid,
 			order : nowOrder,
+			otype : nowOtype,
 			info : d
 		}
 		if(nowManage){

@@ -243,6 +243,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 	}
 
 	function foldInit(e,d){
+		console.log(d);
 		action = 1;
 		foldTarget.hide().removeAttr('show');
 		foldTarget.css('float','none').css('width','100%');

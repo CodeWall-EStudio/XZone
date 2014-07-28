@@ -7,6 +7,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		nowKey = '',
 		nowUid = 0,
 		nowType = 0,
+		nowOtype = 'list',
 		nowManage = 0,
 		nowSchool = null,
 		rootFd = 0;
@@ -22,6 +23,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		$("#groupAside").show();
 
 		nowManage = d.manage;
+		nowOtype = d.otype || nowOtype;
 
 		// $('.school-link').removeClass('selected');
 		// if(nowManage){
@@ -66,13 +68,12 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			d.fdid = nowFd;
 		}
 
-
 		var view = new View({
 			target : $("#groupAside"),
 			tplid : 'school.aside',
 			data : {
-				auth : nowManage,
-				type : nowType
+				auth : school.auth,
+				type : nowManage
 			},
 			handlers : {
 				'h3' : {
@@ -137,6 +138,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			fdid : nowFd,
 			uid : nowUid,
 			order : nowOrder,
+			otype : nowOtype,
 			info : d
 		}
 		if(nowManage){
