@@ -310,7 +310,7 @@ exports.login = function(req, res) {
         var skey = Util.md5(user.name + ':' + user.pwd + ':' + Date.now());
 
         req.session[skey] = user._id.toString();
-        var mainDomain = config.APP_DOMAIN.split('.').slice(1).join('.');
+        var mainDomain = config.APP_MAIN_DOMAIN;
         res.cookie('skey', skey, {
             domain: '.' + mainDomain
         });

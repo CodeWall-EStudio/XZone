@@ -284,7 +284,7 @@ exports.modify = function(query, doc, callback){
 
 exports.getGroup = function(query, callback){
 
-    // Logger.debug('>>>getGroup: ', JSON.stringify(query));
+    Logger.debug('>>>getGroup: ', JSON.stringify(query));
     db.group.findOne(query, function(err, group){
 
         if(group){

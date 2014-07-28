@@ -27,6 +27,10 @@ exports.JOD_CONVERTER = '/var/run/jodconverter/lib/jodconverter-core-3.0-beta-4.
 // 应用运行的域名
 exports.APP_DOMAIN = 'http://xzone.codewalle.com';
 
+// main domain
+exports.APP_MAIN_DOMAIN = exports.APP_DOMAIN.split('.').slice(1).join('.');
+
+
 // cookie 的加密key
 exports.COOKIE_SECRET= 'xzone_HeMHFxTAMPAjlRVH_secret';
 
