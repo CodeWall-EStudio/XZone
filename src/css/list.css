@@ -176,6 +176,9 @@
 	border-radius:3px;	
 	background:url(imgs/down.png) no-repeat center;
 }
+.dis-ico-type i.down{
+	display:inline-block;
+}
 .dis-list-type i.more,.dis-ico-type i.more{
 	width:20px;
 	height:16px;

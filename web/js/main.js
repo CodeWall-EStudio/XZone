@@ -7362,6 +7362,7 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 		nowPage = 0,
 		isLoading = false,
 		nowLength = 0;
+	var nowHeight = 0;
 	var nowType = null;
 	var mail = null,
 		cate = null,
@@ -7397,6 +7398,8 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 
 	function show(e,d){
 		//console.log(d);
+		nowHeight = document.body.clientHeight;
+
 		nowId = d.id;
 		nowPage = 0;
 		mail = false;
@@ -7721,6 +7724,7 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
         target : $('#reviewDiv'),
         tplid : 'review',
         after : function(){
+          $('#reviewDiv').height(nowHeight-180);
           if(data.type == 2){
               var purl = encodeURIComponent(config.cgi.filereview+'?fileId='+data.id);
               if(mail){
@@ -7834,6 +7838,10 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 	for(var i in handlers){
 		handerObj.bind(i,handlers[i]);
 	}
+	
+	$(window).bind('resize',function(){
+		nowHeight = $('body').height();
+	});
 
 
 });
