@@ -61,6 +61,7 @@
 					<span class="filesave<%+item.id%>"><a data-id="<%+item.id%>" data-fid="<%+item.fid%>" data-name="<%+item.name%>" cmd="savetomy"><i class="point" title="保存"></i></a></span>
 				<%}%>
 				<span><a href="<%+down%>?fileId=<%+item.id%>" data-id="<%+item.id%>" data-fid="<%+item.fid%>" target="_blank"><i class="down" title="下载"></i></a></span>
+				<span><%if(!pr){%><i <%if(item.coll){%>class="fav<%+item.id%> colls s" cmd="uncoll" title="取消收藏"<%}else{%>cmd="coll" class="fav<%+item.id%> colls" title="收藏"<%}%> data-type="file" data-id="<%+item.id%>" data-fid="<%+item.fid%>"></i><%}%></span>
 			</dd>
 		</dl>
 	</li>

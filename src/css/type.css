@@ -100,7 +100,14 @@ td i.s{
 	background:url(imgs/star1.png) no-repeat;
 }
 
+.dis-ico-type i.colls{
+	position:static;
+}
 
+.dis-ico-type i.s{
+	height:16px;
+	background:url(imgs/star1.png) no-repeat;
+}
 
 .dis-ico-type i.icon-type1{
 	display:inline-block;

@@ -159,8 +159,9 @@
 	height:16px;
 	background:url(imgs/star1.png) no-repeat;
 }
-
-.dis-list-type i.share,.dis-ico-type i.share{
+/*.dis-ico-type i.share*/
+.dis-ico-type i.share{
+	display:inline-block;
 	width:20px;
 	height:16px;
 	border:1px solid #B9B8B8;
