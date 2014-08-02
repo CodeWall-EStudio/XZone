@@ -75,16 +75,15 @@
       padding:0;
     }
   	.file-reivew-act{
-  		width:1000px;
   		text-align : center;
-  		margin:0 auto;
       text-align:center;
       position:fixed;
       bottom:80px;
-
+      width: 560px;
+      left: 50%;
+      margin-left: -280px; 
   	}
     .file-reivew-act-bg{
-      margin:0 auto;
       text-align:center;
       position:fixed;
       bottom:90px;
@@ -92,8 +91,9 @@
       background:#000;
       z-index:2;
       height:60px;
-      width:80%;
-      left:10%;
+      width: 560px;
+      left: 50%;
+      margin-left: -280px;      
     }
 
 	#reviewWin .file-act{

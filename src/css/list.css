@@ -169,6 +169,16 @@
 	margin-left:0;
 	background:url(imgs/share.png) no-repeat center;
 }
+.dis-ico-type i.point{
+	display:inline-block;
+	width:20px;
+	height:16px;
+	border:1px solid #B9B8B8;
+	border-radius:3px;
+	margin-left:0;
+	background:url(imgs/share.png) no-repeat center;	
+}
+
 .dis-list-type i.down,.dis-ico-type i.down{
 	width:20px;
 	height:16px;
