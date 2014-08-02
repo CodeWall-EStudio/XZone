@@ -4031,6 +4031,7 @@ define('model.fold',['config','helper/request','helper/util','cache'],function(c
 		if(creator){
 			obj.creatorId = creator;
 		}
+		obj.order = order;
 
 		var opt = {
 			cgi : config.cgi.foldlist,
@@ -4502,7 +4503,9 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		// 		handerObj.triggerHandler('fold:get',o1);
 		// 	};
 		// }
-
+		
+		obj.order = nowOds; 
+		// console.log(obj,nowOrder,nowOds);	
 		if(nowKey == ''){
 			handerObj.triggerHandler('fold:get',obj);
 		}else{
@@ -4681,6 +4684,8 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			order : nowOds			
 		}
 
+
+
 		if(nowGid){
 			data.groupId = nowGid;
 		}
@@ -4690,8 +4695,6 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		if(nowUid){
 			data.creatorId = nowUid;
 		}
-		//console.log(data);
-		
 		handerObj.triggerHandler('fold:search',data);			
 	}	
 

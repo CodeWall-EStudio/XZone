@@ -351,7 +351,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		// 		handerObj.triggerHandler('fold:get',o1);
 		// 	};
 		// }
-
+		
+		obj.order = nowOds; 
+		// console.log(obj,nowOrder,nowOds);	
 		if(nowKey == ''){
 			handerObj.triggerHandler('fold:get',obj);
 		}else{
@@ -530,6 +532,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			order : nowOds			
 		}
 
+
+
 		if(nowGid){
 			data.groupId = nowGid;
 		}
@@ -539,8 +543,6 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(nowUid){
 			data.creatorId = nowUid;
 		}
-		//console.log(data);
-		
 		handerObj.triggerHandler('fold:search',data);			
 	}	
 

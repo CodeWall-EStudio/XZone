@@ -143,6 +143,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		if(creator){
 			obj.creatorId = creator;
 		}
+		obj.order = order;
 
 		var opt = {
 			cgi : config.cgi.foldlist,
