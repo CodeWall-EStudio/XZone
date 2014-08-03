@@ -27,11 +27,12 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.cookieParser());
 
+var mainDomain = config.APP_MAIN_DOMAIN && ('.' + config.APP_MAIN_DOMAIN) || null;
 
 app.use(express.session({
     // key: 'sid',
     secret: config.COOKIE_SECRET,
-    cookie: { maxAge:  config.COOKIE_TIME, httpOnly: true, domain: '.' + config.APP_MAIN_DOMAIN }, // 2 hour
+    cookie: { maxAge:  config.COOKIE_TIME, httpOnly: true, domain: mainDomain }, // 2 hour
     store: new MongoStore({
         url: config.DB_URI
     }, function () {
