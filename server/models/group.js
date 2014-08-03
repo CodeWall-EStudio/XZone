@@ -34,8 +34,8 @@ exports.create = function(params, callback){
         
 
         pt: Number(params.pt) || 0,
-        tag: params.tag || null,
-        grade: params.grade || null,
+        tag: ('tag' in params) && params.tag || null,
+        grade: ('grade' in params) && params.grade || null,
 
         startTime: params.startTime || 0,
         endTime: params.endTime || 0,
