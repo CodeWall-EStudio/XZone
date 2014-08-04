@@ -375,6 +375,7 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 				var t = $(this),
 					on = t.attr('data-on'),
 					od = t.attr('data-od');
+					
 				if(on != nowOd || od != nowOd){
 					nowOd = od;
 					nowOn = on;
