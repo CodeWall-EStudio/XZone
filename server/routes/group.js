@@ -423,11 +423,11 @@ exports.modify = function(req, res) {
             doc.endTime = endTime;
         }
 
-        if (params.tag) {
+        if ('tag' in params) {
             doc.tag = params.tag;
         }
 
-        if (params.grade) {
+        if ('grade' in params) {
             doc.grade = params.grade;
         }
 
