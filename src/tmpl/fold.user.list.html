@@ -22,11 +22,12 @@
 						<%}%>
 
 						<%
-							if(pr != 'group' && !school && item.type !== 1){
+							if(pr != 'group' && !school){
 								if($.isEmptyObject(ginfo)){
+							
 						%>
 						<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
-							<%if(item.mark==''){%>
+							<%if(item.mark == '' && item.type !== 1){%>
 								编辑备注
 							<%}else{%>
 								<%-item.mark%>
