@@ -579,6 +579,7 @@ exports.importUser = function(req, res) {
             var nick  = String(cols[0]).trim();
             var loginName = String(cols[1]).trim();
             var pwd = String(cols[2]).trim();
+            var auth = parseInt(cols[3] || 0);
 
             if(!nick || !loginName){
                 next();
@@ -590,6 +591,7 @@ exports.importUser = function(req, res) {
                 nick: nick,
                 name: loginName,
                 pwd: Util.md5(pwd),
+                auth: auth,
                 from: 'import',
                 sizegroupId: sizegroup._id,
                 size: sizegroup.size
