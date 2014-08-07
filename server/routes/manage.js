@@ -1,4 +1,5 @@
 var http = require('http');
+var fs = require('fs');
 var EventProxy = require('eventproxy');
 var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
@@ -11,6 +12,7 @@ var mGroup = require('../models/group');
 var mFile = require('../models/file');
 var mFolder = require('../models/folder');
 var mUser = require('../models/user');
+var mSizegroup = require('../models/sizegroup');
 var Util = require('../util');
 var Logger = require('../logger');
 
@@ -157,7 +159,7 @@ exports.approveFile = function(req, res) {
         return;
     }
 
-    
+
     //这里应该增加学校的空间使用
     mGroup.updateUsed(school._id, file.size, function() {});
 
@@ -312,8 +314,8 @@ exports.listFiles = function(req, res) {
     };
 
     mFile.search(searchParams, function(err, total, docs) {
-        
-        if(err){
+
+        if (err) {
             return res.json({
                 err: total || ERR.SERVER_ERROR,
                 msg: err
@@ -330,7 +332,7 @@ exports.listFiles = function(req, res) {
     });
 };
 
-exports.createUser = function(req, res){
+exports.createUser = function(req, res) {
     var params = req.parameter;
 
     var sizegroup = params.sizegroupId;
@@ -528,6 +530,102 @@ exports.statistics = function(req, res) {
         res.json({
             err: ERR.SUCCESS,
             result: result
+        });
+    });
+};
+
+
+
+exports.importUser = function(req, res) {
+    var files = req.files;
+    var file = files.file;
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
+    });
+
+    if (!file) {
+        ep.emit('error', ERR.PARAM_ERROR, 'no file!');
+        return;
+    }
+
+    var content = fs.readFileSync(file.path);
+    content = content.toString();
+
+    mSizegroup.getSizegroup({
+        isDefault: true,
+        type: 0
+    }, ep.doneLater('getDefaultSzie'));
+
+
+    ep.on('getDefaultSzie', function(sizegroup) {
+        var rows = content.split('\n');
+        var list = [],
+            duplicates = [],
+            fails = [];
+
+        Util.forEach(rows, function(row, i, next) {
+
+            if (i === 0) { // 跳过第一行, 第一行是表头
+                return next();
+            }
+
+            var cols = row.split(',');
+            Logger.info('[importUser]', cols[0], cols[1]);
+
+            var nick  = String(cols[0]).trim();
+            var loginName = String(cols[1]).trim();
+            var pwd = String(cols[2]).trim();
+
+            if(!nick || !loginName){
+                next();
+                return;
+            }
+
+
+            var user = {
+                nick: nick,
+                name: loginName,
+                pwd: Util.md5(pwd),
+                from: 'import',
+                sizegroupId: sizegroup._id,
+                size: sizegroup.size
+            };
+
+            mUser.getUser({
+                name: user.name
+            }, function(err, doc) {
+                if (doc) {
+                    duplicates.push(cols);
+                    next();
+                } else {
+
+                    mUser.create(user, function(err, doc) {
+                        if (err) {
+                            fails.push(cols);
+                        } else {
+                            delete doc.pwd;
+                            list.push(doc);
+                        }
+                        next();
+                    });
+                }
+
+            });
+
+        }, function() {
+            Logger.info('[importUser] done.');
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    list: list,
+                    duplicates: duplicates,
+                    fails: fails
+                }
+            });
         });
     });
 };
