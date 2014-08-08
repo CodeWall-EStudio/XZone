@@ -532,15 +532,14 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 		}else{
 			var loop = 1;
 			var td = o2key[id];
-			id = td.parent.$id;
+			//id = td.parent.$id;
 			do{
 				
 				if(!o2key[id]){
 					return false;
 				}else{
-					td = o2key[id];
-					console.log(td);
-					id = td.parent.$id;
+					//td = o2key[id];
+					//id = td.parent.$id;
 					loop++;
 				}
 

@@ -128,6 +128,11 @@ define(function() {
 			getstorge : CGI_PATH+'storage'+EXT,
 			setstorge : CGI_PATH+'storage/set'+EXT
 
+			//导入
+			// /manage/importUser
+			// /manage/importOrganization
+
+
 		},
 		grade : {
 			1 : '一年级',
