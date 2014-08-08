@@ -1,7 +1,7 @@
-var http = require('http');
+// var http = require('http');
 var fs = require('fs');
 var EventProxy = require('eventproxy');
-var ObjectID = require('mongodb').ObjectID;
+// var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var us = require('underscore');
 
@@ -13,12 +13,13 @@ var mFile = require('../models/file');
 var mFolder = require('../models/folder');
 var mUser = require('../models/user');
 var mSizegroup = require('../models/sizegroup');
+var mOrganization = require('../models/organization');
 var Util = require('../util');
 var Logger = require('../logger');
 
 exports.listGroups = function(req, res) {
     var params = req.parameter;
-    var loginUser = req.loginUser;
+    // var loginUser = req.loginUser;
 
     var query = {};
 
@@ -576,12 +577,12 @@ exports.importUser = function(req, res) {
             var cols = row.split(',');
             Logger.info('[importUser]', cols[0], cols[1]);
 
-            var nick  = String(cols[0]).trim();
+            var nick = String(cols[0]).trim();
             var loginName = String(cols[1]).trim();
             var pwd = String(cols[2]).trim();
             var auth = parseInt(cols[3] || 0);
 
-            if(!nick || !loginName){
+            if (!nick || !loginName) {
                 next();
                 return;
             }
@@ -630,4 +631,119 @@ exports.importUser = function(req, res) {
             });
         });
     });
+};
+
+function createOrganizationUser(data, callback) {
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    mOrganization.getOrganization({
+        name: data.orgName
+    }, ep.doneLater('getOrganization'));
+
+    mUser.getUser({
+        name: data.loginName
+    }, ep.doneLater('getUser'));
+
+
+    ep.all('getOrganization', 'getUser', function(org, user) {
+
+        if (!org || !user) {
+            callback('no such organization or user');
+            return;
+        }
+        mOrganization.checkOrgUser({
+            'user.$id': user._id,
+            'department.$id': org._id
+        }, function(err, doc) {
+            if (doc) {
+                callback(null, 1, doc);
+            } else {
+                mOrganization.addUser({
+                    userId: user._id,
+                    organizationId: org._id
+                }, ep.done('addUser'));
+
+            }
+        });
+
+    });
+
+    ep.on('addUser', function(doc) {
+        callback(null, 0, doc);
+    });
+
+}
+
+exports.importOrgsUsers = function(req, res) {
+    var files = req.files;
+    var file = files.file;
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
+    });
+
+    if (!file) {
+        ep.emit('error', ERR.PARAM_ERROR, 'no file!');
+        return;
+    }
+
+    var content = fs.readFileSync(file.path);
+    content = content.toString();
+
+    var rows = content.split('\n');
+    var list = [],
+        duplicates = [],
+        fails = [];
+
+    Util.forEach(rows, function(row, i, next) {
+
+        if (i === 0) { // 跳过第一行, 第一行是表头
+            return next();
+        }
+
+        var cols = row.split(',');
+        Logger.info('[importOrgsUsers]', cols);
+
+        var orgName = String(cols[0]).trim();
+        var loginName = String(cols[1]).trim();
+
+        if (!orgName || !loginName) {
+            next();
+            return;
+        }
+
+        createOrganizationUser({
+            orgName: orgName,
+            loginName: loginName
+        }, function(err, code, doc) {
+            if (err) {
+                fails.push({
+                    data: cols,
+                    msg: err
+                });
+            } else if (code === 0) {
+                list.push(cols);
+            } else if (code === 1) {
+                duplicates.push(doc);
+            }
+            next();
+        });
+
+        // end onEach
+    }, function() { // onDone
+        Logger.info('[importOrgsUsers] done.');
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                list: list,
+                duplicates: duplicates,
+                fails: fails
+            }
+        });
+    });
+
 };

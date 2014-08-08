@@ -45,8 +45,8 @@ exports.delete = function(query, callback) {
 
 
 
-    db.department.remove(query, function(err){
-        if(err){
+    db.department.remove(query, function(err) {
+        if (err) {
             return callback(err);
         }
         db.departuser.remove({
@@ -104,16 +104,16 @@ exports.addUser = function(params, callback) {
     db.departuser.findOne({
         'user.$id': params.userId,
         'department.$id': params.organizationId
-    }, function(err, result){
+    }, function(err, result) {
         // Logger.debug('[addUser]', result);
-        if(result){
+        if (result) {
             return callback(err, result);
         }
         var doc = {
             user: new DBRef('user', params.userId),
             department: new DBRef('department', params.organizationId)
         };
-        db.departuser.save(doc, function(err){
+        db.departuser.save(doc, function(err) {
             callback(err, err || doc);
         });
     });
@@ -129,106 +129,140 @@ exports.removeUser = function(params, callback) {
     }, callback);
 };
 
+exports.getOrganization = function(query, callback) {
 
-function fetchDepartments(dep, callback){
+    db.department.findOne(query, callback);
+
+};
+
+exports.checkOrgUser = function(query, callback) {
+
+    db.departuser.findOne(query, callback);
+};
+
+function fetchDepartments(dep, callback) {
     var ep = new EventProxy();
     ep.fail(callback);
 
     // 1. 先查询该部门的用户
-    db.departuser.find({ 'department.$id': dep._id }, ep.doneLater('getUsers'));
+    db.departuser.find({
+        'department.$id': dep._id
+    }, ep.doneLater('getUsers'));
 
-    ep.on('getUsers', function(depUsers){
+    ep.on('getUsers', function(depUsers) {
 
         dep.users = [];
 
-        ep.after('fetchDepartUsers', depUsers.length, function(list){
+        ep.after('fetchDepartUsers', depUsers.length, function(list) {
             dep.users = us.compact(list);
 
             ep.emit('getUsersDone');
         });
 
-        depUsers.forEach(function(doc){
+        depUsers.forEach(function(doc) {
 
             // 过滤掉测试用户
-            db.user.findOne({ _id: doc.user.oid, test: null, status: 0 }, ep.group('fetchDepartUsers'));
+            db.user.findOne({
+                _id: doc.user.oid,
+                test: null,
+                status: 0
+            }, ep.group('fetchDepartUsers'));
 
         });
 
     });
 
     // 2. 查询该部门的子部门
-    db.search('department', { 'parent.$id': dep._id }, { order: { order: 1 } }, ep.doneLater('getDeps'));
+    db.search('department', {
+        'parent.$id': dep._id
+    }, {
+        order: {
+            order: 1
+        }
+    }, ep.doneLater('getDeps'));
 
-    ep.on('getDeps', function(total, deps){
+    ep.on('getDeps', function(total, deps) {
         deps = deps || [];
         dep.children = deps;
 
-        ep.after('fetchChildDeparts', deps.length, function(){
+        ep.after('fetchChildDeparts', deps.length, function() {
             ep.emit('getDepartsDone');
         });
 
-        deps.forEach(function(doc){
+        deps.forEach(function(doc) {
             fetchDepartments(doc, ep.group('fetchChildDeparts'));
         });
 
     });
 
-    ep.all('getUsersDone', 'getDepartsDone', function(){
+    ep.all('getUsersDone', 'getDepartsDone', function() {
 
         callback(null, dep);
     });
 
 }
 
-exports.getOrganizationTree = function(params, callback){
+exports.getOrganizationTree = function(params, callback) {
 
     var ep = new EventProxy();
     ep.fail(callback);
 
-    db.department.findOne({ parent: null }, ep.doneLater('getOrgRoot'));
+    db.department.findOne({
+        parent: null
+    }, ep.doneLater('getOrgRoot'));
 
-    ep.on('getOrgRoot', function(root){
+    ep.on('getOrgRoot', function(root) {
 
-        if(!root){
+        if (!root) {
             return callback('can\'t find the root of organization');
         }
 
         // 查询一级部门
-        db.search('department', { 'parent.$id': root._id }, { order: { order: 1 } }, function(err, total, docs){
-            if(err){
+        db.search('department', {
+            'parent.$id': root._id
+        }, {
+            order: {
+                order: -1
+            }
+        }, function(err, total, docs) {
+            if (err) {
                 return callback(err);
             }
             root.children = docs;
 
-            ep.after('fetchChildDeparts', docs.length, function(){
+            ep.after('fetchChildDeparts', docs.length, function() {
                 callback(null, root);
             });
 
-            docs.forEach(function(doc){
+            docs.forEach(function(doc) {
                 fetchDepartments(doc, ep.group('fetchChildDeparts'));
             });
-            
+
         });
     });
 };
 
-exports.getOrgsByUserId = function(userId, callback){
+exports.getOrgsByUserId = function(userId, callback) {
 
     var ep = new EventProxy();
     ep.fail(callback);
 
-    db.departuser.find({ 'user.$id': userId }, ep.doneLater('getOrgs'));
+    db.departuser.find({
+        'user.$id': userId
+    }, ep.doneLater('getOrgs'));
 
-    ep.on('getOrgs', function(depUsers){
-        
-        ep.after('fetchDepartments', depUsers.length, function(list){
+    ep.on('getOrgs', function(depUsers) {
+
+        ep.after('fetchDepartments', depUsers.length, function(list) {
 
             callback(null, us.compact(list));
         });
 
-        depUsers.forEach(function(doc){
+        depUsers.forEach(function(doc) {
 
-            db.department.findOne({ _id: doc.department.oid }, ep.group('fetchDepartments'));
+            db.department.findOne({
+                _id: doc.department.oid
+            }, ep.group('fetchDepartments'));
         });
     });
 
