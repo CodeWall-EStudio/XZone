@@ -11,3 +11,5 @@ logs/*
 
 
 server/helper/getOrgTree.htm.text
+
+server/organization.csv

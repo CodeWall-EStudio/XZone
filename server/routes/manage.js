@@ -1,5 +1,6 @@
 // var http = require('http');
 var fs = require('fs');
+var path = require('path');
 var EventProxy = require('eventproxy');
 // var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
@@ -747,3 +748,44 @@ exports.importOrgsUsers = function(req, res) {
     });
 
 };
+
+function getOrganizationNames(result, data){
+    result.push(data.name);
+    if(data.children){
+        data.children.forEach(function(data){
+            getOrganizationNames(result, data);
+        });
+    }
+}
+
+exports.downloadOrganization = function(req, res){
+
+    mOrganization.getOrganizationTree({}, function(err, data){
+        if(err){
+            res.json({
+                err: data || ERR.SERVER_ERROR,
+                msg: err
+            });
+            return;
+        }
+
+
+        var tables = ['组织名'];
+
+        data.children = data.children || [];
+
+        getOrganizationNames(tables, data);
+
+        var content = tables.join('\n');
+
+        var dir = path.resolve('./');
+        var fileName = path.join(dir, 'organization.csv');
+        fs.writeFileSync(fileName, content);
+
+        res.sendfile(fileName);
+
+
+    });
+
+};
+
