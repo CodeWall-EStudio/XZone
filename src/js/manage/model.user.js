@@ -292,6 +292,58 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		request.get(opt,success);		
 	}
 
+	function importUser(e,d){
+		//console.log(d);
+
+		formData = new FormData();
+		formData.append('file', d);
+
+		$.ajax({
+		    url: config.cgi.importuser,
+		    //contentType:"multipart/form-data",
+		    contentType: false,
+		    data: formData,
+		    processData: false,
+		    type: 'POST',
+		    success : function(data){
+		    	if(data.err===0){
+					handerObj.triggerHandler('msg:show','成功导入'+data.result.list.length+'个用户,失败'+data.result.fails.length+'个用户,'+data.result.duplicates.length+'个用户重复');		    		
+		    	}else{
+		    		handerObj.triggerHandler('msg:error',data.err);
+		    	}
+		    },
+		    error : function(data){
+		    	console.log(data);
+		    }
+		});		
+	};
+
+	function importDeps(e,d){
+		//console.log(d);
+
+		formData = new FormData();
+		formData.append('file', d);
+
+		$.ajax({
+		    url: config.cgi.importuser,
+		    //contentType:"multipart/form-data",
+		    contentType: false,
+		    data: formData,
+		    processData: false,
+		    type: 'POST',
+		    success : function(data){
+		    	if(data.err===0){
+					handerObj.triggerHandler('msg:show','成功导入'+data.result.list.length+'个用户,失败'+data.result.fails.length+'个用户,'+data.result.duplicates.length+'个用户重复');		    		
+		    	}else{
+		    		handerObj.triggerHandler('msg:error',data.err);
+		    	}
+		    },
+		    error : function(data){
+		    	console.log(data);
+		    }
+		});			
+	};	
+
 	var handlers = {
 		'user:getone' : getOne,
 		'user:orgdel' : delOrg,
@@ -306,7 +358,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		'user:deps' : loadUser,
 		'user:depsearch' : depSearch,
 		'user:orguseradd' : orgUserAdd,
-		'user:orguserdel' : orgUserDel		
+		'user:orguserdel' : orgUserDel,
+		'user:importuser' : importUser,
+		'user:importdeps' : importDeps,
 	}
 
 	for(var i in handlers){

@@ -126,9 +126,21 @@ define(function() {
 
 			//存储
 			getstorge : CGI_PATH+'storage'+EXT,
-			setstorge : CGI_PATH+'storage/set'+EXT
+			setstorge : CGI_PATH+'storage/set'+EXT,
 
 			//导入
+			importuser : CGI_PATH+'manage/importUser'+EXT,
+			importdeps : CGI_PATH+'manage/importOrgsUsers'+EXT,
+/*
+manage/importUser 导入用户
+POST 参数: file=csv文件, 返回:   list 导入陈宫的用户, fails: 失败的用户, duplcates: 重复的用户
+
+manage/importOrgsUsers 导入组织的用户
+POST 参数: file=csv文件, 返回:   list 导入陈宫的用户, fails: 失败的用户, duplcates: 重复的用户
+
+manage/downloadOrganization 下载组织架构
+GET: 参数: 无
+*/			
 			// /manage/importUser
 			// /manage/importOrganization
 

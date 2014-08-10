@@ -113,6 +113,7 @@
 }
 .action-list .action-btn-list{
 	float:left;
+	position:relative;
 }
 .manage-act-zone dt{
 	line-height:32px;
@@ -306,4 +307,11 @@ table.jqplot-table-legend{
 	cursor:pointer;
 	padding:10px;
 	display:none;	
+}
+
+.btn-file{
+	position:absolute;
+	top:0;
+	width:82px;
+	opacity: 0;
 }

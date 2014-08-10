@@ -34,6 +34,13 @@ define(['config','cache','helper/view'],function(config,Cache,View){
 		var msg = Messenger().post(obj);
 	}
 
+	function show(e,d){
+		obj = {
+			message : d
+		}
+		Messenger().post(obj);
+	}
+
 	function showErr(e,d){
 		if(d == 1001){
 			//window.location = config.cgi.gotologin;
@@ -69,6 +76,7 @@ define(['config','cache','helper/view'],function(config,Cache,View){
 
 	var handlers = {
 		'msg:error' : showErr,
+		'msg:show' : show,
 		'msg:config' : showConfig
 	}
 

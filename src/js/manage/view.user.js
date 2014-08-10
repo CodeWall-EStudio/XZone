@@ -373,6 +373,12 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 								getUser(obj);
 							}
 						}
+					},
+					'.btn-file' : {
+						'change' : function(){
+							var file = $(this)[0].files[0];
+							handerObj.triggerHandler('user:importuser',file);
+						}
 					}
 
 				}
@@ -960,7 +966,13 @@ define(['config','cache','helper/view','helper/util','model.user'],function(conf
 							$('#depModifyZone').html('');
 						}
 					}
-				}	
+				},
+				'.btn-file' : {
+					'change' : function(){
+						var file = $(this)[0].files[0];
+						handerObj.triggerHandler('user:importdeps',file);
+					}
+				}
 			}
 		}
 
