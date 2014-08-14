@@ -325,7 +325,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		formData.append('file', d);
 
 		$.ajax({
-		    url: config.cgi.importuser,
+		    url: config.cgi.importdeps,
 		    //contentType:"multipart/form-data",
 		    contentType: false,
 		    data: formData,

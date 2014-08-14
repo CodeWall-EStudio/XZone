@@ -238,3 +238,7 @@
       width:100%;
       overflow:hidden;
     }
+	.review-img-block img{
+		max-width:100%;
+		max-height:100%;
+	}

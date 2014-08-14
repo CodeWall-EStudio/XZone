@@ -7762,11 +7762,12 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
               );            
           }else if(data.type == 1){
                var num = 0;   
-
+			/*
 			$('#reviewImg').load(function(e){
 				var obj = e.target;
 				var w = $('body').width(),
 					h = $('body').height();
+				console.log(obj.width,w,obj.height,h);
 				if(obj.width > w){
 					if(obj.width/obj.height > w/h){
 						obj.style.width = '90%';
@@ -7775,9 +7776,9 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 					}
 				}else if(obj.height > h){
 					if(obj.width/obj.height > w/h){
-						obj.style.width = '90%';
+						obj.style.width = w*0.8+'px';
 					}else{
-						obj.style.height = '90%';
+						obj.style.height = h*0.8+'px';
 					}
 				}else{
 					obj.style.marginTop = (h-obj.height)/2+'px';
@@ -7794,6 +7795,7 @@ require(['config','helper/util','helper/request','helper/view','model.review','m
 				// //obj.style.marginTop = (640-obj.width)/2+'px';
 				// }
 			});
+			*/
             $('.to-left').bind('click',function(){
               $('#reviewImg').rotate({
                 angle: (num)*90,
