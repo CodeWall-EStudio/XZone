@@ -232,7 +232,7 @@ function fetchDepartments(dep, callback){
     });
 
     // 2. 查询该部门的子部门
-    db.department.find({ 'parent.$id': dep._id }, { order: { order: -1 }}, ep.doneLater('getDeps'));
+    db.department.find({ 'parent.$id': dep._id }, { sort: { order: -1 }}, ep.doneLater('getDeps'));
 
     ep.on('getDeps', function(deps){
         dep.children = deps || [];
@@ -268,7 +268,7 @@ exports.getAllDepartments = function(params, callback){
         }
 
         // 查询一级部门
-        db.department.find({ 'parent.$id': root._id }, function(err, docs){
+        db.department.find({ 'parent.$id': root._id },  { sort: { order: -1 }},function(err, docs){
             if(err){
                 return ep.emit('error', err);
             }
