@@ -27,7 +27,7 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.cookieParser());
 
-var mainDomain = '.' + exports.APP_DOMAIN.split('.').slice(1).join('.');
+var mainDomain = '.' + config.APP_DOMAIN.split('.').slice(1).join('.');
 
 app.use(express.session({
     // key: 'sid',
