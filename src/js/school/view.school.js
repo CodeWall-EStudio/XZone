@@ -139,6 +139,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			uid : nowUid,
 			order : nowOrder,
 			otype : nowOtype,
+			key : nowKey,
 			info : d
 		}
 		if(nowManage){

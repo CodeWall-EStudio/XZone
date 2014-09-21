@@ -2908,7 +2908,6 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		if(nowAuth){
 			obj.status = 1;
 		}
-		console.log(obj);
 		handerObj.triggerHandler('file:search',obj);			
 	}
 
@@ -6778,6 +6777,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			uid : nowUid,
 			order : nowOrder,
 			otype : nowOtype,
+			key : nowKey,
 			info : d
 		}
 		if(nowManage){

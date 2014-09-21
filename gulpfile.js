@@ -5,11 +5,11 @@ var gulp = require('gulp'),
     minifycss = require('gulp-minify-css'),
     replace = require('gulp-replace'),
     watch = require('gulp-watch'),
-    inline = require('gulp-inline'),
+    //inline = require('gulp-inline'),
     htmlreplace = require('gulp-html-replace'),
-    sass = require('gulp-sass'),
+    //sass = require('gulp-sass'),
     concat = require('gulp-concat'),
-    es = require('event-stream'),
+    //es = require('event-stream'),
     compass = require('gulp-compass');
 var rjs = require('gulp-requirejs');
 

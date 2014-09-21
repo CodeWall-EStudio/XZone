@@ -300,7 +300,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowAuth){
 			obj.status = 1;
 		}
-		console.log(obj);
 		handerObj.triggerHandler('file:search',obj);			
 	}
 
