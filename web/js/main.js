@@ -2568,7 +2568,7 @@ define('model.file',['config','helper/request','helper/util','cache','helper/tes
 					}
 				};
 				if(!check){
-					handerObj.triggerHandler('fild:checkSuc',{
+					handerObj.triggerHandler('file:checkSuc',{
 						check: check,cl: cl,fl:fl,fd:fd
 					});
 				}else{
@@ -3866,7 +3866,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		'model:change' : modelChange,
 		'search:start' : search,
 		'file:del' : fileDel,
-		'fild:checkSuc' : fileCheckSuc,
+		'file:checkSuc' : fileCheckSuc,
 		'file:init' : fileInit,
 		'file:load' : fileLoad,
 		'file:tocoll' : toColl,
