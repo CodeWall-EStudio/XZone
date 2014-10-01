@@ -1,4 +1,3 @@
-
 var EventProxy = require('eventproxy');
 var ObjectID = require('mongodb').ObjectID;
 var us = require('underscore');
@@ -14,7 +13,7 @@ var mLog = require('../models/log');
 var U = require('../util');
 var fileHelper = require('../helper/file_helper');
 
-exports.create = function(req, res){
+exports.create = function(req, res) {
     var loginUser = req.loginUser;
 
     var parameter = req.parameter;
@@ -28,16 +27,19 @@ exports.create = function(req, res){
     var createParams = us.extend({}, parameter);
 
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
 
-    if(parentFolder.__role & config.FOLDER_DEPARTMENT){
+    if (parentFolder.__role & config.FOLDER_DEPARTMENT) {
         // 继承父文件夹的公开和读写状态
-        if(parentFolder.isOpen){
+        if (parentFolder.isOpen) {
             createParams.isOpen = 1;
         }
-        if(parentFolder.isReadonly){
+        if (parentFolder.isReadonly) {
             createParams.isReadonly = 1;
         }
     }
@@ -49,23 +51,23 @@ exports.create = function(req, res){
     }, ep.done('checkName'));
 
 
-    ep.on('checkName', function(fld){
-        if(fld){
+    ep.on('checkName', function(fld) {
+        if (fld) {
             ep.emit('error', 'has the same folder name', ERR.DUPLICATE);
             return;
         }
 
         createParams.creator = loginUser._id;
         createParams.folder = parentFolder;
-        if(parentFolder.group){
+        if (parentFolder.group) {
             createParams.groupId = folder.group.oid;
         }
 
         mFolder.create(createParams, ep.done('create'));
 
     });
-    
-    ep.on('create', function(folder){
+
+    ep.on('create', function(folder) {
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -93,22 +95,31 @@ exports.create = function(req, res){
 
 };
 
-exports.get = function(req, res){
+exports.get = function(req, res) {
     var params = req.parameter;
     var folder = params.folderId;
 
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
 
     Logger.debug('folder.get', folder);
 
-    mFile.countFile({ 'folder.$id': folder._id, del: false }, ep.doneLater('countFile'));
+    mFile.countFile({
+        'folder.$id': folder._id,
+        del: false
+    }, ep.doneLater('countFile'));
 
-    db.dereference(folder, {'parent': ['_id', 'name'], 'top': ['_id', 'name']}, ep.doneLater('dereference'));
+    db.dereference(folder, {
+        'parent': ['_id', 'name'],
+        'top': ['_id', 'name']
+    }, ep.doneLater('dereference'));
 
-    ep.all('dereference', 'countFile', function(doc, filesCount){
+    ep.all('dereference', 'countFile', function(doc, filesCount) {
 
         folder.hasFile = !!filesCount;
 
@@ -121,10 +132,10 @@ exports.get = function(req, res){
             }
         });
     });
-    
+
 };
 
-exports.modify = function(req, res){
+exports.modify = function(req, res) {
     // 只能修改自己的
     var params = req.parameter;
     var folder = params.folderId;
@@ -132,20 +143,23 @@ exports.modify = function(req, res){
 
 
     var doc = {};
-    if(params.mark){
+    if (params.mark) {
         doc.mark = params.mark;
     }
-    if(params.name){
+    if (params.name) {
         doc.name = params.name;
     }
 
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
 
-    ep.on('checkName', function(result){
-        if(!result){
+    ep.on('checkName', function(result) {
+        if (!result) {
             ep.emit('error', 'has the same name in this folder', ERR.DUPLICATE);
             return;
         }
@@ -153,12 +167,22 @@ exports.modify = function(req, res){
         var oldFolderName = folder.name;
         // params.folderId = folder._id;
 
-        mFolder.modify({ _id: folder._id }, doc, function(err, doc){
-            if(err){
-                res.json({ err: ERR.SERVER_ERROR, msg: err});
-            }else {
-                res.json({ err: ERR.SUCCESS , result: { data: doc }});
-                
+        mFolder.modify({
+            _id: folder._id
+        }, doc, function(err, doc) {
+            if (err) {
+                res.json({
+                    err: ERR.SERVER_ERROR,
+                    msg: err
+                });
+            } else {
+                res.json({
+                    err: ERR.SUCCESS,
+                    result: {
+                        data: doc
+                    }
+                });
+
                 // 记录该操作
                 mLog.create({
                     fromUser: loginUser,
@@ -181,8 +205,8 @@ exports.modify = function(req, res){
         });
     });
 
-    if(params.name){
-        if(params.name === folder.name){
+    if (params.name) {
+        if (params.name === folder.name) {
             // 名字没变过, 就不要改了
             delete doc.name;
             delete params.name;
@@ -192,24 +216,24 @@ exports.modify = function(req, res){
         mFolder.getFolder({
             name: params.name,
             'parent.$id': folder.parent._id
-        }, function(err, doc){
-            if(doc){
+        }, function(err, doc) {
+            if (doc) {
                 ep.emit('checkName', false);
-            }else{
+            } else {
                 ep.emit('checkName', true);
             }
         });
-    }else{
+    } else {
         ep.emitLater('checkName', true);
     }
 
 };
 
-function deleteFolder(loginUser, folder, callback){
+function deleteFolder(loginUser, folder, callback) {
     // 检查改目录下是否有不是自己的文件, 有就不能删
     // 管理员不受限制
 
-    if(('deletable' in folder) && !folder.deletable){
+    if (('deletable' in folder) && !folder.deletable) {
         callback('can not delete this folder', ERR.UNDELETABLE);
         return;
     }
@@ -220,20 +244,24 @@ function deleteFolder(loginUser, folder, callback){
         recursive: true,
         folderId: folder._id,
         extendQuery: {
-            'creator.$id': { $ne: loginUser._id }
+            'creator.$id': {
+                $ne: loginUser._id
+            }
         }
     };
 
-    mFile.search(searchParams, function(err, total, docs){
-        if(err){
+    mFile.search(searchParams, function(err, total, docs) {
+        if (err) {
             return callback(err);
         }
         // ROLE_FOLDER_MANAGER === 系统管理员 | 超级管理员 | 小组管理员 | 部门管理员
-        if(total && !(folder.__user_role & config.ROLE_FOLDER_MANAGER)){
+        if (total && !(folder.__user_role & config.ROLE_FOLDER_MANAGER)) {
             return callback('there are some files create by another', ERR.NOT_EMPTY);
         }
 
-        mFolder.delete({ folder: folder } , callback);
+        mFolder.delete({
+            folder: folder
+        }, callback);
 
         // 记录该操作
         mLog.create({
@@ -254,7 +282,7 @@ function deleteFolder(loginUser, folder, callback){
     });
 }
 
-exports.delete = function(req, res){
+exports.delete = function(req, res) {
     var params = req.parameter;
     var folders = params.folderId;
     // var groupId = params.groupId;
@@ -262,11 +290,14 @@ exports.delete = function(req, res){
     // var creator = loginUser._id;
 
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
 
-    ep.after('delete', folders.length, function(list){
+    ep.after('delete', folders.length, function(list) {
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -275,46 +306,51 @@ exports.delete = function(req, res){
         });
     });
 
-    folders.forEach(function(folder){
+    folders.forEach(function(folder) {
 
         deleteFolder(loginUser, folder, ep.group('delete'));
 
     });
 };
 
-exports.list = function(req, res){
+exports.list = function(req, res) {
     var params = req.parameter;
 
     var folder = params.folderId;
-	var creator = params.creatorId;
+    var creator = params.creatorId;
     // var groupId = params.groupId || null;
 
     var loginUser = req.loginUser;
 
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
-    
+
     params.folderId = folder._id;
     params.isDeref = true;
-	
-    if(creator){
+
+    if (folder.__user_role & config.ROLE_MANAGER) {
+        // 管理员, 想看谁的看谁的
+    } else if (creator) {
         params.creator = creator._id;
-	}else if(folder.__role & config.FOLDER_PRIVATE){
+    } else if (folder.__role & config.FOLDER_PRIVATE) {
         // 个人空间搜索, 搜索自己创建的文件
         params.creator = loginUser._id;
-    }else if((folder.__role & config.FOLDER_DEPARTMENT) && (loginUser.__role & config.ROLE_VISITOR)){
+    } else if ((folder.__role & config.FOLDER_DEPARTMENT) && (loginUser.__role & config.ROLE_VISITOR)) {
         // 不是部门文件夹的授权访问者, 就只能看公开文件夹
         // 
-        params.extendQuery = {// 公開文件夾可以搜索文件夾, 非公開就不返回內容
+        params.extendQuery = { // 公開文件夾可以搜索文件夾, 非公開就不返回內容
             isOpen: true
         };
     }
 
     mFolder.search(params, ep.done('search'));
 
-    ep.on('search', function(total, docs){
+    ep.on('search', function(total, docs) {
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -325,38 +361,44 @@ exports.list = function(req, res){
     });
 };
 
-exports.search = function(req, res){
+exports.search = function(req, res) {
     var params = req.parameter;
 
     var folder = params.folderId;
     var creator = params.creatorId;
 
     var loginUser = req.loginUser;
-    
+
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
 
     params.folderId = folder._id;
     params.isDeref = true;
     params.recursive = true;
 
-    if(creator){
+    if (folder.__user_role & config.ROLE_MANAGER) {
+        // 管理员, 想看谁的看谁的
+    } else
+    if (creator) {
         params.creator = creator._id;
-    }else if(folder.__role & config.FOLDER_PRIVATE){
+    } else if (folder.__role & config.FOLDER_PRIVATE) {
         // 个人空间搜索, 搜索自己创建的文件
         params.creator = loginUser._id;
-    }else if((folder.__role & config.FOLDER_DEPARTMENT) && (loginUser.__role & config.ROLE_VISITOR)){
+    } else if ((folder.__role & config.FOLDER_DEPARTMENT) && (loginUser.__role & config.ROLE_VISITOR)) {
         // 不是文件夹的授权访问者, 就只能看 公开文件夹
-        params.extendQuery = {// 公開文件夾可以搜索文件夾, 非公開就不返回內容
+        params.extendQuery = { // 公開文件夾可以搜索文件夾, 非公開就不返回內容
             isOpen: true
         };
     }
-    
+
     mFolder.search(params, ep.done('search'));
 
-    ep.on('search', function(total, docs){
+    ep.on('search', function(total, docs) {
         res.json({
             err: ERR.SUCCESS,
             result: {
@@ -368,16 +410,18 @@ exports.search = function(req, res){
 };
 
 
-function statisticsFolder(folder, callback){
+function statisticsFolder(folder, callback) {
 
     var ep = new EventProxy();
     ep.fail(callback);
 
     mFolder.statistics(folder._id, {}, ep.doneLater('statFolder'));
 
-    mFile.statistics(folder._id, { ignoreDel: true }, ep.doneLater('statFile'));
+    mFile.statistics(folder._id, {
+        ignoreDel: true
+    }, ep.doneLater('statFile'));
 
-    ep.all('statFolder', 'statFile', function(folderResult, fileResult){
+    ep.all('statFolder', 'statFile', function(folderResult, fileResult) {
 
         var result = folderResult;
         result.fileStat = fileResult;
@@ -395,18 +439,19 @@ function statisticsFolder(folder, callback){
  * @param  {[type]} res [description]
  * @return {[type]}     [description]
  */
-exports.statistics = function(req, res){
+exports.statistics = function(req, res) {
     var parameter = req.parameter;
     var folder = parameter.folderId;
 
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode) {
+        return res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
 
-    statisticsFolder(folder, ep.doneLater('statisticsFolder'));
-
-    ep.on('statisticsFolder', function(result){
+    ep.on('statisticsFolder', function(result) {
 
         res.json({
             err: ERR.SUCCESS,
@@ -417,16 +462,19 @@ exports.statistics = function(req, res){
 
 };
 
-exports.batchStatistics = function(req, res){
+exports.batchStatistics = function(req, res) {
     var parameter = req.parameter;
     var folders = parameter.folderId;
 
     var ep = new EventProxy();
-    ep.fail(function(err, errCode){
-        return res.json({ err: errCode || ERR.SERVER_ERROR, msg: err});
+    ep.fail(function(err, errCode) {
+        return res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
     });
 
-    ep.after('statisticsFolder', folders.length, function(list){
+    ep.after('statisticsFolder', folders.length, function(list) {
 
         res.json({
             err: ERR.SUCCESS,
@@ -435,7 +483,7 @@ exports.batchStatistics = function(req, res){
 
     });
 
-    folders.forEach(function(folder){
+    folders.forEach(function(folder) {
         statisticsFolder(folder, ep.group('statisticsFolder'));
     });
 

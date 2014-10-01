@@ -24,5 +24,14 @@ module.exports = exports = {
 
     FORBIDDEN: 1018, // 被禁止访问接口
 
+    UNINSERTABLE: 1019, // 禁止添加
+
+    LOGIN_FAILURE: 1040, // 登录失败
+    ACCOUNT_ERROR: 1041, // 用户名或密码错误
+    PASSWORD_ERROR: 1042, // 密码错误
+    ACCOUNT_CLOSE: 1043, // 账号被关闭了
+
+    TIME_DUPLICATE: 1050, // 创建学年时, 时间交叉了
+
     SUCCESS: 0
 };

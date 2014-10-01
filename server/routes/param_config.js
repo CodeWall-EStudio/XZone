@@ -71,6 +71,10 @@ module.exports = {
             {
                 name: 'messageId',
                 type: 'message'
+            },
+            {
+                name: 'size', // 指定图片的预览图大小, 只有格式为图片时有用
+                type: 'string'
             }
         ]
     },
@@ -267,6 +271,14 @@ module.exports = {
                 name: 'activityId',
                 type: 'string',
                 required: true
+            },
+            {
+                name: 'activityName',
+                type: 'string'
+            },
+            {
+                name: 'activityTime',
+                type: 'string'
             },
             {
                 name: 'file_path'
@@ -632,11 +644,51 @@ module.exports = {
         params: []
     },
 
+    '/api/user/login': {
+        method: 'POST',
+        params: [
+            {
+                name: 'name',
+                type: 'string',
+                required: true
+            },
+            {
+                name: 'pwd',
+                type: 'string',
+                required: true
+            },
+            {
+                name: 'json',
+                type: 'boolean'
+            }
+        ]
+    },
+
+    '/api/user/info': {
+        method: 'GET',
+        params: [
+            {
+                name: 'userId',
+                type: 'user',
+                required: true
+            }
+        ]
+    },
+
     '/api/user/gotoLogin': {
         method: 'GET',
         params: [
             {
                 name: 'type'
+            }
+        ]
+    },
+
+    '/api/user/validate': {
+        method: 'GET',
+        params: [
+            {
+                name: 'skey'
             }
         ]
     },
@@ -666,20 +718,32 @@ module.exports = {
     '/api/user/logoff': {
         method: 'GET',
         params: [
+            {
+                name: 'json',
+                type: 'boolean'
+            }
         ]
     },
+    
     '/api/user/departments': {
         method: 'GET',
         params: [
         ]
     },
-    // '/api/user/modify': { // 只能修改自己的
-    //     method: 'POST',
-    //     params: [
-    //         // TODO
-    //     ]
-
-    // },
+    '/api/user/modify': { // 只能修改自己的
+        method: 'POST',
+        params: [
+            {
+                name: 'nick'
+            },
+            {
+                name: 'pwd'
+            },
+            {
+                name: 'newPwd'
+            }
+        ]
+    },
     '/api/user/search': {
         method: 'GET',
         params: [
@@ -1011,6 +1075,44 @@ module.exports = {
             {
                 name: 'status',
                 type: 'number'
+            },
+            {
+                name: 'nick',
+                type: 'string'
+            },
+            {
+                name: 'auth',
+                type: 'number'
+            }
+        ]
+    },
+    '/api/manage/createUser': {
+        method: 'POST',
+        params: [
+            {
+                name: 'name',
+                type: 'string',
+                required: true
+            },
+            {
+                name: 'sizegroupId',
+                type: 'sizegroup',
+                required: true
+            },
+            {
+                name: 'nick',
+                type: 'string',
+                required: true
+            }
+        ]
+    },
+    '/api/manage/resetUserPwd': {
+        method: 'POST',
+        params: [
+            {
+                name: 'userId',
+                type: 'user',
+                required: true
             }
         ]
     },
@@ -1171,6 +1273,81 @@ module.exports = {
                 type: 'number'
             }
         ]
+    },
+
+    // organization
+    '/api/organization/create': {
+        method: 'POST',
+        params: [{
+            name: 'name',
+            required: true
+        },{
+            name: 'order',
+            type: 'number',
+            required: true
+        },{
+            name: 'parentId',
+            type: 'department',
+            required: true
+        }]
+    },
+
+    '/api/organization/modify': {
+        method: 'POST',
+        params: [
+            {
+                name: 'organizationId',
+                type: 'department',
+                required: true
+            },{
+                name: 'name'
+            },{
+                name: 'order',
+                type: 'number'
+            }
+        ]
+    },
+
+    '/api/organization/delete': {
+        method: 'POST',
+        params: [
+            {
+                name: 'organizationId',
+                type: 'department',
+                required: true
+            }
+        ]
+    },
+
+    '/api/organization/addUser': {
+        method: 'POST',
+        params: [{
+            name: 'userId',
+            type: 'user',
+            required: true
+        },{
+            name: 'organizationId',
+            type: 'department',
+            required: true
+        }]
+    },
+
+    '/api/organization/removeUser': {
+        method: 'POST',
+        params: [{
+            name: 'userId',
+            type: 'user',
+            required: true
+        },{
+            name: 'organizationId',
+            type: 'department',
+            required: true
+        }]
+    },
+
+    '/api/organization/tree': {
+        method: 'GET',
+        params: []
     }
 };
 

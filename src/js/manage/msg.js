@@ -1,4 +1,4 @@
-define(['../school/config','cache','helper/view'],function(config,Cache,View){
+define(['config','cache','helper/view'],function(config,Cache,View){
 	var	handerObj = $(Schhandler);
 	var msg = config.msg;
 
@@ -9,9 +9,42 @@ define(['../school/config','cache','helper/view'],function(config,Cache,View){
 
 	var at = 0;
 
+	function showConfig(e,d){
+		if(typeof d === 'undefined'){
+			return;
+		}
+		var obj = {
+			message : d.msg,
+			actions : {
+				sub : {
+					label : d.act.sub.label,
+					action : function(){
+						d.act.sub.action();
+						msg.hide();
+					}
+				},
+				cancel : {
+					label : d.act.cancel.label,
+					action : function(){
+						msg.hide();
+					}					
+				}
+			}
+		}
+		var msg = Messenger().post(obj);
+	}
+
+	function show(e,d){
+		obj = {
+			message : d
+		}
+		Messenger().post(obj);
+	}
+
 	function showErr(e,d){
 		if(d == 1001){
-			window.location = config.cgi.gotologin;
+			//window.location = config.cgi.gotologin;
+			handerObj.triggerHandler('nav:showlogin');
 			return;
 		}
 
@@ -42,7 +75,9 @@ define(['../school/config','cache','helper/view'],function(config,Cache,View){
 	}
 
 	var handlers = {
-		'msg:error' : showErr
+		'msg:error' : showErr,
+		'msg:show' : show,
+		'msg:config' : showConfig
 	}
 
 	for(var i in handlers){

@@ -8,10 +8,10 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		isLoading = false;
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
-		nowOds = '',
-		nowUid = 0,
+		nowOds = '', //当前排序
+		nowUid = 0,  //当前uin
 		nowPrep = 0, //当前是否是备课
-		rootFd = 0,
+		rootFd = 0,  //根目录id
 		depnum = -1,
 		nowTotal = 0,
 		nowUid = 0,
@@ -21,10 +21,14 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nowType = 0,
 		nowSchool = 0,
 		nowAuth = 0,
+		nowOtype = 'list',
+		inReview = false, //是否在预览中
 		isMember = {},		
+		fileList = {},
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		icoTarget = $("#fileIcoList"),
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),
 		tabletitTarget = $("#tableTit");
@@ -76,6 +80,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 	function fileInit(e,d){
 		nowTotal = 0;
 		nextPage = 0;
+		fileList = {};
 		action = 1;
 
 		if(depnum < 0){
@@ -103,6 +108,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			nowGroup = d.info || null;
 			nowSchool = d.school || 0;
 			nowAuth = d.auth || 0;
+			nowOtype = d.otype || nowOtype;
 			//rootFd = d.rootfdid || 0;
 		}
 
@@ -190,9 +196,25 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowPrep){
 			pr = nowPrep;
 		}
+
+		for(var i = 0,l=d.list.length;i<l;i++){
+			fileList[d.list[i].id] = d.list[i];
+		}
+
+		if(inReview){
+			returnList();
+		}
+
+		var target = tmpTarget,
+			tplid = 'file.user.list';
+
+		if(nowOtype === 'ico'){
+			target = icoTarget;
+			tplid = 'file.ico';
+		}
 		var view = new View({
-			target : tmpTarget,
-			tplid : 'file.user.list',
+			target : target,
+			tplid : tplid,
 			data : {
 				list : d.list,
 				filetype : config.filetype,
@@ -278,7 +300,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		if(nowAuth){
 			obj.status = 1;
 		}
-		console.log(obj);
 		handerObj.triggerHandler('file:search',obj);			
 	}
 
@@ -359,6 +380,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			}
 			handerObj.triggerHandler('file:checkfold',obj);
 		}else{
+			
 			var view = new View({
 				target : actTarget,
 				tplid : 'del',
@@ -691,6 +713,22 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			after : function(){
 				$("#actWin").modal('show');
 
+				//拉学校文件夹
+				if(d.type === 'school'){
+						var myinfo = Cache.get('myinfo');
+						var school = myinfo.school;
+						var obj = {
+							target : $('#groupFoldResultUl'),
+							tplid : 'share.fold.li',
+							groupId : school.id,
+							folderId : school.rootFolder.$id,
+							type : 2,
+							root : 1
+						}
+						$('#groupFoldResultUl').html('');
+						handerObj.triggerHandler('fold:get',obj);					
+				}
+
 				$('.act-search-input').focus(function(){
 					var target = $(this),
 						def = target.attr('data-def');
@@ -894,6 +932,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		view.createPanel();
 	};
 
+	//复制文件
 	function fileCopy(e,d){
 		var myinfo = Cache.get('myinfo');
 		var prep = myinfo['prep'];
@@ -968,6 +1007,18 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		view.createPanel();		
 	}	
 
+	//复制媒体文件
+	function copytoMy(e,d){
+		var myInfo = Cache.get('myinfo');
+		var obj = {
+			fileId : d.fl,
+			targetId : myInfo.rootFolder.id,
+			savetomy : 1
+		}
+		handerObj.triggerHandler('file:savetomy',obj);
+	}	
+
+	//小组保存到个人
 	function fileSave(e,d){
 		var myInfo = Cache.get('myinfo');
 		var obj = {
@@ -1169,12 +1220,29 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		handerObj.triggerHandler('file:edit',d);
 	}	
 
+	//返回列表
+	function returnList(e,d){
+		//console.log(d);
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}
+	}
+
 	var handlers = {
 		//'order:change' : orderChange,
 		'file:sharefoldload' : shareFoldLoad,
 		'recy:recysuc' : recySuc,	
 		'recy:ref' : recyRef,
 		'recy:del' : recyDel,
+		'file:copytomy' : copytoMy,
 		'file:save' : fileSave,	
 		'file:savesuc' : fileSaveSuc,	
 		'file:movesuc' : moveSuc,
@@ -1201,7 +1269,8 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		'page:next' : pageNext,
 		'file:sharesuc' : sharesuc,
 		'file:editmark' : editMark,
-		'file:uploadsuc' : uploadSuc
+		'file:uploadsuc' : uploadSuc,
+		'file:getlist' : returnList
 	}
 
 	for(var i in handlers){

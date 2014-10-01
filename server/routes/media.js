@@ -42,7 +42,10 @@ function getFolder(params, callback){
         }else{ // 没有, 新建一个
             mFolder.create({
                 name: params.name,
+                mark: params.mark,
+                type: 1,
                 deletable: false,
+                editable: false,
                 creator: params.creator,
                 folder: params.parent
             }, callback);
@@ -53,10 +56,12 @@ function getFolder(params, callback){
 exports.upload = function(req, res){
 
     var parameter = req.parameter;
-    var loginUser;
+    var loginUser = req.loginUser;
     var skey = req.skey;
     console.log('>>>media upload, skey:',skey);
     var activityId = parameter.activityId;
+    var activityName = parameter.activityName;
+    var activityTime = parameter.activityTime;
 
     var ep = new EventProxy();
     ep.fail(function(err, code){
@@ -65,22 +70,29 @@ exports.upload = function(req, res){
         res.json({ code: code || ERR.SERVER_ERROR, msg: err });
     });
 
-    if(!skey){
-        ep.emit('error', 'need login', ERR.NOT_LOGIN);
-        return;
-    }else if(!parameter.file_path){
-        ep.emit('error', 'upload file fail');
-        return;
+    if(!loginUser){
+        if(!skey){
+            ep.emit('error', 'need login', ERR.NOT_LOGIN);
+            return;
+        }else if(!parameter.file_path){
+            ep.emit('error', 'upload file fail');
+            return;
+        }
+
+        userHelper.findAndUpdateUserInfo(skey, config.AUTH_TYPE, ep.doneLater('getUserInfoSuccess'));
+
+        ep.on('getUserInfoSuccess', function(user){
+            loginUser = user;
+            // TODO 这里应该有个 session 保存起来, 不要每次都去请求服务器
+            mFolder.getFolder({ _id: loginUser.rootFolder.oid }, ep.done('getRootFolder'));
+
+        });
+    }else{
+
+        mFolder.getFolder({ _id: loginUser.rootFolder.oid }, ep.doneLater('getRootFolder'));
     }
 
-    userHelper.findAndUpdateUserInfo(skey, config.AUTH_TYPE, ep.doneLater('getUserInfoSuccess'));
-
-    ep.on('getUserInfoSuccess', function(user){
-        loginUser = user;
-        // TODO 这里应该有个 session 保存起来, 不要每次都去请求服务器
-        mFolder.getFolder({ _id: user.rootFolder.oid }, ep.done('getRootFolder'));
-
-    });
+    
 
     ep.on('getRootFolder', function(rootFolder){
         getFolder({
@@ -94,6 +106,7 @@ exports.upload = function(req, res){
     ep.on('getMediaFolderSucc', function(mediaFolder){
         getFolder({
             name: activityId + '',
+            mark: activityTime + activityName,
             creator: loginUser._id,
             parent: mediaFolder
         }, ep.done('getActFolderSucc'));
@@ -164,6 +177,7 @@ exports.download = function(req, res){
 
     var file = parameter.fileId;
     var skey = req.skey;
+    var loginUser = req.loginUser;
     
     var ep = new EventProxy();
     ep.fail(function(err, code){
@@ -205,6 +219,8 @@ exports.download = function(req, res){
         res.send();
 
         mLog.create({
+
+            fromUser: loginUser,
 
             fromUserId: null,
             fromUserName: 'media download',

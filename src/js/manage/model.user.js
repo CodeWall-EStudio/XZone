@@ -16,7 +16,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			}else{
 				item.size = 0;
 			}
-			
+
 			if(item.used){
 				item.used = util.getSize(item.used);
 			}else{
@@ -25,6 +25,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 
 
 			list[item.id] = item;
+			//console.log(item);
 			//list.push(item);
 			//console.log(item);
 		}
@@ -38,14 +39,31 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			data : d
 		}
 
+		if(d.nowOg){
+			var nowOg = d.nowOg,
+				kl = d.kl,
+				rid = d.rid;
+			delete d.kl;
+			opt.data = d;
+		}
 		var success = function(d){
 			if(d.err == 0){
 				var list = convent(d.result.list);
 				var total = d.result.total;
-				handerObj.triggerHandler('user:listload',{
-					list : list,
-					total : total
-				});
+				if(nowOg){
+					handerObj.triggerHandler('user:listload',{
+						list : list,
+						total : total,
+						nowOg : nowOg,
+						kl : kl,
+						rid : rid
+					});
+				}else{
+					handerObj.triggerHandler('user:listload',{
+						list : list,
+						total : total
+					});
+				}
 			}else{
 				handerObj.triggerHandler('msg:error',d.err);
 			}
@@ -96,22 +114,36 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		request.get(opt,success);			
 	}	
 
+
+	function conventOrg(d){
+		var td = {};
+		for(var i in d){
+			var item = d[i];
+			td[item._id] = d[i];
+			if(item.children && item.children.length){
+				var tk = conventOrg(item.children);
+				$.extend(td,tk);
+			}
+		}
+		return td;
+	}
 	//读组织树
 	function loadUser(e,d){
-		var departments = Cache.get('departments');
-		if(departments){
-			handerObj.triggerHandler('user:depsload',{ list :departments});
-			return;
-		}
+		// var departments = Cache.get('departments');
+		// if(departments){
+		// 	handerObj.triggerHandler('user:depsload',{ list :departments});
+		// 	return;
+		// }
 		var opt = {
-			cgi : config.cgi.departments //userlist
-		}		
+			cgi : config.cgi.orglist //userlist
+		};
 		var success = function(data){
 			if(data.err == 0){
-				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.list,type:1});
-				handerObj.triggerHandler('user:depsload',{ list :data.result.list});
+				var d2k = conventOrg(data.result.data.children);
+				handerObj.triggerHandler('cache:set',{key: 'departments',data: data.result.data.children,type:1});
+				handerObj.triggerHandler('user:depsload',{ root:data.result.data._id, list :data.result.data.children,kl : d2k});
 			}else{
-				handerObj.triggerHandler('msg:error',d.err);
+				handerObj.triggerHandler('msg:error',data.err);
 			}
 		}
 		request.get(opt,success);		
@@ -119,7 +151,6 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 
 	//读目录
 	function getFolder(e,d){
-		console.log(d);
 		var opt = {
 			cgi : config.cgi.foldlist,
 			data : {
@@ -132,12 +163,209 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		request.get(opt,success);
 	}
 
+	function createUser(e,d){
+		var opt = {
+			cgi : config.cgi.create,
+			data : d
+		}
+		var success = function(data){
+			if(data.err===0){
+				var obj = convent([data.result.data]);
+
+
+				handerObj.triggerHandler('user:createsuc',obj);
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}
+
+	function resetPwd(e,d){
+		var opt = {
+			cgi : config.cgi.resetpwd,
+			data : {
+				userId : d
+			}
+		}
+		var success = function(data){
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);		
+	}
+
+	function createOrg(e,d){
+		var opt = {
+			cgi : config.cgi.createorgan,
+			data : d
+		}
+		var success = function(data){
+			if(data.err===0){
+				var obj = data.result.data;
+				handerObj.triggerHandler('user:orgcreatesuc',obj);
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}
+
+	function modifyOrg(e,d){
+		var opt = {
+			cgi : config.cgi.organmodify,
+			data : d
+		}
+		var success = function(data){
+			if(data.err===0){
+				var obj = data.result.data;
+				handerObj.triggerHandler('user:orgmodifysuc',obj);
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}
+
+	function delOrg(e,d){
+		var opt = {
+			cgi : config.cgi.orgdelete,
+			data : {
+				organizationId : d
+			}
+		}
+		var success = function(data){
+			if(data.err===0){
+				handerObj.triggerHandler('user:orgdelsuc',d);
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);	
+	}
+
+	function orgUserAdd(e,d){
+		var opt = {
+			cgi : config.cgi.adduser,
+			data : d
+		};
+		var success = function(data){
+			if(data.err === 0){
+				handerObj.triggerHandler('user:addusersuc',d);
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}
+
+	function orgUserDel(e,d){
+		var opt = {
+			cgi : config.cgi.removeuser,
+			data : d
+		};
+		var success = function(data){
+			if(data.err === 0){
+				handerObj.triggerHandler('user:delusersuc',d);
+			}
+			handerObj.triggerHandler('msg:error',data.err);			
+		}
+		request.post(opt,success);
+	}	
+
+	function depSearch(e,d){
+		var key = d.key,
+			list = d.list;
+		var result = {};
+		for(var i in list){
+			var item = list[i];
+			if(item.name.indexOf(key) >= 0){
+				result[item._id] = item;
+			}
+		}
+		handerObj.triggerHandler('user:depsearchreturn',result);
+	}
+
+	function getOne(e,d){
+		var opt = {
+			cgi : config.cgi.info,
+			data : {
+				userId : d
+			}
+		};
+		var success = function(data){
+			if(data.err === 0){
+				handerObj.triggerHandler('user:oneload',data.result);
+			}else{
+				handerObj.triggerHandler('msg:error',data.err);			
+			}
+		}
+		request.get(opt,success);		
+	}
+
+	function importUser(e,d){
+		//console.log(d);
+
+		formData = new FormData();
+		formData.append('file', d);
+
+		$.ajax({
+		    url: config.cgi.importuser,
+		    //contentType:"multipart/form-data",
+		    contentType: false,
+		    data: formData,
+		    processData: false,
+		    type: 'POST',
+		    success : function(data){
+		    	if(data.err===0){
+					handerObj.triggerHandler('msg:show','成功导入'+data.result.list.length+'个用户,失败'+data.result.fails.length+'个用户,'+data.result.duplicates.length+'个用户重复');		    		
+		    	}else{
+		    		handerObj.triggerHandler('msg:error',data.err);
+		    	}
+		    },
+		    error : function(data){
+		    	console.log(data);
+		    }
+		});		
+	};
+
+	function importDeps(e,d){
+		//console.log(d);
+
+		formData = new FormData();
+		formData.append('file', d);
+
+		$.ajax({
+		    url: config.cgi.importdeps,
+		    //contentType:"multipart/form-data",
+		    contentType: false,
+		    data: formData,
+		    processData: false,
+		    type: 'POST',
+		    success : function(data){
+		    	if(data.err===0){
+					handerObj.triggerHandler('msg:show','成功导入'+data.result.list.length+'个用户,失败'+data.result.fails.length+'个用户,'+data.result.duplicates.length+'个用户重复');		    		
+		    	}else{
+		    		handerObj.triggerHandler('msg:error',data.err);
+		    	}
+		    },
+		    error : function(data){
+		    	console.log(data);
+		    }
+		});			
+	};	
+
 	var handlers = {
+		'user:getone' : getOne,
+		'user:orgdel' : delOrg,
+		'user:orgmodify' : modifyOrg,
+		'user:orgcreate' : createOrg,
+		'user:resetpwd' : resetPwd,
+		'user:create' : createUser,
 		'user:search' : userSearch,
 		'user:modify' : userModify,
 		'user:folderstatus' : folderStatus,
 		'user:getfolder' : getFolder,
-		'user:deps' : loadUser
+		'user:deps' : loadUser,
+		'user:depsearch' : depSearch,
+		'user:orguseradd' : orgUserAdd,
+		'user:orguserdel' : orgUserDel,
+		'user:importuser' : importUser,
+		'user:importdeps' : importDeps,
 	}
 
 	for(var i in handlers){

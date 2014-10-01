@@ -5,18 +5,18 @@ var gulp = require('gulp'),
     minifycss = require('gulp-minify-css'),
     replace = require('gulp-replace'),
     watch = require('gulp-watch'),
-    inline = require('gulp-inline'),
+    //inline = require('gulp-inline'),
     htmlreplace = require('gulp-html-replace'),
-    sass = require('gulp-sass'),
+    //sass = require('gulp-sass'),
     concat = require('gulp-concat'),
-    es = require('event-stream'),
+    //es = require('event-stream'),
     compass = require('gulp-compass');
 var rjs = require('gulp-requirejs');
 
 var src = './src';
 var dist = './dist';
 
-var cssList = ["./src/css/bootstrap.css","./src/css/jquery.ui.min.css","./src/css/base.css","./src/css/common.css","./src/css/icon.css","./src/css/tips.css","./src/css/list.css","./src/css/upload.css","./src/css/manage.css","./src/css/share.css","./src/css/scroll.css","./src/css/type.css","./src/css/messenger.css","./src/css/messenger-spinner.css","./src/css/messenger-theme-air.css","./src/css/messenger-theme-block.css","./src/css/messenger-theme-flat.css","./src/css/messenger-theme-future.css","./src/css/messenger-theme-ice.css","./src/css/jquery.jqplot.css","./src/css/pickmeup.min.css","./src/css/jquery.plupload.queue.css"];
+var cssList = ["./src/css/bootstrap.css","./src/css/jquery.ui.min.css","./src/css/base.css","./src/css/common.css","./src/css/icon.css","./src/css/tips.css","./src/css/list.css","./src/css/upload.css","./src/css/manage.css","./src/css/share.css","./src/css/scroll.css","./src/css/type.css","./src/css/review.win.css","./src/css/messenger.css","./src/css/messenger-spinner.css","./src/css/messenger-theme-air.css","./src/css/messenger-theme-block.css","./src/css/messenger-theme-flat.css","./src/css/messenger-theme-future.css","./src/css/messenger-theme-ice.css","./src/css/jquery.jqplot.css","./src/css/pickmeup.min.css","./src/css/jquery.plupload.queue.css"];
 var mcssList = ["./src/css/bootstrap.css","./src/css/jquery.ui.min.css","./src/css/base.css","./src/css/common.css","./src/css/icon.css","./src/css/tips.css","./src/css/list.css","./src/css/upload.css","./src/css/manage.css","./src/css/share.css","./src/css/scroll.css","./src/css/type.css","./src/css/messenger.css","./src/css/messenger-spinner.css","./src/css/messenger-theme-air.css","./src/css/messenger-theme-block.css","./src/css/messenger-theme-flat.css","./src/css/messenger-theme-future.css","./src/css/messenger-theme-ice.css","./src/css/jquery.jqplot.css","./src/css/pickmeup.min.css"];
 var rcssList = ["./src/css/bootstrap.css","./src/css/review.css","./src/css/player/video-js.min.css"];
 var jqlib = ['./src/js/lib/jquery/jq.validate.js','./src/js/lib/jquery/jquery.pickmeup.js','./src/js/lib/jquery/jquery.jqplot.min.js','./src/js/lib/jquery/jqplot.funnelRenderer.js','./src/js/lib/jquery/jqplot.pieRenderer.js'];

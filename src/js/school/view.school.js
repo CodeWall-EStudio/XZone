@@ -7,6 +7,9 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		nowKey = '',
 		nowUid = 0,
 		nowType = 0,
+		nowOtype = 'list',
+		nowManage = 0,
+		nowSchool = null,
 		rootFd = 0;
 
 	var actTarget = $('#actWinZone'),
@@ -19,6 +22,16 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		$('#userAside').hide();
 		$("#groupAside").show();
 
+		nowManage = d.manage;
+		nowOtype = d.otype || nowOtype;
+
+		// $('.school-link').removeClass('selected');
+		// if(nowManage){
+		// 	$('.school-link').eq(1).addClass('selected');
+		// }else{
+		// 	$('.school-link').eq(0).addClass('selected');
+		// }
+
 		util.showNav('school');
 		userAsideTarget.hide();
 		userPrepAsideTarget.hide();
@@ -26,6 +39,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
+		nowSchool = school;
 
 		$("#fileActZone .sharefile").hide();
 		$("#fileActZone .copyfile").hide();
@@ -54,13 +68,12 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			d.fdid = nowFd;
 		}
 
-
 		var view = new View({
 			target : $("#groupAside"),
 			tplid : 'school.aside',
 			data : {
 				auth : school.auth,
-				type : nowType
+				type : nowManage
 			},
 			handlers : {
 				'h3' : {
@@ -125,7 +138,13 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			fdid : nowFd,
 			uid : nowUid,
 			order : nowOrder,
+			otype : nowOtype,
+			key : nowKey,
 			info : d
+		}
+		if(nowManage){
+			obj.auth = nowSchool.auth;
+			obj.nowType = 1;			
 		}
 		handerObj.triggerHandler('fold:init',obj); 
 	}

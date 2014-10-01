@@ -12,7 +12,7 @@
 var https = require('https');
 var http = require('http');
 var url = require('url');
-var pkg = require('../package.json');
+
 
 /**
  * Initialize CAS with the given `options`.
@@ -48,7 +48,7 @@ var CAS = module.exports = function CAS(options) {
  * Library version.
  */
 
-CAS.version = pkg.version;
+CAS.version = 1.0;
 
 CAS.prototype.getLoginUrl = function(){
   return url.format({

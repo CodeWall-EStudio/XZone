@@ -4,13 +4,17 @@
 				<tr>
 					<td width="100">姓名:</td>
 					<td>
-						<%-data.nick%>
+						<input type="text" value="<%if(data){%><%-data.nick%><%}%>" id="userNick"  />
 					</td>
 				</tr>
 				<tr>
 					<td>用户名:</td>
 					<td>
-						<%-data.name%>
+						<%if(data){%>
+							<%-data.name%>
+						<%}else{%>
+							<input type="text" value="<%-data.name%>" id="userName" />
+						<%}%>
 					</td>
 				</tr>				
 				<tr>
@@ -18,7 +22,7 @@
 						容量组:
 					</td>
 					<td>
-						<select class="user-size-group">
+						<select class="user-size-group" id="userSizeGroup">
 							<%
 							 for(var i in sglist){
 							 	var item = sglist[i];
@@ -27,15 +31,32 @@
 							<option value="<%+item.id%>" <%if(data.sizegroup && data.sizegroup.$id == item.id){%>selected<%}%>><%-item.name%></option>
 							<%}}%>
 						</select>
+						<%if(data){%>
 						<div>
-							当前使用<span id="userSizeUsed"><%-data.pre%>%</span>
-						</div>						
+							当前使用<%-data.pre%>%
+						</div>		
+						<%}%>				
+					</td>
+				</tr>
+				<tr>
+					<td>所属组织</td>
+					<td id="userInOrgs">
+						<%if(data){%>
+						正在加载
+						<%}%>
+					</td>
+				</tr>
+				<tr>
+					<td>权限</td>
+					<td>
+						<input <%if(typeof data.auth != 'undefined' && data.auth === 15){%>checked<%}%> type="checkbox" id="adminAuth" />
+						系统管理员
 					</td>
 				</tr>
 				<tr>
 					<td></td>
 					<td>
-						<button class="btn btn-primary btn-user-save" <%if(data.name){%>data-modify="1"<%}%> >保存</button>
+						<button class="btn btn-primary <%if(data){%>btn-user-save<%}else{%>btn-user-newsub<%}%>" <%if(data.name){%>data-modify="1"<%}%> >保存</button>
 						<button class="btn btn-primary btn-reset" <%if(data.name){%>data-id="<%-data.id%>"<%}%> >取消</button>
 					</td>
 				</tr>									

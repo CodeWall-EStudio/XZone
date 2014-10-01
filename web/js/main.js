@@ -79,6 +79,7 @@ define('config',[],function() {
 			favdel : CGI_PATH+'fav/delete'+EXT,
 			favsearch : CGI_PATH+'fav/search'+EXT,
 
+
 			//回收站
 			reclist : CGI_PATH+'recycle/list'+EXT,
 			recrev : CGI_PATH+'recycle/revert'+EXT,
@@ -155,6 +156,8 @@ define('config',[],function() {
 			11 : '组织名称必须填写',
 			20 : '新密码和重复密码必须一致',
 			21 : '请填写用户名和密码!',
+			22 : '用户不存在',
+			30 : '组织最多支持3级!', 
 			50 : '你要上传的文件已经超过你的剩余空间!',
 			60 : '你还没有选择要共享的目录',
 			75 : '序号只能在1~99之间',
@@ -173,7 +176,9 @@ define('config',[],function() {
 			1015 : '已经归档啦!',
 			1016 : '该资源不能删除',
 			1017 : '该目录下还有其他文件，无法删除!',
-			1041 : '用户名或密码错误!'
+			1041 : '用户名或密码错误!',
+			1043 : '用户不存在!',
+			1050 : '时间交叉了!'
 		}
 	}
 // module.exports = exports = {
@@ -767,20 +772,12 @@ define('helper/util',['../config'], function(config) {
     	$('#pageNav .'+type+'space').addClass('selected');
     }
 
-    var getServerTime = function(str){
-		var tmp = str.split(/\r\n/);
-		var tmp1 = tmp[0].split('Date:');
-		var nowtime = + new Date(tmp1[1]);
-		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
-    }
-
 	var getServerTime = function(str){
 		var tmp = str.split(/\r\n/);
 		var tmp1 = tmp[0].split('Date:');
 		var nowtime = + new Date(tmp1[1]);
 		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
     }
-
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -1098,9 +1095,39 @@ define('model.nav',['config','helper/request','cache','helper/util'],function(co
 		request.get(opt,success);
 	}
 
+	function changePwd(e,d){
+
+		var opt = {
+			cgi : config.cgi.umodify,
+			data : d
+		}
+
+		var success = function(data){
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}
+
+	function login(e,d){
+
+		var opt = {
+			cgi : config.cgi.login,
+			data : d
+		}
+
+		var success = function(data){
+			if(data.err === 0){
+				window.location.reload();
+			}
+			handerObj.triggerHandler('msg:error',data.err);
+		}
+		request.post(opt,success);
+	}	
+
 	var handlers = {
 		'nav:init' : init,
-
+		'nav:changepwd' : changePwd,
+		'nav:login' : login
 	}
 
 	for(var i in handlers){
@@ -1602,6 +1629,35 @@ define('view.nav',['config','model.nav','helper/view','helper/util','cache','mod
 		handerObj.triggerHandler('nav:load',myinfo);
 	}
 
+	function showPwd(){
+		var view = new View({
+			target : $('#actWinZone'),
+			tplid : 'pwd',
+			after : function(){
+				$("#actWin").modal('show');
+			},
+			handlers : {
+				'.btn-save-pwd' : {
+					'click' : function(){
+						var op = $('#odpwd').val();
+						var np = $('#newpwd').val();
+						var rp = $('#rppwd').val();
+						if(np !== rp){
+							handerObj.triggerHandler('msg:error',20);
+							return;
+						}
+						var obj = {
+							pwd : op,
+							newPwd :  np
+						}
+						handerObj.triggerHandler('nav:changepwd',obj);
+					}
+				}
+			}
+		});
+		view.createPanel();
+	}
+
 	function navLoad(e,d){
 		var headers  = $.ajax({async:false}).getAllResponseHeaders();
 		util.getServerTime(headers);
@@ -1624,7 +1680,8 @@ Content-Type: text/html
 			handlers : {
 				'a.layout' : {
 					click : function(e){
-						window.location = config.cgi.logout;
+						console.log(333);
+						//window.location = config.cgi.logout;
 					}
 				},
 				'.manage-one-group' : {
@@ -1661,7 +1718,12 @@ Content-Type: text/html
 					click : function(e){
 						window.location = config.cgi.logout;
 					}
-				}
+				},
+				'a.changepwd' : {
+					click : function(e){
+						showPwd();
+					}
+				}					
 			}			
 		});
 		view.createPanel();
@@ -1895,6 +1957,55 @@ Content-Type: text/html
 		$('.group-name-tit').text(d.name);
 	}
 
+	function showLogin(){
+		var view = new View({
+			target : $('#actWinZone'),
+			tplid : 'login',
+			after : function(){
+				$("#actWin").modal('show');
+			},
+			handlers : {
+				'#userPwd' : {
+					'keyup' : function(e){
+						if(e.keyCode === 13){
+							var name = $('#userName').val(),
+								pwd = $('#userPwd').val();
+							if(name !== '' && pwd !== ''){
+								var obj = {
+									name : name,
+									pwd : pwd,
+									json: true
+								};
+								handerObj.triggerHandler('nav:login',obj);
+							}
+						}
+					}
+				},
+				'.btn-login' : {
+					'click' : function(){
+						var name = $('#userName').val(),
+							pwd = $('#userPwd').val();
+						if(name !== '' && pwd !== ''){
+							var obj = {
+								name : name,
+								pwd : pwd,
+								json: true
+							};
+							handerObj.triggerHandler('nav:login',obj);
+						}else{
+							handerObj.triggerHandler('msg:error',21);
+						}
+					}
+				}
+			}
+		});
+		view.createPanel();
+	}
+
+	$('.show-login').bind('click',function(){
+		handerObj.triggerHandler('nav:showlogin');
+	});
+
 	var handlers = {
 		'nav:load' : navLoad,
 		'nav:newgroup' : newGroup,
@@ -1902,7 +2013,8 @@ Content-Type: text/html
 		'nav:userload' : userLoad,
 		'nav:createsuc' : createSuc,
 		'nav:infosuc' : infoSuc,
-		'nav:modifysuc' : modifySuc
+		'nav:modifysuc' : modifySuc,
+		'nav:showlogin' : showLogin
 	}
 
 	for(var i in handlers){
@@ -2456,7 +2568,7 @@ define('model.file',['config','helper/request','helper/util','cache','helper/tes
 					}
 				};
 				if(!check){
-					handerObj.triggerHandler('file:checkSuc',{
+					handerObj.triggerHandler('fild:checkSuc',{
 						check: check,cl: cl,fl:fl,fd:fd
 					});
 				}else{
@@ -2504,10 +2616,10 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		isLoading = false;
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
-		nowOds = '',
-		nowUid = 0,
+		nowOds = '', //当前排序
+		nowUid = 0,  //当前uin
 		nowPrep = 0, //当前是否是备课
-		rootFd = 0,
+		rootFd = 0,  //根目录id
 		depnum = -1,
 		nowTotal = 0,
 		nowUid = 0,
@@ -2517,10 +2629,14 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		nowType = 0,
 		nowSchool = 0,
 		nowAuth = 0,
+		nowOtype = 'list',
+		inReview = false, //是否在预览中
 		isMember = {},		
+		fileList = {},
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		icoTarget = $("#fileIcoList"),
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),
 		tabletitTarget = $("#tableTit");
@@ -2572,6 +2688,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 	function fileInit(e,d){
 		nowTotal = 0;
 		nextPage = 0;
+		fileList = {};
 		action = 1;
 
 		if(depnum < 0){
@@ -2599,6 +2716,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			nowGroup = d.info || null;
 			nowSchool = d.school || 0;
 			nowAuth = d.auth || 0;
+			nowOtype = d.otype || nowOtype;
 			//rootFd = d.rootfdid || 0;
 		}
 
@@ -2686,9 +2804,25 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		if(nowPrep){
 			pr = nowPrep;
 		}
+
+		for(var i = 0,l=d.list.length;i<l;i++){
+			fileList[d.list[i].id] = d.list[i];
+		}
+
+		if(inReview){
+			returnList();
+		}
+
+		var target = tmpTarget,
+			tplid = 'file.user.list';
+
+		if(nowOtype === 'ico'){
+			target = icoTarget;
+			tplid = 'file.ico';
+		}
 		var view = new View({
-			target : tmpTarget,
-			tplid : 'file.user.list',
+			target : target,
+			tplid : tplid,
 			data : {
 				list : d.list,
 				filetype : config.filetype,
@@ -2774,7 +2908,6 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		if(nowAuth){
 			obj.status = 1;
 		}
-		console.log(obj);
 		handerObj.triggerHandler('file:search',obj);			
 	}
 
@@ -2855,6 +2988,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			}
 			handerObj.triggerHandler('file:checkfold',obj);
 		}else{
+			
 			var view = new View({
 				target : actTarget,
 				tplid : 'del',
@@ -3187,6 +3321,22 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			after : function(){
 				$("#actWin").modal('show');
 
+				//拉学校文件夹
+				if(d.type === 'school'){
+						var myinfo = Cache.get('myinfo');
+						var school = myinfo.school;
+						var obj = {
+							target : $('#groupFoldResultUl'),
+							tplid : 'share.fold.li',
+							groupId : school.id,
+							folderId : school.rootFolder.$id,
+							type : 2,
+							root : 1
+						}
+						$('#groupFoldResultUl').html('');
+						handerObj.triggerHandler('fold:get',obj);					
+				}
+
 				$('.act-search-input').focus(function(){
 					var target = $(this),
 						def = target.attr('data-def');
@@ -3390,6 +3540,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		view.createPanel();
 	};
 
+	//复制文件
 	function fileCopy(e,d){
 		var myinfo = Cache.get('myinfo');
 		var prep = myinfo['prep'];
@@ -3464,6 +3615,18 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		view.createPanel();		
 	}	
 
+	//复制媒体文件
+	function copytoMy(e,d){
+		var myInfo = Cache.get('myinfo');
+		var obj = {
+			fileId : d.fl,
+			targetId : myInfo.rootFolder.id,
+			savetomy : 1
+		}
+		handerObj.triggerHandler('file:savetomy',obj);
+	}	
+
+	//小组保存到个人
 	function fileSave(e,d){
 		var myInfo = Cache.get('myinfo');
 		var obj = {
@@ -3665,12 +3828,29 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		handerObj.triggerHandler('file:edit',d);
 	}	
 
+	//返回列表
+	function returnList(e,d){
+		//console.log(d);
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}
+	}
+
 	var handlers = {
 		//'order:change' : orderChange,
 		'file:sharefoldload' : shareFoldLoad,
 		'recy:recysuc' : recySuc,	
 		'recy:ref' : recyRef,
 		'recy:del' : recyDel,
+		'file:copytomy' : copytoMy,
 		'file:save' : fileSave,	
 		'file:savesuc' : fileSaveSuc,	
 		'file:movesuc' : moveSuc,
@@ -3686,7 +3866,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		'model:change' : modelChange,
 		'search:start' : search,
 		'file:del' : fileDel,
-		'file:checkSuc' : fileCheckSuc,
+		'fild:checkSuc' : fileCheckSuc,
 		'file:init' : fileInit,
 		'file:load' : fileLoad,
 		'file:tocoll' : toColl,
@@ -3697,7 +3877,8 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		'page:next' : pageNext,
 		'file:sharesuc' : sharesuc,
 		'file:editmark' : editMark,
-		'file:uploadsuc' : uploadSuc
+		'file:uploadsuc' : uploadSuc,
+		'file:getlist' : returnList
 	}
 
 	for(var i in handlers){
@@ -3724,7 +3905,9 @@ define('model.fold',['config','helper/request','helper/util','cache'],function(c
 				read : item.isReadonly || 0,
 				pid : item.parent.$id,
 				tid : item.top.$id,
-				idpath : item.idpath
+				idpath : item.idpath,
+				type : item.type,
+				candel : item.deletable
 			})
 		}
 		return list;
@@ -3754,6 +3937,8 @@ define('model.fold',['config','helper/request','helper/util','cache'],function(c
 
 		t.isOpen = data.isOpen || false;
 		t.isReady = data.isReadonly || false;
+		t.type = data.type;
+		t.candel = data.deletable;
 
 		// if(t.pid == t.tid){
 		// 	t.pid = 0;
@@ -3845,6 +4030,7 @@ define('model.fold',['config','helper/request','helper/util','cache'],function(c
 		if(creator){
 			obj.creatorId = creator;
 		}
+		obj.order = order;
 
 		var opt = {
 			cgi : config.cgi.foldlist,
@@ -3983,6 +4169,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		nowUid = 0,
 		nowType = 0,
 		nowGrade = 0,
+		nowOtype = 'list',
 		nowTag = 0,	
 		nowPid = 0,	
 		isOpen = 0,
@@ -3992,6 +4179,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		icoTarget = $('#fileIcoList'),
 		foldTarget = $('#foldList'),
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),	
@@ -4007,6 +4195,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			gname : nowGinfo.name || '',
 			school : nowSchool,
 			filetype : config.filetype,
+			otype : nowOtype,
 			root : rootFd,
 			type : nowType,
 			key : nowKey,
@@ -4215,6 +4404,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 
 		// foldTarget.html('')
 		tmpTarget.html('');
+		$("#fileIcoList").html('');
 		nowFdInfo = {};
 		if(d){
 			nowGid = d.gid || 0;
@@ -4225,6 +4415,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			nowUid = d.uid || 0;
 			rootFd = d.rootfdid || 0;
 			nowType = d.type;
+			nowOtype = d.otype || nowOtype;
 			if(d.order){
 				nowOrder = d.order;
 			}
@@ -4237,6 +4428,20 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			nowTag = d.tag || 0;
 			nowUid = d.uid || 0;
 			nowPid = d.pid || 0;						
+		}
+
+		if(nowOtype === 'list'){
+			$('#fileInfoTable').show();
+			$("#fileIcoList").hide();
+		}else{
+			$('#fileInfoTable').hide();
+			$("#fileIcoList").show();			
+		}
+
+		if(nowOtype === 'ico'){
+			$('#fileList').attr('class','dis-ico-type');
+		}else{
+			$('#fileList').attr('class','dis-list-type');
 		}
 
 		if(nowGid && !nowFd || (typeof nowData.now !== 'undefined' && !nowData.now)){
@@ -4297,7 +4502,9 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		// 		handerObj.triggerHandler('fold:get',o1);
 		// 	};
 		// }
-
+		
+		obj.order = nowOds; 
+		// console.log(obj,nowOrder,nowOds);	
 		if(nowKey == ''){
 			handerObj.triggerHandler('fold:get',obj);
 		}else{
@@ -4306,10 +4513,18 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		}
 	}
 
+	//取一个文件夹的信息
 	function foldOne(e,d){
-
 		if(d.isOpen){
 			nowData.open = 1;
+		}
+
+		//type1 新媒体
+
+		if(d.type === 1){
+			handerObj.triggerHandler('bind:swall',1);
+		}else{
+			handerObj.triggerHandler('bind:swall',0);
 		}
 		if(nowData.info){
 			handerObj.triggerHandler('file:init',nowData);
@@ -4339,6 +4554,9 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
             	//新建文件夹
                 if(d.pid == rootFd){
                 	var fl = Cache.get('myfold');
+                	if(!fl){
+                		fl = [];
+                	}
                 	fl.push(d.list[0]);
                 	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'myfold',data:fl});                	
@@ -4407,9 +4625,19 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		if(nowPrep){
 			pr = nowPrep;
 		}
+		//console.log(d.list);
+
+		var target = tmpTarget,
+			tplid = 'fold.user.list';
+
+		if(nowOtype === 'ico'){
+			target = icoTarget;
+			tplid = 'fold.ico';
+		}
+
 		var view = new View({
-			target : tmpTarget,
-			tplid : 'fold.user.list',
+			target : target,
+			tplid : tplid,
 			data : {
 				list : d.list,
 				gid : nowGid,
@@ -4421,7 +4649,8 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 				ginfo : nowGinfo,
 				auth : nowAuth,
 				tag : nowTag,
-				uid : nowUid
+				uid : nowUid,
+				fdid : nowFd
 			}
 		});
 		view.beginPanel();		
@@ -4454,6 +4683,8 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			order : nowOds			
 		}
 
+
+
 		if(nowGid){
 			data.groupId = nowGid;
 		}
@@ -4463,8 +4694,6 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		if(nowUid){
 			data.creatorId = nowUid;
 		}
-		//console.log(data);
-		
 		handerObj.triggerHandler('fold:search',data);			
 	}	
 
@@ -4707,8 +4936,11 @@ define('model.group',['config','helper/request','helper/util'],function(config,r
 
 	function conventMembers(list){
 		var ml = [];
+		//console.log(list);
 		for(var i in list){
-			ml.push(list[i]._id);
+			if(list[i] !== null){
+				ml.push(list[i]._id);
+			}
 		}
 		return ml;
 	}
@@ -4716,8 +4948,10 @@ define('model.group',['config','helper/request','helper/util'],function(config,r
 	function convent2Members(list){
 		var ml = {};
 		for(var i in list){
-			list[i].id = list[i]._id;
-			ml[list[i]._id] = list[i];
+			if(list[i] !== null){
+				list[i].id = list[i]._id;
+				ml[list[i]._id] = list[i];
+			}
 		}
 		return ml;
 	}	
@@ -5575,6 +5809,7 @@ define('model.mail',['config','helper/request','helper/util'],function(config,re
 
 	function convent(data){
 		var list = [];
+		console.log(data);
 		for(var i=0,l=data.length;i<l;i++){
 			var item = data[i];
 			list.push({
@@ -5582,7 +5817,7 @@ define('model.mail',['config','helper/request','helper/util'],function(config,re
 				rid : item.resource._id,
 				tname : item.toUser.nick,
 				fname : item.fromUser.nick,
-				fid : item.fid,
+				fid : item.resource._id,
 				name : item.name,
 				content : item.content,
 				time : util.time(item.createTime),
@@ -5691,9 +5926,11 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 		action = 0,//活动状态
 		nextPage = 0,
 		nowTotal = 0,
+		inReview = false,
 		nowCate = 0,//我的贡献 ,1 收件 2 发件
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
+		fileList = {},
 		nowKey = '';
 
 	var tmpTarget = $('#boxTableList'),
@@ -5716,6 +5953,7 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 
 	function init(e,d){
 		tmpTarget.html('');
+		fileList = {};
 
 		nextPage = 0;
 		nowTotal = 0;
@@ -5764,6 +6002,14 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 
 		//nextPage = d.next;
 		nowTotal = d.total;
+		for(var i in d.list){
+			var item = d.list[i];
+			fileList[item.id] = item;
+		}
+
+		if(inReview){
+			returnList();
+		}		
 
 		if($(".file").length < nowTotal){
 			nextPage += 1;
@@ -5824,13 +6070,35 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 		$('.mailsave'+d).remove();
 	}
 
+
+	function getList(d){
+
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}		
+		// handerObj.triggerHandler('review:return',{
+		// 	list : fileList,
+		// 	total : nowTotal,
+		// 	page : nextPage
+		// });		
+	}
+
 	var handlers = {
 		'page:next' : pageNext,
 		'model:change' : modelChange,
 		'mail:init' : init,
 		'mail:get' : mailGet,
 		'mail:load' : load,
-		'mail:savesuc' : saveSuc
+		'mail:savesuc' : saveSuc,
+		'mail:getlist' : getList
 	}
 
 	for(var i in handlers){
@@ -5869,6 +6137,7 @@ define('model.coll',['config','helper/request','helper/util'],function(config,re
 			if(d.err == 0){
 				handerObj.triggerHandler('coll:load',{
 					list : convent(d.result.list),
+					total : d.result.total,
 					next : d.result.next
 				});
 			}else{
@@ -5894,6 +6163,9 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 		nowOrder  = ['createTime',-1], 
 		nowType = 0;
 		nowOds = '',
+		inReview = false,
+		fileList = {},
+		nowTotal = 0;
 		nowKey = '';
 
 	var tmpTarget = $('#boxTableList'),
@@ -5919,6 +6191,9 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 		nowType = d.type;
 		tmpTarget.html('');
 		crTit();
+
+		fileList = {};
+		nowTotal = 0;		
 
 		if(d.order){
 			nowOrder = d.order;
@@ -5948,6 +6223,18 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 
 	function load(e,d){
 		nextPage = d.next;
+
+		nowTotal = d.total;
+		for(var i in d.list){
+			var item = d.list[i];
+				item.id = item.fileid;
+			fileList[item.fileid] = item;
+		}
+
+		if(inReview){
+			returnList();
+		}		
+
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'coll.list',
@@ -5994,11 +6281,32 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 		});		
 	}
 
+	function getList(d){
+
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}		
+		// handerObj.triggerHandler('review:return',{
+		// 	list : fileList,
+		// 	total : nowTotal,
+		// 	page : nextPage
+		// });		
+	}
+
 	var handlers = {
 		'page:next' : pageNext,
 		'model:change' : modelChange,
 		'coll:init' : init,
-		'coll:load' : load
+		'coll:load' : load,
+		'coll:getlist' : getList
 	}
 
 	for(var i in handlers){
@@ -6006,7 +6314,7 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 	}			
 
 });
-define('view.prep',['config','helper/view','cache','helper/util'],function(config,View,Cache,Util){
+define('view.prep',['config','helper/view','cache'],function(config,View,Cache){
 	var	handerObj = $(Schhandler);
 
 	var nowGid = 0,
@@ -6048,43 +6356,10 @@ define('view.prep',['config','helper/view','cache','helper/util'],function(confi
 			prep : 'my'
 		}
         //handerObj.triggerHandler('file:init',data);
+        handerObj.triggerHandler('fold:init',data); 
+        handerObj.triggerHandler('upload:param',data);		
+
 		$('#aside .aside-divs').hide();
-		var list = {};
-		var plength = 0;
-		var ntime = Cache.get('nowtime');
-		for(var i in prepList){
-			var item = prepList[i];
-			if(item.parent){
-				if(!list[item.parent._id]){
-					list[item.parent._id] = {
-						id : item.parent._id,
-						name : item.parent.name,
-						child : []
-					};
-					if(item.parent.startTime && (ntime >= item.parent.startTime && ntime <= item.parent.endTime )){
-						list[item.parent._id].now = true;
-					}
-				}
-				if(!list[item.parent._id].child){
-					list[item.parent._id].child = [];
-				}
-				list[item.parent._id].child.push(item);
-				plength++;
-			}else{
-				list[item.id] = item;
-			}
-		}
-		var tmp = [];
-		for(var i in list){
-			tmp.push(list[i]);
-		}
-		tmp.sort(function(a,b){
-			if(a.now){
-				return -1;
-			}else{
-				return 1;
-			}
-		});
 		var view = new View({
 			target : $('#userPrepAside'),
 			tplid : 'myprep.list',
@@ -6092,29 +6367,11 @@ define('view.prep',['config','helper/view','cache','helper/util'],function(confi
 				$('#userPrepAside').show();
 			},
 			data : { 
-				list : tmp,
-				plength : plength,
+				list : prepList,
 				length : prepLength
 			}
 		})
 		view.createPanel();
-
-		var ngroup = prepKey[data.gid];
-		if(ngroup && ngroup.parent.startTime && (ntime >= ngroup.parent.startTime && ntime <= ngroup.parent.endTime )){
-			data.now = true;
-
-		}else{
-			data.now = false;
-			$('#btnZone').hide();
-			$("#fileActZone").addClass('hide');			
-		}
-
-		handerObj.triggerHandler('bind:prep',{
-			now : data.now,
-			prep : 1
-		});		
-        handerObj.triggerHandler('fold:init',data); 
-        handerObj.triggerHandler('upload:param',data);			
 	}
 
 	var handlers = {
@@ -6183,6 +6440,7 @@ define('view.recy',['config','helper/view','cache','model.recy'],function(config
 	var nextPage = 0,
 		action = 0,
 		nowGid = 0,
+		inReview = false,
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
 		nowType = 0,
@@ -6387,6 +6645,9 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		nowKey = '',
 		nowUid = 0,
 		nowType = 0,
+		nowOtype = 'list',
+		nowManage = 0,
+		nowSchool = null,
 		rootFd = 0;
 
 	var actTarget = $('#actWinZone'),
@@ -6399,6 +6660,16 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		$('#userAside').hide();
 		$("#groupAside").show();
 
+		nowManage = d.manage;
+		nowOtype = d.otype || nowOtype;
+
+		// $('.school-link').removeClass('selected');
+		// if(nowManage){
+		// 	$('.school-link').eq(1).addClass('selected');
+		// }else{
+		// 	$('.school-link').eq(0).addClass('selected');
+		// }
+
 		util.showNav('school');
 		userAsideTarget.hide();
 		userPrepAsideTarget.hide();
@@ -6406,6 +6677,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
+		nowSchool = school;
 
 		$("#fileActZone .sharefile").hide();
 		$("#fileActZone .copyfile").hide();
@@ -6434,13 +6706,12 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			d.fdid = nowFd;
 		}
 
-
 		var view = new View({
 			target : $("#groupAside"),
 			tplid : 'school.aside',
 			data : {
 				auth : school.auth,
-				type : nowType
+				type : nowManage
 			},
 			handlers : {
 				'h3' : {
@@ -6505,7 +6776,13 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			fdid : nowFd,
 			uid : nowUid,
 			order : nowOrder,
+			otype : nowOtype,
+			key : nowKey,
 			info : d
+		}
+		if(nowManage){
+			obj.auth = nowSchool.auth;
+			obj.nowType = 1;			
 		}
 		handerObj.triggerHandler('fold:init',obj); 
 	}
@@ -6936,6 +7213,645 @@ define('view.data',['config','cache','helper/view','helper/request','helper/util
 		handerObj.bind(i,handlers[i]);
 	}			
 });
+define('model.review',['config','helper/request','helper/util'],function(config,request,util){
+	var	handerObj = $(Schhandler);
+
+	function getFile(obj,callback){
+		var opt = {
+			cgi : config.cgi.filesearch,
+			data : obj
+		}
+		var success = function(d){
+			if(d.err == 0){
+				if(typeof callback === 'function'){
+					callback(d.result);
+				}else{
+					handerObj.triggerHandler('review:fileload',d.result);
+				}
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);
+	}
+
+	function getMailFile(obj,callback){
+		var opt = {
+			cgi : config.cgi.msgsearch,
+			data : obj
+		}
+		var success = function(d){
+			if(d.err == 0){
+				if(typeof callback === 'function'){
+					callback(d.result);
+				}else{
+					handerObj.triggerHandler('review:fileload',d.result);
+				}
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);		
+	}
+
+	function getCollFile(obj,callback){
+		var opt = {
+			cgi : config.cgi.favsearch,
+			data : d
+		}	
+
+		var success = function(d){
+			if(d.err == 0){
+				if(typeof callback === 'function'){
+					callback(d.result);
+				}else{
+					handerObj.triggerHandler('review:fileload',d.result);
+				}
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);
+	}
+
+	return {
+		getfile : getFile,
+		getmailfile : getMailFile,
+		getcollfile : getCollFile
+	}
+});
+define('msg',['config','cache','helper/view'],function(config,Cache,View){
+	var	handerObj = $(Schhandler);
+	var msg = config.msg;
+
+	Messenger().options = {
+	    extraClasses: 'messenger-fixed messenger-on-bottom',
+	    theme: 'flat'
+	}
+
+	var at = 0;
+
+	function showConfig(e,d){
+		if(typeof d === 'undefined'){
+			return;
+		}
+		var obj = {
+			message : d.msg,
+			actions : {
+				sub : {
+					label : d.act.sub.label || '确定',
+					action : function(){
+						d.act.sub.action();
+						msg.hide();
+					}
+				},
+				cancel : {
+					label : d.act.canel.label || '取消',
+					action : function(){
+						msg.hide();
+					}
+				}
+			}
+		}
+		var msg = Messenger().post(obj);
+	}
+
+	function showErr(e,d){
+		if(d == 1001){
+			//window.location = config.cgi.gotologin;
+			handerObj.triggerHandler('nav:showlogin');
+			return;
+		}
+
+		var obj = {
+			'message' : msg[d]
+		}
+		if(parseInt(d)){
+			obj.type = 'error'
+		}
+
+		Messenger().post(obj);	
+	}
+
+	function showMsg(e,d){
+		var obj = {
+			'message' : d.msg
+		}
+		obj.type = d.type;
+
+		Messenger().post(obj);		
+	}
+
+	var handlers = {
+		'msg:error' : showErr,
+		'msg:show' : showMsg,
+		'msg:config' : showConfig
+	}
+
+	for(var i in handlers){
+		handerObj.bind(i,handlers[i]);
+	}	
+});
+require(['config','helper/util','helper/request','helper/view','model.review','msg'], function(config,util,request,View,Review) {
+
+	var handerObj = $(Schhandler);
+	var nowType = null;
+	var isInit = false,
+		isShow = false;
+    var isMove = false; //切换预览
+    var isInit = false; //是否已经初始化		
+	var nowId = null;
+	var nowTotal = 0,
+		nowPage = 0,
+		isLoading = false,
+		nowLength = 0;
+	var nowHeight = 0;
+	var nowType = null;
+	var mail = null,
+		cate = null,
+		coll = null;
+
+	var nowList = {};
+
+	var bgsTarget = $("#reviewBgs"),
+		revTarget = $('#reviewWin'),
+		blockTarget = null,
+		listTarget = null;
+
+    //节流
+    function lockMove(){
+      isMove = true;
+      setTimeout(function(){
+        isMove = false;
+      },500);
+    }
+
+
+	function showTarget(){
+		//revTarget.html('');
+		bgsTarget.show();
+		revTarget.show();
+	}
+
+	function hideTarget(){
+		isShow = false;
+		bgsTarget.hide();
+		revTarget.hide();		
+	}
+
+	function show(e,d){
+		//console.log(d);
+		nowHeight = document.body.clientHeight;
+
+		nowId = d.id;
+		nowPage = 0;
+		mail = false;
+		cate = false;
+		coll = false;
+		if(d.type){
+			switch(d.type){
+				case 'mail':
+					mail = true;
+					break;
+				case 'cate':
+					cate = true;
+					break;
+				case 'coll':
+					coll = true;
+					break;
+			}
+			nowType = d.type;
+		}else{
+			nowType = 'file';
+		}
+		nowList = {};
+		showTarget();
+
+		handerObj.triggerHandler(nowType+':getlist');
+	}
+
+	function getIdx(){
+          var t = $("#reviewBlock li");
+          var l = $("#reviewBlock li").length;
+          var idx = 0;
+          $("#reviewBlock li").each(function(i){
+            if($(this).hasClass('selected')){
+              idx = i;
+            }
+          });		
+          return idx;
+	}
+
+	function getNextId(){
+		var idx = getIdx();
+		var list = $("#reviewBlock li");
+		var l = list.length;
+		if(idx < l-1){
+			idx++;
+			return list.eq(idx).attr('data-id');
+		}else{
+			return 0;
+		}
+	}
+
+	function getPrevId(){
+		var idx = getIdx();
+		var list = $("#reviewBlock li");
+		var l = list.length;
+		if(idx > 0){
+			idx--;
+			return list.eq(idx).attr('data-id');
+		}else{
+			return 0;
+		}
+	}
+
+
+    function getFile(id){
+    	var item = nowList[id];
+    	nowId = id;
+		if(item.type === 8){
+			//getFile(nowId);
+	        var to = {};
+	        if(mail){
+	          to.messageId = id;
+	        }else{
+	          to.fileId = id;
+	        }						
+	        $.get(config.cgi.filereview,to,function(d){
+	          item.text = d;
+	          render(item);
+	        },'text');						
+		}else{
+			render(item);			
+		}
+		if(!isShow){
+			renderList();	
+			isShow = true;
+		}
+    }	
+
+    //从各个模块拿到数据了.
+	function listLoad(e,d){
+		isLoading = false;
+		nowList = d.list;   //文件列表
+		nowTotal = d.total; //文件总数
+		nowPage = d.page;  //当前在第几页了.
+		if(isInit){
+			render(nowList[nowId]);
+			renderList();
+			isShow = true;
+		}else{
+			var view = new View({
+				target : revTarget,
+				tplid : 'review.div',
+				after : function(){
+					blockTarget = $('#reviewDiv');
+					listTarget = $('#reviewBlock');
+				
+					$('body').bind('keyup',function(e){
+						if(e.keyCode===27){
+							hideTarget();
+						}
+					});				
+
+					getFile(nowId);
+				},
+				handlers : {
+					'.review-close' : {
+						'click' : function(){
+							hideTarget();
+						}
+					},
+			          '.ar-arrow' : {
+			          	'click' : function(){
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              var id = getNextId();
+			              if(id){
+			              	getFile(id);
+			              	$("#reviewBlock li").removeClass('selected');
+			              	$('#review'+id).addClass('selected');
+			              }else{
+			                  	handerObj.triggerHandler('msg:show',{
+				                    type: 'error',
+				                    msg : '已经是最后文件了!'
+				                });	              		
+			              }
+
+			          	}
+			          },
+			          '.al-arrow' : {
+			          	'click' : function(){
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              var id = getPrevId();
+			              if(id){
+			              	getFile(id);
+			              	$("#reviewBlock li").removeClass('selected');
+			              	$('#review'+id).addClass('selected');
+			              }else{
+			                  	handerObj.triggerHandler('msg:show',{
+				                    type: 'error',
+				                    msg : '已经是第一个文件了!'
+				                });
+			              }	              
+			          	}
+			          },
+			        '.al-arrow-p' : {
+			        	'click' : function(){
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              prevPage();
+			        	}
+			        },
+			        '.ar-arrow-p' : {
+			        	'click' : function(){
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              nextPage();			        		
+			        	}
+			        }
+				}
+			});
+			view.createPanel();
+		}
+	}
+
+	//下一个文件
+	function nextPage(){
+		if(isLoading){
+          	handerObj.triggerHandler('msg:show',{
+                type: 'error',
+                msg : '正在努力加载中,请稍等!'
+            });	  			
+			return;
+		}
+		//还有下一页数据
+		if(nowLength < nowTotal){
+			isLoading = true;
+			handerObj.triggerHandler(nowType+':getlist',true);
+		//已经有全部数据了.
+		}else{
+			var t = $('#reviewFileList');
+			var w = $('.review-list-block').width();
+
+			var tn = Math.ceil(w/48);
+
+			var rw = t.width();
+			var ml = t.css('marginLeft');
+			ml = parseInt(ml.replace('px',''));
+			if(w<rw){
+				if(ml <= 0 && Math.abs(ml-tn*48)<rw){
+					t.css('marginLeft',ml-tn*48+'px');
+				}else{
+
+				}
+			}
+
+		}
+	}
+
+	//上一个文件
+	function prevPage(){
+		console.log('prev');
+		var t = $('#reviewFileList');
+		var w = $('.review-list-block').width();
+		var rw = t.width();
+		var ml = t.css('marginLeft');
+		ml = parseInt(ml.replace('px',''));
+		if(w<rw){
+			var t = $('#reviewFileList');
+			var w = $('.review-list-block').width();
+
+			var tn = Math.ceil(w/48);
+
+			var rw = t.width();
+			var ml = t.css('marginLeft');
+			ml = parseInt(ml.replace('px',''));
+			console.log(ml,Math.abs(ml-tn*48)<rw);
+			if(ml < -tn*48){
+				t.css('marginLeft',ml+tn*48+'px');
+			}else{
+				t.css('marginLeft','0px');
+			}
+
+		}
+	}
+
+	//计算是否有下一页等等
+	function checkPage(){
+		var w = $('.review-list-block').width();
+		//var nowFileLength = $('#reviewFileList li').length;
+		//if(w>=48*nowLength){
+			var idx = getIdx();
+			if(idx*48>w){
+
+			}else{
+				$('.al-arrow-p').attr('disable','disable');
+				$('.ar-arrow-p').attr('disable','disable');				
+			}
+		// }else{
+		// 	$('.al-arrow-p').attr('disable','disable');
+		// 	$('.ar-arrow-p').attr('disable','disable');
+		// }
+	}
+
+	//生成缩略图列表
+	function renderList(){
+		var handlers = {};
+		if(!isInit){
+			isInit = true;
+			handlers = {
+	          'li' : {
+	            'click': function(e){
+	              if(isMove){
+	                return;
+	              }
+	              lockMove();
+	              var t = $(this);
+	              var id = t.attr('data-id');
+	              if(id){
+	                $("#reviewBlock li").removeClass('selected');
+	                t.addClass('selected');
+	                t.attr('class','selected');
+	                getFile(id);
+	              }
+	            }
+	          }
+			}
+		}
+
+		var view = new View({
+	        tplid : 'review.list',
+	        target : $('#reviewBlock'),
+	        after : function(){
+	          nowLength = $('#reviewFileList li').length;
+	          $('#reviewFileList').width(48*nowLength); 
+	          checkPage();	        	
+	        },
+	        data : {
+	          list : nowList,
+	          id : nowId,
+	          mail : mail  	
+	        },
+	        handlers : handlers
+		});
+		view.createPanel();
+	}
+
+	function change(num){
+		//0 横,1竖
+		var w = $('#reviewImg').width();
+		var h = $('#reviewImg').height();
+		// if(num){
+		// 	$('#reviewImg').width(h);
+		// }else{
+
+		// }
+		// console.log(num%2,$('#reviewImg').width(),$('#reviewImg').height());
+	}
+
+    function render(data){
+      //图片
+      data.mail = mail;
+      var view = new View({
+        target : $('#reviewDiv'),
+        tplid : 'review',
+        after : function(){
+          $('#reviewDiv').height(nowHeight-180);
+          if(data.type == 2){
+              var purl = encodeURIComponent(config.cgi.filereview+'?fileId='+data.id);
+              if(mail){
+                purl = encodeURIComponent(config.cgi.filereview+'?messageId='+data.id)
+              }
+              $('#documentViewer').FlexPaperViewer(
+                { config : {
+                    SWFFile : purl,
+                    jsDirectory : '/js/lib/flex/',
+                    Scale : 0.8,
+                    ZoomTransition : 'easeOut',
+                    ZoomTime : 0.5,
+                    ZoomInterval : 0.2,
+                    FitPageOnLoad : true,
+                    FitWidthOnLoad : false,
+                    FullScreenAsMaxWindow : false,
+                    ProgressiveLoading : false,
+                    MinZoomSize : 0.2,
+                    MaxZoomSize : 5,
+                    SearchMatchAll : false,
+                    InitViewMode : 'Portrait',
+                    RenderingOrder : 'flash',
+                    StartAtPage : '',
+                    ViewModeToolsVisible : true,
+                    ZoomToolsVisible : true,
+                    NavToolsVisible : true,
+                    CursorToolsVisible : true,
+                    SearchToolsVisible : true,
+                    WMode : 'window',
+                    localeChain: 'zh_CN'
+                }}
+              );            
+          }else if(data.type == 1){
+               var num = 0;   
+			/*
+			$('#reviewImg').load(function(e){
+				var obj = e.target;
+				var w = $('body').width(),
+					h = $('body').height();
+				console.log(obj.width,w,obj.height,h);
+				if(obj.width > w){
+					if(obj.width/obj.height > w/h){
+						obj.style.width = '90%';
+					}else{
+						obj.style.height = '90%';
+					}
+				}else if(obj.height > h){
+					if(obj.width/obj.height > w/h){
+						obj.style.width = w*0.8+'px';
+					}else{
+						obj.style.height = h*0.8+'px';
+					}
+				}else{
+					obj.style.marginTop = (h-obj.height)/2+'px';
+				}
+				// if(obj.width >= obj.height){
+				// 	if(obj.width>640){
+				// 		obj.width= 640;
+				// 	}     
+				// 		obj.style.marginTop = (640-obj.height)/2+'px';
+				// }else{
+				// 	if(obj.height>640){
+				// 		obj.height= 640;
+				// 	}   
+				// //obj.style.marginTop = (640-obj.width)/2+'px';
+				// }
+			});
+			*/
+            $('.to-left').bind('click',function(){
+              $('#reviewImg').rotate({
+                angle: (num)*90,
+                animateTo: (num-1)*90,
+              });
+              num--;
+              change(num);
+            });
+            $('.to-right').bind('click',function(){
+            
+              $('#reviewImg').rotate({                          
+                    angle: num*90,
+                    animateTo: (num+1)*90,
+                  });
+              num++;   
+              change(num);  
+            }); 
+            $('.zoom-in').bind('click',function(){
+              $('#reviewImg').css('width',function(i,v){
+                var nv = parseInt(v,10);
+                return nv*0.8;
+              }); 
+            });
+            $('.zoom-out').bind('click',function(){
+              $('#reviewImg').css('width',function(i,v){
+                var nv = parseInt(v,10);
+                return nv*1.2;
+              }); 
+            }); 
+          }
+        },
+        data : {
+          data : data,
+          url : config.cgi.filereview
+        }
+      });
+      view.createPanel();
+    }
+
+	var handlers = {
+		'review:show' : show,
+		'review:return' : listLoad
+	}
+
+	for(var i in handlers){
+		handerObj.bind(i,handlers[i]);
+	}
+	
+	$(window).bind('resize',function(){
+		nowHeight = $('body').height();
+	});
+
+
+});
+define("view.review", function(){});
+
 define('bind',['config'],function(config){
 
 	var	handerObj = $(Schhandler);
@@ -6948,6 +7864,7 @@ define('bind',['config'],function(config){
 		nowSchool = 0,
 		isMember = 0,
 		nowAuth = 0,
+		isSwall = 0,
 		nowPage = 'user';
 
     $("#newFolds").validate({
@@ -7062,6 +7979,21 @@ define('bind',['config'],function(config){
 
 				handerObj.triggerHandler('file:move',{fl:fl});
 			}
+	}
+
+	//公共文件复制到个人空间
+	function copytoMy(){
+		if($('.table-files .fclick:checked').length>0){
+			var fl  = [];
+			$('.table-files .fclick:checked').each(function(){
+				var id = $(this).val(),
+					fid = $(this).attr('data-fid'),
+					name = $('.fdname'+id).text();
+				fl.push(id);
+			})
+
+			handerObj.triggerHandler('file:copytomy',{fl:fl});
+		}
 	}
 
 	//移动文件到备课
@@ -7203,13 +8135,12 @@ define('bind',['config'],function(config){
 
     //显示或者隐藏重命名和评论
     var checkAct = function(){
-    	var l = $('.table-files .fclick:checked').length;
+    	var l = $('.table-files .fclick:checked').length; 
     	var n = $('.table-files .fdclick:checked').length;
 
     	if(isPrep && !nowPrep){
     		return;
     	}
-
 		if(n == 0){
 			if(!nowSchool){
 		    	$('#fileActZone .sharefile').show();
@@ -7218,9 +8149,26 @@ define('bind',['config'],function(config){
 		    	$('#fileActZone .movefile').show(); 
 	    	}
 	    	$('#fileActZone .downfile').show();
-	    	$('#fileActZone .collfile').show();
-	    	$('#fileActZone .renamefile').show();
 	    }
+    	if(isSwall){
+	    	$('#fileActZone .collfile').hide();
+	    	$('#fileActZone .renamefile').hide();
+	    	$('#fileActZone .copyfile').hide();
+	    	$('#fileActZone .movefile').hide();
+	    	$('#fileActZone .delfile').hide();
+	    	if(!n){
+	    		$('#fileActZone .copytomy').removeClass('hide');
+	    	}else{
+	    		$('#fileActZone .copytomy').addClass('hide');	   
+	    	}
+    	}else{
+	    	$('#fileActZone .collfile').show();
+	    	$('#fileActZone .renamefile').show();	 
+	    	$('#fileActZone .copyfile').show();
+	    	$('#fileActZone .delfile').show();	
+	    	$('#fileActZone .movefile').show();
+	    	$('#fileActZone .copytomy').addClass('hide');	    	   		
+    	}	    
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
@@ -7253,7 +8201,7 @@ define('bind',['config'],function(config){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
     	}else{
-    		if(n>0){   			
+    		if(n>0){  
 		    	$('#fileActZone .sharefile').hide();
 		    	$('#fileActZone .downfile').hide();
 		    	$('#fileActZone .collfile').hide();    		
@@ -7266,6 +8214,24 @@ define('bind',['config'],function(config){
 		    	}else if(nowAuth){
 		    		$('#fileActZone .movefile').show();  
 		    	}
+		    	//新媒体验证
+		    	if(isSwall){
+			    	$('#fileActZone .collfile').hide();
+			    	$('#fileActZone .renamefile').hide();
+			    	$('#fileActZone .copyfile').hide();
+			    	$('#fileActZone .delfile').hide();
+					$('#fileActZone .movefile').hide();
+			    	$('#fileActZone .copytomy').removeClass('hide');
+
+		    	}else{
+			    	$('#fileActZone .collfile').show();
+			    	$('#fileActZone .renamefile').show();	 
+			    	$('#fileActZone .copyfile').show();
+			    	$('#fileActZone .delfile').show();	
+			    	$('#fileActZone .movefile').show();
+			    	$('#fileActZone .copytomy').addClass('hide');	    	   		
+		    	}	
+
 		    	$('#fileActZone .downfile').show();
 		    	$('#fileActZone .collfile').show();    		
 		    		    		
@@ -7344,6 +8310,9 @@ define('bind',['config'],function(config){
 			case 'downfile':
 				downFile();
 				break;
+			case 'copytomy':
+				copytoMy();
+				break;
 			case 'move':
 				moveFile();
 				break;
@@ -7414,6 +8383,15 @@ define('bind',['config'],function(config){
 			file = 1;
 		}
 		switch(cmd){
+			case 'review':
+				var id = target.attr('data-id');
+				var type = target.attr('data-type');
+
+				handerObj.triggerHandler("review:show",{
+					id:id,
+					type : type
+				});
+				break;
 			case 'other':
 			case 'group':
 			case 'dep':
@@ -7588,10 +8566,15 @@ define('bind',['config'],function(config){
     	}
     }
 
+    function swallChange(e,d){
+    	isSwall = d;
+    }
+
     var handlers = {
     	'page:change' : pageChange,
     	'bind:school' : schoolChange,
-    	'bind:prep' : prepChange
+    	'bind:prep' : prepChange,
+    	'bind:swall' : swallChange
     }
 
     for(var i in handlers){
@@ -7698,77 +8681,6 @@ define('upload',['config','cache'],function(config,Cache){
 	handerObj.bind('upload:param',paramChange);
 	
 });
-define('msg',['config','cache','helper/view'],function(config,Cache,View){
-	var	handerObj = $(Schhandler);
-	var msg = config.msg;
-
-	Messenger().options = {
-	    extraClasses: 'messenger-fixed messenger-on-bottom',
-	    theme: 'flat'
-	}
-
-	var at = 0;
-
-	function showConfig(e,d){
-		if(typeof d === 'undefined'){
-			return;
-		}
-		var obj = {
-			message : d.msg,
-			actions : {
-				sub : {
-					label : d.act.sub.label || '确定',
-					action : function(){
-						d.act.sub.action();
-						msg.hide();
-					}
-				},
-				cancel : {
-					label : d.act.canel.label || '取消',
-					action : function(){
-						msg.hide();
-					}
-				}
-			}
-		}
-		var msg = Messenger().post(obj);
-	}
-
-	function showErr(e,d){
-		if(d == 1001){
-			window.location = config.cgi.gotologin;
-			return;
-		}
-
-		var obj = {
-			'message' : msg[d]
-		}
-		if(parseInt(d)){
-			obj.type = 'error'
-		}
-
-		Messenger().post(obj);	
-	}
-
-	function showMsg(e,d){
-		var obj = {
-			'message' : d.msg
-		}
-		obj.type = d.type;
-
-		Messenger().post(obj);		
-	}
-
-	var handlers = {
-		'msg:error' : showErr,
-		'msg:show' : showMsg,
-		'msg:config' : showConfig
-	}
-
-	for(var i in handlers){
-		handerObj.bind(i,handlers[i]);
-	}	
-});
 ;(function() {
 
   requirejs.config({
@@ -7778,12 +8690,14 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
     }    
   });
 
-  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','bind','upload','msg'], function(config,router,util,nav) {
-  
+  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','view.review','bind','upload','msg'], function(config,router,util,nav) {
+
     var handerObj = $(Schhandler);
+
     
     if(!util.getCookie('skey')){
-      window.location = config.cgi.gotologin;
+      //window.location = config.cgi.gotologin;
+      handerObj.triggerHandler('nav:showlogin');
       return;
     }
 
@@ -7921,6 +8835,7 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
     var opt = {
       routes : {
         "mailbox=:id" : 'mailbox',
+        "act=:act" : 'review',
         'mycoll=:id' : 'coll',
         'myshare' : 'share',
         'myrecy=:id' : 'recy',
@@ -7937,19 +8852,26 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
         "" : 'myFile', // 无hash的情况，首页
         "fdid=:id" : 'myFile'
       },
+      review : function(data){
+        console.log(data);
+      },
       school : function(data){
         showModel('school');
         var gid = data.gid,
             uid = data.uid || 0,
-            fdid = data.fdid || 0;
+            fdid = data.fdid || 0,
+            otype = data.otype;
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
+            manage = data.manage || 0,
             type = data.type || 0;
         var d = {
           uid : uid,
           fdid : fdid,
-          type : type
+          type : type,
+          manage : manage,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -7958,8 +8880,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
           d.key = key;
         }  
         handerObj.triggerHandler('page:change'); 
-        handerObj.triggerHandler('school:init',d); 
-        handerObj.triggerHandler('bind:prep',0);              
+        handerObj.triggerHandler('school:init',d);              
+        handerObj.triggerHandler('bind:prep',0);
       },
       mailbox : function(data){
         showModel('mailbox');
@@ -8057,7 +8979,9 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
         var gid = data.gid,
             uid = data.uid || 0,
-            fdid = data.fdid || 0;
+            fdid = data.fdid || 0,
+            otype = data.otype;// || 'list';
+
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
@@ -8066,7 +8990,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
           gid : gid,
           uid : uid,
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -8092,10 +9017,13 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
-            type = data.type || 0;
+            type = data.type || 0,
+            otype = data.otype;// || 'list';
+
         var d = {
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];

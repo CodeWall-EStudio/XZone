@@ -1,6 +1,8 @@
-var http = require('http');
+// var http = require('http');
+var fs = require('fs');
+var path = require('path');
 var EventProxy = require('eventproxy');
-var ObjectID = require('mongodb').ObjectID;
+// var ObjectID = require('mongodb').ObjectID;
 var DBRef = require('mongodb').DBRef;
 var us = require('underscore');
 
@@ -11,12 +13,14 @@ var mGroup = require('../models/group');
 var mFile = require('../models/file');
 var mFolder = require('../models/folder');
 var mUser = require('../models/user');
-var U = require('../util');
+var mSizegroup = require('../models/sizegroup');
+var mOrganization = require('../models/organization');
+var Util = require('../util');
 var Logger = require('../logger');
 
 exports.listGroups = function(req, res) {
     var params = req.parameter;
-    var loginUser = req.loginUser;
+    // var loginUser = req.loginUser;
 
     var query = {};
 
@@ -37,7 +41,7 @@ exports.listGroups = function(req, res) {
         }
     }
     if (params.keyword) {
-        query['name'] = new RegExp('.*' + U.encodeRegexp(params.keyword) + '.*');
+        query['name'] = new RegExp('.*' + Util.encodeRegexp(params.keyword) + '.*');
     }
 
     params.extendQuery = query;
@@ -157,7 +161,7 @@ exports.approveFile = function(req, res) {
         return;
     }
 
-    
+
     //这里应该增加学校的空间使用
     mGroup.updateUsed(school._id, file.size, function() {});
 
@@ -312,8 +316,8 @@ exports.listFiles = function(req, res) {
     };
 
     mFile.search(searchParams, function(err, total, docs) {
-        
-        if(err){
+
+        if (err) {
             return res.json({
                 err: total || ERR.SERVER_ERROR,
                 msg: err
@@ -330,6 +334,56 @@ exports.listFiles = function(req, res) {
     });
 };
 
+exports.createUser = function(req, res) {
+    var params = req.parameter;
+
+    var sizegroup = params.sizegroupId;
+    var name = params.name;
+    var nick = params.nick;
+
+    mUser.getUser({
+        name: name
+    }, function(err, doc) {
+        if (err) {
+            return res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
+        }
+        if (doc) {
+            return res.json({
+                err: ERR.DUPLICATE,
+                msg: 'already has the same account name: ' + name
+            });
+        }
+        doc = {
+            name: name,
+            nick: nick,
+            from: 'ucenter',
+            pwd: Util.md5(config.DEFAULT_USER_PWD),
+            sizegroupId: sizegroup._id,
+            size: sizegroup.size
+        };
+        mUser.create(doc, function(err, doc) {
+            if (err) {
+                return res.json({
+                    err: doc || ERR.SERVER_ERROR,
+                    msg: err
+                });
+            }
+            delete doc.pwd; // 去除密码
+
+            return res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    data: doc
+                }
+            });
+        });
+    });
+
+};
+
 exports.modifyUser = function(req, res) {
 
     var params = req.parameter;
@@ -344,7 +398,12 @@ exports.modifyUser = function(req, res) {
     if ('status' in params) {
         doc.status = params.status;
     }
-
+    if (params.auth) { //更改权限 
+        doc.auth = params.auth;
+    }
+    if (params.nick) {
+        doc.nick = params.nick;
+    }
     mUser.update({
         _id: user._id
     }, doc, function(err, result) {
@@ -358,6 +417,29 @@ exports.modifyUser = function(req, res) {
             err: ERR.SUCCESS
         });
 
+    });
+
+};
+
+exports.resetUserPwd = function(req, res) {
+
+    var user = req.parameter.userId;
+
+    mUser.update({
+        _id: user._id
+    }, {
+        pwd: Util.md5(config.DEFAULT_USER_PWD)
+    }, function(err, doc) {
+        if (err) {
+            res.json({
+                err: ERR.SERVER_ERROR,
+                msg: err
+            });
+        } else {
+            res.json({
+                err: ERR.SUCCESS
+            });
+        }
     });
 
 };
@@ -453,3 +535,257 @@ exports.statistics = function(req, res) {
         });
     });
 };
+
+
+
+exports.importUser = function(req, res) {
+    var files = req.files;
+    var file = files.file;
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
+    });
+
+    if (!file) {
+        ep.emit('error', ERR.PARAM_ERROR, 'no file!');
+        return;
+    }
+
+    var content = fs.readFileSync(file.path);
+    content = content.toString();
+
+    mSizegroup.getSizegroup({
+        isDefault: true,
+        type: 0
+    }, ep.doneLater('getDefaultSzie'));
+
+
+    ep.on('getDefaultSzie', function(sizegroup) {
+        var rows = content.split('\n');
+        var list = [],
+            duplicates = [],
+            fails = [];
+
+        Util.forEach(rows, function(row, i, next) {
+
+            if (i === 0) { // 跳过第一行, 第一行是表头
+                return next();
+            }
+
+            var cols = row.split(',');
+            Logger.info('[importUser]', cols[0], cols[1]);
+
+            var nick = String(cols[0]).trim();
+            var loginName = String(cols[1]).trim();
+            var pwd = String(cols[2]).trim();
+            var auth = parseInt(cols[3] || 0);
+
+            if (!nick || !loginName) {
+                next();
+                return;
+            }
+
+
+            var user = {
+                nick: nick,
+                name: loginName,
+                pwd: Util.md5(pwd),
+                auth: auth,
+                from: 'import',
+                sizegroupId: sizegroup._id,
+                size: sizegroup.size
+            };
+
+            mUser.getUser({
+                name: user.name
+            }, function(err, doc) {
+                if (doc) {
+                    duplicates.push(cols);
+                    next();
+                } else {
+
+                    mUser.create(user, function(err, doc) {
+                        if (err) {
+                            fails.push(cols);
+                        } else {
+                            delete doc.pwd;
+                            list.push(doc);
+                        }
+                        next();
+                    });
+                }
+
+            });
+
+        }, function() {
+            Logger.info('[importUser] done.');
+            res.json({
+                err: ERR.SUCCESS,
+                result: {
+                    list: list,
+                    duplicates: duplicates,
+                    fails: fails
+                }
+            });
+        });
+    });
+};
+
+function createOrganizationUser(data, callback) {
+    var ep = new EventProxy();
+    ep.fail(callback);
+
+    mOrganization.getOrganization({
+        name: data.orgName
+    }, ep.doneLater('getOrganization'));
+
+    mUser.getUser({
+        name: data.loginName
+    }, ep.doneLater('getUser'));
+
+
+    ep.all('getOrganization', 'getUser', function(org, user) {
+
+        if (!org || !user) {
+            callback('no such organization or user');
+            return;
+        }
+        mOrganization.checkOrgUser({
+            'user.$id': user._id,
+            'department.$id': org._id
+        }, function(err, doc) {
+            if (doc) {
+                callback(null, 1, doc);
+            } else {
+                mOrganization.addUser({
+                    userId: user._id,
+                    organizationId: org._id
+                }, ep.done('addUser'));
+
+            }
+        });
+
+    });
+
+    ep.on('addUser', function(doc) {
+        callback(null, 0, doc);
+    });
+
+}
+
+exports.importOrgsUsers = function(req, res) {
+    var files = req.files;
+    var file = files.file;
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode) {
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
+    });
+
+    if (!file) {
+        ep.emit('error', ERR.PARAM_ERROR, 'no file!');
+        return;
+    }
+
+    var content = fs.readFileSync(file.path);
+    content = content.toString();
+
+    var rows = content.split('\n');
+    var list = [],
+        duplicates = [],
+        fails = [];
+
+    Util.forEach(rows, function(row, i, next) {
+
+        if (i === 0) { // 跳过第一行, 第一行是表头
+            return next();
+        }
+
+        var cols = row.split(',');
+        Logger.info('[importOrgsUsers]', cols);
+
+        var orgName = String(cols[0]).trim();
+        var loginName = String(cols[1]).trim();
+
+        if (!orgName || !loginName) {
+            next();
+            return;
+        }
+
+        createOrganizationUser({
+            orgName: orgName,
+            loginName: loginName
+        }, function(err, code, doc) {
+            if (err) {
+                fails.push({
+                    data: cols,
+                    msg: err
+                });
+            } else if (code === 0) {
+                list.push(cols);
+            } else if (code === 1) {
+                duplicates.push(doc);
+            }
+            next();
+        });
+
+        // end onEach
+    }, function() { // onDone
+        Logger.info('[importOrgsUsers] done.');
+        res.json({
+            err: ERR.SUCCESS,
+            result: {
+                list: list,
+                duplicates: duplicates,
+                fails: fails
+            }
+        });
+    });
+
+};
+
+function getOrganizationNames(result, data){
+    result.push(data.name);
+    if(data.children){
+        data.children.forEach(function(data){
+            getOrganizationNames(result, data);
+        });
+    }
+}
+
+exports.downloadOrganization = function(req, res){
+
+    mOrganization.getOrganizationTree({}, function(err, data){
+        if(err){
+            res.json({
+                err: data || ERR.SERVER_ERROR,
+                msg: err
+            });
+            return;
+        }
+
+
+        var tables = ['组织名'];
+
+        data.children = data.children || [];
+
+        getOrganizationNames(tables, data);
+
+        var content = tables.join('\n');
+
+        var dir = path.resolve('./');
+        var fileName = path.join(dir, 'organization.csv');
+        fs.writeFileSync(fileName, content);
+
+        res.sendfile(fileName);
+
+
+    });
+
+};
+

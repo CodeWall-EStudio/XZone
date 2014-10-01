@@ -22,8 +22,11 @@ exports.create = function(params, callback){
         openid: params.openid,
         nick: params.nick || '',
         name: params.name || '',
-        auth: 0,
+        pwd: params.pwd || '',
+        
+        auth: params.auth || 0,
         status: 0,
+        type: params.type || 0,
 
         sizegroup: params.sizegroupId ? new DBRef('sizegroup', params.sizegroupId) : null,
         size: params.size || config.DEFAULT_USER_SPACE,
@@ -204,100 +207,12 @@ exports.getUserAllInfo = function(user, callback){
      
 };
 
-
-function fetchDepartments(dep, callback){
-    var ep = new EventProxy();
-    ep.fail(callback);
-
-    // 1. 先查询该部门的用户
-    db.departuser.find({ 'department.$id': dep._id }, ep.doneLater('getUsers'));
-
-    ep.on('getUsers', function(depUsers){
-
-        dep.users = [];
-
-        ep.after('fetchDepartUsers', depUsers.length, function(list){
-            dep.users = us.compact(list);
-
-            ep.emit('getUsersDone');
-        });
-
-        depUsers.forEach(function(doc){
-
-            // 过滤掉测试用户
-            db.user.findOne({ _id: doc.user.oid }, ep.group('fetchDepartUsers'));
-
-        });
-
-    });
-
-    // 2. 查询该部门的子部门
-    db.department.find({ 'parent.$id': dep._id }, { sort: { order: -1 }}, ep.doneLater('getDeps'));
-
-    ep.on('getDeps', function(deps){
-        dep.children = deps || [];
-
-        ep.after('fetchChildDeparts', deps.length, function(){
-            ep.emit('getDepartsDone');
-        });
-
-        deps.forEach(function(doc){
-            fetchDepartments(doc, ep.group('fetchChildDeparts'));
-        });
-
-    });
-
-    ep.all('getUsersDone', 'getDepartsDone', function(){
-
-        callback(null, dep);
-    });
-
-}
-
-exports.getAllDepartments = function(params, callback){
-
-    var ep = new EventProxy();
-    ep.fail(callback);
-
-    db.department.findOne({ parent: null }, ep.doneLater('getSchoolDep'));
-
-    ep.on('getSchoolDep', function(root){
-
-        if(!root){
-            return callback('can\'t find the root of departments');
-        }
-
-        // 查询一级部门
-        db.department.find({ 'parent.$id': root._id },  { sort: { order: -1 }},function(err, docs){
-            if(err){
-                return ep.emit('error', err);
-            }
-            root.children = docs;
-            console.log('get school');
-            ep.after('fetchChildDeparts', docs.length, function(){
-                ep.emit('allDone');
-            });
-
-            docs.forEach(function(doc){
-                fetchDepartments(doc, ep.group('fetchChildDeparts'));
-            });
-            
-        });
-    });
-
-    ep.all('getSchoolDep', 'allDone', function(root, allDone){
-        if(!allDone){
-            callback(null, root);
-        }else{
-            callback(allDone);
-        }
-    });
-};
-
 exports.search = function(params, callback){
     var keyword = params.keyword || '';
 
     var extendQuery = params.extendQuery || {};
+
+    params.fields = { pwd: 0 }; //排除掉密码
 
     var query = {};
 

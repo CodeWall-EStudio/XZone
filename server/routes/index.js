@@ -9,9 +9,6 @@ us.extend(exports, require('./param_verify'));
 us.extend(exports, require('./auth_verify'));
 
 
-var MEDIA_UPLOAD_CGI = '/api/media/upload';
-var MEDIA_DOWNLOAD_CGI = '/api/media/download';
-
 function getRouter(path, method){
 
     var arr = path.split('/'), module;
@@ -55,7 +52,7 @@ exports.setXHR2Headers = function(req, res, next){
         res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Headers', 'origin,content-type');
-        res.setHeader('Access-Control-Max-Age', '30');
+        res.setHeader('Access-Control-Max-Age', '3600');
 
         Logger.info('[setXHR2Headers]', 'origin: ', origin, 'method: ', method);
 
@@ -70,13 +67,13 @@ exports.setXHR2Headers = function(req, res, next){
 
 exports.mediaUpload = function(req, res, next){
 
-    var type = Number(req.param('media', 0));
+    var media = Number(req.param('media', 0));
 
-    Logger.debug('[mediaUpload]', 'type: ', type);
+    Logger.debug('[mediaUpload]', 'media: ', media);
 
-    if (type === 1) {
+    if (media === 1) {
 
-        req.redirectPath = MEDIA_UPLOAD_CGI;
+        req.redirectPath = config.MEDIA_UPLOAD_CGI;
         Logger.debug('[mediaUpload]', 'req.redirectPath: ', req.redirectPath);
     }
     next();
@@ -92,10 +89,13 @@ exports.mediaDownload = function(req, res, next){
     }
     skey = skey || '';
 
-    var url = MEDIA_DOWNLOAD_CGI + '?fileId=' + fileId + '&skey=' + skey;
+    var url = config.MEDIA_DOWNLOAD_CGI + '?fileId=' + fileId + '&skey=' + skey;
     res.redirect(url);
 
     Logger.debug('[mediaDownload]', 'skey: ', skey, 'fileId: ', fileId);
 };
 
-
+exports.index = function(req, res){
+    
+    res.redirect(config.INDEX_PAGE);
+};

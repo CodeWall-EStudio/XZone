@@ -126,7 +126,24 @@ define(function() {
 
 			//存储
 			getstorge : CGI_PATH+'storage'+EXT,
-			setstorge : CGI_PATH+'storage/set'+EXT
+			setstorge : CGI_PATH+'storage/set'+EXT,
+
+			//导入
+			importuser : CGI_PATH+'manage/importUser'+EXT,
+			importdeps : CGI_PATH+'manage/importOrgsUsers'+EXT,
+/*
+manage/importUser 导入用户
+POST 参数: file=csv文件, 返回:   list 导入陈宫的用户, fails: 失败的用户, duplcates: 重复的用户
+
+manage/importOrgsUsers 导入组织的用户
+POST 参数: file=csv文件, 返回:   list 导入陈宫的用户, fails: 失败的用户, duplcates: 重复的用户
+
+manage/downloadOrganization 下载组织架构
+GET: 参数: 无
+*/			
+			// /manage/importUser
+			// /manage/importOrganization
+
 
 		},
 		grade : {
@@ -154,6 +171,10 @@ define(function() {
 			11 : '组织名称必须填写',
 			20 : '新密码和重复密码必须一致',
 			21 : '请填写用户名和密码!',
+			22 : '用户不存在',
+			23 : '该组织中包含用户，无法删除！',
+			24 : '请填写用户名和姓名!',
+			30 : '组织最多支持3级!', 
 			50 : '你要上传的文件已经超过你的剩余空间!',
 			60 : '你还没有选择要共享的目录',
 			75 : '序号只能在1~99之间',
@@ -172,7 +193,9 @@ define(function() {
 			1015 : '已经归档啦!',
 			1016 : '该资源不能删除',
 			1017 : '该目录下还有其他文件，无法删除!',
-			1041 : '用户名或密码错误!'
+			1041 : '用户名或密码错误!',
+			1042 : '该用户不存在!',
+			1050 : '时间交叉了!'
 		}
 	}
 // module.exports = exports = {

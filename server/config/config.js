@@ -1,3 +1,5 @@
+var path = require('path');
+
 // debug 模式, 会输出一些调试用的 log
 exports.DEBUG = true;
 
@@ -14,13 +16,13 @@ exports.FILE_SAVE_ROOT = '/home/swall/xzone/';
 
 // 上传的文件保存的目录, 相对于 FILE_SAVE_ROOT
 // 文件上传后会保存到 FILE_SAVE_ROOT + FILE_SAVE_DIR 下
-exports.FILE_SAVE_DIR = '/data/71xiaoxue/';
+exports.FILE_SAVE_DIR = '/data/files/';
 
 // 批量下载时打包成zip包的保存目录, 相对于 FILE_SAVE_ROOT
 exports.FILE_ZIP_DIR = '/data/zip/';
 
 // jodconverter 的路径, 用于把doc转换为pdf
-exports.JOD_CONVERTER = '/var/run/jodconverter/lib/jodconverter-core-3.0-beta-4.jar';
+exports.JOD_CONVERTER = path.join(__dirname, '../../lib/jodconverter-core-3.0-beta-4.jar');
 
 // ==== 应用自身相关的配置 ====================================================
 
@@ -31,18 +33,17 @@ exports.APP_DOMAIN = 'http://xzone.codewalle.com';
 exports.COOKIE_SECRET= 'xzone_HeMHFxTAMPAjlRVH_secret';
 
 // cookie 的有效时间
-exports.COOKIE_TIME = 2 * 60 * 60 * 1000; // 2 小时
+exports.COOKIE_TIME = 24 * 60 * 60 * 1000; // 24 小时
 
 exports.STATIC_FILE_EXPIRES = 7 * 24 * 60 * 60 * 1000; // 静态文件的过期时间
 
 // 默认每个用户的空间大小 3G
 exports.DEFAULT_USER_SPACE = 3 * 1024 * 1024 * 1024;
 
-exports.NOT_FOUND_PAGE = '/404.html';
-
 // 允许新媒体跨域上传和下载资源的 host
 exports.XHR2_ALLOW_ORIGIN = [
-    'http://media.71xiaoxue.com'
+    'http://media.71xiaoxue.com',
+    'http://swall.codewalle.com'
 ];
 
 // 下载的接口列表
@@ -51,15 +52,38 @@ exports.DOWNLOAD_APIS = [
     '/api/file/batchDownload'
 ];
 
-// ==== SSO登陆相关的配置 ====================================================
+// 多媒体的上传接口
+exports.MEDIA_UPLOAD_CGI = '/api/media/upload';
 
-exports.AUTH_TYPE = 'sso';// auto, sso, qq
+// 多媒体下载接口
+exports.MEDIA_DOWNLOAD_CGI = '/api/media/download';
+
+
+exports.AUTH_TYPE = 'self';// auto, sso, qq, self
+
+// 一些页面 url 的常量
+
+exports.INDEX_PAGE = '/index.html';
+
+exports.LOGIN_PAGE = '/login.html';
+
+exports.LOGIN_FAIL_PAGE = '/loginfail.html';
+
+exports.NOT_FOUND_PAGE = '/404.html';
+
+
+// ==== User Center 相关的配置 ====================================================
+
+// 默认新建用户的密码
+exports.DEFAULT_USER_PWD = '8888';
+
+// ==== SSO登陆相关的配置 ====================================================
 
 // CAS 的配置以及登录成功后的跳转 URL
 exports.CAS_BASE_URL = 'http://dand.71xiaoxue.com:80/sso.web';
 
 // 这里要改为对应域名
-exports.CAS_SERVICE = exports.APP_DOMAIN + '/api/user/loginSuccess';
+exports.CAS_SERVICE = '/api/user/loginSuccess';
 
 // 获取用户详细资料的CGI
 exports.CAS_USER_INFO_CGI = 'http://mapp.71xiaoxue.com/components/getUserInfo.htm';
@@ -76,7 +100,7 @@ exports.QQ_CONNECT_APPID = '100548719';
 exports.QQ_CONNECT_APPKEY = '9e47324ac7fed9f8364d4982ccf3037e';
 
 // 登陆成功的回调地址
-exports.QQ_CONNECT_CALLBACK = exports.APP_DOMAIN + '/api/user/loginSuccessWithQQ';
+exports.QQ_CONNECT_CALLBACK = '/api/user/loginSuccessWithQQ';
 
 exports.QQ_CONNECT_SITE = 'https://graph.qq.com';
 

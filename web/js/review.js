@@ -79,6 +79,7 @@ define('config',[],function() {
 			favdel : CGI_PATH+'fav/delete'+EXT,
 			favsearch : CGI_PATH+'fav/search'+EXT,
 
+
 			//回收站
 			reclist : CGI_PATH+'recycle/list'+EXT,
 			recrev : CGI_PATH+'recycle/revert'+EXT,
@@ -155,6 +156,8 @@ define('config',[],function() {
 			11 : '组织名称必须填写',
 			20 : '新密码和重复密码必须一致',
 			21 : '请填写用户名和密码!',
+			22 : '用户不存在',
+			30 : '组织最多支持3级!', 
 			50 : '你要上传的文件已经超过你的剩余空间!',
 			60 : '你还没有选择要共享的目录',
 			75 : '序号只能在1~99之间',
@@ -173,7 +176,9 @@ define('config',[],function() {
 			1015 : '已经归档啦!',
 			1016 : '该资源不能删除',
 			1017 : '该目录下还有其他文件，无法删除!',
-			1041 : '用户名或密码错误!'
+			1041 : '用户名或密码错误!',
+			1043 : '用户不存在!',
+			1050 : '时间交叉了!'
 		}
 	}
 // module.exports = exports = {
@@ -663,20 +668,12 @@ define('helper/util',['../config'], function(config) {
     	$('#pageNav .'+type+'space').addClass('selected');
     }
 
-    var getServerTime = function(str){
-		var tmp = str.split(/\r\n/);
-		var tmp1 = tmp[0].split('Date:');
-		var nowtime = + new Date(tmp1[1]);
-		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
-    }
-
 	var getServerTime = function(str){
 		var tmp = str.split(/\r\n/);
 		var tmp1 = tmp[0].split('Date:');
 		var nowtime = + new Date(tmp1[1]);
 		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
     }
-
 	//expose
 	util.bind = bind;
   	util.lenReg = lenReg;
@@ -1290,7 +1287,8 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
 
 	function showErr(e,d){
 		if(d == 1001){
-			window.location = config.cgi.gotologin;
+			//window.location = config.cgi.gotologin;
+			handerObj.triggerHandler('nav:showlogin');
 			return;
 		}
 
@@ -1494,7 +1492,7 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
     var id = util.getParam('id');
     var mail = util.getParam('mail');
     var cate = util.getParam('cate');
-    var coll = util.getParam('coll')
+    var coll = util.getParam('coll');
     var gid = util.getParam('gid');
     var fdid = util.getParam('fdid');
     var page = parseInt(util.getParam('page')) || 0;

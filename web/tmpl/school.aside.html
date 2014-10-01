@@ -1,7 +1,7 @@
-<h3 cmd="list" class="<%if(!type){%>selected<%}%> school-link">文件列表</h3>
+<h3 class="<%if(!type){%>selected<%}%> school-link"><a href="#school=1">文件列表</a></h3>
 <%if(auth){%>
-<h3 cmd="manage" class="<%if(type){%>selected<%}%> school-link">
-	文件审核
+<h3 class="<%if(type){%>selected<%}%> school-link">
+	<a href="#school=1&manage=1">文件审核</a>
 </h3>
 <h3 cmd="recy" class="school-link">回收站</h3>
 <%}%>

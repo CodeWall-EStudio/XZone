@@ -124,6 +124,7 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 					var prep = Cache.get('preps');
 					data.prep = prep.g2key;
 				}
+				console.log(data);
 				var view = new View({
 					target : $('#groupModifyZone'),
 					tplid : 'manage/group.modify.dl',
@@ -375,6 +376,7 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 				var t = $(this),
 					on = t.attr('data-on'),
 					od = t.attr('data-od');
+					
 				if(on != nowOd || od != nowOd){
 					nowOd = od;
 					nowOn = on;
@@ -687,6 +689,7 @@ define(['config','cache','helper/view','helper/util','model.group'],function(con
 		d.subject = subject;
 		d.prep = prep;
 
+		console.log(d);
 		var view = new View({
 			target : $('#tableBody'),
 			tplid : 'manage/group.list',

@@ -18,7 +18,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				read : item.isReadonly || 0,
 				pid : item.parent.$id,
 				tid : item.top.$id,
-				idpath : item.idpath
+				idpath : item.idpath,
+				type : item.type,
+				candel : item.deletable
 			})
 		}
 		return list;
@@ -48,6 +50,8 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 
 		t.isOpen = data.isOpen || false;
 		t.isReady = data.isReadonly || false;
+		t.type = data.type;
+		t.candel = data.deletable;
 
 		// if(t.pid == t.tid){
 		// 	t.pid = 0;
@@ -139,6 +143,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 		if(creator){
 			obj.creatorId = creator;
 		}
+		obj.order = order;
 
 		var opt = {
 			cgi : config.cgi.foldlist,

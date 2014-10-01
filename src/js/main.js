@@ -7,12 +7,14 @@
     }    
   });
 
-  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','bind','upload','msg'], function(config,router,util,nav) {
-  
+  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','view.review','bind','upload','msg'], function(config,router,util,nav) {
+
     var handerObj = $(Schhandler);
+
     
     if(!util.getCookie('skey')){
-      window.location = config.cgi.gotologin;
+      //window.location = config.cgi.gotologin;
+      handerObj.triggerHandler('nav:showlogin');
       return;
     }
 
@@ -150,6 +152,7 @@
     var opt = {
       routes : {
         "mailbox=:id" : 'mailbox',
+        "act=:act" : 'review',
         'mycoll=:id' : 'coll',
         'myshare' : 'share',
         'myrecy=:id' : 'recy',
@@ -166,19 +169,26 @@
         "" : 'myFile', // 无hash的情况，首页
         "fdid=:id" : 'myFile'
       },
+      review : function(data){
+        console.log(data);
+      },
       school : function(data){
         showModel('school');
         var gid = data.gid,
             uid = data.uid || 0,
-            fdid = data.fdid || 0;
+            fdid = data.fdid || 0,
+            otype = data.otype;
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
+            manage = data.manage || 0,
             type = data.type || 0;
         var d = {
           uid : uid,
           fdid : fdid,
-          type : type
+          type : type,
+          manage : manage,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -187,8 +197,8 @@
           d.key = key;
         }  
         handerObj.triggerHandler('page:change'); 
-        handerObj.triggerHandler('school:init',d); 
-        handerObj.triggerHandler('bind:prep',0);              
+        handerObj.triggerHandler('school:init',d);              
+        handerObj.triggerHandler('bind:prep',0);
       },
       mailbox : function(data){
         showModel('mailbox');
@@ -286,7 +296,9 @@
 
         var gid = data.gid,
             uid = data.uid || 0,
-            fdid = data.fdid || 0;
+            fdid = data.fdid || 0,
+            otype = data.otype;// || 'list';
+
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
@@ -295,7 +307,8 @@
           gid : gid,
           uid : uid,
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -321,10 +334,13 @@
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
-            type = data.type || 0;
+            type = data.type || 0,
+            otype = data.otype;// || 'list';
+
         var d = {
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];

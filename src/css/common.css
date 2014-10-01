@@ -27,14 +27,18 @@ a:hover{
 	min-width:1000px;
 	margin:0 auto;
 	height:60px;
+	background-color:#fff;
+	color:#000;	
+	/*
 	background-color:#224888;
 	color:#97afcd;
+	*/
 }
 .header .logo{
 	display:inline-block;
 	float:left;
-	background:url(imgs/logo.png) no-repeat;
-	width:235px;
+	background:url(imgs/logo_small.png) no-repeat;
+	width:203px;
 	height:60px;
 }
 .header .header-nav li.nav{
@@ -56,13 +60,18 @@ a:hover{
 .header .header-nav li.nav:hover{	
 	line-height:60px;
 	height:59px;
+	/*
 	background-color:#1e417b;
 	color:#fff;
+	*/
+	background-color:#BED7FF;
+	color:#000;	
 	border-bottom:1px solid #102860;
 	transition:.25s linear;
 }
 .header .header-nav li.selected{
-	background-color:#1C3764;
+	/*background-color:#1C3764;*/
+	background-color:#AEC1F0;
 }
 .header .header-nav li.nav.open{
 	border:1px solid #c3c5cb;
@@ -90,11 +99,13 @@ a:hover{
 .header .userinfo{
 	line-height:60px;
 	font-size:18px;
+	width:200px;
 	position:relative;
 	float:right;
 }
 .header .userinfo a{
-	color:#fff;
+	color:#000;
+	/*color:#fff;*/
 }
 .header .header-nav li i{
 	display:inline-block;
@@ -110,7 +121,8 @@ a:hover{
 	display:block;
 }
 .header .header-nav a,.userinfo a{
-	color:#fff;
+	color:#000;
+	/*color:#fff;*/
 }
 .header .menu a{
 	color:#428bca;
@@ -141,7 +153,9 @@ a:hover{
 	top:0;
 	left:130px;
 }
-.header .menu li a.text-limit{
+.header .menu li a{
+	display:inline-block;
+	width:100%;
 	display:inline-block;
 	width:100px;
 	overflow:hidden;
@@ -508,6 +522,7 @@ a:hover{
 }
 .section-tit ul.act-zone ul li{
 	text-indent:1em;
+	width:100%;
 	clear:both;
 }
 

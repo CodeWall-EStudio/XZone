@@ -23,8 +23,9 @@ exports.AUTH_WHITE_LIST = [
     '/api/user/loginSuccess',
     '/api/user/loginWithQQ',
     '/api/user/loginSuccessWithQQ',
-    '/api/media/upload',
-    '/api/media/download'
+    // '/api/media/upload',
+    // '/api/media/download',
+    '/api/system/init' // 系统初始化接口, 只会运行一次
 ];
 
 exports.RULES = {
@@ -506,7 +507,6 @@ exports.RULES = {
     // user
 
 
-
     // recycle
     '/api/recycle/delete': {
         verify: function(user, parameter, callback){
@@ -681,16 +681,7 @@ exports.RULES = {
             return callback('no auth');
         }
     },
-    '/api/manage/approveGroup': {
-        verify: function(user, parameter, callback){
-
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            return callback('no auth');
-        }
-
-    },
+    
     '/api/manage/listPrepares': {
         verify: function(user, parameter, callback){
 
@@ -701,6 +692,7 @@ exports.RULES = {
             return callback('no auth');
         }
     },
+
     '/api/manage/approveFile': {
         verify: function(user, parameter, callback){
 
@@ -725,7 +717,9 @@ exports.RULES = {
 
         }
     },
+
     '/api/manage/listFiles': {
+
         verify: function(user, parameter, callback){
 
             mGroup.getGroup({
@@ -748,15 +742,6 @@ exports.RULES = {
             });
         }
     },
-    '/api/manage/modifyUser': {
-        verify: function(user, parameter, callback){
-
-            if(user.__role & config.ROLE_MANAGER){
-                return callback(null);
-            }
-            return callback('no auth');
-        }
-    },
 
     // '/api/storage': {
     //     verify: function(user, parameter, callback){
@@ -775,8 +760,33 @@ exports.RULES = {
             }
             return callback('no auth');
         }
-    }
+    },
 
+    // system
+    '/api/system/*': { // 系统初始化相关的接口, 只有系统管理员有权限
+
+        verify: function(user, parameter, callback){
+
+            if(user.__role & config.AUTH_SYS_MANAGER){
+
+                return callback(null);
+            }
+            return callback('no auth');
+        }
+    },
+
+    // organization
+    '/api/organization/*': { // 用户中心的组织架构的接口, 管理员可调用
+
+        verify: function(user, parameter, callback){
+
+            if(user.__role & config.AUTH_MANAGER){
+
+                return callback(null);
+            }
+            return callback('no auth');
+        }
+    },
 };
 
 /**

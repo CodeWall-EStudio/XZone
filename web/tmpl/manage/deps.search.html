@@ -1,0 +1,19 @@
+	<div>
+		<div class="quit-dep-search">退出搜索</div>
+				<ul class="act-fold-list">
+				<%
+				if(!$.isEmptyObject(list)){
+					for(var i in list){
+						var item = list[i];
+				%>
+					<li id="org<%-item._id%>">
+						<i></i> <strong><a title="<%+item.name%>" class="list-link" data-id="<%+item._id%>"> <%=item.name%></a></strong> 	
+						</a>
+					</li>
+				<%}%>
+				<%}else{%>
+					<li>没有搜索到结果!</li>
+				<%}%>
+				</ul>
+	
+	</div>

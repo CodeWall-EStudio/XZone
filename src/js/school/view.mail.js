@@ -5,9 +5,11 @@ define(['config','helper/view','model.mail'],function(config,View){
 		action = 0,//活动状态
 		nextPage = 0,
 		nowTotal = 0,
+		inReview = false,
 		nowCate = 0,//我的贡献 ,1 收件 2 发件
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
+		fileList = {},
 		nowKey = '';
 
 	var tmpTarget = $('#boxTableList'),
@@ -30,6 +32,7 @@ define(['config','helper/view','model.mail'],function(config,View){
 
 	function init(e,d){
 		tmpTarget.html('');
+		fileList = {};
 
 		nextPage = 0;
 		nowTotal = 0;
@@ -78,6 +81,14 @@ define(['config','helper/view','model.mail'],function(config,View){
 
 		//nextPage = d.next;
 		nowTotal = d.total;
+		for(var i in d.list){
+			var item = d.list[i];
+			fileList[item.id] = item;
+		}
+
+		if(inReview){
+			returnList();
+		}		
 
 		if($(".file").length < nowTotal){
 			nextPage += 1;
@@ -138,13 +149,35 @@ define(['config','helper/view','model.mail'],function(config,View){
 		$('.mailsave'+d).remove();
 	}
 
+
+	function getList(d){
+
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}		
+		// handerObj.triggerHandler('review:return',{
+		// 	list : fileList,
+		// 	total : nowTotal,
+		// 	page : nextPage
+		// });		
+	}
+
 	var handlers = {
 		'page:next' : pageNext,
 		'model:change' : modelChange,
 		'mail:init' : init,
 		'mail:get' : mailGet,
 		'mail:load' : load,
-		'mail:savesuc' : saveSuc
+		'mail:savesuc' : saveSuc,
+		'mail:getlist' : getList
 	}
 
 	for(var i in handlers){

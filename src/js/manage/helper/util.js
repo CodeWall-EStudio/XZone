@@ -468,7 +468,7 @@ define(['../config'], function(config) {
 		var tmp1 = tmp[0].split('Date:');
 		var nowtime = + new Date(tmp1[1]);
 		handerObj.triggerHandler('cache:set',{key: 'nowtime',data: nowtime});
-    }    
+    }
 
 	//expose
 	util.bind = bind;
@@ -489,7 +489,7 @@ define(['../config'], function(config) {
 	util.logType = showLogType;
 	util.showNav = showNav;
 	util.getServerTime = getServerTime;
-	
+
 	return util;
 
 });

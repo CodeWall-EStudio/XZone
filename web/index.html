@@ -5,7 +5,7 @@
   <meta name="author" content="Xzone" />
   <meta http-equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" />
   <title>教师工作室</title>
-  <link rel="stylesheet" href="css/main.css?t=1405608332070">
+  <link rel="stylesheet" href="css/main.css?t=1411314252723">
 
   <meta property="qc:admins" content="124110632765637457144563757" />
 
@@ -15,7 +15,7 @@
 		<div id="pageNav">
 			<i class="logo"></i>
 			<div class="userinfo">
-
+				<a class="show-login">登录</a>
 			</div>
 		</div>
 	</div>
@@ -50,6 +50,7 @@
 					<li class="downfile"><a cmd="downfile" id="donwFiles">下载</a></li>
 					<li class="renamefile" id="renameAct"><a cmd="rename">重命名</a></li>
 					<li class="copyfile"><a cmd="copy">复制到备课</a></li>
+					<li class="copytomy"><a cmd="copytomy">保存</a></li>
 					<li class="movefile"><a cmd="move">移动文件</a></li>
 					<li class="delfile"><a cmd="del">删除</a></li>
 					<li class="cancel"><a cmd="cancel">取消</a></li>
@@ -77,10 +78,12 @@
 					
 				</div>
 				<div class="listDiv">
-				<table width="100%"  class="table table-striped table-hover table-list table-files">
+				<table width="100%" id="fileInfoTable" class="table table-striped table-hover table-list table-files">
 					<tbody id="fileInfoList">
 					</tbody>
-				</table>	
+				</table>
+				<div id="foldIcoList"></div>
+				<ul id="fileIcoList" class="table-list table-files"></ul>
 				<div id="pageZone" class="page-div">
 
 				</div>
@@ -146,6 +149,9 @@
 				</div>				
 				<table class="table table-striped table-hover table-list" width="100%">
 					<tr>
+						<th width="120">日志类型</th>
+						<th>日志内容</th>
+						<th>操作时间</th>
 						<th>名称</th>
 						<th width="90">类型</th>
 						<th width="90">大小</th>
@@ -231,7 +237,7 @@
 			
 			</div>
 		</div>
-	</div>	
+	</div>		
 
 	<div id="uploadFile" class="upload-win" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -251,6 +257,10 @@
 		</div>
 	</div>	
 
+	<div id="reviewBgs"></div>
+	<div id="reviewWin"></div>
+	
+
 	<form action="/api/file/batchDownload" target="_blank" method="post" id="downloadForm" class="hide">
 		
 	</form>
@@ -262,7 +272,8 @@
 	<script src="/js/lib/jquery/jquery-1.8.3.js"></script>
 	<script src="js/lib/bootstrap.js"></script>
 	<script src="js/lib/jqlib.js"></script>
+  <script src="js/lib/reviewlib.js"></script>
 	<script src="js/lib/jqupload.js"></script>
-	<script data-main="js/main.js?t=1405608332069" src="js/lib/require/require.2.1.8.js"></script>
+	<script data-main="js/main.js?t=1411314252723" src="js/lib/require/require.2.1.8.js"></script>
 </body>
 </html>

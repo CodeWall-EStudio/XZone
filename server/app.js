@@ -27,9 +27,12 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.cookieParser());
 
+var mainDomain = '.' + config.APP_DOMAIN.split('.').slice(1).join('.');
+
 app.use(express.session({
+    // key: 'sid',
     secret: config.COOKIE_SECRET,
-    cookie: { maxAge:  config.COOKIE_TIME, httpOnly: true }, // 2 hour
+    cookie: { maxAge:  config.COOKIE_TIME, httpOnly: true, domain: mainDomain }, // 2 hour
     store: new MongoStore({
         url: config.DB_URI
     }, function () {
@@ -42,8 +45,9 @@ app.use(app.router);
 app.use(express.static(path.join(__dirname, '../web'), { maxAge: config.STATIC_FILE_EXPIRES }));
 
 // 检查是否登录, 如果没有登录, 跳转到登录页
-app.all('/', routes.checkAuthAndLogin);
-app.all('/index.html', routes.checkAuthAndLogin);
+//app.all('/', routes.checkAuthAndLogin);
+//app.all(config.INDEX_PAGE, routes.checkAuthAndLogin);
+app.all('/', routes.index);
 
 // 设置跨域请求头
 app.all('/*', routes.setXHR2Headers);
