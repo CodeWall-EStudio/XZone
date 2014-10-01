@@ -11,17 +11,41 @@
 // ssh root@58.117.151.6
 // 69802847
 
-var IP = '58.117.151.6';
+
+// 阿里云的测试环境
+
+
+// ssh root@112.126.66.147
+
+
+// 2eefc9e3
+
+
+
+var IP = '112.126.66.147';
 var USER = 'root';
-var PWD = '69802847';
+var PWD = '2eefc9e3';
 
 var Util = require('../server/util.js');
 
-// var process = require('process');
+
 var spawn = require('child_process').spawn;
+// var exec = require('child_process').exec;
+// var child;
+
+// child = exec('ssh -tt ' + USER + '@' + IP,
+//   function (error, stdout, stderr) {
+//     console.log('stdout: ' + stdout);
+//     console.log('stderr: ' + stderr);
+//     if (error !== null) {
+//       console.log('exec error: ' + error);
+//     }
+// });
 
 var ssh = spawn('ssh', ['-tt', USER + '@' + IP]);
-
+ssh.on('message', function(data){
+    console.log('message: ' + data);
+})
 
 ssh.stdout.on('data', function(data) {
     console.log('stdout: ' + data);
@@ -37,15 +61,4 @@ ssh.stderr.on('data', function(data) {
 
 ssh.on('exit', function(code) {
     console.log('child process exited with code ' + code);
-});
-process.stdin.resume();
-
-process.stdin.on('data', function(data){
-    console.log('process.stdin: ' + data);
-});
-process.stdout.on('data', function(data){
-    console.log('process.stdout: ' + data);
-});
-process.stderr.on('data', function(data){
-    console.log('process.stderr: ' + data);
 });
