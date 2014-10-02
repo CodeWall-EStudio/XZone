@@ -263,6 +263,20 @@ exports.departments = function(req, res) {
 };
 
 exports.login = function(req, res) {
+    
+    var type = req.type || req.parameter.type || config.AUTH_TYPE || 'self';
+
+
+    if(type === 'self'){
+        loginWithUserCenter(req, res);
+    }else if(type === 'huairou'){
+        
+        // TODO
+    }
+    
+};
+
+function loginWithUserCenter(req, res){
     var parameter = req.parameter;
     var name = parameter.name;
     var pwd = parameter.pwd;
@@ -270,7 +284,6 @@ exports.login = function(req, res) {
 
     pwd = Util.md5(pwd);
 
-    var type = req.type || req.parameter.type || 'self';
 
     mUser.getUser({
         name: name,
@@ -332,7 +345,7 @@ exports.login = function(req, res) {
             res.redirect('/');
         } // end redirectUrl
     });
-};
+}
 
 exports.logoff = function(req, res) {
     var type = req.type || req.parameter.type || 'self';

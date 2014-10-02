@@ -59,7 +59,7 @@ exports.MEDIA_UPLOAD_CGI = '/api/media/upload';
 exports.MEDIA_DOWNLOAD_CGI = '/api/media/download';
 
 
-exports.AUTH_TYPE = 'self';// auto, sso, qq, self
+exports.AUTH_TYPE = 'self';// auto, sso, qq, self, huairou
 
 // 一些页面 url 的常量
 
