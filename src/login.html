@@ -7,8 +7,8 @@
   <title>教师工作室</title>
   <style>
   body{ padding:0px; background: url(images/qiyiImages/bg.jpg) top center no-repeat #fff; font-family:Microsoft YaHei}
-  .main{ width:1002px; margin:0px auto; padding-top:170px;}
-  .nr{ float:left; width:100%;}
+  .main{ width:1002px; margin:0px auto; }
+  .nr{ float:left; width:100%;background:url(css/imgs/yd_logo_big.png) no-repeat;height:320px;}
   .login{ margin-right:40px; float:right; border:#dddddd solid 6px; background-color:#f5f5f5; width:350px; height:250px; padding-top:37px; padding-left:21px;}
   td{ line-height:48px; height:48px; font-size:12px;}
   .name{ font-size:14px;}
@@ -16,10 +16,11 @@
   .mima a{text-decoration: underline; color:#368b9e;}
   .foot{width:100%; font-size:14px;  padding-top:70px;float:left;}
   .footer{  text-align:center; line-height:30px;}
+  .title {font-size:32px;padding:50px;text-align:center}
   </style>
 </head> 
 <body id="cas" class="login_body">
-<form id="fm1" class="fm-v clearfix" action="/sso.web/login?service=http%3A%2F%2Fszone.71xiaoxue.com%2Fapi%2Fuser%2FloginSuccess" method="post">		
+	<div class="title">北京第二实验小学永定分校</div>
   <div class="main">
     <div class="nr">
       <div class="login">
@@ -38,7 +39,7 @@
               <input id="password" name="password" class="required Ipt inputcw srk" tabindex="2" onkeydown="enterKeyPress(event)" class="srk" accesskey="p" type="password" value="" maxlength="50" autocomplete="off"/>
             </td>
           </tr>
-          <tr>
+          <tr style="display:none;">
             <td>&nbsp;</td>
             <td>
               <table width="265" border="0" cellspacing="0" cellpadding="0">
@@ -60,7 +61,7 @@
               <input type="hidden" name="lt" value="LT-283-BXbTNTSsUJ3H63gmqUvocAoUVUzpfi" />
               <input type="hidden" name="execution" value="e2s1" />
               <input type="hidden" name="_eventId" value="submit" />
-              <img src="images/qiyiImages/dl.jpg" width="265" height="48" onclick="SetPwdAndChk();fm1.submit();"/>
+              <img src="css/imgs/dl.jpg" width="265" height="48" onclick="SetPwdAndChk();fm1.submit();"/>
             </td>
           </tr>
         </table>
@@ -71,12 +72,13 @@
   </div>
   <div class="foot">
     <div class="footer">
-      版权所有：北京市海淀区七一小学
+      版权所有：北京第二实验小学永定分校
     </div>
     <div class="footer">
       运营服务：北京泓远联创科技有限公司
     </div>
   </div>
-</form>
+  <script src="/js/lib/jquery/jquery-1.8.3.js"></script>
+  <script src="/js/login.js"></script>
 </body>
 </html>

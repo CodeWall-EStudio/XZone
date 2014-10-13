@@ -34,12 +34,22 @@ a:hover{
 	color:#97afcd;
 	*/
 }
+.header.yd-school{
+}
 .header .logo{
 	display:inline-block;
 	float:left;
 	background:url(imgs/logo_small.png) no-repeat;
 	width:203px;
 	height:60px;
+}
+.yd-school .logo{
+	display:inline-block;
+	float:left;
+	margin-left:30px;
+	background:url(imgs/yd_logo.png) no-repeat;
+	width:390px;
+	font-style:normal;
 }
 .header .header-nav li.nav{
 	position:relative;
