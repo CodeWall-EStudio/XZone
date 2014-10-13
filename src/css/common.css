@@ -47,8 +47,8 @@ a:hover{
 	display:inline-block;
 	float:left;
 	margin-left:30px;
-	background:url(imgs/yd_logo.png) no-repeat;
-	width:390px;
+	background:url(imgs/yd_logo_small.png) no-repeat;
+	width:443px;
 	font-style:normal;
 }
 .header .header-nav li.nav{
