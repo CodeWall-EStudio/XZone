@@ -71,7 +71,10 @@ gulp.task('concat',function(){
     .pipe(gulp.dest('./web/js/lib'));  
   gulp.src(bootstrap)
     .pipe(concat('bootstrap.js'))
-    .pipe(gulp.dest('./web/js/lib'));      
+    .pipe(gulp.dest('./web/js/lib')); 
+
+  gulp.src('./src/js/login.js')
+    .pipe(gulp.dest('./web/js/')); 
 
   gulp.src(cssList)
     .pipe(concat('main.css'))
@@ -93,12 +96,14 @@ gulp.task('build',function(){
     .pipe(replace('%TimeStamp%',new Date().getTime()))
     .pipe(htmlreplace({    
       'maincss' : 'css/main.css?t='+new Date().getTime(),
+      'logincss' : 'css/bootstrap.css?t='+new Date().getTime(),
       'reviewcss' : 'css/review.css?t='+new Date().getTime(),
       'managecss' : 'css/manage.css?t='+new Date().getTime(),
       'jqlib' : 'js/lib/jqlib.js',
       'jqupload' : 'js/lib/jqupload.js',
       'bootstrap' : 'js/lib/bootstrap.js',
-      'reviewlib' : 'js/lib/reviewlib.js'
+      'reviewlib' : 'js/lib/reviewlib.js',
+      'loginjs' : 'js/login.js',
     }))
     .pipe(gulp.dest('./web/'));  
 });

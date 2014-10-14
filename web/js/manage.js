@@ -1,4 +1,3 @@
-
 define('config',[],function() {
 	var CGI_PATH = '/api/',
 		EXT = '';//'.php';
