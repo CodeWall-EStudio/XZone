@@ -11,106 +11,106 @@ var config = require('../config');
 var AuthConfig = require('./auth_config');
 var mUser = require('../models/user');
 var mGroup = require('../models/group');
-var routeUser = require('./user');
 
 
 /**
  * 检查是否登录, 如果登录了, 从数据库把用户信息找出
  */
-exports.checkAuth = function(req, res, next) {
-    var path = req.redirectPath || req.path;
-    var method = req.method;
-    var skey = req.cookies.skey || req.body.skey || req.query.skey;
-    if (!skey) {
-        skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
-    }
-    req.skey = skey;
+// exports.checkAuth = function(req, res, next) {
 
-    Logger.debug('[checkAuth]', 'req.redirectPath: ', req.redirectPath);
+//     var path = req.redirectPath || req.path;
+//     var method = req.method;
+//     var skey = req.cookies.skey || req.body.skey || req.query.skey;
+//     if (!skey) {
+//         skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
+//     }
+//     req.skey = skey;
 
-    if (AuthConfig.AUTH_WHITE_LIST.indexOf(path) >= 0) {
-        Logger.info('[checkAuth] white list skip.', 'path: ', path, ', method: ', method);
-        return next();
-    }
+//     Logger.debug('[checkAuth]', 'req.redirectPath: ', req.redirectPath);
 
-    if (config.AUTH_TYPE !== 'self' && (path === config.MEDIA_UPLOAD_CGI || path === config.MEDIA_DOWNLOAD_CGI)) {
+//     if (AuthConfig.AUTH_WHITE_LIST.indexOf(path) >= 0) {
+//         Logger.info('[checkAuth] white list skip.', 'path: ', path, ', method: ', method);
+//         return next();
+//     }
 
-        // 使用用户中心的时候, 多媒体的上传也走统一验证, 不配置白名单
-        // 非用户中心的时候, 则直接跳过登陆验证
-        return next();
-    }
-    var loginUid;
-    if (!req.session || !skey || !(loginUid = req.session[skey])) {
-        res.json({
-            err: ERR.NOT_LOGIN,
-            msg: 'not login'
-        });
-        Logger.info('[checkAuth] not login.', 'path: ', path, ', method: ', method, ', skey: ', skey);
-        return;
-    }
-    req.loginUid = loginUid;
+//     if (config.AUTH_TYPE !== 'self' && (path === config.MEDIA_UPLOAD_CGI || path === config.MEDIA_DOWNLOAD_CGI)) {
 
-    // 这里改成每次请求都从数据库读取用户信息, 为了数据的一致性, 只能牺牲下性能
-    mUser.getUser({
-        _id: new ObjectID(loginUid)
-    }, function(err, user) {
-        if (err) {
-            res.json({
-                err: ERR.SERVER_ERROR,
-                msg: 'verify user error'
-            });
-            Logger.error('[checkAuth] verify user error: ', user, ':', err, 'path: ', path, ', method: ', method);
-        } else if (user) {
+//         // 使用用户中心的时候, 多媒体的上传也走统一验证, 不配置白名单
+//         // 非用户中心的时候, 则直接跳过登陆验证
+//         return next();
+//     }
+//     var loginUid;
+//     if (!req.session || !skey || !(loginUid = req.session[skey])) {
+//         res.json({
+//             err: ERR.NOT_LOGIN,
+//             msg: 'not login'
+//         });
+//         Logger.info('[checkAuth] not login.', 'path: ', path, ', method: ', method, ', skey: ', skey);
+//         return;
+//     }
+//     req.loginUid = loginUid;
 
-            // Logger.debug('[checkAuth] get loginUser.', user);
-            req.loginUser = user;
-            if (user.status === 1) {
+//     // 这里改成每次请求都从数据库读取用户信息, 为了数据的一致性, 只能牺牲下性能
+//     mUser.getUser({
+//         _id: new ObjectID(loginUid)
+//     }, function(err, user) {
+//         if (err) {
+//             res.json({
+//                 err: ERR.SERVER_ERROR,
+//                 msg: 'verify user error'
+//             });
+//             Logger.error('[checkAuth] verify user error: ', user, ':', err, 'path: ', path, ', method: ', method);
+//         } else if (user) {
 
-                // status = 1 的用户是被关闭的, 不允许调用
-                res.json({
-                    err: ERR.FORBIDDEN,
-                    msg: 'this user has close, can\'t access the api'
-                });
+//             // Logger.debug('[checkAuth] get loginUser.', user);
+//             req.loginUser = user;
+//             if (user.status === 1) {
 
-            } else {
-                next();
-            }
+//                 // status = 1 的用户是被关闭的, 不允许调用
+//                 res.json({
+//                     err: ERR.FORBIDDEN,
+//                     msg: 'this user has close, can\'t access the api'
+//                 });
 
-        } else {
-            res.json({
-                err: ERR.NOT_LOGIN,
-                msg: 'verify user error, con\'t find user in db'
-            });
-            Logger.info('[checkAuth] verify user error, con\'t find user in db', 'path: ', path, ', method: ', method);
-        }
-    });
+//             } else {
+//                 next();
+//             }
 
-};
+//         } else {
+//             res.json({
+//                 err: ERR.NOT_LOGIN,
+//                 msg: 'verify user error, con\'t find user in db'
+//             });
+//             Logger.info('[checkAuth] verify user error, con\'t find user in db', 'path: ', path, ', method: ', method);
+//         }
+//     });
+
+// };
 
 /**
  * 检查是否登录, 如果没有登录, 跳转到登录页
  */
-exports.checkAuthAndLogin = function(req, res, next) {
-    var path = req.redirectPath || req.path;
-    var method = req.method;
-    var skey = req.cookies.skey || req.body.skey || req.query.skey;
-    if (!skey) {
-        skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
-    }
-    req.skey = skey;
+// exports.checkAuthAndLogin = function(req, res, next) {
+//     var path = req.redirectPath || req.path;
+//     var method = req.method;
+//     var skey = req.cookies.skey || req.body.skey || req.query.skey;
+//     if (!skey) {
+//         skey = req.cookies.accessToken || req.body.accessToken || req.query.accessToken;
+//     }
+//     req.skey = skey;
 
-    if (AuthConfig.AUTH_WHITE_LIST.indexOf(path) >= 0) {
-        return next();
-    }
-    var loginUid;
-    if (!req.session || !skey || !(loginUid = req.session[skey])) {
-        Logger.info('[checkAuthAndLogin] goto login', 'path: ', path, ', method: ', method);
-        routeUser.gotoLogin(req, res);
-        return;
-    }
-    req.loginUid = loginUid;
-    next();
-};
+//     if (AuthConfig.AUTH_WHITE_LIST.indexOf(path) >= 0) {
+//         return next();
+//     }
+//     var loginUid;
+//     if (!req.session || !skey || !(loginUid = req.session[skey])) {
+//         Logger.info('[checkAuthAndLogin] goto login', 'path: ', path, ', method: ', method);
+//         routeUser.gotoLogin(req, res);
+//         return;
+//     }
+//     req.loginUid = loginUid;
+//     next();
+// };
 
 /**
  * 检查 api 调用权限, 所有 api 权限检查都在这里完成, api 的具体实现里就不在涉及跟权限有关的代码

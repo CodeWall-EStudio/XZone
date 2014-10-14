@@ -14,7 +14,7 @@ function getRouter(path, method){
     var arr = path.split('/'), module;
     try{
         if(arr[1] === 'api'){
-            module = require('./' + arr[2]);
+            module = require('../' + arr[1] + '/' + arr[2]);
             if(arr[3]){
                 return module[arr[3]];
             }else{

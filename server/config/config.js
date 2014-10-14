@@ -27,7 +27,7 @@ exports.JOD_CONVERTER = path.join(__dirname, '../../lib/jodconverter-core-3.0-be
 // ==== 应用自身相关的配置 ====================================================
 
 // 应用运行的域名
-exports.APP_DOMAIN = 'http://xzone.codewalle.com';
+exports.APP_DOMAIN = 'http://localhost:8091';
 
 // cookie 的加密key
 exports.COOKIE_SECRET= 'xzone_HeMHFxTAMPAjlRVH_secret';
@@ -77,38 +77,20 @@ exports.NOT_FOUND_PAGE = '/404.html';
 // 默认新建用户的密码
 exports.DEFAULT_USER_PWD = '8888';
 
-// ==== SSO登陆相关的配置 ====================================================
+exports.USERCENTER_LOGIN_TYPE = 'token'; // pwd, token
 
-// CAS 的配置以及登录成功后的跳转 URL
-exports.CAS_BASE_URL = 'http://dand.71xiaoxue.com:80/sso.web';
+exports.USERCENTER_CLIENT_ID = '54321';
 
-// 这里要改为对应域名
-exports.CAS_SERVICE = '/api/user/loginSuccess';
+exports.USERCENTER_CLIENT_SECRET = '22ff294ea9c161ca843fbc22eafb068b';
 
-// 获取用户详细资料的CGI
-exports.CAS_USER_INFO_CGI = 'http://mapp.71xiaoxue.com/components/getUserInfo.htm';
+exports.USERCENTER_CALLBACK = '/api/login/loginUCSuccess';
 
-// 获取用户组织列表单cgi
-exports.CAS_ORG_TREE_CGI = 'http://mapp.71xiaoxue.com/components/getOrgTree.htm';
+exports.USERCENTER_SITE = 'http://localhost:8099';
 
+exports.USERCENTER_AUTH_PATH = '/oauth/authorise';
 
-// ==== QQ登陆相关的配置 ====================================================
-// QQ 互联的 appid
-exports.QQ_CONNECT_APPID = '100548719';
+exports.USERCENTER_TOKEN_PATH = '/oauth/token';
 
-// appkey
-exports.QQ_CONNECT_APPKEY = '9e47324ac7fed9f8364d4982ccf3037e';
+exports.USERCENTER_OPENID_PATH = '/oauth/verify';
 
-// 登陆成功的回调地址
-exports.QQ_CONNECT_CALLBACK = '/api/user/loginSuccessWithQQ';
-
-exports.QQ_CONNECT_SITE = 'https://graph.qq.com';
-
-exports.QQ_CONNECT_AUTH_PATH = '/oauth2.0/authorize';
-
-exports.QQ_CONNECT_TOKEN_PATH = '/oauth2.0/token';
-
-exports.QQ_CONNECT_OPENID_PATH = '/oauth2.0/me';
-
-exports.QQ_CONNECT_USERINFO_PATH = '/user/get_user_info';
 
