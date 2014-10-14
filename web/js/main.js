@@ -1958,6 +1958,8 @@ Content-Type: text/html
 	}
 
 	function showLogin(){
+		location.href='/login.html';
+		return;
 		var view = new View({
 			target : $('#actWinZone'),
 			tplid : 'login',
