@@ -88,6 +88,10 @@ gulp.task('concat',function(){
     .pipe(concat('review.css'))
     .pipe(minifycss())
     .pipe(gulp.dest('./web/css/'));
+  gulp.src(rcssList)
+    .pipe(concat('bootstrap.css'))
+    .pipe(minifycss())
+    .pipe(gulp.dest('./web/css/'));    
 
 });
 
