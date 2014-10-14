@@ -10,7 +10,7 @@ exports.PORT = 8091;
 exports.DB_URI = 'mongodb://xzone_user:HeMHFxTAMPAjlRVH@127.0.0.1:27017/xzone';
 
 // 上传的文件保存的根目录
-exports.FILE_SAVE_ROOT = '/home/swall/xzone/';
+exports.FILE_SAVE_ROOT = '/data/project_data/Szone/';
 
 // ==== 应用自身相关的配置 ====================================================
 
