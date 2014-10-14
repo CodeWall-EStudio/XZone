@@ -13,7 +13,7 @@ if(jump){
 
 $('#submit').on('click',function(){
 	var name = $("#name").val();
-	var pwd = $("#name").val();
+	var pwd = $("#pwd").val();
 	if(name !== '' && pwd !== ''){
 		var param = {
 			name : name,
