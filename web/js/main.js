@@ -8487,7 +8487,11 @@ define('bind',['config'],function(config){
 						}else{
 							p.find('.liclick').prop({'checked':true});
 						}
-						checkAct();
+						if(p.hasClass('fold')){
+							checkFoldAct();
+						}else{
+							checkAct();
+						}
 						//p.find('.liclick').click();										
 					}
 				}
