@@ -27,12 +27,13 @@ a:hover{
 	min-width:1000px;
 	margin:0 auto;
 	height:60px;
+	/*
 	background-color:#fff;
 	color:#000;	
-	/*
+	*/
 	background-color:#224888;
 	color:#97afcd;
-	*/
+	
 }
 .header.yd-school{
 }
@@ -40,7 +41,7 @@ a:hover{
 	display:inline-block;
 	float:left;
 	background:url(imgs/logo1.png) no-repeat;
-	width:203px;
+	width:235px;
 	height:60px;
 }
 .yd-school .logo{
@@ -70,18 +71,20 @@ a:hover{
 .header .header-nav li.nav:hover{	
 	line-height:60px;
 	height:59px;
-	/*
+	
 	background-color:#1e417b;
 	color:#fff;
-	*/
+	
+	/*
 	background-color:#BED7FF;
 	color:#000;	
+	*/
 	border-bottom:1px solid #102860;
 	transition:.25s linear;
 }
 .header .header-nav li.selected{
-	/*background-color:#1C3764;*/
-	background-color:#AEC1F0;
+	background-color:#1C3764;
+	/*background-color:#AEC1F0;*/
 }
 .header .header-nav li.nav.open{
 	border:1px solid #c3c5cb;
