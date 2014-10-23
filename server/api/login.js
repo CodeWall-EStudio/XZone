@@ -35,7 +35,7 @@ function findAndUpdateUserInfo(accessToken, callback) {
         try {
             data = JSON.parse(data);
         } catch (e) {
-            return ep.emitLater('error', e);
+            return ep.emitLater('error', e, ERR.NOT_LOGIN);
 
         }
         if (err) {
@@ -266,7 +266,7 @@ exports.checkLogin = function(req, res, next) {
     function fetchUserSuccess(err, user) {
         if (err) {
             res.json({
-                err: ERR.SERVER_ERROR,
+                err: user || ERR.SERVER_ERROR,
                 msg: 'verify user error'
             });
             Logger.error('[checkLogin] verify user error: ', user, ':', err, 'path: ', path, ', method: ', method);
