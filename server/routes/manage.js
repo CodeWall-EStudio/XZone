@@ -129,12 +129,13 @@ exports.approveGroup = function(req, res) {
     });
 };
 
-exports.approveFile = function(req, res) {
-    var params = req.parameter;
-    var file = params.fileId;
+function approveFile(params, callback) {
+
+    var file = params.file;
     var school = params.school;
 
-    var loginUser = req.loginUser;
+    var loginUser = params.loginUser;
+
     // 这里的文件只有个人提交到学校的
     var validateStatus = Number(params.validateStatus) || 0;
     if (validateStatus === 0) {
@@ -143,21 +144,13 @@ exports.approveFile = function(req, res) {
         mFile.delete({
             _id: file._id
         }, { /*updateUsed: true*/ }, function(err /*, doc*/ ) {
-            if (err) {
-                res.json({
-                    err: ERR.SERVER_ERROR,
-                    msg: err
-                });
-            } else {
-                res.json({
-                    err: ERR.SUCCESS
-                });
-            }
+
+            callback(err);
         });
         return;
     }
 
-    
+
     //这里应该增加学校的空间使用
     mGroup.updateUsed(school._id, file.size, function() {});
 
@@ -173,20 +166,74 @@ exports.approveFile = function(req, res) {
         _id: file._id
     }, doc, function(err, doc) {
         if (err) {
-            res.json({
-                err: ERR.SERVER_ERROR,
-                msg: err
-            });
+            callback(err);
         } else if (!doc) {
+            callback('no such group', ERR.NOT_FOUND);
+        } else {
+            callback(null);
+        }
+    });
+}
+
+exports.approveFile = function(req, res) {
+    var params = req.parameter;
+    var file = params.fileId;
+    var school = params.school;
+
+    var loginUser = req.loginUser;
+
+    approveFile({
+        file: file,
+        school: school,
+        validateStatus: params.validateStatus,
+        validateText: params.validateText,
+        loginUser: loginUser
+    }, function(err, errCode) {
+        if (err) {
             res.json({
-                err: ERR.NOT_FOUND,
-                msg: 'no such group'
+                err: errCode || ERR.SERVER_ERROR,
+                msg: err
             });
         } else {
             res.json({
                 err: ERR.SUCCESS
             });
         }
+    });
+
+};
+
+exports.batchApproveFiles = function(req, res) {
+    var params = req.parameter;
+    var files = params.fileIds;
+    var school = params.school;
+    var validateStatus = params.validateStatus;
+    var validateText = params.validateText;
+
+    var loginUser = req.loginUser;
+
+    var ep = new EventProxy();
+    ep.fail(function(err, errCode){
+        res.json({
+            err: errCode || ERR.SERVER_ERROR,
+            msg: err
+        });
+    });
+
+    ep.after('approveFile', files.length, function() {
+        res.json({
+            err: ERR.SUCCESS
+        });
+    });
+
+    files.forEach(function(file) {
+        approveFile({
+            file: file,
+            school: school,
+            validateStatus: validateStatus,
+            validateText: validateText,
+            loginUser: loginUser
+        }, ep.group('approveFile'));
     });
 
 };
@@ -312,8 +359,8 @@ exports.listFiles = function(req, res) {
     };
 
     mFile.search(searchParams, function(err, total, docs) {
-        
-        if(err){
+
+        if (err) {
             return res.json({
                 err: total || ERR.SERVER_ERROR,
                 msg: err

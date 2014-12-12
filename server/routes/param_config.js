@@ -977,6 +977,25 @@ module.exports = {
             }
         ]
     },
+    '/api/manage/batchApproveFiles': {
+        method: 'POST',
+        params: [
+            {
+                name: 'fileIds',
+                type: '[file]',
+                required: true
+            },
+            {
+                name: 'validateText',
+                type: 'string'
+            },
+            {
+                name: 'validateStatus',
+                type: 'number',
+                required: true
+            }
+        ]
+    },
     '/api/manage/listFiles': {
         method: 'GET',
         params: [
