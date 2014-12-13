@@ -645,6 +645,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 				ismember : true
 			}
 		};
+		console.log(obj);
 		var myinfo = Cache.get('myinfo');
 		if(myinfo.dep2key[d.gid]){
 			obj.data.ismember = myinfo.dep2key[d.gid].isMember;
@@ -701,6 +702,7 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		// 		isMember[d.list[i].id] = d.list[i].isMember;
 		// 	}
 		// }
+		console.log(d,d.list);
 		var selected = [];
 		var view = new View({
 			target : actTarget,
@@ -712,7 +714,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 			},
 			after : function(){
 				$("#actWin").modal('show');
-
 				//拉学校文件夹
 				if(d.type === 'school'){
 						var myinfo = Cache.get('myinfo');
