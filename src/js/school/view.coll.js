@@ -6,6 +6,9 @@ define(['config','helper/view','model.coll'],function(config,View){
 		nowOrder  = ['createTime',-1], 
 		nowType = 0;
 		nowOds = '',
+		inReview = false,
+		fileList = {},
+		nowTotal = 0;
 		nowKey = '';
 
 	var tmpTarget = $('#boxTableList'),
@@ -31,6 +34,9 @@ define(['config','helper/view','model.coll'],function(config,View){
 		nowType = d.type;
 		tmpTarget.html('');
 		crTit();
+
+		fileList = {};
+		nowTotal = 0;		
 
 		if(d.order){
 			nowOrder = d.order;
@@ -60,6 +66,18 @@ define(['config','helper/view','model.coll'],function(config,View){
 
 	function load(e,d){
 		nextPage = d.next;
+
+		nowTotal = d.total;
+		for(var i in d.list){
+			var item = d.list[i];
+				item.id = item.fileid;
+			fileList[item.fileid] = item;
+		}
+
+		if(inReview){
+			returnList();
+		}		
+
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'coll.list',
@@ -106,11 +124,32 @@ define(['config','helper/view','model.coll'],function(config,View){
 		});		
 	}
 
+	function getList(d){
+
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}		
+		// handerObj.triggerHandler('review:return',{
+		// 	list : fileList,
+		// 	total : nowTotal,
+		// 	page : nextPage
+		// });		
+	}
+
 	var handlers = {
 		'page:next' : pageNext,
 		'model:change' : modelChange,
 		'coll:init' : init,
-		'coll:load' : load
+		'coll:load' : load,
+		'coll:getlist' : getList
 	}
 
 	for(var i in handlers){

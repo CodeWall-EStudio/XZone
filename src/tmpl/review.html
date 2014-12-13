@@ -1,15 +1,29 @@
-<%if(data.type == 1){%>
-	<img id="reviewImg" src="/api/file/preview?<%if(data.mail){%>messageId=<%+data.id%><%}else{%>fileId=<%+data.id%><%}%>" onload="change(this)" align="absmiddle" />
+<div class="al-arrow" titla="上一个文件"></div>
+
+<%
+	if(data.type == 1){
+%>
+	<div class="review-img-block">
+		<img id="reviewImg" src="/api/file/preview?<%if(data.mail){%>messageId=<%+data.id%><%}else{%>fileId=<%+data.id%><%}%>" align="absmiddle" />
+	</div>
 		<div class="file-reivew-act">
 			<dl>
 				<dt>文件名:<%-data.name%></dt>
+				<dd>
+					文件大小: <%-data.size%>
+					时间: <%-data.time%>
+					<%-data.mark%>
+				</dd>
 			</dl>
-			<div>			
-				<span class="to-left"></span>
-				<span class="to-right"></span>
+			<div class="file-act">			
+				<span class="to-left">左转</span>
+				<span class="to-right">右转</span>
+				<!--
 				<span class="zoom-out"></span>
 				<span class="zoom-in"></span>
+				-->
 			</div>
+			<div class="file-reivew-act-bg"></div>
 		</div>	
 <%}else if(data.type == 2){%>
 	<div id="documentViewer" class="flexpaper_viewer">
@@ -26,16 +40,41 @@
 	    <track kind="captions" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
 	    <track kind="subtitles" src="demo.captions.vtt" srclang="en" label="English"></track><!-- Tracks need an ending tag thanks to IE9 -->
 	  </video>
-	<div class="otherType">
-		<div>文件名:<%-data.name%></div>
+	<div class="file-reivew-act">
+		<dl>
+			<dt>文件名:<%-data.name%></dt>
+			<dd>
+				文件大小: <%-data.size%>
+				时间: <%-data.time%>
+				<%-data.mark%>
+			</dd>
+		</dl>
 	</div>
 
 	</div>
 <%}else if(data.type == 8){%>
 	<div class="text-review"><%*data.text%></div>
+	<div class="file-reivew-act">
+		<dl>
+			<dt>文件名:<%-data.name%></dt>
+			<dd>
+				文件大小: <%-data.size%>
+				时间: <%-data.time%>
+				<%-data.mark%>
+			</dd>
+		</dl>
+	</div>	
 <%}else{%>
-	<div class="otherType">
+	<div class="file-reivew-act">
 		<i class="icon-type<%+data.type%>"></i>
-		<div>文件名:<%-data.name%></div>
-	</div>
+		<dl>
+			<dt>文件名:<%-data.name%></dt>
+			<dd>
+				文件大小: <%-data.size%>
+				时间: <%-data.time%>
+				<%-data.mark%>
+			</dd>
+		</dl>
+	</div>	
 <%}%>
+<div class="ar-arrow" titla="下一个文件"></div>

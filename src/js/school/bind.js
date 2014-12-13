@@ -394,6 +394,7 @@ define(['config'],function(config){
 		var target = $(e.target),
 			cmd = target.attr('cmd');
 		switch(cmd){	
+
 			case 'rename':
 				renameObj();
 				break;
@@ -476,6 +477,15 @@ define(['config'],function(config){
 			file = 1;
 		}
 		switch(cmd){
+			case 'review':
+				var id = target.attr('data-id');
+				var type = target.attr('data-type');
+
+				handerObj.triggerHandler("review:show",{
+					id:id,
+					type : type
+				});
+				break;				
 			case 'other':
 			case 'group':
 			case 'dep':
