@@ -485,7 +485,7 @@ a:hover{
 .section-tit ul.act-zone{
 	position: absolute;
 	top: 0;
-	right:0;
+	right:60px;
 }
 .section-tit ul.act-zone a{
 	color:#6a6a6a;

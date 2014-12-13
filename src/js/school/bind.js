@@ -184,6 +184,18 @@ define(['config'],function(config){
 		}
 	}
 
+	$("#listTypeAction").bind('click',function(e){
+		var target = $(e.target),
+			cmd = target.attr('cmd');
+		//列表
+		if(cmd === 'listType'){
+			$("#fileList").attr('class','dis-list-type');
+		//图标
+		}else if (cmd === 'listIco'){
+			$("#fileList").attr('class','dis-ico-type');
+		}
+	});
+
 	$('.btn-newfold').bind('click',function(e){
 		handerObj.triggerHandler('fold:createfold');
 	});

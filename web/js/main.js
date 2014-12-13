@@ -2504,10 +2504,10 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		isLoading = false;
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
-		nowOds = '',
-		nowUid = 0,
+		nowOds = '', //当前排序
+		nowUid = 0,  //当前uin
 		nowPrep = 0, //当前是否是备课
-		rootFd = 0,
+		rootFd = 0,  //根目录id
 		depnum = -1,
 		nowTotal = 0,
 		nowUid = 0,
@@ -2517,10 +2517,14 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		nowType = 0,
 		nowSchool = 0,
 		nowAuth = 0,
+		nowOtype = 'list',
+		inReview = false, //是否在预览中
 		isMember = {},		
+		fileList = {},
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		icoTarget = $("#fileIcoList"),
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),
 		tabletitTarget = $("#tableTit");
@@ -2572,6 +2576,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 	function fileInit(e,d){
 		nowTotal = 0;
 		nextPage = 0;
+		fileList = {};
 		action = 1;
 
 		if(depnum < 0){
@@ -2599,6 +2604,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			nowGroup = d.info || null;
 			nowSchool = d.school || 0;
 			nowAuth = d.auth || 0;
+			nowOtype = d.otype || nowOtype;
 			//rootFd = d.rootfdid || 0;
 		}
 
@@ -2686,9 +2692,25 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		if(nowPrep){
 			pr = nowPrep;
 		}
+
+		for(var i = 0,l=d.list.length;i<l;i++){
+			fileList[d.list[i].id] = d.list[i];
+		}
+
+		if(inReview){
+			returnList();
+		}
+
+		var target = tmpTarget,
+			tplid = 'file.user.list';
+
+		if(nowOtype === 'ico'){
+			target = icoTarget;
+			tplid = 'file.ico';
+		}
 		var view = new View({
-			target : tmpTarget,
-			tplid : 'file.user.list',
+			target : target,
+			tplid : tplid,
 			data : {
 				list : d.list,
 				filetype : config.filetype,
@@ -2774,7 +2796,6 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		if(nowAuth){
 			obj.status = 1;
 		}
-		console.log(obj);
 		handerObj.triggerHandler('file:search',obj);			
 	}
 
@@ -2855,6 +2876,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			}
 			handerObj.triggerHandler('file:checkfold',obj);
 		}else{
+			
 			var view = new View({
 				target : actTarget,
 				tplid : 'del',
@@ -3119,6 +3141,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 				ismember : true
 			}
 		};
+		console.log(obj);
 		var myinfo = Cache.get('myinfo');
 		if(myinfo.dep2key[d.gid]){
 			obj.data.ismember = myinfo.dep2key[d.gid].isMember;
@@ -3175,6 +3198,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		// 		isMember[d.list[i].id] = d.list[i].isMember;
 		// 	}
 		// }
+		console.log(d,d.list);
 		var selected = [];
 		var view = new View({
 			target : actTarget,
@@ -3186,6 +3210,21 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			},
 			after : function(){
 				$("#actWin").modal('show');
+				//拉学校文件夹
+				if(d.type === 'school'){
+						var myinfo = Cache.get('myinfo');
+						var school = myinfo.school;
+						var obj = {
+							target : $('#groupFoldResultUl'),
+							tplid : 'share.fold.li',
+							groupId : school.id,
+							folderId : school.rootFolder.$id,
+							type : 2,
+							root : 1
+						}
+						$('#groupFoldResultUl').html('');
+						handerObj.triggerHandler('fold:get',obj);					
+				}
 
 				$('.act-search-input').focus(function(){
 					var target = $(this),
@@ -3390,6 +3429,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		view.createPanel();
 	};
 
+	//复制文件
 	function fileCopy(e,d){
 		var myinfo = Cache.get('myinfo');
 		var prep = myinfo['prep'];
@@ -3464,6 +3504,18 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		view.createPanel();		
 	}	
 
+	//复制媒体文件
+	function copytoMy(e,d){
+		var myInfo = Cache.get('myinfo');
+		var obj = {
+			fileId : d.fl,
+			targetId : myInfo.rootFolder.id,
+			savetomy : 1
+		}
+		handerObj.triggerHandler('file:savetomy',obj);
+	}	
+
+	//小组保存到个人
 	function fileSave(e,d){
 		var myInfo = Cache.get('myinfo');
 		var obj = {
@@ -3665,12 +3717,29 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		handerObj.triggerHandler('file:edit',d);
 	}	
 
+	//返回列表
+	function returnList(e,d){
+		//console.log(d);
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}
+	}
+
 	var handlers = {
 		//'order:change' : orderChange,
 		'file:sharefoldload' : shareFoldLoad,
 		'recy:recysuc' : recySuc,	
 		'recy:ref' : recyRef,
 		'recy:del' : recyDel,
+		'file:copytomy' : copytoMy,
 		'file:save' : fileSave,	
 		'file:savesuc' : fileSaveSuc,	
 		'file:movesuc' : moveSuc,
@@ -3697,7 +3766,8 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		'page:next' : pageNext,
 		'file:sharesuc' : sharesuc,
 		'file:editmark' : editMark,
-		'file:uploadsuc' : uploadSuc
+		'file:uploadsuc' : uploadSuc,
+		'file:getlist' : returnList
 	}
 
 	for(var i in handlers){
@@ -5691,9 +5761,11 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 		action = 0,//活动状态
 		nextPage = 0,
 		nowTotal = 0,
+		inReview = false,
 		nowCate = 0,//我的贡献 ,1 收件 2 发件
 		nowOrder  = ['createTime',-1],
 		nowOds = '',
+		fileList = {},
 		nowKey = '';
 
 	var tmpTarget = $('#boxTableList'),
@@ -5716,6 +5788,7 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 
 	function init(e,d){
 		tmpTarget.html('');
+		fileList = {};
 
 		nextPage = 0;
 		nowTotal = 0;
@@ -5764,6 +5837,14 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 
 		//nextPage = d.next;
 		nowTotal = d.total;
+		for(var i in d.list){
+			var item = d.list[i];
+			fileList[item.id] = item;
+		}
+
+		if(inReview){
+			returnList();
+		}		
 
 		if($(".file").length < nowTotal){
 			nextPage += 1;
@@ -5824,13 +5905,35 @@ define('view.mail',['config','helper/view','model.mail'],function(config,View){
 		$('.mailsave'+d).remove();
 	}
 
+
+	function getList(d){
+
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}		
+		// handerObj.triggerHandler('review:return',{
+		// 	list : fileList,
+		// 	total : nowTotal,
+		// 	page : nextPage
+		// });		
+	}
+
 	var handlers = {
 		'page:next' : pageNext,
 		'model:change' : modelChange,
 		'mail:init' : init,
 		'mail:get' : mailGet,
 		'mail:load' : load,
-		'mail:savesuc' : saveSuc
+		'mail:savesuc' : saveSuc,
+		'mail:getlist' : getList
 	}
 
 	for(var i in handlers){
@@ -5894,6 +5997,9 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 		nowOrder  = ['createTime',-1], 
 		nowType = 0;
 		nowOds = '',
+		inReview = false,
+		fileList = {},
+		nowTotal = 0;
 		nowKey = '';
 
 	var tmpTarget = $('#boxTableList'),
@@ -5919,6 +6025,9 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 		nowType = d.type;
 		tmpTarget.html('');
 		crTit();
+
+		fileList = {};
+		nowTotal = 0;		
 
 		if(d.order){
 			nowOrder = d.order;
@@ -5948,6 +6057,18 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 
 	function load(e,d){
 		nextPage = d.next;
+
+		nowTotal = d.total;
+		for(var i in d.list){
+			var item = d.list[i];
+				item.id = item.fileid;
+			fileList[item.fileid] = item;
+		}
+
+		if(inReview){
+			returnList();
+		}		
+
 		var view = new View({
 			target : tmpTarget,
 			tplid : 'coll.list',
@@ -5994,11 +6115,32 @@ define('view.coll',['config','helper/view','model.coll'],function(config,View){
 		});		
 	}
 
+	function getList(d){
+
+		if(d){
+			inReview = true;
+			pageNext();
+		}else{
+			inReview = false;
+			handerObj.triggerHandler('review:return',{
+				list : fileList,
+				total : nowTotal,
+				page : nextPage
+			});
+		}		
+		// handerObj.triggerHandler('review:return',{
+		// 	list : fileList,
+		// 	total : nowTotal,
+		// 	page : nextPage
+		// });		
+	}
+
 	var handlers = {
 		'page:next' : pageNext,
 		'model:change' : modelChange,
 		'coll:init' : init,
-		'coll:load' : load
+		'coll:load' : load,
+		'coll:getlist' : getList
 	}
 
 	for(var i in handlers){
@@ -6936,6 +7078,643 @@ define('view.data',['config','cache','helper/view','helper/request','helper/util
 		handerObj.bind(i,handlers[i]);
 	}			
 });
+define('model.review',['config','helper/request','helper/util'],function(config,request,util){
+	var	handerObj = $(Schhandler);
+
+	function getFile(obj,callback){
+		var opt = {
+			cgi : config.cgi.filesearch,
+			data : obj
+		}
+		var success = function(d){
+			if(d.err == 0){
+				if(typeof callback === 'function'){
+					callback(d.result);
+				}else{
+					handerObj.triggerHandler('review:fileload',d.result);
+				}
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);
+	}
+
+	function getMailFile(obj,callback){
+		var opt = {
+			cgi : config.cgi.msgsearch,
+			data : obj
+		}
+		var success = function(d){
+			if(d.err == 0){
+				if(typeof callback === 'function'){
+					callback(d.result);
+				}else{
+					handerObj.triggerHandler('review:fileload',d.result);
+				}
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);		
+	}
+
+	function getCollFile(obj,callback){
+		var opt = {
+			cgi : config.cgi.favsearch,
+			data : d
+		}	
+
+		var success = function(d){
+			if(d.err == 0){
+				if(typeof callback === 'function'){
+					callback(d.result);
+				}else{
+					handerObj.triggerHandler('review:fileload',d.result);
+				}
+			}else{
+				handerObj.triggerHandler('msg:error',d.err);
+			}
+		}
+		request.get(opt,success);
+	}
+
+	return {
+		getfile : getFile,
+		getmailfile : getMailFile,
+		getcollfile : getCollFile
+	}
+});
+define('msg',['config','cache','helper/view'],function(config,Cache,View){
+	var	handerObj = $(Schhandler);
+	var msg = config.msg;
+
+	Messenger().options = {
+	    extraClasses: 'messenger-fixed messenger-on-bottom',
+	    theme: 'flat'
+	}
+
+	var at = 0;
+
+	function showConfig(e,d){
+		if(typeof d === 'undefined'){
+			return;
+		}
+		var obj = {
+			message : d.msg,
+			actions : {
+				sub : {
+					label : d.act.sub.label || '确定',
+					action : function(){
+						d.act.sub.action();
+						msg.hide();
+					}
+				},
+				cancel : {
+					label : d.act.canel.label || '取消',
+					action : function(){
+						msg.hide();
+					}
+				}
+			}
+		}
+		var msg = Messenger().post(obj);
+	}
+
+	function showErr(e,d){
+		if(d == 1001){
+			window.location = config.cgi.gotologin;
+			return;
+		}
+
+		var obj = {
+			'message' : msg[d]
+		}
+		if(parseInt(d)){
+			obj.type = 'error'
+		}
+
+		Messenger().post(obj);	
+	}
+
+	function showMsg(e,d){
+		var obj = {
+			'message' : d.msg
+		}
+		obj.type = d.type;
+
+		Messenger().post(obj);		
+	}
+
+	var handlers = {
+		'msg:error' : showErr,
+		'msg:show' : showMsg,
+		'msg:config' : showConfig
+	}
+
+	for(var i in handlers){
+		handerObj.bind(i,handlers[i]);
+	}	
+});
+require(['config','helper/util','helper/request','helper/view','model.review','msg'], function(config,util,request,View,Review) {
+
+	var handerObj = $(Schhandler);
+	var nowType = null;
+	var isInit = false,
+		isShow = false;
+    var isMove = false; //切换预览
+    var isInit = false; //是否已经初始化		
+	var nowId = null;
+	var nowTotal = 0,
+		nowPage = 0,
+		isLoading = false,
+		nowLength = 0;
+	var nowHeight = 0;
+	var nowType = null;
+	var mail = null,
+		cate = null,
+		coll = null;
+
+	var nowList = {};
+
+	var bgsTarget = $("#reviewBgs"),
+		revTarget = $('#reviewWin'),
+		blockTarget = null,
+		listTarget = null;
+
+    //节流
+    function lockMove(){
+      isMove = true;
+      setTimeout(function(){
+        isMove = false;
+      },500);
+    }
+
+
+	function showTarget(){
+		//revTarget.html('');
+		bgsTarget.show();
+		revTarget.show();
+	}
+
+	function hideTarget(){
+		isShow = false;
+		bgsTarget.hide();
+		revTarget.hide();		
+	}
+
+	function show(e,d){
+		nowHeight = document.body.clientHeight;
+
+		nowId = d.id;
+		nowPage = 0;
+		mail = false;
+		cate = false;
+		coll = false;
+		if(d.type){
+			switch(d.type){
+				case 'mail':
+					mail = true;
+					break;
+				case 'cate':
+					cate = true;
+					break;
+				case 'coll':
+					coll = true;
+					break;
+			}
+			nowType = d.type;
+		}else{
+			nowType = 'file';
+		}
+		nowList = {};
+		showTarget();
+
+		handerObj.triggerHandler(nowType+':getlist');
+	}
+
+	function getIdx(){
+          var t = $("#reviewBlock li");
+          var l = $("#reviewBlock li").length;
+          var idx = 0;
+          $("#reviewBlock li").each(function(i){
+            if($(this).hasClass('selected')){
+              idx = i;
+            }
+          });		
+          return idx;
+	}
+
+	function getNextId(){
+		var idx = getIdx();
+		var list = $("#reviewBlock li");
+		var l = list.length;
+		if(idx < l-1){
+			idx++;
+			return list.eq(idx).attr('data-id');
+		}else{
+			return 0;
+		}
+	}
+
+	function getPrevId(){
+		var idx = getIdx();
+		var list = $("#reviewBlock li");
+		var l = list.length;
+		if(idx > 0){
+			idx--;
+			return list.eq(idx).attr('data-id');
+		}else{
+			return 0;
+		}
+	}
+
+
+    function getFile(id){
+    	var item = nowList[id];
+    	nowId = id;
+		if(item.type === 8){
+			//getFile(nowId);
+	        var to = {};
+	        if(mail){
+	          to.messageId = id;
+	        }else{
+	          to.fileId = id;
+	        }						
+	        $.get(config.cgi.filereview,to,function(d){
+	          item.text = d;
+	          render(item);
+	        },'text');						
+		}else{
+			render(item);			
+		}
+		if(!isShow){
+			renderList();	
+			isShow = true;
+		}
+    }	
+
+    //从各个模块拿到数据了.
+	function listLoad(e,d){
+		isLoading = false;
+		nowList = d.list;   //文件列表
+		nowTotal = d.total; //文件总数
+		nowPage = d.page;  //当前在第几页了.
+		if(isInit){
+			render(nowList[nowId]);
+			renderList();
+			isShow = true;
+		}else{
+			var view = new View({
+				target : revTarget,
+				tplid : 'review.div',
+				after : function(){
+					blockTarget = $('#reviewDiv');
+					listTarget = $('#reviewBlock');
+				
+					$('body').bind('keyup',function(e){
+						if(e.keyCode===27){
+							hideTarget();
+						}
+					});				
+
+					getFile(nowId);
+				},
+				handlers : {
+					'.review-close' : {
+						'click' : function(){
+							hideTarget();
+						}
+					},
+			          '.ar-arrow' : {
+			          	'click' : function(){
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              var id = getNextId();
+			              if(id){
+			              	getFile(id);
+			              	$("#reviewBlock li").removeClass('selected');
+			              	$('#review'+id).addClass('selected');
+			              }else{
+			                  	handerObj.triggerHandler('msg:show',{
+				                    type: 'error',
+				                    msg : '已经是最后文件了!'
+				                });	              		
+			              }
+
+			          	}
+			          },
+			          '.al-arrow' : {
+			          	'click' : function(){
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              var id = getPrevId();
+			              if(id){
+			              	getFile(id);
+			              	$("#reviewBlock li").removeClass('selected');
+			              	$('#review'+id).addClass('selected');
+			              }else{
+			                  	handerObj.triggerHandler('msg:show',{
+				                    type: 'error',
+				                    msg : '已经是第一个文件了!'
+				                });
+			              }	              
+			          	}
+			          },
+			        '.al-arrow-p' : {
+			        	'click' : function(){
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              prevPage();
+			        	}
+			        },
+			        '.ar-arrow-p' : {
+			        	'click' : function(){
+			              if(isMove){
+			                return;
+			              }
+			              lockMove();
+			              nextPage();			        		
+			        	}
+			        }
+				}
+			});
+			view.createPanel();
+		}
+	}
+
+	//下一个文件
+	function nextPage(){
+		if(isLoading){
+          	handerObj.triggerHandler('msg:show',{
+                type: 'error',
+                msg : '正在努力加载中,请稍等!'
+            });	  			
+			return;
+		}
+		//还有下一页数据
+		if(nowLength < nowTotal){
+			isLoading = true;
+			handerObj.triggerHandler(nowType+':getlist',true);
+		//已经有全部数据了.
+		}else{
+			var t = $('#reviewFileList');
+			var w = $('.review-list-block').width();
+
+			var tn = Math.ceil(w/48);
+
+			var rw = t.width();
+			var ml = t.css('marginLeft');
+			ml = parseInt(ml.replace('px',''));
+			if(w<rw){
+				if(ml <= 0 && Math.abs(ml-tn*48)<rw){
+					t.css('marginLeft',ml-tn*48+'px');
+				}else{
+
+				}
+			}
+
+		}
+	}
+
+	//上一个文件
+	function prevPage(){
+		console.log('prev');
+		var t = $('#reviewFileList');
+		var w = $('.review-list-block').width();
+		var rw = t.width();
+		var ml = t.css('marginLeft');
+		ml = parseInt(ml.replace('px',''));
+		if(w<rw){
+			var t = $('#reviewFileList');
+			var w = $('.review-list-block').width();
+
+			var tn = Math.ceil(w/48);
+
+			var rw = t.width();
+			var ml = t.css('marginLeft');
+			ml = parseInt(ml.replace('px',''));
+			console.log(ml,Math.abs(ml-tn*48)<rw);
+			if(ml < -tn*48){
+				t.css('marginLeft',ml+tn*48+'px');
+			}else{
+				t.css('marginLeft','0px');
+			}
+
+		}
+	}
+
+	//计算是否有下一页等等
+	function checkPage(){
+		var w = $('.review-list-block').width();
+		//var nowFileLength = $('#reviewFileList li').length;
+		//if(w>=48*nowLength){
+			var idx = getIdx();
+			if(idx*48>w){
+
+			}else{
+				$('.al-arrow-p').attr('disable','disable');
+				$('.ar-arrow-p').attr('disable','disable');				
+			}
+		// }else{
+		// 	$('.al-arrow-p').attr('disable','disable');
+		// 	$('.ar-arrow-p').attr('disable','disable');
+		// }
+	}
+
+	//生成缩略图列表
+	function renderList(){
+		var handlers = {};
+		if(!isInit){
+			isInit = true;
+			handlers = {
+	          'li' : {
+	            'click': function(e){
+	              if(isMove){
+	                return;
+	              }
+	              lockMove();
+	              var t = $(this);
+	              var id = t.attr('data-id');
+	              if(id){
+	                $("#reviewBlock li").removeClass('selected');
+	                t.addClass('selected');
+	                t.attr('class','selected');
+	                getFile(id);
+	              }
+	            }
+	          }
+			}
+		}
+
+		var view = new View({
+	        tplid : 'review.list',
+	        target : $('#reviewBlock'),
+	        after : function(){
+	          nowLength = $('#reviewFileList li').length;
+	          $('#reviewFileList').width(48*nowLength); 
+	          checkPage();	        	
+	        },
+	        data : {
+	          list : nowList,
+	          id : nowId,
+	          mail : mail  	
+	        },
+	        handlers : handlers
+		});
+		view.createPanel();
+	}
+
+	function change(num){
+		//0 横,1竖
+		var w = $('#reviewImg').width();
+		var h = $('#reviewImg').height();
+		// if(num){
+		// 	$('#reviewImg').width(h);
+		// }else{
+
+		// }
+		// console.log(num%2,$('#reviewImg').width(),$('#reviewImg').height());
+	}
+
+    function render(data){
+      //图片
+      data.mail = mail;
+      var view = new View({
+        target : $('#reviewDiv'),
+        tplid : 'review',
+        after : function(){
+          $('#reviewDiv').height(nowHeight-180);
+          if(data.type == 2){
+              var purl = encodeURIComponent(config.cgi.filereview+'?fileId='+data.id);
+              if(mail){
+                purl = encodeURIComponent(config.cgi.filereview+'?messageId='+data.id)
+              }
+              $('#documentViewer').FlexPaperViewer(
+                { config : {
+                    SWFFile : purl,
+                    jsDirectory : '/js/lib/flex/',
+                    Scale : 0.8,
+                    ZoomTransition : 'easeOut',
+                    ZoomTime : 0.5,
+                    ZoomInterval : 0.2,
+                    FitPageOnLoad : true,
+                    FitWidthOnLoad : false,
+                    FullScreenAsMaxWindow : false,
+                    ProgressiveLoading : false,
+                    MinZoomSize : 0.2,
+                    MaxZoomSize : 5,
+                    SearchMatchAll : false,
+                    InitViewMode : 'Portrait',
+                    RenderingOrder : 'flash',
+                    StartAtPage : '',
+                    ViewModeToolsVisible : true,
+                    ZoomToolsVisible : true,
+                    NavToolsVisible : true,
+                    CursorToolsVisible : true,
+                    SearchToolsVisible : true,
+                    WMode : 'window',
+                    localeChain: 'zh_CN'
+                }}
+              );            
+          }else if(data.type == 1){
+               var num = 0;   
+			/*
+			$('#reviewImg').load(function(e){
+				var obj = e.target;
+				var w = $('body').width(),
+					h = $('body').height();
+				console.log(obj.width,w,obj.height,h);
+				if(obj.width > w){
+					if(obj.width/obj.height > w/h){
+						obj.style.width = '90%';
+					}else{
+						obj.style.height = '90%';
+					}
+				}else if(obj.height > h){
+					if(obj.width/obj.height > w/h){
+						obj.style.width = w*0.8+'px';
+					}else{
+						obj.style.height = h*0.8+'px';
+					}
+				}else{
+					obj.style.marginTop = (h-obj.height)/2+'px';
+				}
+				// if(obj.width >= obj.height){
+				// 	if(obj.width>640){
+				// 		obj.width= 640;
+				// 	}     
+				// 		obj.style.marginTop = (640-obj.height)/2+'px';
+				// }else{
+				// 	if(obj.height>640){
+				// 		obj.height= 640;
+				// 	}   
+				// //obj.style.marginTop = (640-obj.width)/2+'px';
+				// }
+			});
+			*/
+            $('.to-left').bind('click',function(){
+              $('#reviewImg').rotate({
+                angle: (num)*90,
+                animateTo: (num-1)*90,
+              });
+              num--;
+              change(num);
+            });
+            $('.to-right').bind('click',function(){
+            
+              $('#reviewImg').rotate({                          
+                    angle: num*90,
+                    animateTo: (num+1)*90,
+                  });
+              num++;   
+              change(num);  
+            }); 
+            $('.zoom-in').bind('click',function(){
+              $('#reviewImg').css('width',function(i,v){
+                var nv = parseInt(v,10);
+                return nv*0.8;
+              }); 
+            });
+            $('.zoom-out').bind('click',function(){
+              $('#reviewImg').css('width',function(i,v){
+                var nv = parseInt(v,10);
+                return nv*1.2;
+              }); 
+            }); 
+          }
+        },
+        data : {
+          data : data,
+          url : config.cgi.filereview
+        }
+      });
+      view.createPanel();
+    }
+
+	var handlers = {
+		'review:show' : show,
+		'review:return' : listLoad
+	}
+
+	for(var i in handlers){
+		handerObj.bind(i,handlers[i]);
+	}
+	
+	$(window).bind('resize',function(){
+		nowHeight = $('body').height();
+	});
+
+
+});
+define("view.review", function(){});
+
 define('bind',['config'],function(config){
 
 	var	handerObj = $(Schhandler);
@@ -7121,6 +7900,18 @@ define('bind',['config'],function(config){
 			}
 		}
 	}
+
+	$("#listTypeAction").bind('click',function(e){
+		var target = $(e.target),
+			cmd = target.attr('cmd');
+		//列表
+		if(cmd === 'listType'){
+			$("#fileList").attr('class','dis-list-type');
+		//图标
+		}else if (cmd === 'listIco'){
+			$("#fileList").attr('class','dis-ico-type');
+		}
+	});
 
 	$('.btn-newfold').bind('click',function(e){
 		handerObj.triggerHandler('fold:createfold');
@@ -7332,6 +8123,7 @@ define('bind',['config'],function(config){
 		var target = $(e.target),
 			cmd = target.attr('cmd');
 		switch(cmd){	
+
 			case 'rename':
 				renameObj();
 				break;
@@ -7414,6 +8206,15 @@ define('bind',['config'],function(config){
 			file = 1;
 		}
 		switch(cmd){
+			case 'review':
+				var id = target.attr('data-id');
+				var type = target.attr('data-type');
+
+				handerObj.triggerHandler("review:show",{
+					id:id,
+					type : type
+				});
+				break;				
 			case 'other':
 			case 'group':
 			case 'dep':
@@ -7698,77 +8499,6 @@ define('upload',['config','cache'],function(config,Cache){
 	handerObj.bind('upload:param',paramChange);
 	
 });
-define('msg',['config','cache','helper/view'],function(config,Cache,View){
-	var	handerObj = $(Schhandler);
-	var msg = config.msg;
-
-	Messenger().options = {
-	    extraClasses: 'messenger-fixed messenger-on-bottom',
-	    theme: 'flat'
-	}
-
-	var at = 0;
-
-	function showConfig(e,d){
-		if(typeof d === 'undefined'){
-			return;
-		}
-		var obj = {
-			message : d.msg,
-			actions : {
-				sub : {
-					label : d.act.sub.label || '确定',
-					action : function(){
-						d.act.sub.action();
-						msg.hide();
-					}
-				},
-				cancel : {
-					label : d.act.canel.label || '取消',
-					action : function(){
-						msg.hide();
-					}
-				}
-			}
-		}
-		var msg = Messenger().post(obj);
-	}
-
-	function showErr(e,d){
-		if(d == 1001){
-			window.location = config.cgi.gotologin;
-			return;
-		}
-
-		var obj = {
-			'message' : msg[d]
-		}
-		if(parseInt(d)){
-			obj.type = 'error'
-		}
-
-		Messenger().post(obj);	
-	}
-
-	function showMsg(e,d){
-		var obj = {
-			'message' : d.msg
-		}
-		obj.type = d.type;
-
-		Messenger().post(obj);		
-	}
-
-	var handlers = {
-		'msg:error' : showErr,
-		'msg:show' : showMsg,
-		'msg:config' : showConfig
-	}
-
-	for(var i in handlers){
-		handerObj.bind(i,handlers[i]);
-	}	
-});
 ;(function() {
 
   requirejs.config({
@@ -7778,7 +8508,7 @@ define('msg',['config','cache','helper/view'],function(config,Cache,View){
     }    
   });
 
-  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','bind','upload','msg'], function(config,router,util,nav) {
+  require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','view.review','bind','upload','msg'], function(config,router,util,nav) {
   
     var handerObj = $(Schhandler);
     

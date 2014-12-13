@@ -5,7 +5,7 @@
   <meta name="author" content="Xzone" />
   <meta http-equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" />
   <title>教师工作室</title>
-  <link rel="stylesheet" href="css/main.css?t=1405608332070">
+  <link rel="stylesheet" href="css/main.css?t=1418470232919">
 
   <meta property="qc:admins" content="124110632765637457144563757" />
 
@@ -22,6 +22,13 @@
 
 	<div class="mcontainer">
 		<div class="main-section">
+			<div id="listTypeAction">
+				<div data-toggle="dropdown" href="#"><span>列表</span><b class="caret"></b></div>
+				<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">					
+					<li><a cmd="listType"> 列表</a></li>
+					<li><a cmd="listIco" > 缩略图</a></li>
+				</ul>			
+			</div>			
 			<div class="tool-zone fade-in">
 				<div class="btn-zone" id="btnZone">
 					<button class="upload btn btn-primary btn-upload">上传</button>
@@ -65,8 +72,9 @@
 						</ul>						
 					</li>
 					<!--<li class="list-type" id="changeType"><i></i><span>图标</span></li>-->
-				</ul>				
+				</ul>			
 			</div>
+
 			<div id="foldList" class="fold-list" show='0'>
 	
 			</div>
@@ -255,6 +263,9 @@
 		
 	</form>
 	
+	<div id="reviewBgs"></div>
+	<div id="reviewWin"></div>
+
 	<script>
 		window.Schhandler = {};
 		//document.domain = 'codewalle.com';
@@ -263,6 +274,6 @@
 	<script src="js/lib/bootstrap.js"></script>
 	<script src="js/lib/jqlib.js"></script>
 	<script src="js/lib/jqupload.js"></script>
-	<script data-main="js/main.js?t=1405608332069" src="js/lib/require/require.2.1.8.js"></script>
+	<script data-main="js/main.js?t=1418470232919" src="js/lib/require/require.2.1.8.js"></script>
 </body>
 </html>

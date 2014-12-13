@@ -5,15 +5,20 @@
 			<tr class="file file<%+item.id%>" data-id="<?=$item['id']?>">
 					<td width="30"><%if(pr != 'group'){%>	<input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" /><%}%></td>
 					<td>
-						<a  href="/review.html#id=<%+item.id%><%if(gid){%>&gid=<%-gid%><%}%><%if(fdid){%>&fdid=<%-fdid%><%}%><%if(page){%>&page=<%-page%><%}%>&key=<%=key%>&ods=<%=ods%>" target="_blank" class="file-name" data-fid="<%+item.fid%>" data-id="<%+item.id%>">
+						<a class="prev-file file-name" cmd="review" data-fid="<%+item.fid%>" data-id="<%+item.id%>">							
+							<span class="ico-prev ico-prev<%+item.type%>">
 						<%if(item.type<7){%>
 							<i class="icon-type<%+item.type%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
 						<%}else{%>
 							<i class="icon-type" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
 						<%}%>
+							</span>
+						<%if(item.type===1){%>
+							<img class="img-prev" src="/api/file/preview?fileId=<%+item.id%>&size=40_40" />
+						<%}%>
 						</a>
 						<dl>
-							<dt><a href="/review.html#id=<%+item.id%><%if(gid){%>&gid=<%-gid%><%}%><%if(fdid){%>&fdid=<%-fdid%><%}%><%if(page){%>&page=<%-page%><%}%>&key=<%=key%>&ods=<%=ods%>" target="_blank" class="file-name fdname<%+item.id%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
+							<dt><a class="prev-file file-name"  cmd="review" data-fid="<%+item.fid%>" data-id="<%+item.id%>"><%-item.name%></a>
 								<%if(pr != 'group' && !school && (ginfo && ginfo.isMember)){%>
 									<span class="f-mark" cmd="edit" data-id="<%+item.id%>">
 										<%if(item.mark==''){%>

@@ -27,6 +27,13 @@
 
 	<div class="mcontainer">
 		<div class="main-section">
+			<div id="listTypeAction">
+				<div data-toggle="dropdown" href="#"><span>列表</span><b class="caret"></b></div>
+				<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">					
+					<li><a cmd="listType"> 列表</a></li>
+					<li><a cmd="listIco" > 缩略图</a></li>
+				</ul>			
+			</div>			
 			<div class="tool-zone fade-in">
 				<div class="btn-zone" id="btnZone">
 					<button class="upload btn btn-primary btn-upload">上传</button>
@@ -70,8 +77,9 @@
 						</ul>						
 					</li>
 					<!--<li class="list-type" id="changeType"><i></i><span>图标</span></li>-->
-				</ul>				
+				</ul>			
 			</div>
+
 			<div id="foldList" class="fold-list" show='0'>
 	
 			</div>
@@ -262,7 +270,7 @@
 	
 	<div id="reviewBgs"></div>
 	<div id="reviewWin"></div>
-	
+
 	<script>
 		window.Schhandler = {};
 		//document.domain = 'codewalle.com';

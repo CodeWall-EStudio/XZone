@@ -1,3 +1,9 @@
+#listTypeAction{
+	position:absolute;
+	top:88px;
+	right:210px;
+	z-index:100;
+}
 .dis-list-type{
 	width:100%;
 }
@@ -8,6 +14,9 @@
 	/*height:70px;*/
 	border-bottom:1px solid #eee;
 	transition:.25s linear;
+}
+.dis-list-type .img-prev{
+	display:none;
 }
 /*.dis-list-type li.tit{
 	background:#fbfbfb;
@@ -108,6 +117,19 @@
 .dis-list-type dd{
 	position:relative;
 	color:#c5c5c5;
+}
+.dis-ico-type .ico-prev1{
+	display:none;
+}
+.dis-ico-type .img-prev{
+	display:block;
+	width:80px;
+	height:80px;
+}
+.dis-ico-type dl{
+	position: absolute;
+top: 10px;
+left: 100px;
 }
 /*.dis-list-type .td2 dd span{
 	cursor:pointer;
