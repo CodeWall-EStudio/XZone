@@ -785,3 +785,6 @@ strong.bold{
 .log-start-time,.log-end-time{
 	width:120px;
 }
+.appove{
+	display:none;
+}

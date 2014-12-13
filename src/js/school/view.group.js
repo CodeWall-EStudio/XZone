@@ -40,7 +40,8 @@ define(['config','cache','helper/view','helper/util','model.group','view.grouppr
 
 		$("#fileActZone .renamefile").show();
 		$("#fileActZone .delfile").show();
-		$("#fileActZone .movefile").show();		
+		$("#fileActZone .movefile").show();	
+		$("#fileActZone .appove").addClass('hide');
 
 		if(nowGroup.isMember){
 			$("#btnZone").show();

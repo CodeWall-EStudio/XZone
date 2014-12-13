@@ -35,7 +35,8 @@ define(['config','cache','helper/view','helper/util','model.file'],function(conf
 	
 		$("#fileActZone .renamefile").show();
 		$("#fileActZone .delfile").show();
-		$("#fileActZone .movefile").show();			
+		$("#fileActZone .movefile").show();	
+		$("#fileActZone .appove").addClass('hide');			
 		$("#btnZone").show();
 		$('.btn-newfold').show();
 		$('.btn-upload').show();

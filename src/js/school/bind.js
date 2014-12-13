@@ -401,12 +401,40 @@ define(['config'],function(config){
     	}
     }
 
+    //审核问卷
+    function appove(flag){
+    	if($('.table-files .fclick:checked').length > 0){
+			var ids = [];
+			var name = false;
+			$('.table-files .fclick:checked').each(function(){
+				var id = $(this).val();
+				if(!name){
+					name = $.trim($('.file'+id+' a.file-name').text());
+				}
+				ids.push(id);
+			});
+			handerObj.triggerHandler('school:appovemore',{
+				id: ids,
+				name : name,
+				status : flag?1:0
+			})
+    	}else{
+
+    	}
+    }
+
+
     //批量操作按钮
     $('#fileActZone').bind('click',function(e){
 		var target = $(e.target),
 			cmd = target.attr('cmd');
 		switch(cmd){	
-
+			case 'appove':
+				appove(true);
+				break;
+			case 'notappove':
+				appove(false);
+				break;
 			case 'rename':
 				renameObj();
 				break;

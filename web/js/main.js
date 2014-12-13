@@ -114,7 +114,8 @@ define('config',[],function() {
 			mappgroup :　CGI_PATH+'manage/approveGroup'+EXT,
 			mpreplist : CGI_PATH+'manage/listPrepares'+EXT,
 			mnewgroup : CGI_PATH+'manage/createGroup'+EXT,
-			mappfile : CGI_PATH+'manage/approveFile'+EXT,
+			mappfile : CGI_PATH+'manage/batchApproveFiles'+EXT,
+			mapponefile : CGI_PATH+'manage/approveFile'+EXT,
 			mstatic : CGI_PATH+'manage/statistics'+EXT,
 
 			//用户 
@@ -4700,7 +4701,8 @@ define('view.my',['config','cache','helper/view','helper/util','model.file'],fun
 	
 		$("#fileActZone .renamefile").show();
 		$("#fileActZone .delfile").show();
-		$("#fileActZone .movefile").show();			
+		$("#fileActZone .movefile").show();	
+		$("#fileActZone .appove").addClass('hide');			
 		$("#btnZone").show();
 		$('.btn-newfold').show();
 		$('.btn-upload').show();
@@ -5213,7 +5215,8 @@ define('view.group',['config','cache','helper/view','helper/util','model.group',
 
 		$("#fileActZone .renamefile").show();
 		$("#fileActZone .delfile").show();
-		$("#fileActZone .movefile").show();		
+		$("#fileActZone .movefile").show();	
+		$("#fileActZone .appove").addClass('hide');
 
 		if(nowGroup.isMember){
 			$("#btnZone").show();
@@ -6492,13 +6495,14 @@ define('model.school',['config','helper/request','helper/util'],function(config,
 			data : d
 		}
 		var td = d;
+
 		var success = function(d){
 			handerObj.triggerHandler('msg:error',d.err);
 			if(d.err == 0){
 				if(td.fdid){
 					var obj = {
 						targetId : td.fdid,
-						fileId : [td.fileId],
+						fileId : td.fileIds,
 						groupId : td.gid
 					}
 					handerObj.triggerHandler('file:moveto',obj);
@@ -6594,8 +6598,10 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 							$(e.target).addClass('selected');
 							if(cmd=='manage'){
 								d.auth = school.auth;
+								$("#fileActZone .appove").removeClass('hide');
 								nowType = 1;	
 							}else{
+								$("#fileActZone .appove").addClass('hide');
 								d.auth = 0;
 								nowType = 0
 							}
@@ -6652,9 +6658,13 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		handerObj.triggerHandler('fold:init',obj); 
 	}
 
+	function appoveMore(e,d){
+		handerObj.triggerHandler('school:showapv',d);
+	}
+
 	function showApv(e,d){
 		var fold = Cache.get('rootFolder'+nowGid);
-
+		console.log(d);
 		var view = new View({
 			target : actTarget,
 			tplid : 'file.apv',
@@ -6670,8 +6680,12 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			handlers : {
 				'.btn-post' : {
 					'click' : function(){
+						var id = d.id;
+						if(typeof d.id === 'string'){
+							id = [d.id];
+						}
 						var obj = {
-							fileId : d.id,
+							fileIds : id,
 							validateText : actTarget.find('.val-text').val(),
 							validateStatus : d.status
 						}
@@ -6722,14 +6736,18 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 	}
 
 	function apvSuc(e,d){
-		$('.file'+d.fileId).remove();
+		var ids = d.fileIds;
+		for(var i = 0,l=ids.length;i<l;i++){
+			$('.file'+ids[i]).remove();
+		}
 	}
 
 	var handlers = {
 		'school:init' : init,
 		'school:infosuc' : infoSuc,
 		'school:showapv' : showApv,
-		'school:apvsuc' : apvSuc
+		'school:apvsuc' : apvSuc,
+		'school:appovemore' : appoveMore
 	};
 
 	for(var i in handlers){
@@ -8118,12 +8136,40 @@ define('bind',['config'],function(config){
     	}
     }
 
+    //审核问卷
+    function appove(flag){
+    	if($('.table-files .fclick:checked').length > 0){
+			var ids = [];
+			var name = false;
+			$('.table-files .fclick:checked').each(function(){
+				var id = $(this).val();
+				if(!name){
+					name = $.trim($('.file'+id+' a.file-name').text());
+				}
+				ids.push(id);
+			});
+			handerObj.triggerHandler('school:appovemore',{
+				id: ids,
+				name : name,
+				status : flag?1:0
+			})
+    	}else{
+
+    	}
+    }
+
+
     //批量操作按钮
     $('#fileActZone').bind('click',function(e){
 		var target = $(e.target),
 			cmd = target.attr('cmd');
 		switch(cmd){	
-
+			case 'appove':
+				appove(true);
+				break;
+			case 'notappove':
+				appove(false);
+				break;
 			case 'rename':
 				renameObj();
 				break;

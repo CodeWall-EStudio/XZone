@@ -72,8 +72,10 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 							$(e.target).addClass('selected');
 							if(cmd=='manage'){
 								d.auth = school.auth;
+								$("#fileActZone .appove").removeClass('hide');
 								nowType = 1;	
 							}else{
+								$("#fileActZone .appove").addClass('hide');
 								d.auth = 0;
 								nowType = 0
 							}
@@ -130,9 +132,13 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		handerObj.triggerHandler('fold:init',obj); 
 	}
 
+	function appoveMore(e,d){
+		handerObj.triggerHandler('school:showapv',d);
+	}
+
 	function showApv(e,d){
 		var fold = Cache.get('rootFolder'+nowGid);
-
+		console.log(d);
 		var view = new View({
 			target : actTarget,
 			tplid : 'file.apv',
@@ -148,8 +154,12 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			handlers : {
 				'.btn-post' : {
 					'click' : function(){
+						var id = d.id;
+						if(typeof d.id === 'string'){
+							id = [d.id];
+						}
 						var obj = {
-							fileId : d.id,
+							fileIds : id,
 							validateText : actTarget.find('.val-text').val(),
 							validateStatus : d.status
 						}
@@ -200,14 +210,18 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 	}
 
 	function apvSuc(e,d){
-		$('.file'+d.fileId).remove();
+		var ids = d.fileIds;
+		for(var i = 0,l=ids.length;i<l;i++){
+			$('.file'+ids[i]).remove();
+		}
 	}
 
 	var handlers = {
 		'school:init' : init,
 		'school:infosuc' : infoSuc,
 		'school:showapv' : showApv,
-		'school:apvsuc' : apvSuc
+		'school:apvsuc' : apvSuc,
+		'school:appovemore' : appoveMore
 	};
 
 	for(var i in handlers){
