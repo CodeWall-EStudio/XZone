@@ -3142,7 +3142,6 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 				ismember : true
 			}
 		};
-		console.log(obj);
 		var myinfo = Cache.get('myinfo');
 		if(myinfo.dep2key[d.gid]){
 			obj.data.ismember = myinfo.dep2key[d.gid].isMember;
@@ -3199,7 +3198,6 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		// 		isMember[d.list[i].id] = d.list[i].isMember;
 		// 	}
 		// }
-		console.log(d,d.list);
 		var selected = [];
 		var view = new View({
 			target : actTarget,
@@ -3211,6 +3209,7 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 			},
 			after : function(){
 				$("#actWin").modal('show');
+
 				//拉学校文件夹
 				if(d.type === 'school'){
 						var myinfo = Cache.get('myinfo');
@@ -4054,6 +4053,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		nowUid = 0,
 		nowType = 0,
 		nowGrade = 0,
+		nowOtype = 'list',
 		nowTag = 0,	
 		nowPid = 0,	
 		isOpen = 0,
@@ -4063,6 +4063,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		icoTarget = $('#fileIcoList'),
 		foldTarget = $('#foldList'),
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),	
@@ -4078,6 +4079,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			gname : nowGinfo.name || '',
 			school : nowSchool,
 			filetype : config.filetype,
+			otype : nowOtype,
 			root : rootFd,
 			type : nowType,
 			key : nowKey,
@@ -4286,6 +4288,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 
 		// foldTarget.html('')
 		tmpTarget.html('');
+		$("#fileIcoList").html('');
 		nowFdInfo = {};
 		if(d){
 			nowGid = d.gid || 0;
@@ -4296,6 +4299,7 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			nowUid = d.uid || 0;
 			rootFd = d.rootfdid || 0;
 			nowType = d.type;
+			nowOtype = d.otype || nowOtype;
 			if(d.order){
 				nowOrder = d.order;
 			}
@@ -4308,6 +4312,20 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			nowTag = d.tag || 0;
 			nowUid = d.uid || 0;
 			nowPid = d.pid || 0;						
+		}
+
+		if(nowOtype === 'list'){
+			$('#fileInfoTable').show();
+			$("#fileIcoList").hide();
+		}else{
+			$('#fileInfoTable').hide();
+			$("#fileIcoList").show();			
+		}
+
+		if(nowOtype === 'ico'){
+			$('#fileList').attr('class','dis-ico-type');
+		}else{
+			$('#fileList').attr('class','dis-list-type');
 		}
 
 		if(nowGid && !nowFd || (typeof nowData.now !== 'undefined' && !nowData.now)){
@@ -4368,7 +4386,9 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		// 		handerObj.triggerHandler('fold:get',o1);
 		// 	};
 		// }
-
+		
+		obj.order = nowOds; 
+		// console.log(obj,nowOrder,nowOds);	
 		if(nowKey == ''){
 			handerObj.triggerHandler('fold:get',obj);
 		}else{
@@ -4377,10 +4397,18 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		}
 	}
 
+	//取一个文件夹的信息
 	function foldOne(e,d){
-
 		if(d.isOpen){
 			nowData.open = 1;
+		}
+
+		//type1 新媒体
+
+		if(d.type === 1){
+			handerObj.triggerHandler('bind:swall',1);
+		}else{
+			handerObj.triggerHandler('bind:swall',0);
 		}
 		if(nowData.info){
 			handerObj.triggerHandler('file:init',nowData);
@@ -4410,6 +4438,9 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
             	//新建文件夹
                 if(d.pid == rootFd){
                 	var fl = Cache.get('myfold');
+                	if(!fl){
+                		fl = [];
+                	}
                 	fl.push(d.list[0]);
                 	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'myfold',data:fl});                	
@@ -4478,9 +4509,19 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		if(nowPrep){
 			pr = nowPrep;
 		}
+		//console.log(d.list);
+
+		var target = tmpTarget,
+			tplid = 'fold.user.list';
+
+		if(nowOtype === 'ico'){
+			target = icoTarget;
+			tplid = 'fold.ico';
+		}
+
 		var view = new View({
-			target : tmpTarget,
-			tplid : 'fold.user.list',
+			target : target,
+			tplid : tplid,
 			data : {
 				list : d.list,
 				gid : nowGid,
@@ -4492,7 +4533,8 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 				ginfo : nowGinfo,
 				auth : nowAuth,
 				tag : nowTag,
-				uid : nowUid
+				uid : nowUid,
+				fdid : nowFd
 			}
 		});
 		view.beginPanel();		
@@ -4525,6 +4567,8 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 			order : nowOds			
 		}
 
+
+
 		if(nowGid){
 			data.groupId = nowGid;
 		}
@@ -4534,8 +4578,6 @@ define('view.fold',['config','helper/view','cache','model.fold'],function(config
 		if(nowUid){
 			data.creatorId = nowUid;
 		}
-		//console.log(data);
-		
 		handerObj.triggerHandler('fold:search',data);			
 	}	
 
@@ -6531,6 +6573,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
 		nowKey = '',
+		nowOtype = 'list',
 		nowUid = 0,
 		nowType = 0,
 		rootFd = 0;
@@ -6550,6 +6593,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		userPrepAsideTarget.hide();
 		groupPrepAsideTarget.hide();
 
+		nowOtype = d.otype || nowOtype;
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
 
@@ -6652,6 +6696,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			gid : nowGid,
 			fdid : nowFd,
 			uid : nowUid,
+			otype : nowOtype,
 			order : nowOrder,
 			info : d
 		}
@@ -8562,11 +8607,13 @@ define('upload',['config','cache'],function(config,Cache){
   });
 
   require(['config','helper/router','helper/util','view.nav','view.file','view.fold','view.my','view.group','view.mail','view.coll','view.prep','view.recy','view.share','view.school','view.log','view.data','view.review','bind','upload','msg'], function(config,router,util,nav) {
-  
+
     var handerObj = $(Schhandler);
+
     
     if(!util.getCookie('skey')){
-      window.location = config.cgi.gotologin;
+      //window.location = config.cgi.gotologin;
+      handerObj.triggerHandler('nav:showlogin');
       return;
     }
 
@@ -8704,6 +8751,7 @@ define('upload',['config','cache'],function(config,Cache){
     var opt = {
       routes : {
         "mailbox=:id" : 'mailbox',
+        "act=:act" : 'review',
         'mycoll=:id' : 'coll',
         'myshare' : 'share',
         'myrecy=:id' : 'recy',
@@ -8720,19 +8768,26 @@ define('upload',['config','cache'],function(config,Cache){
         "" : 'myFile', // 无hash的情况，首页
         "fdid=:id" : 'myFile'
       },
+      review : function(data){
+        console.log(data);
+      },
       school : function(data){
         showModel('school');
         var gid = data.gid,
             uid = data.uid || 0,
-            fdid = data.fdid || 0;
+            fdid = data.fdid || 0,
+            otype = data.otype;
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
+            manage = data.manage || 0,
             type = data.type || 0;
         var d = {
           uid : uid,
           fdid : fdid,
-          type : type
+          type : type,
+          manage : manage,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -8741,8 +8796,8 @@ define('upload',['config','cache'],function(config,Cache){
           d.key = key;
         }  
         handerObj.triggerHandler('page:change'); 
-        handerObj.triggerHandler('school:init',d); 
-        handerObj.triggerHandler('bind:prep',0);              
+        handerObj.triggerHandler('school:init',d);              
+        handerObj.triggerHandler('bind:prep',0);
       },
       mailbox : function(data){
         showModel('mailbox');
@@ -8840,7 +8895,9 @@ define('upload',['config','cache'],function(config,Cache){
 
         var gid = data.gid,
             uid = data.uid || 0,
-            fdid = data.fdid || 0;
+            fdid = data.fdid || 0,
+            otype = data.otype;// || 'list';
+
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
@@ -8849,7 +8906,8 @@ define('upload',['config','cache'],function(config,Cache){
           gid : gid,
           uid : uid,
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];
@@ -8875,10 +8933,13 @@ define('upload',['config','cache'],function(config,Cache){
         var od = parseInt(data.od) || 0,
             on = data.on || 0,
             key = data.key || 0,
-            type = data.type || 0;
+            type = data.type || 0,
+            otype = data.otype;// || 'list';
+
         var d = {
           fdid : fdid,
-          type : type
+          type : type,
+          otype : otype
         }
         if(Math.abs(od)){
           d.order = [on,od];

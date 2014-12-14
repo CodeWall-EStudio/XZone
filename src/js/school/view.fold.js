@@ -18,6 +18,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		nowUid = 0,
 		nowType = 0,
 		nowGrade = 0,
+		nowOtype = 'list',
 		nowTag = 0,	
 		nowPid = 0,	
 		isOpen = 0,
@@ -27,6 +28,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		nextPage = 0;
 
 	var tmpTarget = $("#fileInfoList"),
+		icoTarget = $('#fileIcoList'),
 		foldTarget = $('#foldList'),
 		actTarget = $('#actWinZone'),
 		actWin = $('#actWin'),	
@@ -42,6 +44,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			gname : nowGinfo.name || '',
 			school : nowSchool,
 			filetype : config.filetype,
+			otype : nowOtype,
 			root : rootFd,
 			type : nowType,
 			key : nowKey,
@@ -250,6 +253,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 
 		// foldTarget.html('')
 		tmpTarget.html('');
+		$("#fileIcoList").html('');
 		nowFdInfo = {};
 		if(d){
 			nowGid = d.gid || 0;
@@ -260,6 +264,7 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			nowUid = d.uid || 0;
 			rootFd = d.rootfdid || 0;
 			nowType = d.type;
+			nowOtype = d.otype || nowOtype;
 			if(d.order){
 				nowOrder = d.order;
 			}
@@ -272,6 +277,20 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			nowTag = d.tag || 0;
 			nowUid = d.uid || 0;
 			nowPid = d.pid || 0;						
+		}
+
+		if(nowOtype === 'list'){
+			$('#fileInfoTable').show();
+			$("#fileIcoList").hide();
+		}else{
+			$('#fileInfoTable').hide();
+			$("#fileIcoList").show();			
+		}
+
+		if(nowOtype === 'ico'){
+			$('#fileList').attr('class','dis-ico-type');
+		}else{
+			$('#fileList').attr('class','dis-list-type');
 		}
 
 		if(nowGid && !nowFd || (typeof nowData.now !== 'undefined' && !nowData.now)){
@@ -332,7 +351,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		// 		handerObj.triggerHandler('fold:get',o1);
 		// 	};
 		// }
-
+		
+		obj.order = nowOds; 
+		// console.log(obj,nowOrder,nowOds);	
 		if(nowKey == ''){
 			handerObj.triggerHandler('fold:get',obj);
 		}else{
@@ -341,10 +362,18 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		}
 	}
 
+	//取一个文件夹的信息
 	function foldOne(e,d){
-
 		if(d.isOpen){
 			nowData.open = 1;
+		}
+
+		//type1 新媒体
+
+		if(d.type === 1){
+			handerObj.triggerHandler('bind:swall',1);
+		}else{
+			handerObj.triggerHandler('bind:swall',0);
 		}
 		if(nowData.info){
 			handerObj.triggerHandler('file:init',nowData);
@@ -374,6 +403,9 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
             	//新建文件夹
                 if(d.pid == rootFd){
                 	var fl = Cache.get('myfold');
+                	if(!fl){
+                		fl = [];
+                	}
                 	fl.push(d.list[0]);
                 	makeTree(fl,foldTarget,nowFd);
 					handerObj.triggerHandler('cache:set',{key: 'myfold',data:fl});                	
@@ -442,9 +474,19 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(nowPrep){
 			pr = nowPrep;
 		}
+		//console.log(d.list);
+
+		var target = tmpTarget,
+			tplid = 'fold.user.list';
+
+		if(nowOtype === 'ico'){
+			target = icoTarget;
+			tplid = 'fold.ico';
+		}
+
 		var view = new View({
-			target : tmpTarget,
-			tplid : 'fold.user.list',
+			target : target,
+			tplid : tplid,
 			data : {
 				list : d.list,
 				gid : nowGid,
@@ -456,7 +498,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 				ginfo : nowGinfo,
 				auth : nowAuth,
 				tag : nowTag,
-				uid : nowUid
+				uid : nowUid,
+				fdid : nowFd
 			}
 		});
 		view.beginPanel();		
@@ -489,6 +532,8 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 			order : nowOds			
 		}
 
+
+
 		if(nowGid){
 			data.groupId = nowGid;
 		}
@@ -498,8 +543,6 @@ define(['config','helper/view','cache','model.fold'],function(config,View,Cache)
 		if(nowUid){
 			data.creatorId = nowUid;
 		}
-		//console.log(data);
-		
 		handerObj.triggerHandler('fold:search',data);			
 	}	
 

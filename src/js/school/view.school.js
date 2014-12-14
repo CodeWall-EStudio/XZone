@@ -5,6 +5,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		nowFd = 0,
 		nowOrder  = ['createTime',-1],
 		nowKey = '',
+		nowOtype = 'list',
 		nowUid = 0,
 		nowType = 0,
 		rootFd = 0;
@@ -24,6 +25,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		userPrepAsideTarget.hide();
 		groupPrepAsideTarget.hide();
 
+		nowOtype = d.otype || nowOtype;
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
 
@@ -126,6 +128,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			gid : nowGid,
 			fdid : nowFd,
 			uid : nowUid,
+			otype : nowOtype,
 			order : nowOrder,
 			info : d
 		}

@@ -27,13 +27,7 @@
 
 	<div class="mcontainer">
 		<div class="main-section">
-			<div id="listTypeAction">
-				<div data-toggle="dropdown" href="#"><span>列表</span><b class="caret"></b></div>
-				<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">					
-					<li><a cmd="listType"> 列表</a></li>
-					<li><a cmd="listIco" > 缩略图</a></li>
-				</ul>			
-			</div>			
+		
 			<div class="tool-zone fade-in">
 				<div class="btn-zone" id="btnZone">
 					<button class="upload btn btn-primary btn-upload">上传</button>
@@ -92,10 +86,12 @@
 					
 				</div>
 				<div class="listDiv">
-				<table width="100%"  class="table table-striped table-hover table-list table-files">
+				<table width="100%" id="fileInfoTable" class="table table-striped table-hover table-list table-files">
 					<tbody id="fileInfoList">
 					</tbody>
-				</table>	
+				</table>
+				<div id="foldIcoList"></div>
+				<ul id="fileIcoList" class="table-list table-files"></ul>
 				<div id="pageZone" class="page-div">
 
 				</div>
