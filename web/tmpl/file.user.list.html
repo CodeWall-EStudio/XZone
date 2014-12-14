@@ -6,15 +6,10 @@
 					<td width="30"><%if(pr != 'group'){%>	<input type="checkbox" name="file" class="fclick liclick" value="<%+item.id%>"  data-fid="<%+item.fid%>" data-type="file" /><%}%></td>
 					<td>
 						<a class="prev-file file-name" cmd="review" data-fid="<%+item.fid%>" data-id="<%+item.id%>">							
-							<span class="ico-prev ico-prev<%+item.type%>">
 						<%if(item.type<7){%>
 							<i class="icon-type<%+item.type%>" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
 						<%}else{%>
 							<i class="icon-type" data-fid="<%+item.fid%>" data-id="<%+item.id%>"></i>
-						<%}%>
-							</span>
-						<%if(item.type===1){%>
-							<img class="img-prev" src="/api/file/preview?fileId=<%+item.id%>&size=40_40" />
 						<%}%>
 						</a>
 						<dl>
