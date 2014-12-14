@@ -3,7 +3,12 @@
 					<h4 class="modal-title">审核文件</h4>
 				</div>
 				<div class="modal-body">
-					<div style="padding:4px;">文件: <%-name%></div>
+					<div style="padding:4px;">
+						文件: <%-name%> 
+						<%if(typeof id !== 'string' && id.length > 1){%>
+							等<%=id.length%>个文件
+						<%}%>
+					</div>
 					<div style="padding:4px;">
 						审核评价: <input class="val-text" type="text" value="" />
 					</div>

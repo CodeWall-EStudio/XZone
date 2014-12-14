@@ -138,12 +138,12 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 
 	function showApv(e,d){
 		var fold = Cache.get('rootFolder'+nowGid);
-		console.log(d);
 		var view = new View({
 			target : actTarget,
 			tplid : 'file.apv',
 			data : {
 				name : d.name,
+				id : d.id,
 				fold : fold,
 				gid : nowGid,
 				status : d.status

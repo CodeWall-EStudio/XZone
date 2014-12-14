@@ -6664,12 +6664,12 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 
 	function showApv(e,d){
 		var fold = Cache.get('rootFolder'+nowGid);
-		console.log(d);
 		var view = new View({
 			target : actTarget,
 			tplid : 'file.apv',
 			data : {
 				name : d.name,
+				id : d.id,
 				fold : fold,
 				gid : nowGid,
 				status : d.status
@@ -8030,6 +8030,11 @@ define('bind',['config'],function(config){
 	    	$('#fileActZone .collfile').show();
 	    	$('#fileActZone .renamefile').show();
 	    }
+	    if(l === 0){
+	    	$("#fileActZone .appove").addClass('hide');
+	    }else if(nowAuth){
+	    	$("#fileActZone .appove").removeClass('hide');
+	    }
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
@@ -8058,6 +8063,8 @@ define('bind',['config'],function(config){
     	// $('#fileList .fclick:checked').each(function(){
     	// 	$(this).attr('checked',false);
     	// });
+
+		$("#fileActZone .appove").addClass('hide');
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');

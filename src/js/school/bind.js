@@ -295,6 +295,11 @@ define(['config'],function(config){
 	    	$('#fileActZone .collfile').show();
 	    	$('#fileActZone .renamefile').show();
 	    }
+	    if(l === 0){
+	    	$("#fileActZone .appove").addClass('hide');
+	    }else if(nowAuth){
+	    	$("#fileActZone .appove").removeClass('hide');
+	    }
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
@@ -323,6 +328,8 @@ define(['config'],function(config){
     	// $('#fileList .fclick:checked').each(function(){
     	// 	$(this).attr('checked',false);
     	// });
+
+		$("#fileActZone .appove").addClass('hide');
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
