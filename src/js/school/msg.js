@@ -35,6 +35,7 @@ define(['config','cache','helper/view'],function(config,Cache,View){
 	}
 
 	function showErr(e,d){
+		
 		if(d == 1001){
 			window.location = config.cgi.gotologin;
 			return;
@@ -51,6 +52,7 @@ define(['config','cache','helper/view'],function(config,Cache,View){
 	}
 
 	function showMsg(e,d){
+
 		var obj = {
 			'message' : d.msg
 		}
