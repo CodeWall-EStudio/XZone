@@ -2584,7 +2584,6 @@ define('view.file',['config','helper/view','cache','helper/util','model.file'],f
 		nextPage = 0;
 		fileList = {};
 		action = 1;
-
 		if(depnum < 0){
 			var myInfo = Cache.get('myinfo');
 			depnum = myInfo.dep.length;
@@ -6597,7 +6596,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 		userAsideTarget.hide();
 		userPrepAsideTarget.hide();
 		groupPrepAsideTarget.hide();
-
+		nowKey = d.key ||'';
 		nowOtype = d.otype || nowOtype;
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
@@ -6703,6 +6702,7 @@ define('view.school',['config','helper/view','cache','helper/util','model.school
 			uid : nowUid,
 			otype : nowOtype,
 			order : nowOrder,
+			key : nowKey,
 			info : d
 		}
 		handerObj.triggerHandler('fold:init',obj); 

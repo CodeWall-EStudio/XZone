@@ -82,7 +82,6 @@ define(['config','helper/view','cache','helper/util','model.file'],function(conf
 		nextPage = 0;
 		fileList = {};
 		action = 1;
-
 		if(depnum < 0){
 			var myInfo = Cache.get('myinfo');
 			depnum = myInfo.dep.length;

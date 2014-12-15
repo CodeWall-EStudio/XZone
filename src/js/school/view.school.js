@@ -24,7 +24,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 		userAsideTarget.hide();
 		userPrepAsideTarget.hide();
 		groupPrepAsideTarget.hide();
-
+		nowKey = d.key ||'';
 		nowOtype = d.otype || nowOtype;
 		var myinfo = Cache.get('myinfo');
 		var school = myinfo.school;
@@ -130,6 +130,7 @@ define(['config','helper/view','cache','helper/util','model.school'],function(co
 			uid : nowUid,
 			otype : nowOtype,
 			order : nowOrder,
+			key : nowKey,
 			info : d
 		}
 		handerObj.triggerHandler('fold:init',obj); 
