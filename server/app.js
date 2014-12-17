@@ -11,8 +11,6 @@ var path = require('path');
 var config = require('./config');
 var routes = require('./routes');
 var Logger = require('./logger');
-var loginApi = require('./api/login');
-
 
 var app = express();
 
@@ -34,7 +32,7 @@ var mainDomain = '.' + config.APP_DOMAIN.split('.').slice(1).join('.');
 app.use(express.session({
     // key: 'sid',
     secret: config.COOKIE_SECRET,
-    cookie: { maxAge:  config.COOKIE_TIME, httpOnly: true/*, domain: mainDomain */}, // 2 hour
+    cookie: { maxAge:  config.COOKIE_TIME, httpOnly: true, domain: mainDomain }, // 2 hour
     store: new MongoStore({
         url: config.DB_URI
     }, function () {
@@ -58,12 +56,8 @@ app.all('/*', routes.setXHR2Headers);
 app.all('/api/file/upload', routes.mediaUpload);
 app.all('/download', routes.mediaDownload);
 
-app.post('/api/user/login', loginApi.post);
-app.get('/api/user/gotoLogin', loginApi.get);
-app.get('/api/user/logoff', loginApi.logoff);
-
 // 检查是否登录, 如果登录了, 从数据库把用户信息找出; 没有登录则返回错误
-app.all('/api/*', loginApi.checkLogin);
+app.all('/api/*', routes.checkAuth);
 
 // 检查参数合法性
 app.all('/api/*', routes.checkParams);

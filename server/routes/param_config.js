@@ -644,6 +644,26 @@ module.exports = {
         params: []
     },
 
+    '/api/user/login': {
+        method: 'POST',
+        params: [
+            {
+                name: 'name',
+                type: 'string',
+                required: true
+            },
+            {
+                name: 'pwd',
+                type: 'string',
+                required: true
+            },
+            {
+                name: 'json',
+                type: 'boolean'
+            }
+        ]
+    },
+
     '/api/user/info': {
         method: 'GET',
         params: [
@@ -669,6 +689,29 @@ module.exports = {
         params: [
             {
                 name: 'skey'
+            }
+        ]
+    },
+
+    '/api/user/loginSuccess': {
+        method: 'GET',
+        params: [
+            {
+                name: 'ticket',
+                required: true
+            }
+        ]
+    },
+    '/api/user/loginSuccessWithQQ': {
+        method: 'GET',
+        params: [
+            {
+                name: 'code',
+                required: true
+            },
+            {
+                name: 'state',
+                required: true
             }
         ]
     },
