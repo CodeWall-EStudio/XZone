@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="author" content="Xzone" />
+  <meta http-equiv = "X-UA-Compatible" content = "IE=edge,chrome=1" />
+  <title>教师工作室</title>
+  <link rel="stylesheet" href="css/main.css?t=1421555544285">
+
+  <meta property="qc:admins" content="124110632765637457144563757" />
+
+</head>
+<body>
+	<div id="header" class="header">
+		<div id="pageNav">
+			<i class="logo"></i>
+			<div class="userinfo">
+
+			</div>
+		</div>
+	</div>
+
+	<div class="mcontainer">
+		<div class="main-section">
+		
+			<div class="tool-zone fade-in">
+				<div class="btn-zone" id="btnZone">
+					<button class="upload btn btn-primary btn-upload">上传</button>
+					<button class="btn btn-default btn-newfold">新建文件夹</button>
+				</div>
+
+				<div class="search-zone" id="searchZone">
+					<input type="text" name="key" value="搜索文件" data-def="搜索文件" id="searchKey" class="search-key" />
+					<input type="hidden" class="fid" name="fid" value="" />
+					<input type="hidden" class="gid" name="gid" value="" />
+					<button type="button" class="search-btn"></button>
+				</div>
+			</div>
+
+			<div class="file-act-zone fade-in bs-callout bs-callout-warning hide" id="fileActZone">
+				<ul class="nav nav-pills">
+					<li class="sharefile">
+						<a data-toggle="dropdown">共享<span class="caret"></span></a>
+						<ul id="actDropDown" class="dropdown-menu menu" role="menu" aria-labelledby="dLabel">
+							<li><a cmd="other">发送给别人</a></li>
+							<li><a cmd="group">发送到小组</a></li>
+							<li class="dep"><a cmd="dep">提交到部门</a></li>
+							<li><a cmd="school">提交到学校</a></li>
+						</ul>						
+					</li>
+					<li class="downfile"><a cmd="downfile" id="donwFiles">下载</a></li>
+					<li class="renamefile" id="renameAct"><a cmd="rename">重命名</a></li>
+					<li class="copyfile"><a cmd="copy">复制到备课</a></li>
+					<li class="movefile"><a cmd="move">移动文件</a></li>
+					<li class="delfile"><a cmd="del">删除</a></li>
+					<li class="cancel"><a cmd="cancel">取消</a></li>
+					<li class="appove hide"><a cmd="appove">审核通过</a></li>
+					<li class="appove hide"><a cmd="notappove">审核不通过</a></li>
+				</ul>
+			</div>		
+			<div class="section-tit" id="sectionTit">
+
+				<ul class="act-zone">
+					<li class="all-file file-type dropdown" id="changeFileType">
+						<a id="drop-type" "button" data-toggle="dropdown" href="#">全部类型
+						<b class="caret"></b></a>
+						<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+						</ul>						
+					</li>
+					<!--<li class="list-type" id="changeType"><i></i><span>图标</span></li>-->
+				</ul>			
+			</div>
+
+			<div id="foldList" class="fold-list" show='0'>
+	
+			</div>
+
+
+			<div id="fileList" class="dis-list-type">
+				<div id="tableTit" class="table-order">
+					
+				</div>
+				<div class="listDiv">
+				<table width="100%" id="fileInfoTable" class="table table-striped table-hover table-list table-files">
+					<tbody id="fileInfoList">
+					</tbody>
+				</table>
+				<div id="foldIcoList"></div>
+				<ul id="fileIcoList" class="table-list table-files"></ul>
+				<div id="pageZone" class="page-div">
+
+				</div>
+				</div>
+			</div>
+
+			<div id="boxList">
+				<div id="boxtableTit" class="table-order">
+					
+				</div>	
+				<div class="listDiv">			
+					<table width="100%"  class="table table-striped table-hover table-list">
+						<tbody id="boxTableList">
+						</tbody>
+					</table>
+					<div class="page-div" id="boxpageZone">
+
+					</div>
+				</div>				
+			</div>
+
+			<div id="logBlock" style="display:none">
+				<div class="log-tit">
+					<div class="lv">
+						筛选类型：<a id="logType" data-type="0" data-toggle="dropdown">全部</a>
+						<ul class="dropdown-menu section-tit-menu1" aria-labelledby="drop-type">
+							<li data-type="0">全部</li>
+							<li data-type="1">上传</li>
+							<li data-type="2">下载</li>
+							<li data-type="3">复制</li>
+							<li data-type="4">移动</li>
+							<li data-type="5">修改</li>
+							<li data-type="6">删除</li>
+							<li data-type="7">预览</li>
+							<li data-type="8">保存</li>
+							<li data-type="9">分享给用户</li>
+							<li data-type="10">分享给小组</li>
+							<li data-type="11">移动到回收站</li>
+							<li data-type="12">创建文件夹</li>				
+						</ul>
+					</div>
+					<div class="lv">
+						<select id="logGroupType">
+							<option value="-1">全部</option>
+							<option value="1">小组</option>
+							<option value="2">部门</option>
+							<option value="3">备课</option>
+							<option value="0">学校</option>
+						</select>
+					</div>					
+					<div class="lv">
+						开始时间 : <input type="text" class="log-start-time"  />
+					</div>
+					<div class="lv">
+						结束时间 : <input type="text" class="log-end-time"  />
+					</div>
+					<div class="lv">
+						<input type="text" id="logSearchKey" placeholder="搜索文件名" />
+					</div>					
+					<div class="lv">
+						<button class="btn btn-primary btn-log-search">开始搜索</button>
+					</div>
+				</div>				
+				<table class="table table-striped table-hover table-list" width="100%">
+					<tr>
+						<th>名称</th>
+						<th width="90">类型</th>
+						<th width="90">大小</th>
+						<th width="140">日志类型</th>
+						<th width="90">来源</th>
+						<th width="90">源位置</th>
+						<th width="90">目标位置</th>
+						<th width="120">操作时间</th>
+					</tr>
+					<tbody id="logList">
+					</tbody>
+				</table>	
+				<div class="next-log-page">
+					点击加载更多
+				</div>							
+			</div>
+
+			<div id="dataBlock" style="display:none">
+				<h3>按文件大小</h3>
+				<div id="dataPre">
+					
+				</div>	
+				<h3>按文件数量</h3>
+				<div id="dataPre1">
+					
+				</div>					
+				<div id="dataTable">
+				</div>							
+			</div>			
+
+			<div id="boardBox">
+
+			</div>
+
+			<div id="shareBox">
+
+			</div>
+
+		</div>
+
+		<div class="aside" id="aside">
+			<div id="userAside" class="aside-divs"></div>
+			<div id="userPrepAside" class="aside-divs"></div>
+			<div id="groupAside" class="aside-divs"></div>
+			<div id="groupPrepAside" class="aside-divs"></div>
+			<div id="userInfoAside" class="userinfo"></div>
+		</div>
+
+		<div class="clear"></div>	
+	</div>
+
+	<div id="newFold" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+					<h4 class="modal-title">新建文件夹</h4>
+				</div>
+				<form class="new-fold" id="newFolds" method="get">
+					<div class="modal-body">
+						<label>文件夹名称：</label><input id="foldname" maxlength="20" name="foldname" type="text" style="width:80%" />
+						<input type="hidden" class="parentid" name="parentid" value="<?=$fid?>" />
+						<div class="open-fold hide">
+							<input type="checkbox" name="open" class="check-open" value="1" />公开文件夹
+						</div>
+						<div class="read-fold hide">
+							<input type="radio" name="read" class="check-read" value="1" />只读
+							<input type="radio" name="read" class="check-read" value="0" />读写
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="submit" class="btn btn-primary btn-new-fold">确定</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					</div>
+				</from>
+			</div>
+		</div>
+	</div>
+
+	<div id="actWin" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content" id="actWinZone">
+			
+			</div>
+		</div>
+	</div>	
+
+	<div id="uploadFile" class="upload-win" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close close-upload" data-dismiss="modal" aria-hidden="true" cmd="close">&times;</button>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true" cmd="min">-</button>
+					<h4 class="modal-title">上传文件</h4>
+				</div>
+				<div class="modal-body">
+	
+					<div id="uploader">
+						<p>Your browser doesn't have Flash, Silverlight or HTML5 support.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>	
+
+	<form action="/api/file/batchDownload" target="_blank" method="post" id="downloadForm" class="hide">
+		
+	</form>
+	
+	<div id="reviewBgs"></div>
+	<div id="reviewWin"></div>
+
+	<script>
+		window.Schhandler = {};
+		//document.domain = 'codewalle.com';
+	</script>
+	<script src="/js/lib/jquery/jquery-1.8.3.js"></script>
+	<script src="js/lib/bootstrap.js"></script>
+	<script src="js/lib/jqlib.js"></script>
+	<script src="js/lib/jqupload.js"></script>
+	  <script src="js/lib/reviewlib.js"></script>
+	<script data-main="js/main.js?t=1421555544285" src="js/lib/require/require.2.1.8.js"></script>
+</body>
+</html>
