@@ -3798,7 +3798,9 @@ define('model.fold',['config','helper/request','helper/util','cache'],function(c
 				read : item.isReadonly || 0,
 				pid : item.parent.$id,
 				tid : item.top.$id,
-				idpath : item.idpath
+				idpath : item.idpath,
+				type : item.type,
+				candel : item.deletable
 			})
 		}
 		return list;
@@ -3818,6 +3820,7 @@ define('model.fold',['config','helper/request','helper/util','cache'],function(c
 			t.pid = 0;
 			t.pname = '';
 		}
+		t.type = data.deletable?0:1;
 		if(data.top){
 			t.tid = data.top._id;
 			t.tname = data.top.name;
@@ -7797,6 +7800,7 @@ define('bind',['config'],function(config){
 		nowSchool = 0,
 		isMember = 0,
 		nowAuth = 0,
+		isSwall = 0,
 		nowPage = 'user';
 
     $("#newFolds").validate({
@@ -8082,6 +8086,25 @@ define('bind',['config'],function(config){
 	    	$('#fileActZone .collfile').show();
 	    	$('#fileActZone .renamefile').show();
 	    }
+    	if(isSwall){
+	    	$('#fileActZone .collfile').hide();
+	    	$('#fileActZone .renamefile').hide();
+	    	$('#fileActZone .copyfile').hide();
+	    	$('#fileActZone .movefile').hide();
+	    	$('#fileActZone .delfile').hide();
+	    	if(!n){
+	    		$('#fileActZone .copytomy').removeClass('hide');
+	    	}else{
+	    		$('#fileActZone .copytomy').addClass('hide');	   
+	    	}
+    	}else{
+	    	$('#fileActZone .collfile').show();
+	    	$('#fileActZone .renamefile').show();	 
+	    	$('#fileActZone .copyfile').show();
+	    	$('#fileActZone .delfile').show();	
+	    	$('#fileActZone .movefile').show();
+	    	$('#fileActZone .copytomy').addClass('hide');	    	   		
+    	}	    
 	    if(l === 0){
 	    	$("#fileActZone .appove").addClass('hide');
 	    }else if(nowAuth){
@@ -8112,11 +8135,26 @@ define('bind',['config'],function(config){
     var checkFoldAct = function(){
     	var l = $('.table-files .fclick:checked').length;
     	var n = $('.table-files .fdclick:checked').length;
+    	var m = $('.table-files .mclick:checked').length;
     	// $('#fileList .fclick:checked').each(function(){
     	// 	$(this).attr('checked',false);
     	// });
 
 		$("#fileActZone .appove").addClass('hide');
+		if(m>0){
+			$('#fileActZone .renamefile').hide();
+			$('#fileActZone .sharefile').hide();
+	    	$('#fileActZone .sharefile').hide();
+	    	$('#fileActZone .downfile').hide();
+	    	$('#fileActZone .collfile').hide();    		
+	    	$('#fileActZone .copyfile').hide(); 
+	    	$('#fileActZone .movefile').hide(); 	
+	    	$('#fileActZone .delfile').hide();		
+			return;
+		}else{
+			$('#fileActZone .delfile').show();
+			$('#fileActZone .renamefile').show();
+		}
     	if(l==0 && n == 0){
 			$('.tool-zone').removeClass('hide');
 			$('.file-act-zone').addClass('hide');
@@ -8494,10 +8532,15 @@ define('bind',['config'],function(config){
     	}
     }
 
+    function swallChange(e,d){
+    	isSwall = d;
+    }    
+
     var handlers = {
     	'page:change' : pageChange,
     	'bind:school' : schoolChange,
-    	'bind:prep' : prepChange
+    	'bind:prep' : prepChange,
+    	'bind:swall' : swallChange
     }
 
     for(var i in handlers){

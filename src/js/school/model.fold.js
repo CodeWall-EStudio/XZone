@@ -18,7 +18,9 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 				read : item.isReadonly || 0,
 				pid : item.parent.$id,
 				tid : item.top.$id,
-				idpath : item.idpath
+				idpath : item.idpath,
+				type : item.type,
+				candel : item.deletable
 			})
 		}
 		return list;
@@ -38,6 +40,7 @@ define(['config','helper/request','helper/util','cache'],function(config,request
 			t.pid = 0;
 			t.pname = '';
 		}
+		t.type = data.deletable?0:1;
 		if(data.top){
 			t.tid = data.top._id;
 			t.tname = data.top.name;
