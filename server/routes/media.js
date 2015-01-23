@@ -57,7 +57,9 @@ exports.upload = function(req, res){
     var skey = req.skey;
     console.log('>>>media upload, skey:',skey);
     var activityId = parameter.activityId;
-
+    var activityName = parameter.activityName;
+    var activityTime = parameter.activityTime;
+    
     var ep = new EventProxy();
     ep.fail(function(err, code){
         console.log('>>>media upload error:',{ err: code || ERR.SERVER_ERROR, msg: err });
@@ -93,7 +95,8 @@ exports.upload = function(req, res){
 
     ep.on('getMediaFolderSucc', function(mediaFolder){
         getFolder({
-            name: activityId + '',
+            name: activityTime + activityName,
+            mark: activityId,
             creator: loginUser._id,
             parent: mediaFolder
         }, ep.done('getActFolderSucc'));
@@ -224,5 +227,47 @@ exports.download = function(req, res){
 
         });
         
+    });
+};
+
+
+exports.departments =function(req, res){
+    var parameter = req.parameter;
+    var loginUser;
+    var skey = req.skey;
+    console.log('>>>media departments, skey:',skey);
+    var activityId = parameter.activityId;
+    var activityName = parameter.activityName;
+    var activityTime = parameter.activityTime;
+    
+    var ep = new EventProxy();
+    ep.fail(function(err, code){
+        // console.log('>>>media upload error:',{ err: code || ERR.SERVER_ERROR, msg: err });
+        // {"code":"200","msg":"\u4e0a\u4f20\u6210\u529f!","data":{"fid":292
+        res.json({ code: code || ERR.SERVER_ERROR, msg: err });
+    });
+
+    if(!skey){
+        ep.emit('error', 'need login', ERR.NOT_LOGIN);
+        return;
+    }
+
+    userHelper.findAndUpdateUserInfo(skey, config.AUTH_TYPE, ep.doneLater('getUserInfoSuccess'));
+
+    ep.on('getUserInfoSuccess', function(user){
+        loginUser = user;
+        mUser.getAllDepartments({}, function(err, data){
+            if(err){
+                res.json({ err: ERR.SERVER_ERROR, msg: err});
+            }else{
+                res.json({
+                    err: ERR.SUCCESS,
+                    result: {
+                        list: data.children
+                    }
+                });
+            }
+        });
+
     });
 };

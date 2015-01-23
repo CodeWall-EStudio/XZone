@@ -269,6 +269,14 @@ module.exports = {
                 required: true
             },
             {
+                name: 'activityName',
+                type: 'string'
+            },
+            {
+                name: 'activityTime',
+                type: 'string'
+            },
+            {
                 name: 'file_path'
             },
             {
