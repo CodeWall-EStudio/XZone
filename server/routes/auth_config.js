@@ -22,6 +22,7 @@ exports.AUTH_WHITE_LIST = [
     '/api/user/loginWithQQ',
     '/api/user/loginSuccessWithQQ',
     '/api/media/upload',
+    '/api/media/departments',
     '/api/media/download'
 ];
 
