@@ -2180,6 +2180,7 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 		isLoading = false;
 		d.archivable = nowArch;
 		nowGroup = d;
+		d.ntime = Cache.get('nowtime');
 		//if(nowType == 'group'){
 			d.prep = Cache.get('preps').g2key;
 		//}
@@ -2190,7 +2191,6 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 		var slist = Cache.get('sizegroup');
 		d.sglist = slist;
 		d.type = nowType;
-
 		//console.log(d,nowType);
 		var view = new View({
 			target : $('#groupModifyZone'),
@@ -2227,6 +2227,7 @@ define('view.group',['config','cache','helper/view','helper/util','model.group']
 				}
 			}		
 		});
+
 		view.createPanel();
 		if(d.status == 1){
 			$('.group-action-btn button').removeClass('active').prop({
