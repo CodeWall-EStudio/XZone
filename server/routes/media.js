@@ -59,7 +59,8 @@ exports.upload = function(req, res){
     var activityId = parameter.activityId;
     var activityName = parameter.activityName;
     var activityTime = parameter.activityTime;
-    
+    activityTime = U.formatDate('yyyy-MM-dd hh:mm:ss');
+
     var ep = new EventProxy();
     ep.fail(function(err, code){
         console.log('>>>media upload error:',{ err: code || ERR.SERVER_ERROR, msg: err });
