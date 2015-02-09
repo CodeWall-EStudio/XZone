@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.swall.tra"
+          android:versionCode="1"
+          android:versionName="1.0">
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-sdk android:minSdkVersion="14"/>
+    <application android:name=".TRAApplication"
+                 android:label="@string/app_name"
+                 android:theme="@style/MyTheme"
+                 android:icon="@drawable/icon"
+            >
+
+        <activity android:name=".SplashActivity"
+                  android:theme="@style/Theme.Sherlock.Light.NoActionBar"
+                >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".LoginActivity"
+                  android:theme="@style/Theme.Sherlock.Light.NoActionBar"
+                  android:configChanges="orientation|keyboardHidden|screenSize"
+                  android:windowSoftInputMode="adjustResize"
+                />
+        <activity android:name=".MainActivity"
+                  android:theme="@style/MyTheme"
+                />
+        <activity android:name=".SettingActivity"/>
+        <activity android:name=".JoinActivityIntent"
+                android:theme="@style/MyTheme"
+                />
+        <activity android:name=".ResourceListActivity"/>
+        <activity android:name=".ImageViewActivity"/>
+        <activity android:name=".VideoCaptureActivity"/>
+        <activity android:name=".TRAInfoActivity"/>
+        <activity android:name=".CurrentTRAActivity"/>
+        <activity android:name=".TRAResourceListAcitivity"/>
+        <activity android:name=".QuitActivity"/>
+        <activity android:name=".AddTextResourceActivity"
+                android:windowSoftInputMode="adjustResize"/>
+        <activity android:name=".UploadProgressActivity"/>
+
+        <!-- 友盟 -->
+        <meta-data android:value="52a3238756240b119207f74f" android:name="UMENG_APPKEY" />
+        <meta-data android:value="c_0001" android:name="UMENG_CHANNEL"/>
+        <service
+                android:name="com.umeng.common.net.DownloadingService"
+                android:process=":DownloadingService" >
+        </service>
+        <activity
+                android:name="com.umeng.update.UpdateDialogActivity"
+                android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+    </application>
+
+
+    <!-- 友盟 -->
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+</manifest>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:padding="8dp"
+              android:layout_height="match_parent">
+    <include
+        layout="@layout/item_resource_header"
+        android:layout_width="fill_parent"
+        />
+
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="发表了评论"
+            android:padding="10dp"
+            android:id="@+id/item_resource_text"
+            android:layout_below="@+id/item_resource_owner"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"/>
+    <com.android.volley.toolbox.NetworkImageView
+
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:text="发表了评论"
+            android:padding="10dp"
+            android:maxHeight="50dp"
+            android:visibility="gone"
+            android:id="@+id/item_resource_image"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon"
+            android:layout_below="@+id/item_resource_owner"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"/>
+
+</RelativeLayout>

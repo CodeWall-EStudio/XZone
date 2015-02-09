@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="bg">#224888</color>
+    <color name="gray_normal">#E3E5E9</color>
+    <color name="gray_selected">#EFEFEF</color>
+    <color name="title_tips_bg_color">#F0A108</color>
+</resources>

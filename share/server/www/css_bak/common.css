@@ -1,0 +1,43 @@
+body{
+    background-color: rgb(235,238,243);
+}
+body.fixedTopNavbar{
+    padding-top: 50px;
+    margin-bottom: 30px;
+}
+
+a{
+    cursor: pointer;
+}
+
+.hbox{
+    display: -webkit-box;
+    -webkit-box-orient: horizontal;
+}
+.vbox{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+}
+.full{
+    -webkit-box-flex: 1;
+}
+.center{
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+}
+
+#topNavBar{
+    border: none;
+    background-color: rgb(36, 74, 134);
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+}
+#topNavBar .navbar-brand{
+    color: #FFF;
+}
+#topNavBar li > a{
+    color: rgb(180,201,221);
+}
+#topNavBar li.active > a{
+    color: #fff;
+    background-color: rgb(32,66,121);
+}

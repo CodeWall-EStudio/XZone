@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="200dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@android:color/holo_blue_light"
+            android:text="张三张三张三张三张三张三张三张三张三张三张三张三张三张三张三张三张三"
+            android:id="@+id/item_resource_owner"/>
+
+    <TextView
+            android:layout_width="180dp"
+            android:singleLine="true"
+            android:textColor="@android:color/darker_gray"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:text="2012年10月8:30:3"
+            android:id="@+id/item_resource_time"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"/>
+</merge>

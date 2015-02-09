@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.swall.tra.widget.InputMethodRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:id="@+id/root"
+                android:background="@drawable/login"
+                android:layout_height="match_parent">
+
+    <ImageView
+            android:src="@drawable/login_school_normal"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_alignParentTop="true"
+            android:id="@+id/login_school_name"
+            android:layout_centerHorizontal="true"/>
+
+    <LinearLayout
+            android:id="@+id/inputlayout"
+            android:layout_below="@+id/login_school_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="2dp"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/white"
+            >
+        <EditText
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/username"
+                android:layout_centerVertical="true"
+                android:hint="请输入帐号"
+                android:singleLine="true"
+                android:background="@android:color/white"
+                android:padding="10dp"
+                android:text="zhaoyonghong"/>
+        <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@android:color/darker_gray"
+                ></View>
+
+        <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:ems="10"
+                android:id="@+id/password"
+                android:background="@android:color/white"
+                android:padding="10dp"
+                android:text="8888"
+                android:singleLine="true"
+                android:hint="请输入密码"
+                android:layout_alignRight="@+id/username"
+                android:layout_alignLeft="@+id/username"
+                android:layout_below="@+id/username"
+                android:layout_centerHorizontal="true"/>
+
+    </LinearLayout>
+
+    <Button
+            style="@style/buttonBlue"
+            android:id="@+id/login_button"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_below="@+id/inputlayout"
+            android:layout_alignRight="@+id/inputlayout"
+            android:layout_alignLeft="@+id/inputlayout"
+            android:text="登录"/>
+
+
+</com.swall.tra.widget.InputMethodRelativeLayout>

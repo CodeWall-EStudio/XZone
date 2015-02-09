@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:padding="20dp"
+                android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="一年级数学组教研活动"
+            android:textColor="@color/bg"
+            android:layout_alignParentTop="true"
+            android:id="@+id/tra_name"
+            android:layout_alignParentLeft="true"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="今天 2013年11月15日 10:00"
+            android:id="@+id/tra_time"
+            android:layout_below="@+id/tra_name"
+            android:layout_alignParentLeft="true"
+            android:layout_alignBottom="@+id/textView"/>
+
+    <TextView
+            android:layout_width="fill_parent"
+            android:layout_below="@+id/tra_time"
+            android:layout_marginTop="20dp"
+            android:textSize="20dp"
+            android:id="@+id/tra_intro"
+            android:text="活动简介: 公开课\n活动简介:区域示范课\n\n\n\n\n\n\n\n\n\n\n\n\n\n-----\n\n\n\n\nhello world"
+            android:layout_height="wrap_content"/>
+</RelativeLayout>

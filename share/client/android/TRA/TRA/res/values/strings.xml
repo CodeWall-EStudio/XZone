@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">新媒体教研中心</string>
+    <string name="tab_current_activities">当前活动</string>
+    <string name="tab_expired_activities">历史活动</string>
+    <string name="tab_settings">设置</string>
+    <string name="launch_camera_fail">启动摄像头失败...</string>
+
+
+    <string name="pref_auto_download">WIFI下自动更新资源</string>
+    <string name="pref_auto_download_summary">启动此项后，连上WIFI情况下，会自动从服务器拉取最新资源</string>
+    <string name="pref_none_wifi_forbidden_summary">非WIFI下不允许执行网络操作，可节省你的流量费用</string>
+    <string name="pref_none_wifi_forbidden">非WIFI下禁用网络数据</string>
+</resources>

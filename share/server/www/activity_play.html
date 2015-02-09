@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html ng-app="activityPlay" ng-controller="PlayerMainController">
+<head>
+    <title>{{activity.info.title}}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="lib/bootstrap_3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/activityPlay.min.css?20140502001" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="player/video.min.css">
+    <script src="lib/jquery/jquery-2.0.3.min.js"></script>
+    <script src="lib/angular/angular_1.2.6.js"></script>
+    <script type="text/javascript" src="player/video.dev.js"></script>
+    <script>
+        videojs.options.flash.swf = "player/video-js.swf";
+    </script>
+</head>
+<body class="fixedTopNavbar">
+
+    <!-- 顶部的导航栏 -->
+    <div id="topNavBar" class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <img src="img/logo.png">
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a class="navbar-brand">{{activity.active ? '展示' : '回放'}}活动：{{activity.info.title}}</a>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a ng-click="showLoginModal()">{{username}}</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 活动信息 -->
+    <div class="row" id="activityInfo">
+        <div class="col-sm-4 section1">
+            <p>活动日期：{{activity.info.date | date:'yyyy年MM月dd日'}}</p>
+            <p>开始时间：{{activity.info.date | date:'HH:mm'}}</p>
+            <p ng-switch on="activity.info.type">
+                活动类型：
+                <span ng-switch-when="1">公开课</span>
+                <span ng-switch-default>其他</span>
+            </p>
+            <p class="autoRefreshSwitch">
+                自动刷新：
+                <span>{{autoRefresh ? '已打开' : '已关闭'}}</span>
+                <button type="button" class="btn btn-link" ng-click="toggleAuthRefresh()">{{autoRefresh ? '关闭' : '打开'}}</button>
+            </p>
+        </div>
+        <div class="col-sm-4 section2">
+            <p>出课教师：{{activity.info.teacher}}</p>
+            <p>年级：{{activity.info.grade}}</p>
+            <p>学科：{{activity.info.subject}}</p>
+            <p>班级：{{activity.info.class}}</p>
+            <p>课题：{{activity.info.domain}}</p>
+        </div>
+        <div class="col-sm-4 section3">
+            <p>
+                用户：
+                <span ng-show="activity.active">当前{{userCount}}位参与者在线</span>
+                <span ng-hide="activity.active">共{{userCount}}位参与者</span>
+            </p>
+            <p>资源：共上传{{activity.resources.length}}个资源</p>
+            <p style="max-height:4.2em; overflow:hidden;">活动简介：{{activity.info.desc}}</p>
+        </div>
+    </div>
+
+    <!-- 主要内容 -->
+    <div class="row hbox full" id="mainContent">
+        <!-- 侧边栏 -->
+        <div class="col-sm-2 sidebar">
+            <div class="addComment" ng-show="activity.active">
+                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#addCommentModal">添加评论</button>
+            </div>
+            <!-- 参与活动的用户列表 -->
+            <div class="userlist full">
+                <ul>
+                    <li ng-class="{selected: !selectedUser}"
+                        ng-click="filterByUser()">所有用户</li>
+                    <li ng-class="{selected: selectedUser==uid}"
+                        ng-repeat="uid in uploadedUsers"
+                        ng-click="filterByUser(uid)">{{uid2nick(uid)}}</li>
+                </ul>
+            </div>
+            <!-- 统计信息入口 -->
+            <div class="stat">
+                <div>
+                    <button data-toggle="modal" data-target="#bigPicModal"
+                            ng-disabled="!activity.resources.length"
+                            ng-click="showTimeStatistics()">
+                        <img src="img/timestat_icon.png">
+                    </button>
+                </div>
+                <div>
+                    <button data-toggle="modal" data-target="#bigPicModal"
+                            ng-disabled="!activity.resources.length"
+                            ng-click="showUserStatistics()">
+                        <img src="img/userstat_icon.png">
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 时间线和资源列表 -->
+        <div id="timeline"
+             ng-class="{min:selectedResource, playMode:selectedMainVideo, 'col-sm-10':activity.active, 'col-sm-8':!activity.active && !selectedMainVideo, 'col-sm-5':!activity.active && selectedMainVideo}">
+            <!-- 按时间（同一分钟内）分组资源 -->
+            <div class="resourceGroup"
+                 ng-show="groupContainsResourceOfSelectedUser(group)"
+                 ng-repeat="group in resources"
+                 ng-init="$groupIndex=$index">
+                <div class="time">
+                    <div class="hhmm">{{group.ts | date:'HH:mm'}}</div>
+                    <div class="ymd">{{group.ts | date:'yyyy-MM-dd'}}</div>
+                </div>
+                <div class="resource">
+                    <div class="line"></div>
+                    <div class="resourceItem"
+                         data-gindex="{{$groupIndex}}"
+                         data-rindex="{{$resourceIndex}}"
+                         data-ts="{{resource.date}}"
+                         ng-repeat="resource in group.resources"
+                         ng-init="$resourceIndex=$index"
+                         ng-show="resourceShouldBeVisible(resource)"
+                         ng-click="showResourceDetail(resource, $groupIndex, $resourceIndex)"
+                         ng-class="{highlight: highlightResource.g==$groupIndex && highlightResource.r==$resourceIndex}"
+                         ng-switch on="resource.type">
+                        <div class="thumb imageThumb" ng-switch-when="1">
+                            <img ng-src="{{resource.content}}"><!--onload="onImgLoad(event)"-->
+                        </div>
+                        <div class="thumb videoThumb" ng-switch-when="2"></div>
+                        <div class="content">
+                            <span ng-switch-when="0">文字</span>
+                            <span ng-switch-when="1">图片</span>
+                            <span ng-switch-when="2">视频</span>
+                            <span ng-switch-when="3">音频</span>
+                            <span>{{uid2nick(resource.user)}}</span>
+                            <div class="textContent" ng-show="resource.type==0">{{resource.content}}</div>
+                            <div class="comment">{{resource.comment}}</div>
+                        </div>
+                        <!--<div class="nextLine"
+                             ng-hide="isFirstResourceInGroup($groupIndex, $resourceIndex)"
+                             style="height:{{nextLineHeight($groupIndex, $resourceIndex)}}px"></div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 主視頻 -->
+        <div id="mainVideos"
+             ng-hide="activity.active"
+             ng-class="{'col-sm-2':!selectedMainVideo, 'col-sm-5':selectedMainVideo}">
+            <!-- 缩略图模式 -->
+            <div class="thumbnailMode" ng-hide="selectedMainVideo">
+                <h4>主视频</h4>
+                <ul>
+                    <li ng-repeat="video in mainVideos">
+                        <a ng-click="selectMainVideo(video)">
+                            <div class="mainVideoThumb hbox center">{{video.name}}</div>
+                        </a>
+                    </li>
+                </ul>
+                <button type="button" class="btn btn-default"
+                        data-toggle="modal" data-target="#uploadMainVideoModal"
+                        ng-show="shouldShowUploadMainButton"
+                        ng-disabled="mainVideos.length >= 4"
+                        ng-click="uploadMainVideo()">
+                    <span class="glyphicon glyphicon-plus"></span> 添加主视频
+                </button>
+            </div>
+            <!-- 播放模式 -->
+            <div class="playMode" ng-show="selectedMainVideo">
+                <div ng-hide="editingOrder || editingTime">
+                    <div class="hbox">
+                        <h4>主视频：{{selectedMainVideo.name}}</h4>
+                        <div class="closeBtn" ng-click="selectMainVideo()">x</div>
+                    </div>
+                    <div class="player">
+                        <!--<div class="videoInfo">{{selectedMainVideo.name}}</div>-->
+                        <video id="player" controls="controls" ng-src="{{selectedMainVideo.url}}"></video>
+                        <div class="videoArea" ng-click="toggleVideoPlayer()"></div>
+                    </div>
+                    <ul class="thumbnails">
+                        <li ng-repeat="video in mainVideos" ng-hide="video == selectedMainVideo">
+                            <a ng-click="selectMainVideo(video)">
+                                <div class="mainVideoThumb hbox center">{{video.name}}</div>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="controls">
+                        <button type="button" class="btn btn-default"
+                                data-toggle="modal" data-target="#uploadMainVideoModal"
+                                ng-show="shouldShowUploadMainButton"
+                                ng-disabled="mainVideos.length >= 4"
+                                ng-click="uploadMainVideo()">
+                            <span class="glyphicon glyphicon-plus"></span> 添加主视频
+                        </button>
+                        <button type="button" class="btn btn-default"
+                                ng-show="shouldShowUploadMainButton"
+                                ng-click="enterEditOrderMode(true)">
+                            <span class="glyphicon glyphicon-pencil"></span> 编辑模式
+                        </button>
+                    </div>
+                </div>
+                <div ng-show="editingOrder && !editingTime">
+                    <div class="hbox">
+                        <h4>编辑主视频</h4>
+                    </div>
+                    <ul>
+                        <li ng-repeat="video in mainVideos" class="hbox editOrderItem">
+                            <a>{{video.name}}</a>
+                            <div></div>
+                            <button type="button" class="btn btn-info" ng-click="editMainVideoName(video)">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                            </button>
+                            <button type="button" class="btn btn-default" ng-click="enterEditTimeMode(video, false)">时间轴对齐</button>
+                            <button type="button" class="btn btn-default"
+                                    ng-disabled="$first"
+                                    ng-click="updateMainVideosLocalOrder($index, true)">
+                                <span class="glyphicon glyphicon-arrow-up"></span>
+                            </button>
+                            <button type="button" class="btn btn-default"
+                                    ng-disabled="$last"
+                                    ng-click="updateMainVideosLocalOrder($index, false)">
+                                <span class="glyphicon glyphicon-arrow-down"></span>
+                            </button>
+                            <button type="button" class="btn btn-warning" ng-click="removeMainVideo(video, $index)">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </li>
+                    </ul>
+                    <div class="controls">
+                        <button type="button" class="btn btn-default" ng-click="enterEditOrderMode(false)">
+                            <span class="glyphicon glyphicon-floppy-disk"></span> 退出编辑
+                        </button>
+                    </div>
+                </div>
+                <div ng-show="editingTime">
+                    <div class="hbox">
+                        <h4>时间轴对齐：{{selectedMainVideo.name}}</h4>
+                    </div>
+                    <p>视频起始时间：{{selectedMainVideoStartTime() | date:'yyyy年MM月dd日 HH:mm:ss'}}</p>
+                    <p>视频终止时间：{{selectedMainVideoStopTime() | date:'yyyy年MM月dd日 HH:mm:ss'}}</p>
+                    <p>视频总时长：{{selectedMainVideo.duration}}秒</p>
+                    <br/>
+                    <p>虚拟时间轴起始时间：{{timelineStartTime() | date:'yyyy年MM月dd日 HH:mm:ss'}}</p>
+                    <p>
+                        视频开始录制时间：
+                        <form class="form-inline" role="form">
+                            <div class="form-group"><input class="form-control dateInput" placeholder="年" ng-model="selectedMainVideoStartDate.y"></div>
+                            <div class="form-group"><input class="form-control dateInput" placeholder="月" ng-model="selectedMainVideoStartDate.M"></div>
+                            <div class="form-group"><input class="form-control dateInput" placeholder="日" ng-model="selectedMainVideoStartDate.d"></div>
+                            <div class="form-group"><input class="form-control dateInput" placeholder="时" ng-model="selectedMainVideoStartDate.h"></div>
+                            <div class="form-group"><input class="form-control dateInput" placeholder="分" ng-model="selectedMainVideoStartDate.m"></div>
+                            <div class="form-group"><input class="form-control dateInput" placeholder="秒" ng-model="selectedMainVideoStartDate.s"></div>
+                        </form>
+                    </p>
+                    <div class="controls">
+                        <button type="button" class="btn btn-default" ng-click="enterEditTimeMode(null, true)">
+                            <span class="glyphicon glyphicon-floppy-disk"></span> 保存
+                        </button>
+                        <button type="button" class="btn btn-default" ng-click="enterEditTimeMode(null, false)">
+                            <span class="glyphicon glyphicon-remove"></span> 返回
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 资源预览 -->
+        <div id="preview" class="vbox" ng-class="{shown:selectedResource}">
+            <div class="toolbar">
+                <button type="button" class="btn btn-link" ng-click="hideResourceDetail()">x</button>
+            </div>
+            <div class="hbox full content">
+                <button type="button" class="btn btn-link"
+                        ng-disabled="!hasPreviousPreviewableResource()"
+                        ng-click="selectPreviousPreviewableResource()">
+                    上一页
+                </button>
+                <div class="mediaContent full" ng-switch on="selectedResource.type">
+                    <div class="contentWrapper">
+                        <div ng-switch-when="1" class="image">
+                            <img ng-src="{{selectedResource.content}}">
+                        </div>
+                        <div ng-switch-when="2" class="video">
+                            <video autoplay controls id="videoPlayer"></video>
+                        </div>
+                        <div>
+                            <span ng-switch-when="1">图片</span>
+                            <span ng-switch-when="2">视频</span>
+                            <span>{{uid2nick(selectedResource.user)}}</span>
+                        </div>
+                        <div>{{selectedResource.comment}}</div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-link"
+                        ng-disabled="!hasNextPreviewableResource()"
+                        ng-click="selectNextPreviewableResource()">
+                    下一页
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="bigPicModal">
+        <div class="modal-dialog" style="width:750px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                    <h4 class="modal-title">
+                        {{stat == 1 ? '按时间统计资源数' : '按用户统计资源数'}}
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div id="statBody" style="width:710px; height:450px"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addCommentModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">添加评论</h4>
+                </div>
+                <div class="modal-body">
+                    <textarea class="form-control" rows="3"placeholder="请输入评论内容"
+                              ng-disabled="addingNewComment"
+                              ng-model="newCommentContent"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success"
+                            ng-click="submitNewComment()"
+                            ng-disabled="addingNewComment || !newCommentContent.length">
+                        <span ng-hide="addingNewComment">添加</span>
+                        <span ng-show="addingNewComment">请稍后</span>
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal"
+                            ng-disabled="addingNewComment">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="uploadMainVideoModal" ng-controller="MainVideoUploaderController">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="uploadMainVideoForm" action="http://szone.71xiaoxue.com/upload" method="post" target="uploadCallback" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                        <h4 class="modal-title">添加主视频</h4>
+                    </div>
+                    <div class="modal-body">
+                        <!--<form role="form">
+                            <div class="form-group">
+                                <label for="mainVideoName">主视频名</label>
+                                <input type="text" ng-model="videoName" class="form-control" id="mainVideoName">
+                            </div>
+                            <div class="form-group">
+                                <label for="mainVideoFile">主视频文件</label>
+                                <input type="file" id="mainVideoFile" onchange="angular.element(this).scope().onSelectedFile()">
+                                <p class="help-block">请选择主视频文件并点击“添加”按钮</p>
+                            </div>
+                        </form>-->
+                        <div class="form-group">
+                            <label for="mainVideoName">主视频名</label>
+                            <input type="text" ng-model="videoName" class="form-control" id="mainVideoName">
+                        </div>
+                        <div class="form-group">
+                            <label for="mainVideoFile">主视频文件</label>
+                            <input type="file" name="file" id="mainVideoFile" onchange="angular.element(this).scope().onSelectedFile()"/>
+                        </div>
+                        <input type="text" name="fromweb" value="1" style="display: none"/>
+                        <input type="text" name="media" value="1" style="display: none"/>
+                        <input type="text" name="skey" ng-model="skey" style="display: none"/>
+                        <input type="text" name="activityId" ng-model="activity._id" style="display: none"/>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" ng-value="submitLabel()" class="btn btn-success"
+                                ng-disabled="!videoName || !videoFile || videoIsUploading || videoIsAdding"
+                                ng-click="startUpload()"/>
+                            <!--<span ng-show="!videoIsReading && !videoIsUploading && !videoIsAdding">添加</span>
+                            <span ng-show="videoIsReading">请稍后...</span>
+                            <span ng-show="videoIsUploading">上传中...</span>
+                            <span ng-show="videoIsAdding">请稍后...</span>
+                        </input>-->
+                        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+                    </div>
+                </form>
+                <iframe style="display: none" src="uploadCallback.html" name="uploadCallback"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/bootstrap_3.0.3/js/bootstrap.js"></script>
+    <script src="lib/underscore/underscore_1.5.2.min.js"></script>
+    <script src="lib/amcharts/amcharts.js"></script>
+    <script src="lib/amcharts/pie.js"></script>
+    <script src="lib/amcharts/serial.js"></script>
+    <script src="lib/amcharts/themes/light.js"></script>
+    <script src="js/activityPlay.min.js?20140402001"></script>
+</body>
+</html>

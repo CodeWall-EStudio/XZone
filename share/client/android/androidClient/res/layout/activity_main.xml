@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:attrstest="http://schemas.android.com/apk/res/com.swall.enteach"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <RelativeLayout
+            android:id="@+id/title"
+            android:layout_width="fill_parent"
+            android:layout_height="50dip"
+            android:background="@android:color/holo_purple"
+            tools:ignore="NewApi">
+
+        <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dip"
+                android:gravity="center"
+                android:text="首页"
+                android:textSize="25dip" />
+    </RelativeLayout>
+
+    <android.support.v4.view.ViewPager
+            android:id="@+id/vPager"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:paddingBottom="55dip"
+            android:persistentDrawingCache="animation" />
+
+    <RadioGroup
+            android:id="@+id/rg_main_btns"
+            android:layout_width="fill_parent"
+            android:layout_height="50dip"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:background="@android:color/holo_blue_bright"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+        <com.swall.enteach.widget.TabStyleRadionButton
+                android:id="@+id/buyHomeTab"
+                style="@style/radioButtonStyle"
+                android:layout_width="60dip"
+                android:layout_height="50dip"
+                android:background="@drawable/btn_bg"
+                android:checked="true"
+                attrstest:pic="@drawable/btn_bg"
+                android:text="进行中活动" />
+
+        <com.swall.enteach.widget.TabStyleRadionButton
+                android:id="@+id/winAfficheTab"
+                style="@style/radioButtonStyle"
+                android:layout_width="60dip"
+                android:layout_height="50dip"
+                android:background="@drawable/btn_bg"
+                android:button="@null"
+                attrstest:pic="@drawable/btn_bg"
+                android:text="已结束活动" />
+
+        <com.swall.enteach.widget.TabStyleRadionButton
+                android:id="@+id/integralTab"
+                style="@style/radioButtonStyle"
+                android:layout_width="65dip"
+                android:layout_height="50dip"
+                android:background="@drawable/btn_bg"
+                attrstest:pic="@drawable/btn_bg"
+                android:text="设置" />
+
+    </RadioGroup>
+</RelativeLayout>

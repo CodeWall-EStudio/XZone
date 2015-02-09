@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:padding="13dp"
+                android:layout_height="match_parent">
+    <LinearLayout
+            android:id="@+id/topLayout"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_alignParentTop="true"
+            android:weightSum="2"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:layout_weight="2"
+                android:duplicateParentState="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:text="英语教学英语教学英语教学英语教学英语教学英语教学"
+                android:textColor="@android:color/holo_blue_light"
+                android:id="@+id/tra_name"
+                android:layout_alignParentTop="true"
+                android:textSize="28sp"
+                android:layout_alignParentLeft="true"/>
+        <TextView
+                android:layout_weight="0"
+                android:layout_width="wrap_content"
+                android:singleLine="true"
+                android:visibility="visible"
+                android:gravity="right|top"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="昨天 2014年9月8号 15:30"
+                android:id="@+id/tra_time"
+                android:layout_alignParentRight="true"
+                android:textColor="@android:color/darker_gray"
+                android:layout_alignParentTop="true"/>
+    </LinearLayout>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:text="已参与"
+            android:visibility="visible"
+            android:textColor="@android:color/holo_red_light"
+            android:id="@+id/tra_joined"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:text="100人参与"
+            android:layout_below="@+id/topLayout"
+            android:id="@+id/tra_participant_count"
+            android:layout_alignRight="@+id/topLayout"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3位参与者, 4张图片, 5段视频, 8条文字"
+            android:id="@+id/tra_resource_count"
+            android:layout_below="@+id/topLayout"
+            android:layout_marginTop="3dp"
+            android:layout_alignLeft="@+id/topLayout"/>
+</RelativeLayout>

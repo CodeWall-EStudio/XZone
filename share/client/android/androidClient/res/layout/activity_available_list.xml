@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <com.swall.enteach.widget.PullToRefreshListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/availableListView"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            >
+    </com.swall.enteach.widget.PullToRefreshListView>
+
+    <ViewStub
+            android:id="@android:id/empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout="@layout/empty"
+            />
+    <ViewStub
+        android:layout="@layout/loading"
+        android:id="@+id/loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+</RelativeLayout>

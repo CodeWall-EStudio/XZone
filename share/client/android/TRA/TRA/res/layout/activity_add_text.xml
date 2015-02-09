@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:gravity="center"
+            android:background="@color/title_tips_bg_color"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:layout_height="80px"
+            android:id="@+id/linearLayout">
+        <TextView
+                android:text="已加入 : "
+                android:textAppearance="?android:textAppearanceMedium"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="80px"/>
+        <TextView
+                android:id="@+id/title_tips"
+                android:singleLine="true"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:text="某某的课某某的课某某的课某某的课某某的课某某的课某某的课某某的课某某的课"
+                android:layout_width="wrap_content"
+                android:textColor="@color/bg"
+                android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <EditText
+            android:gravity="top"
+            android:padding="20dp"
+            android:hint="输入文字..."
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:id="@+id/editText"
+            android:layout_below="@+id/linearLayout"
+            android:layout_alignParentLeft="true"
+            android:layout_above="@+id/linearLayout2"
+            android:layout_alignParentRight="true"/>
+    <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_alignParentBottom="true"
+            android:visibility="visible"
+            android:orientation="horizontal">
+        <TextView
+
+                style="@style/buttonPositive"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="保存"
+                android:id="@+id/btnSave"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+
+                />
+        <TextView
+
+                style="@style/buttonNegative"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="放弃"
+                android:id="@+id/btnAbort"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+
+                />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:padding="13dp"
+                android:layout_height="match_parent">
+    <LinearLayout
+            android:id="@+id/topLayout"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_alignParentTop="true"
+            android:weightSum="2"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:layout_weight="2"
+                android:duplicateParentState="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="middle"
+                android:text="英语教学英语教学英语教学英语教学英语教学英语教学"
+                android:textColor="@color/bg"
+                android:id="@+id/tra_name"
+                android:layout_alignParentTop="true"
+                android:textSize="28sp"
+                android:layout_alignParentLeft="true"/>
+
+    </LinearLayout>
+
+    <TextView
+            android:layout_alignLeft="@+id/topLayout"
+            android:layout_below="@+id/topLayout"
+            android:layout_weight="0"
+            android:layout_marginTop="8dp"
+            android:layout_width="wrap_content"
+            android:singleLine="false"
+            android:visibility="visible"
+            android:gravity="top"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="昨天 2014年9月8号 15:30 1人参与 33资源 33 资源 33 资源 33资源"
+            android:id="@+id/tra_long_desc"
+            android:textColor="@android:color/darker_gray"
+            />
+</RelativeLayout>

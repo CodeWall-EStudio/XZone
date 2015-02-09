@@ -1,0 +1,983 @@
+{
+  "c": 0,
+  "r": {
+    "activities": [
+      {
+        "_id": "52b6cf21c860a76c77409804",
+        "active": true,
+        "info": {
+          "title": "怎么教出党的好学生",
+          "desc": null,
+          "type": 1,
+          "date": 1388057761153,
+          "createDate": 1387712289218,
+          "teacher": "张三丰",
+          "grade": "4",
+          "class": "3",
+          "subject": "洗脑课",
+          "domain": "hello"
+        },
+        "resources": [
+          {
+            "_id": "52baff54a99392287ef4f13e",
+            "user": "???",
+            "activity": "52b6cf21c860a76c77409804",
+            "type": 0,
+            "content": "这不是测试",
+            "comment": null,
+            "date": 1387986772273
+          },
+          {
+            "_id": "52baff7ca99392287ef4f13f",
+            "user": "???",
+            "activity": "52b6cf21c860a76c77409804",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-dtkgch.jpg",
+            "comment": null,
+            "date": 1387986812699
+          }
+        ],
+        "users": {
+          "creator": "irjr",
+          "invitedUsers": [
+            "*"
+          ],
+          "participators": [
+            "???"
+          ]
+        }
+      },
+      {
+        "_id": "52b6cedbc860a76c77409803",
+        "active": true,
+        "info": {
+          "title": "怎么教出党的好学生",
+          "desc": null,
+          "type": 1,
+          "date": 1388057761153,
+          "createDate": 1387712219210,
+          "teacher": "%E5%BC%A0%E4%B8%89%08%E4%B8%B0",
+          "grade": "4",
+          "class": "3",
+          "subject": "洗脑课",
+          "domain": "hello"
+        },
+        "resources": [
+          {
+            "_id": "52bbfe82a99392287ef4f152",
+            "user": "hjrirjft",
+            "activity": "52b6cedbc860a76c77409803",
+            "type": 0,
+            "content": "krnfj",
+            "comment": null,
+            "date": 1388052098328
+          },
+          {
+            "_id": "52bbfe89a99392287ef4f153",
+            "user": "hjrirjft",
+            "activity": "52b6cedbc860a76c77409803",
+            "type": 0,
+            "content": "bkclrjfnjdkidjf",
+            "comment": null,
+            "date": 1388052105925
+          },
+          {
+            "_id": "52bbfe8ea99392287ef4f154",
+            "user": "hjrirjft",
+            "activity": "52b6cedbc860a76c77409803",
+            "type": 0,
+            "content": "ijfbd",
+            "comment": null,
+            "date": 1388052110096
+          },
+          {
+            "_id": "52bbfe94a99392287ef4f155",
+            "user": "hjrirjft",
+            "activity": "52b6cedbc860a76c77409803",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-rd4d2i.jpg",
+            "comment": null,
+            "date": 1388052116836
+          },
+          {
+            "_id": "52bbfedba99392287ef4f156",
+            "user": "hjrirjft",
+            "activity": "52b6cedbc860a76c77409803",
+            "type": 2,
+            "content": "http://115.28.55.91:8080/resources/32296-14kgsfd.3gp",
+            "comment": null,
+            "date": 1388052187088
+          },
+          {
+            "_id": "52bee41f8483c04a5bd3cf7c",
+            "user": "张三丰",
+            "activity": "52b6cedbc860a76c77409803",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/23370-6dseqd.jpg",
+            "comment": "",
+            "date": 1388241951556
+          }
+        ],
+        "users": {
+          "creator": "irjr",
+          "invitedUsers": [
+            "*"
+          ],
+          "participators": [
+            "yig",
+            "TIJD"
+          ]
+        }
+      },
+      {
+        "_id": "52b6d019c860a76c77409805",
+        "active": true,
+        "info": {
+          "title": "怎么教出党的好学生",
+          "desc": null,
+          "type": 1,
+          "date": 1388057761153,
+          "createDate": 1387712537845,
+          "teacher": "张三丰",
+          "grade": "4",
+          "class": "3",
+          "subject": "洗脑课",
+          "domain": "hello"
+        },
+        "resources": [
+          {
+            "_id": "52bba0f0a99392287ef4f148",
+            "user": "ZWJ",
+            "activity": "52b6d019c860a76c77409805",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-1ku5y4m.jpg",
+            "comment": null,
+            "date": 1388028144959
+          },
+          {
+            "_id": "52bba0fda99392287ef4f149",
+            "user": "ZWJ",
+            "activity": "52b6d019c860a76c77409805",
+            "type": 0,
+            "content": "SFGJKK",
+            "comment": null,
+            "date": 1388028157319
+          },
+          {
+            "_id": "52bee9118483c04a5bd3cf7d",
+            "user": "UJGF",
+            "activity": "52b6d019c860a76c77409805",
+            "type": 0,
+            "content": "TUUH",
+            "comment": "",
+            "date": 1388243217773
+          },
+          {
+            "_id": "52beea728483c04a5bd3cf7e",
+            "user": "UJGF",
+            "activity": "52b6d019c860a76c77409805",
+            "type": 0,
+            "content": "GJBG",
+            "comment": "",
+            "date": 1388243570020
+          },
+          {
+            "_id": "52bef79f8483c04a5bd3cf84",
+            "user": "DSF",
+            "activity": "52b6d019c860a76c77409805",
+            "type": 0,
+            "content": "OOOOOOO9GGGDFGY",
+            "comment": "",
+            "date": 1388246943856
+          },
+          {
+            "_id": "52bf14718483c04a5bd3cf85",
+            "user": "HFFH",
+            "activity": "52b6d019c860a76c77409805",
+            "type": 0,
+            "content": "HH",
+            "comment": "",
+            "date": 1388254321277
+          }
+        ],
+        "users": {
+          "creator": "irjr",
+          "invitedUsers": [
+            "*"
+          ],
+          "participators": [
+            "刚",
+            "YH",
+            "RFG"
+          ]
+        }
+      },
+      {
+        "_id": "52b6d01fc860a76c77409807",
+        "active": true,
+        "info": {
+          "title": "怎么教出党的好学生",
+          "desc": null,
+          "type": 1,
+          "date": 1388057761153,
+          "createDate": 1387712543159,
+          "teacher": "张三丰",
+          "grade": "4",
+          "class": "3",
+          "subject": "洗脑课",
+          "domain": "hello"
+        },
+        "resources": [
+          {
+            "_id": "52ba361c15a70d3c405a9d65",
+            "user": "higf",
+            "activity": "52b6d01fc860a76c77409807",
+            "type": 0,
+            "content": "尖锐不可当",
+            "comment": null,
+            "date": 1387935260361
+          },
+          {
+            "_id": "52ba365515a70d3c405a9d66",
+            "user": "higf",
+            "activity": "52b6d01fc860a76c77409807",
+            "type": 0,
+            "content": "厶",
+            "comment": null,
+            "date": 1387935317432
+          },
+          {
+            "_id": "52bae1e9a99392287ef4f12d",
+            "user": "higf",
+            "activity": "52b6d01fc860a76c77409807",
+            "type": 0,
+            "content": "题",
+            "comment": null,
+            "date": 1387979241609
+          },
+          {
+            "_id": "52bae213a99392287ef4f12e",
+            "user": "higf",
+            "activity": "52b6d01fc860a76c77409807",
+            "type": 0,
+            "content": "。。。",
+            "comment": null,
+            "date": 1387979283326
+          },
+          {
+            "_id": "52bae234a99392287ef4f12f",
+            "user": "higf",
+            "activity": "52b6d01fc860a76c77409807",
+            "type": 0,
+            "content": "们",
+            "comment": null,
+            "date": 1387979316851
+          },
+          {
+            "_id": "52bae49da99392287ef4f130",
+            "user": "higf",
+            "activity": "52b6d01fc860a76c77409807",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-vtmpkl.png",
+            "comment": null,
+            "date": 1387979933763
+          },
+          {
+            "_id": "52bae4afa99392287ef4f131",
+            "user": "higf",
+            "activity": "52b6d01fc860a76c77409807",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-1272d1s.png",
+            "comment": null,
+            "date": 1387979951670
+          },
+          {
+            "_id": "52bae875a99392287ef4f132",
+            "user": "higf",
+            "activity": "52b6d01fc860a76c77409807",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-vlto7a.png",
+            "comment": null,
+            "date": 1387980917449
+          },
+          {
+            "_id": "52bbe57da99392287ef4f151",
+            "user": "a",
+            "activity": "52b6d01fc860a76c77409807",
+            "type": 0,
+            "content": "12333544566698778655445565555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555b55555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555",
+            "comment": null,
+            "date": 1388045693764
+          },
+          {
+            "_id": "52bef1548483c04a5bd3cf7f",
+            "user": "FUJI",
+            "activity": "52b6d01fc860a76c77409807",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/23370-1pa2esx.jpg",
+            "comment": "",
+            "date": 1388245332627
+          }
+        ],
+        "users": {
+          "creator": "irjr",
+          "invitedUsers": [
+            "*"
+          ],
+          "participators": [
+            "?",
+            "髓",
+            "YY"
+          ]
+        }
+      },
+      {
+        "_id": "52b6d01cc860a76c77409806",
+        "active": true,
+        "info": {
+          "title": "怎么教出党的好学生",
+          "desc": null,
+          "type": 1,
+          "date": 1388057761153,
+          "createDate": 1387712540416,
+          "teacher": "张三丰",
+          "grade": "4",
+          "class": "3",
+          "subject": "洗脑课",
+          "domain": "hello"
+        },
+        "resources": [
+          {
+            "_id": "52baf9c0a99392287ef4f13d",
+            "user": "higf",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 0,
+            "content": "鉴",
+            "comment": null,
+            "date": 1387985344958
+          },
+          {
+            "_id": "52bb0087a99392287ef4f140",
+            "user": "张三丰",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 0,
+            "content": "亅",
+            "comment": null,
+            "date": 1387987079389
+          },
+          {
+            "_id": "52bb0089a99392287ef4f141",
+            "user": "张三丰",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 0,
+            "content": "亅",
+            "comment": null,
+            "date": 1387987081987
+          },
+          {
+            "_id": "52bb0097a99392287ef4f142",
+            "user": "张三丰",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 0,
+            "content": "药",
+            "comment": null,
+            "date": 1387987095319
+          },
+          {
+            "_id": "52bb00cea99392287ef4f143",
+            "user": "张三丰",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-3rv5ri.jpg",
+            "comment": null,
+            "date": 1387987150112
+          },
+          {
+            "_id": "52bb01faa99392287ef4f144",
+            "user": "张三丰",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 0,
+            "content": "少",
+            "comment": null,
+            "date": 1387987450723
+          },
+          {
+            "_id": "52bb0202a99392287ef4f145",
+            "user": "张三丰",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-xxz26z.jpg",
+            "comment": null,
+            "date": 1387987458087
+          },
+          {
+            "_id": "52bb02a9a99392287ef4f146",
+            "user": "张三丰",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 0,
+            "content": "药",
+            "comment": null,
+            "date": 1387987625157
+          },
+          {
+            "_id": "52bb0363a99392287ef4f147",
+            "user": "张三丰",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 2,
+            "content": "http://115.28.55.91:8080/resources/32296-1ymmvpa.3gp",
+            "comment": null,
+            "date": 1387987811501
+          },
+          {
+            "_id": "52bef6d08483c04a5bd3cf82",
+            "user": "DSF",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/23370-1rmwcdi.jpg",
+            "comment": "",
+            "date": 1388246736953
+          },
+          {
+            "_id": "52bef6df8483c04a5bd3cf83",
+            "user": "DSF",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 0,
+            "content": "TUUH",
+            "comment": "",
+            "date": 1388246751783
+          },
+          {
+            "_id": "52c1182d1bf8f39c19852cf6",
+            "user": "123",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 0,
+            "content": "123456789",
+            "comment": "",
+            "date": 1388386349375
+          },
+          {
+            "_id": "52c1185a1bf8f39c19852cf7",
+            "user": "123",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 0,
+            "content": "fhjkjgg",
+            "comment": "",
+            "date": 1388386394249
+          },
+          {
+            "_id": "52c1185a1bf8f39c19852cf8",
+            "user": "123",
+            "activity": "52b6d01cc860a76c77409806",
+            "type": 0,
+            "content": "fhjkjgg",
+            "comment": "",
+            "date": 1388386394399
+          }
+        ],
+        "users": {
+          "creator": "irjr",
+          "invitedUsers": [
+            "*"
+          ],
+          "participators": [
+            "yigd",
+            "yigdf",
+            "GHOST"
+          ]
+        }
+      },
+      {
+        "users": {
+          "creator": "oscar",
+          "invitedUsers": [
+            "*"
+          ],
+          "participators": []
+        },
+        "resources": [],
+        "active": true,
+        "info": {
+          "type": 1,
+          "date": 1388592000000,
+          "createDate": 1388472719048,
+          "title": "測試",
+          "desc": "測試的活動",
+          "teacher": "沒老師",
+          "grade": "一年级",
+          "class": "一班",
+          "subject": "数学",
+          "domain": "測試課"
+        },
+        "_id": "52c2698fda48d1ac193aa379"
+      },
+      {
+        "_id": "52b6ccf5c860a76c77409801",
+        "active": true,
+        "info": {
+          "title": "hello world",
+          "desc": null,
+          "type": 1,
+          "date": 1399364092450,
+          "createDate": 1387711733530,
+          "teacher": "雷鋒",
+          "grade": "3",
+          "class": "2",
+          "subject": "解讀「奉獻他人、提升自己」的精粹與內涵",
+          "domain": "雷鋒思想"
+        },
+        "resources": [
+          {
+            "_id": "52baea20a99392287ef4f133",
+            "user": "higf",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-1k6gujo.png",
+            "comment": null,
+            "date": 1387981344442
+          },
+          {
+            "_id": "52baedd7a99392287ef4f134",
+            "user": "higf",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 2,
+            "content": "http://115.28.55.91:8080/resources/32296-syh3nx",
+            "comment": null,
+            "date": 1387982295830
+          },
+          {
+            "_id": "52baef34a99392287ef4f135",
+            "user": "higf",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 2,
+            "content": "http://115.28.55.91:8080/resources/32296-1b5e3nb.3gp",
+            "comment": null,
+            "date": 1387982644772
+          },
+          {
+            "_id": "52baef8ba99392287ef4f136",
+            "user": "higf",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 0,
+            "content": "默",
+            "comment": null,
+            "date": 1387982731312
+          },
+          {
+            "_id": "52bba4aaa99392287ef4f14a",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-1dtyk6b.jpg",
+            "comment": null,
+            "date": 1388029098721
+          },
+          {
+            "_id": "52bba4bea99392287ef4f14b",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-1k20b47.jpg",
+            "comment": null,
+            "date": 1388029118361
+          },
+          {
+            "_id": "52bba4c2a99392287ef4f14c",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-c1znvt.jpg",
+            "comment": null,
+            "date": 1388029122685
+          },
+          {
+            "_id": "52bba4daa99392287ef4f14d",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-rwak1c.jpg",
+            "comment": null,
+            "date": 1388029146107
+          },
+          {
+            "_id": "52be61648483c04a5bd3cf6c",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 0,
+            "content": "隐藏獒令",
+            "comment": "",
+            "date": 1388208484542
+          },
+          {
+            "_id": "52be62628483c04a5bd3cf6d",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/23370-1t34joi.jpg",
+            "comment": "",
+            "date": 1388208738163
+          },
+          {
+            "_id": "52bed9cf8483c04a5bd3cf73",
+            "user": "人",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 2,
+            "content": "http://115.28.55.91:8080/resources/23370-1ck056e.3gp",
+            "comment": "",
+            "date": 1388239311522
+          },
+          {
+            "_id": "52bede128483c04a5bd3cf74",
+            "user": "人",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 0,
+            "content": "丄",
+            "comment": "",
+            "date": 1388240402628
+          },
+          {
+            "_id": "52bedfd08483c04a5bd3cf75",
+            "user": "人",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/23370-1qc0jx8.jpg",
+            "comment": "",
+            "date": 1388240848138
+          },
+          {
+            "_id": "52bedfdc8483c04a5bd3cf76",
+            "user": "人",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/23370-1s5ub03.jpg",
+            "comment": "",
+            "date": 1388240860955
+          },
+          {
+            "_id": "52bee2998483c04a5bd3cf77",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/23370-25hdj7.jpg",
+            "comment": "",
+            "date": 1388241561414
+          },
+          {
+            "_id": "52bee2a88483c04a5bd3cf78",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 0,
+            "content": "你好",
+            "comment": "",
+            "date": 1388241576829
+          },
+          {
+            "_id": "52bee3698483c04a5bd3cf79",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 0,
+            "content": "乙JFKRBRJRJJRBEHJEJEHEHEJJEJEJEJEJJFJNFBFJDJDFFFFFF\n\nFF\n\n\n\n\n\nFFFFFFG",
+            "comment": "",
+            "date": 1388241769259
+          },
+          {
+            "_id": "52bee3758483c04a5bd3cf7a",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 0,
+            "content": "Y",
+            "comment": "",
+            "date": 1388241781326
+          },
+          {
+            "_id": "52bee37f8483c04a5bd3cf7b",
+            "user": "张三丰",
+            "activity": "52b6ccf5c860a76c77409801",
+            "type": 0,
+            "content": "TUI",
+            "comment": "",
+            "date": 1388241791400
+          }
+        ],
+        "users": {
+          "creator": "oscar",
+          "invitedUsers": [
+            "*"
+          ],
+          "participators": []
+        }
+      },
+      {
+        "_id": "52b6ce1ac860a76c77409802",
+        "active": true,
+        "info": {
+          "title": "牛逼哄哄的標題牛逼哄哄的標題牛逼哄哄的標題牛逼哄哄的標題",
+          "desc": null,
+          "type": 1,
+          "date": 1399364092450,
+          "createDate": 1387712026351,
+          "teacher": "雷鋒",
+          "grade": "3",
+          "class": "2",
+          "subject": "解讀「奉獻他人、提升自己」的精粹與內涵",
+          "domain": "雷鋒思想"
+        },
+        "resources": [
+          {
+            "_id": "52b9ef1c15a70d3c405a9d60",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 0,
+            "content": "helloworld",
+            "comment": null,
+            "date": 1387917084044
+          },
+          {
+            "_id": "52b9ef6015a70d3c405a9d61",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "uejbd",
+            "comment": null,
+            "date": 1387917152502
+          },
+          {
+            "_id": "52b9ef6615a70d3c405a9d62",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "urjjd",
+            "comment": null,
+            "date": 1387917158783
+          },
+          {
+            "_id": "52b9f0c015a70d3c405a9d63",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "fuij",
+            "comment": null,
+            "date": 1387917504689
+          },
+          {
+            "_id": "52b9f79215a70d3c405a9d64",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 0,
+            "content": "人:乚憨粥方活洗洗方完完洗丶丶\n\n\n\n\n覕\n\nㄥㄥㄥ",
+            "comment": null,
+            "date": 1387919250495
+          },
+          {
+            "_id": "52baaabbd5c5e36b5822137e",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 0,
+            "content": "idjdjdhdhdjdkdjdhudoiuuoeiudhodoherieidi",
+            "comment": null,
+            "date": 1387965115619
+          },
+          {
+            "_id": "52baaac2d5c5e36b5822137f",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 0,
+            "content": "iejhd",
+            "comment": null,
+            "date": 1387965122731
+          },
+          {
+            "_id": "52baaac9d5c5e36b58221380",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 0,
+            "content": "ujrjjfodojfkfo",
+            "comment": null,
+            "date": 1387965129811
+          },
+          {
+            "_id": "52baaad0d5c5e36b58221381",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 0,
+            "content": "irkhfidorjfororifjfko",
+            "comment": null,
+            "date": 1387965136522
+          },
+          {
+            "_id": "52baefc1a99392287ef4f137",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 2,
+            "content": "http://115.28.55.91:8080/resources/32296-3mmcha.3gp",
+            "comment": null,
+            "date": 1387982785158
+          },
+          {
+            "_id": "52baf1aba99392287ef4f138",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 2,
+            "content": "http://115.28.55.91:8080/resources/32296-x1i0cm.3gp",
+            "comment": null,
+            "date": 1387983275373
+          },
+          {
+            "_id": "52baf4bba99392287ef4f139",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-18h3f9y.jpg",
+            "comment": null,
+            "date": 1387984059046
+          },
+          {
+            "_id": "52baf87ba99392287ef4f13a",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-1xptnv1.jpg",
+            "comment": null,
+            "date": 1387985019856
+          },
+          {
+            "_id": "52baf87ea99392287ef4f13b",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-1xptnv1.jpg",
+            "comment": null,
+            "date": 1387985022470
+          },
+          {
+            "_id": "52baf8c5a99392287ef4f13c",
+            "user": "higf",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-1u8fb1m.jpg",
+            "comment": null,
+            "date": 1387985093835
+          },
+          {
+            "_id": "52bbd867a99392287ef4f14e",
+            "user": "ZWJ",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-lo0xq4.jpg",
+            "comment": null,
+            "date": 1388042343554
+          },
+          {
+            "_id": "52bbd8c4a99392287ef4f14f",
+            "user": "ZWJ",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 0,
+            "content": "测试",
+            "comment": null,
+            "date": 1388042436404
+          },
+          {
+            "_id": "52bbd8f8a99392287ef4f150",
+            "user": "ZWJ",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 2,
+            "content": "http://115.28.55.91:8080/resources/32296-1cuolp4.3gp",
+            "comment": null,
+            "date": 1388042488952
+          },
+          {
+            "_id": "52bc3d8da99392287ef4f157",
+            "user": "hjrirjft",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/32296-lbix4.jpg",
+            "comment": null,
+            "date": 1388068237845
+          },
+          {
+            "_id": "52be68428483c04a5bd3cf6e",
+            "user": "t",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 0,
+            "content": "uiitttu",
+            "comment": "",
+            "date": 1388210242878
+          },
+          {
+            "_id": "52bed8708483c04a5bd3cf6f",
+            "user": "人",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 2,
+            "content": "http://115.28.55.91:8080/resources/23370-1olbfuf.3gp",
+            "comment": "",
+            "date": 1388238960140
+          },
+          {
+            "_id": "52bed8868483c04a5bd3cf70",
+            "user": "人",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/23370-1l51u5v.jpg",
+            "comment": "",
+            "date": 1388238982153
+          },
+          {
+            "_id": "52bed8a98483c04a5bd3cf71",
+            "user": "人",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 2,
+            "content": "http://115.28.55.91:8080/resources/23370-1ea8iow.3gp",
+            "comment": "",
+            "date": 1388239017762
+          },
+          {
+            "_id": "52bed8b48483c04a5bd3cf72",
+            "user": "人",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 0,
+            "content": "鳭",
+            "comment": "",
+            "date": 1388239028982
+          },
+          {
+            "_id": "52bef6208483c04a5bd3cf80",
+            "user": "DSF",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 0,
+            "content": "JSKIDJJF",
+            "comment": "",
+            "date": 1388246560650
+          },
+          {
+            "_id": "52bef62b8483c04a5bd3cf81",
+            "user": "DSF",
+            "activity": "52b6ce1ac860a76c77409802",
+            "type": 1,
+            "content": "http://115.28.55.91:8080/resources/23370-jsh3zm.jpg",
+            "comment": "",
+            "date": 1388246571372
+          }
+        ],
+        "users": {
+          "creator": "oscar",
+          "invitedUsers": [
+            "*"
+          ],
+          "participators": [
+            "cdf",
+            "higf",
+            "oscar",
+            "hjrirjft",
+            "UJGF",
+            "UFO",
+            "UGG",
+            "QQ",
+            "TTY",
+            "IXJD",
+            "紧"
+          ]
+        }
+      }
+    ],
+    "more": false
+  }
+}

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:orientation="vertical">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:text="当前登录用户"
+                />
+        <TextView
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/username"
+                android:text="张三"
+                android:textColor="@color/bg"
+                android:textAppearance="?android:textAppearanceLarge"
+                />
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/join_button"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/button_height"
+            android:layout_alignParentBottom="true"
+            android:visibility="visible"
+            android:orientation="horizontal">
+        <TextView
+
+                style="@style/buttonNegative"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="返回"
+                android:id="@+id/btnBack"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+
+                />
+        <TextView
+
+                style="@style/buttonPositive"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="退出登录"
+                android:id="@+id/btnQuit"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+
+                />
+    </LinearLayout>
+</RelativeLayout>

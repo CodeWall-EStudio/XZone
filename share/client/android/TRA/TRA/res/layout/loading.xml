@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+       android:layout_width="fill_parent"
+       android:background="@android:color/transparent"
+       android:layout_height="fill_parent">
+    <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon"
+            android:id="@+id/upload_preview_image"
+            android:layout_centerInParent="true"
+            />
+    <TextView
+            android:layout_below="@+id/upload_preview_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="正在请求数据..."
+            android:id="@+id/textView"/>
+
+    <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar"
+            android:layout_above="@+id/textView"
+            android:layout_centerHorizontal="true"/>
+</RelativeLayout>

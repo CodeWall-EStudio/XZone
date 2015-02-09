@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="user:"
+            android:id="@+id/tvCurrentLogin"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="16dp"/>
+
+    <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Auto Login"
+            android:id="@+id/cbSettingsAutoLogin"
+            android:layout_alignLeft="@+id/tvCurrentLogin"
+            android:layout_below="@+id/tvCurrentLogin"
+            android:checked="false"/>
+</RelativeLayout>

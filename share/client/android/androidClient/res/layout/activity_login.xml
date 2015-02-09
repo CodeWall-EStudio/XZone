@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+              android:layout_width="fill_parent"
+              android:id="@+id/login_layout"
+              android:layout_height="fill_parent"
+              >
+
+    <TextView
+            android:drawableLeft="@drawable/icon"
+            android:gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="北京市海滨区七一小学"
+            android:id="@+id/textView"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="新媒体考研中心"
+            android:id="@+id/textView2"
+            android:layout_marginTop="24dp"
+            android:layout_below="@+id/textView"
+            android:layout_centerHorizontal="true"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="移动设备客户端"
+            android:id="@+id/textView3"
+            android:layout_below="@+id/textView2"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"/>
+
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/username"
+            android:layout_centerVertical="true"
+            android:layout_alignRight="@+id/textView"
+            android:text=""
+            android:layout_alignLeft="@+id/textView"/>
+
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/password"
+            android:text=""
+            android:layout_alignRight="@+id/username"
+            android:layout_alignLeft="@+id/username"
+            android:layout_below="@+id/username"
+            android:layout_centerHorizontal="true"/>
+    <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/auto_login"
+            android:id="@+id/cb_auto_login"
+            android:visibility="gone"
+            android:layout_alignRight="@+id/username"
+            android:layout_below="@+id/password"
+            android:checked="true"/>
+
+    <Button
+            android:id="@+id/login_button"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_below="@+id/password"
+            android:layout_alignRight="@+id/username"
+            android:layout_alignLeft="@+id/username"
+            android:text="@string/action_login"/>
+
+</RelativeLayout>

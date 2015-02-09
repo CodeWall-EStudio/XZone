@@ -1,0 +1,48 @@
+body{
+    background-color: rgb(235,238,243);
+}
+body.fixedTopNavbar{
+    padding-top: 50px;
+    margin-bottom: 30px;
+}
+
+a{
+    cursor: pointer;
+}
+
+.hbox{
+    display: -webkit-box;
+    display: /* @alternate */-ms-flexbox;
+    -webkit-box-orient: horizontal;
+    /* @alternate */-ms-flex-direction: row;
+}
+.vbox{
+    display: -webkit-box;
+    display: /* @alternate */-ms-flexbox;
+    -webkit-box-orient: vertical;
+    /* @alternate */-ms-flex-direction: column;
+}
+.full{
+    -webkit-box-flex: 1;
+    /* @alternate */-ms-flex: 1;
+}
+.center{
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+}
+
+#topNavBar{
+    border: none;
+    background-color: rgb(36, 74, 134);
+    box-shadow: 0 0 10px rgba(0,0,0,0.8);
+}
+#topNavBar .navbar-brand{
+    color: #FFF;
+}
+#topNavBar li > a{
+    color: rgb(180,201,221);
+}
+#topNavBar li.active > a{
+    color: #fff;
+    background-color: rgb(32,66,121);
+}

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="login_style">
+        <item name="android:textColor">#ffffff</item>
+
+    </style>
+
+
+    <style name="buttonBlue">
+
+        <item name="android:clickable">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/btn_positive_txt_color</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@drawable/blue_bg</item>
+<!--
+        <item name="android:shadowColor">#7f000000</item>
+        <item name="android:shadowDx">0.0</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="android:shadowRadius">0.1</item>
+-->
+    </style>
+    <style name="buttonPositive">
+        <item name="android:clickable">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/btn_positive_txt_color</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@drawable/btn_bg_cyan</item>
+        <!--
+        <item name="android:shadowColor">#7f000000</item>
+        <item name="android:shadowDx">0.0</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="android:shadowRadius">0.1</item>
+        -->
+    </style>
+    <style name="buttonNegative">
+        <item name="android:clickable">true</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/btn_navigate_txt_color</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:background">@drawable/btn_bg_gray</item>
+        <!--
+        <item name="android:shadowColor">#7f000000</item>
+        <item name="android:shadowDx">0.0</item>
+        <item name="android:shadowDy">1.0</item>
+        <item name="android:shadowRadius">0.1</item>
+        -->
+    </style>
+
+    <style name="MyTheme" parent="@style/Theme.Sherlock.Light">
+        <!--item name="android:actionBarStyle">@style/MyActionBar</item-->
+        <!--item name="actionBarStyle">@style/MyActionBar</item-->
+        <!--item name="android:tabWidgetStyle">@style/tabwidgetStyle</item-->
+    </style>
+
+    <style name="MyActionBar" parent="@style/Theme.Sherlock.Light.DarkActionBar">
+        <item name="android:background">#224888</item>
+        <item name="android:actionBarTabTextStyle">@style/whiteText</item>
+        <item name="android:titleTextStyle">@style/whiteText</item>
+    </style>
+
+    <style name="whiteText">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+
+    <style name="tabwidgetStyle" >
+        <!--item name="android:textAppearance">@style/tabwidgetTextStyle</item-->
+
+
+        <!--
+        <item name="android:tabStripLeft"></item>
+        <item name="android:tabStripRight"></item>
+
+        <item name="android:tabStripEnabled">false</item>
+        -->
+        <!--item name="android:background">@android:color/darker_gray</item-->
+        <!--item name="android:divider">@null</item-->
+        <!--item name="android:activatedBackgroundIndicator">@color/bg_cyan</item-->
+    </style>
+
+    <style name="tabwidgetTextStyle">
+        <item name="android:textColor">@color/tab_text_color</item>
+    </style>
+
+</resources>
