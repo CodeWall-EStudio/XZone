@@ -7,6 +7,7 @@
 
 /**
  * Module dependencies
+ * add by horde 单点登录
  */
 
 var https = require('https');

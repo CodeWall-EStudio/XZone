@@ -824,7 +824,9 @@ app.put('/users/:uid/login', function(req, res){
     );
 });
 
-/*71*/
+/*
+    add by horde 71单点登录
+*/
 app.get('/users/info',function(req,res){
     auth.info(req,res);
 });
@@ -832,7 +834,9 @@ app.get('/users/info',function(req,res){
 app.get('/users/callback',function(req,res){
     auth.callback(req,res);
 });
-
+/*
+    add by horde 71单点登录 end
+*/
 
 //獲取指定用戶的昵稱
 app.get('/users/:uid/profile', function(req, res){

@@ -16,6 +16,9 @@ var GET_ENCODE_KEY_API      = {host:'my.71xiaoxue.com', path:'/authenticationUse
     GET_PROFILE_API         = {host:'mapp.71xiaoxue.com', path:'/components/getUserInfo.htm'},
     GET_ORGANIZATION_TREE   = {host:'mapp.71xiaoxue.com', path:'/components/getOrgTree.htm'};
 
+/*
+add by horde 单点登录
+*/
 function cas(req, res) {
     if (!cas.ins) {
         var host = req.protocol+'://'+req.headers.host;
@@ -177,6 +180,10 @@ function callback(req,res){
 
     });
 }
+/*
+add by horde 单点登录 end
+*/
+
 
 function login(username, password, callback){
     if(username && password){
