@@ -59,7 +59,9 @@ exports.upload = function(req, res){
     var activityId = parameter.activityId;
     var activityName = parameter.activityName;
     var activityTime = parameter.activityTime;
-    activityTime = U.formatDate('yyyy-MM-dd hh:mm:ss');
+    if(activityTime){
+        activityTime = U.formatDate(new Date(activityTime), 'yyyy-MM-dd hh:mm:ss');
+    }
 
     var ep = new EventProxy();
     ep.fail(function(err, code){
@@ -237,9 +239,9 @@ exports.departments =function(req, res){
     var loginUser;
     var skey = req.skey;
     console.log('>>>media departments, skey:',skey);
-    var activityId = parameter.activityId;
-    var activityName = parameter.activityName;
-    var activityTime = parameter.activityTime;
+    // var activityId = parameter.activityId;
+    // var activityName = parameter.activityName;
+    // var activityTime = parameter.activityTime;
     
     var ep = new EventProxy();
     ep.fail(function(err, code){
