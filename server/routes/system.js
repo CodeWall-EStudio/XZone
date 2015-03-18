@@ -173,8 +173,9 @@ exports.initDeparts = function(req, res) {
 
     userHelper.getOrgTree(skey, user.name, ep.done('getOrgTree'));
     // });
+    db.department.remove(ep.done('clear'));
 
-    ep.on('getOrgTree', function(data) {
+    ep.all('clear', 'getOrgTree', function(data) {
         if (data.success) {
             var root = data.departmentTree;
             db.department.save({
