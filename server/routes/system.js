@@ -125,6 +125,7 @@ function createDepart(parent, dep, callback) {
 
             } else {
                 var order = NAMES.indexOf(dep.title);
+                console.log(dep.title, order);
                 doc = {
                     openid: dep.id,
                     name: dep.title,
