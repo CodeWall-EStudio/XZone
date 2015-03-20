@@ -268,7 +268,7 @@ exports.getAllDepartments = function(params, callback){
         }
 
         // 查询一级部门
-        db.department.find({ 'parent.$id': root._id },  { sort: { order: -1 }},function(err, docs){
+        db.department.find({ 'parent.$id': root._id },  { sort: { order: 1 }},function(err, docs){
             if(err){
                 return ep.emit('error', err);
             }
